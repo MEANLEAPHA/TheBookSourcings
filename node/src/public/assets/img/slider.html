@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .slider{
+            width: 75%;
+            height: auto;
+            margin: auto;
+            position: relative;
+            gap: 0px;
+            padding: 0px;
+        }
+        .slider .img{
+            display: none;
+        }
+        .slider a{
+            color: rgb(255, 255, 255);
+        }
+        .slider a p{
+            color: rgb(255, 255, 255);
+            margin: 0;
+            text-align: end;
+        }
+        .slider a:hover{
+            color: rgb(1, 50, 195);           
+        }
+        .slider a p:hover{
+            color: rgb(1, 50, 195);           
+        }
+        .img.displaySlide{
+            display: block;
+            position: relative;
+            width: 100%;
+            height: 90px;
+            margin: 35px auto 0px auto;
+            max-width: 100%;
+            box-shadow: 0px 0px 3px 1px rgb(190, 190, 190);
+        }
+
+        .sliderWidth{
+            width: 97%;
+            height: auto;
+            display: flex;
+            gap:15px;
+            justify-content: center;
+            margin: auto;
+            display: none;
+        }
+        .imgWidth{
+            width: 100%;
+            height: 100px;
+            position: relative;
+            max-width: 100%;
+            box-shadow: 0px 0px 3px 1px rgb(190, 190, 190);
+        }
+        a p{
+            position: absolute;
+            bottom: 2px;
+            color: royalblue;
+            right: 2px;
+        }
+
+    </style>
+</head>
+<body>
+    
+
+    <div class="slider">
+        <div class="slides">
+            <a href="#"><img src="remindWhoBanner.gif" alt="Ad1" class="img"></a>
+            <a href="#"><img src="remindWhoBanner.gif" alt="Ad2" class="img"></a>
+            <a href="#"><img src="remindWhoBanner.gif" alt="Ad3" class="img"></a>
+        </div>
+        <a href="ad.html"><p>Ad</p></a>
+        <button onclick="Prev()" class="btn">Prev</button>
+        <button onclick="Next()" class="btn">Next</button>
+    </div>
+
+
+
+
+
+
+
+     <div class="sliderWidth">
+        <a href="#"><img src="remindWhoBanner.gif" alt="Ad1" class="imgWidth"></a>
+        <a href="#"><img src="remindWhoBanner.gif" alt="Ad2" class="imgWidth"></a>
+        <a href="#"><img src="remindWhoBanner.gif" alt="Ad3" class="imgWidth"></a>
+     </div>
+
+
+
+
+</body>
+
+<script>
+    const slides = document.querySelectorAll('.slides img');
+    const btn = document.querySelectorAll('.btn');
+    btn.forEach(btns => {
+        btns.style.display = "none";
+    })
+    let IndexSlider = 0;
+    let interValid = null;
+    document.addEventListener("DOMContentLoaded", initializeSlider());
+    function initializeSlider(){
+        if(slides.length>0){
+            slides[IndexSlider].classList.add("displaySlide");
+            interValid = setInterval(Next,5000);
+        }
+    }
+    function showSlide(index){
+        if(index >= slides.length){
+            IndexSlider = 0;
+        }
+        else if(index < 0){
+            IndexSlider = slides.length -1;
+        }
+        slides.forEach(slide => {
+            slide.classList.remove("displaySlide");
+            }
+        )
+        slides[IndexSlider].classList.add("displaySlide");
+    }
+    function Prev(){
+        IndexSlider --;
+        showSlide(IndexSlider)
+    }
+    function Next(){
+        IndexSlider++;
+        showSlide(IndexSlider);
+    }
+</script>
+</html>

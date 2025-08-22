@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login</title>
+  <link rel="icon" href="img/remindWho2-removebg-preview.png">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/100/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.0.2/TweenMax.min.js"></script>
+  <script src="https://unpkg.com/three@0.84.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://kit.fontawesome.com/ec7a51a641.js" crossorigin="anonymous"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Tagesschrift&family=Reenie+Beanie&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pirata+One&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../assets/css/login/login.css">
+</head>
+</head>
+<body>
+  <main>
+     <div id="formLogin"  data-aos="fade-up">
+            <span id="logNsign">
+                <a href="login.html" id="log"> Login </a> | <a href="signup.html" id="sign"> Signup</a>
+            </span>
+            <p style="font-family: monospace;font-size: 14px;">We're ready to help you discover your next book</p>
+            <br>
+            <div id="Img"><img src="../assets/img/TBSfinal-removebg-preview.png" ></div>
+            <br>
+            <form id="member-form">
+               <div class="message" id="msg"></div>
+               <br>
+                <label for="">Email</label>
+                <br>
+                <input type="text" id="email" placeholder="Enter Email">
+                <br><br>
+                <span id="emailInco"></span>
+                <label for="">Password</label><br>
+                <input type="password" id="password" placeholder="Enter Password"><i class="fa-regular fa-eye-slash" id='togglePasswords' style="margin-left: 8px;"></i><br><br>
+                <span id="passInco"></span>
+                <div style="width: 75%;display: flex;justify-content: space-between;">
+                    <input type="submit" id="submit" value="Login" >
+                  <span><a href="forgetPassword.html" style="text-align: end;color: brown;">Forgot Password?</a></span>
+                </div>
+                
+                <br>
+<!--                
+                <br>
+                <input type="submit" id="submit" value="Login" > -->
+            
+            </form>
+          
+           
+            <p > <a href="signup.html" id="createAcc" >Don't have an account? <span style="color: rgb(99, 190, 91);"><u>Create one</u></span> </a></p>
+            
+        </div>
+
+
+
+
+    <div id="canvas-container"></div>
+    </main>
+    <footer>
+      <h2>Welcome Back... :) </h2>
+     
+    </footer>
+  <script src="../assets/js/jquery.js"></script>
+  <script src="../assets/js/login/eyeToggle.js"></script>
+  <script src="../assets/js/login/login.js"></script>
+  <script src="../assets/js/login/animation.js"></script>
+</body>
+</html>
