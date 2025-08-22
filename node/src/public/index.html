@@ -412,7 +412,7 @@
   <script>
 async function fetchTrendingBooks() {
   try {
-    const res = await fetch('http://localhost:3000/api/trending');
+    const res = await fetch('https://thebooksourcings.onrender.com/api/trending');
     const result = await res.json();
 
     // ✅ Flatten all sources into one array
