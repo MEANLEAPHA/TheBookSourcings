@@ -12,9 +12,8 @@ async function getOpenLibraryTrending() {
     source: "Open Library",
     title: book.title,
     authors: book.authors?.map(a => a.name) || [],
-    description: "Trending book from Open Library",
     cover: book.cover_i
-      ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg`
+      ? `https://covers.openlibrary.org/b/id/${book.cover_i}-S.jpg`
       : null,
     key: book.key
   }));

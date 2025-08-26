@@ -12,9 +12,9 @@ async function getGutenbergTrending() {
     source: "Project Gutenberg",
     title: book.title,
     authors: book.authors.map(a => a.name),
-    description: "Classic book from Project Gutenberg",
     cover: book.formats["image/jpeg"] || null,
-    subjects: book.subjects || []
+    subjects: book.subjects || [],
+    bookId: book.id
   }));
 }
 
