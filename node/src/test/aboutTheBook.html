@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+const bookId = urlParams.get("bookId");
+const source = detectSource(bookId);
+
+switch (source) {
+  case "googlebooks":
+    fetch(`https://www.googleapis.com/books/v1/volumes/${bookId}`)
+      .then(res => res.json())
+      .then(renderGoogleBook);
+    break;
+  case "openlibrary":
+    fetch(`https://openlibrary.org/works/${bookId}.json`)
+      .then(res => res.json())
+      .then(renderOpenLibraryBook);
+    break;
+  case "gutenberg":
+    fetch(`https://gutendex.com/books/${bookId}`)
+      .then(res => res.json())
+      .then(renderGutenbergBook);
+    break;
+}
+
+
+function renderGoogleBook(data) {
+  const info = data.volumeInfo;
+  document.querySelector("#title").textContent = info.title;
+  document.querySelector("#author").textContent = info.authors?.join(", ") || "Unknown";
+  document.querySelector("#description").innerHTML = info.description || "No description available.";
+  document.querySelector("#cover").src = info.imageLinks?.thumbnail || "fallback.jpg";
+}
+
+</script>
+</html>

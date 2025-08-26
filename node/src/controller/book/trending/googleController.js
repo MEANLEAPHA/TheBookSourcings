@@ -10,7 +10,7 @@ async function getGoogleTrending() {
 
   return data.items.map(book => ({
     source: "Google Books",
-    id:book.volumeInfo.id,
+    bookId:book.volumeInfo.id,
     title: book.volumeInfo.title,
     authors: book.volumeInfo.authors || [],
     cover: book.volumeInfo.imageLinks?.smallThumbnail || null,

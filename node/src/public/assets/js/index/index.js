@@ -25,27 +25,33 @@ async function fetchTrendingBooks() {
       const author = book.authors && book.authors.length ? book.authors.join(", ") : "No Data";
       // ✅ Get source
       const source = book.source || "No Data";
+
+      // get boook id
+      const bookId = book.bookId;
+
       // ✅ Tags: only first 4
       const tags = (book.categories && book.categories.length ? book.categories.slice(0, 4) : ["General"]);
 
       // ✅ Build HTML
       const card = `
         <div class="Book-card">
-          <div class="thumbnail">
-            <img src="${cover}" class="bookCovers">
-          </div>
-          <div class="Book-info">
-            <div class="title">${book.title || "Untitled"}</div>
-            <div class="byAuthor">${author}</div>
-            <div class="meta">1.2M views · 3 days ago</div>
-            <div class="channel">
-              <div class="avatar"></div>
-              <div class="channel-name">${source}</div>
+          <a href='aboutBook.html?bookId=${book.bookId}'>
+            <div class="thumbnail">
+              <img src="${cover}" class="bookCovers">
             </div>
-            <div class="tags">
-              ${tags.map(tag => `<div class="tag">#${tag}</div>`).join("")}
+            <div class="Book-info">
+              <div class="title">${book.title || "Untitled"}</div>
+              <div class="byAuthor">${author}</div>
+              <div class="meta">1.2M views · 3 days ago</div>
+              <div class="channel">
+                <div class="avatar"></div>
+                <div class="channel-name">${source}</div>
+              </div>
+              <div class="tags">
+                ${tags.map(tag => `<div class="tag">#${tag}</div>`).join("")}
+              </div>
             </div>
-          </div>
+          </a>
         </div>
       `;
 
