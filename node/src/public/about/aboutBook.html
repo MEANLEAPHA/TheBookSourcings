@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <title>Profile & Tasks — Vanilla HTML/CSS</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="../assets/css/about/aboutBook.css">
+</head>
+<body >
+  <header></header>
+  <main>
+  <div class="container">
+    <div class="grid">
+      <!-- Main Column -->
+      <div>
+        <!-- Profile Header -->
+        <div class="card">
+          <div class="card-body pb-0">
+            <div class="row">
+              <div class="col-left">
+                <img src="21 Lessons for the 21st Century.jpg" alt="Jansh Wells" class="BookUrl">
+              </div>
+              <div class="col-right">
+                <h4 class="section-title">About : <span>21 Lessons for the 21st Century</span></h4>
+                <div id="bookDescription">
+                    <span id="description" >The book had articles and reviews published by The New York Times, The Economist,[4] Financial Times, The Guardian, New Statesman, and The Times.
+                        In The New York Times, Bill Gates calls the book "fascinating" and his author "such a stimulating writer that even when I disagreed, I wanted to keep reading and thinking." For Gates, Harari "has teed up a crucial global conversation about how to take on the problems of the 21st century."[5]
+                        John Thornhill in Financial Times said that "[although] 21 Lessons is lit up by flashes of intellectual adventure and literary verve, it is probably the least illuminating of the three books" written by Harari, and that many of the observations in it feel recycled from the two others.[6] Helen Lewis review in The Guardian is not as glowing but admires "the ambition and breadth of his work, smashing together unexpected ideas into dazzling observations."[3]
+                        book has also received negative reviews. Gavin Jacobson in the New Statesman sees it as "a study thick with promise and thin in import" with advice "either too vague or too hollow to provide any meaningful guidance."[7] In The Times, Gerard DeGroot writes: "The author of Sapiens is good at identifying the crises to come but his syrupy platitudes are no answer."[8]
+                    </span><a id="seemore"> ▼ Read more</a><a id="seeless"> ▲ Read less</a>
+                </div>
+
+                <!-- Channel action with btn access -->
+                <div id="accessBtn">
+                  <div  id="channelOpt">
+                    <img src="dog.png"  id="channelPf">
+                    <div id="channelInfo">
+                        <p id="channelName">Channel Name</p>
+                        <p id="channelRep">112 Followers</p>
+                    </div>
+                    <input type="button" value="Follow" id="followBtn">
+                  </div>
+                 
+                  <div id="btnAllAcc" class="d-flex gap-2">
+                    <button class="btnAcc">
+                      <i class="fas fa-book-open"></i> Read
+                    </button>
+                    <button class="btnAcc">
+                      <i class="fas fa-download"></i> Download
+                    </button>
+                    <button class="btnAcc">
+                      <i class="fa-solid fa-lines-leaning"></i> Library
+                    </button>
+                
+                    <div class="dropdown">
+                      <button class="btnAcc" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="BtnAccLast">
+                        <i class="fas fa-ellipsis-h"></i>
+                      </button>
+                      <ul class="dropdown-menu">
+                        <li><button class="dropdown-item" type="button"><i class="fa-solid fa-bookmark"></i> Read Later</button></li>
+                        <li><button class="dropdown-item" type="button"><i class="fa-solid fa-flag"></i> Report</button></li>
+                        <li><button class="dropdown-item" type="button"><i class="fa-solid fa-share"></i> Share</button></li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tasks -->
+        <div class="card">
+          <div class="card-body">
+            <h3 class="section-title">Bibliographic information</h3>
+               <table>
+                    <tbody>
+                        <tr class="trs">
+                            <td>Author</td>
+                            <td>Harari, Yuval Noah Harari</td>
+                        </tr>
+                        <tr class="trs">
+                            <td>Title</td>
+                            <td>21 Lessons for the 21st Century</td>
+                        </tr>
+                        <tr class="trs">
+                            <td>SubTitle</td>
+                            <td>Offers a helpful framework for processing the news and thinking about the challenges we face</td>
+                        </tr>
+                        <tr class="trs">
+                            <td>Category</td>
+                            <td>Self-help</td>
+                        </tr>
+                        <tr class="trs">
+                            <td>Genre</td>
+                            <td>Non-fiction</td>
+                        </tr>
+                        <tr class="trs">
+                            <td>Language</td>
+                            <td>English</td>
+                        </tr>
+                            <tr class="trs">
+                            <td>Page</td>
+                            <td>352</td>
+                        </tr>
+                        <tr class="trs">
+                            <td>ISBN-10</td>
+                            <td>0-06-112008-1</td>
+                        </tr>
+                        <tr class="trs">
+                            <td>ISBN-13</td>
+                            <td>978-0-06-112008-1</td>
+                        </tr>
+                        <tr class="trs">
+                            <td>Published Date</td>
+                            <td>Aug 20, 2019</td>
+                        </tr>
+                        <tr class="trs">
+                            <td>Publisher</td>
+                            <td>Random House Publishing Group</td>
+                        </tr>
+                    </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <aside>
+        <!-- About -->
+        <div class="card">
+          <div class="card-body">
+            <h3 class="section-title">Other Book by the Author</h3>
+            <div id="otherBook">
+                <div class="books">
+                    <img src="thinkandgrowrich.jpg" alt="howibuiltthis" class="bookImg">
+                    <div class="bookInfo">
+                        <a href="#" id="OtherbookTitle">How I BUILT THIS</a>
+                        <a href="#" id="OtherbookSubTitle">Sub Title</a>
+                    </div>
+                </div>
+                  <div class="books">
+                    <img src="thinkandgrowrich.jpg" alt="howibuiltthis" class="bookImg">
+                    <div class="bookInfo">
+                        <a href="#" id="OtherbookTitle">How I BUILT THIS</a>
+                        <a href="#" id="OtherbookSubTitle">Sub Title</a>
+                    </div>
+                </div>
+                  <div class="books">
+                    <img src="thinkandgrowrich.jpg" alt="howibuiltthis" class="bookImg">
+                    <div class="bookInfo">
+                        <a href="#" id="OtherbookTitle">How I BUILT THIS</a>
+                        <a href="#" id="OtherbookSubTitle">Sub Title</a>
+                    </div>
+                </div>
+                  <div class="books">
+                    <img src="thinkandgrowrich.jpg" alt="howibuiltthis" class="bookImg">
+                    <div class="bookInfo">
+                        <a href="#" id="OtherbookTitle">How I BUILT THIS</a>
+                        <a href="#" id="OtherbookSubTitle">Sub Title</a>
+                    </div>
+                </div>
+                  <div class="books">
+                    <img src="thinkandgrowrich.jpg" alt="howibuiltthis" class="bookImg">
+                    <div class="bookInfo">
+                        <a href="#" id="OtherbookTitle">How I BUILT THIS</a>
+                        <a href="#" id="OtherbookSubTitle">Sub Title</a>
+                    </div>
+                </div>
+                <div id="bookOpt">
+                   <p id="showAllBook">Show all</p>
+                   <p id="showLessBook">Show less</p>
+                </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Personal Details -->
+        <div class="card">
+          <div class="card-body">
+            <h3 class="section-title">About the Author</h3>
+              <div id="aboutAuthor">
+                <img src="dog.png" id="aboutPf">
+                <div id="authorInfo">
+                  <p id="authorName">Yuval Noah Harari</p>
+                  <p id="authorProfession">Israeli medievalist and military historian</p>
+                </div>
+              </div>
+              <p id="aboutAuthorDes">Professor YUVAL NOAH HARARI is a historian, philosopher, and the bestselling author of Sapiens: A Brief History of Humankind, Homo Deus: A Brief History of Tomorrow, and 21 Lessons for the 21st Century, which have sold over 35 million copies worldwide, and been translated into 65 languages. Born in Haifa, Israel in 1976, Harari received his Ph.D. from the University of Oxford in 2002, and is currently a lecturer at the Department of History, the Hebrew University of Jerusalem. Harari lectures around the world on the topics explored in his books and articles and has written for publications such as The Guardian, Financial Times, New York Times, The Times, The Economist, and Nature magazine. He also offers his knowledge and time to various organizations and audiences on a voluntary basis.</p>
+              <p><a href="#" >Know more details</a></p>
+          </div>
+        </div>
+
+        <!-- Work Experience -->
+        <div class="card">
+          <div class="card-body">
+            <h3 class="section-title">Award and Recognition</h3>
+          
+          </div>
+        </div>
+      </aside>
+    </div>
+     
+    <div class="book-carousel swiper">
+       <h3 class="section-title">About the Author</h3>
+        <div class="swiper-wrapper">
+            <div class="swiper-slide">
+              <img src="usbornelaw.jpg" alt="Book 1">
+              <div class="bookInfo">
+                <p>How i built this</p>
+                <p>Publisher name here </p>
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <img src="howibuiltthis1.jpg" alt="Book 2">
+              <div class="bookInfo">
+                <p>How i built this</p>
+                <p>Publisher name here </p>
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <img src="Homo Deus.jpg" alt="Book 3">
+              <div class="bookInfo">
+                <p>How i built this</p>
+                <p>Publisher name here </p>
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <img src="sapien.jpg" alt="Book 4">
+              <div class="bookInfo">
+                <p>How i built this</p>
+                <p>Publisher name here </p>
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <img src="usbornelaw.jpg" alt="Book 1">
+              <div class="bookInfo">
+                <p>How i built this</p>
+                <p>Publisher name here </p>
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <img src="howibuiltthis1.jpg" alt="Book 2">
+              <div class="bookInfo">
+                <p>How i built this</p>
+                <p>Publisher name here </p>
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <img src="Homo Deus.jpg" alt="Book 3">
+              <div class="bookInfo">
+                <p>How i built this</p>
+                <p>Publisher name here </p>
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <img src="sapien.jpg" alt="Book 4">
+              <div class="bookInfo">
+                <p>How i built this</p>
+                <p>Publisher name here </p>
+              </div>
+            </div>
+        </div>
+        <div  class="sp"> 
+        <div class="swiper-pagination"></div>
+        </div>
+        <div class="swiper-button-prev" style="color: lightgrey;display: none;" ></div>
+        <div class="swiper-button-next" style="color: lightgrey;display: none;"></div>
+    </div>
+   <section class="content-item" id="comments">
+  <div class="container">
+    <form>
+      <h3 class="form-title">Say something about this book</h3>
+      <button type="submit" class="btn">Submit</button>
+      <fieldset>
+        <div class="form-row">
+          <div class="avatar">
+            <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="user avatar">
+          </div>
+          <div class="input-box">
+            <textarea class="form-control" id="message" placeholder="Your message" required></textarea>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+
+    <h3>4 Comments</h3>
+
+    <!-- COMMENT 1 -->
+    <div class="media">
+      <div class="avatar">
+        <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="">
+      </div>
+      <div class="media-body">
+        <h4 class="media-heading">John Doe</h4>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+        <ul class="media-detail left">
+          <li><i class="fa fa-calendar"></i>27/02/2014</li>
+          <li><i class="fa fa-thumbs-up"></i>13</li>
+        </ul>
+        <ul class="media-detail right">
+          <li><a href="#">Like</a></li>
+          <li><a href="#">Reply</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- COMMENT 2 -->
+    <div class="media">
+      <div class="avatar">
+        <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="">
+      </div>
+      <div class="media-body">
+        <h4 class="media-heading">John Doe</h4>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+        <ul class="media-detail left">
+          <li><i class="fa fa-calendar"></i>27/02/2014</li>
+          <li><i class="fa fa-thumbs-up"></i>13</li>
+        </ul>
+        <ul class="media-detail right">
+          <li><a href="#">Like</a></li>
+          <li><a href="#">Reply</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- COMMENT 3 -->
+    <div class="media">
+      <div class="avatar">
+        <img src="https://bootdey.com/img/Content/avatar/avatar3.png" alt="">
+      </div>
+      <div class="media-body">
+        <h4 class="media-heading">John Doe</h4>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+        <ul class="media-detail left">
+          <li><i class="fa fa-calendar"></i>27/02/2014</li>
+          <li><i class="fa fa-thumbs-up"></i>13</li>
+        </ul>
+        <ul class="media-detail right">
+          <li><a href="#">Like</a></li>
+          <li><a href="#">Reply</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- COMMENT 4 -->
+    <div class="media">
+      <div class="avatar">
+        <img src="https://bootdey.com/img/Content/avatar/avatar4.png" alt="">
+      </div>
+      <div class="media-body">
+        <h4 class="media-heading">John Doe</h4>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+        <ul class="media-detail left">
+          <li><i class="fa fa-calendar"></i>27/02/2014</li>
+          <li><i class="fa fa-thumbs-up"></i>13</li>
+        </ul>
+        <ul class="media-detail right">
+          <li><a href="#">Like</a></li>
+          <li><a href="#">Reply</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+  </div>
+  </main>
+  <footer></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="../assets/js/about/aboutBook.js"></script>
+
+</body>
+</html>

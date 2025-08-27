@@ -20,10 +20,18 @@ app.get('/', (req, res) => {
 // Import Routes
 const { TheBookSourcingUser } = require('./routes/userRoute');
 const trendingRoutes = require('./routes/book/trending/trendingRoutes'); // ✅ trending route
+const aboutInfoRoute = require('./routes/book/about/aboutGoogleRoute');
 
 // Initialize Routes
 TheBookSourcingUser(app);
 app.use('/api/trending', trendingRoutes); // ✅ mount trending API
+app.use('/api/aboutBook', aboutInfoRoute)
+
+
+
+
+
+
 
 // Start Server
 const port = 3000;
