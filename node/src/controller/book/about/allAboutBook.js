@@ -1,0 +1,33 @@
+
+const {getGoogleBookById} = require("./aboutGoogleController")
+const {getOpenLibraryBookById} = require("./aboutOpenLibraryController")
+const {getGutenbergBookById} = require("./aboutGutenbergController")
+
+
+
+ async function allAboutBook(req, res){
+  const { source, bookId } = req.params;
+  try {
+            const allowedSources = ["google", "openlibrary", "gutenberg"];
+        if (!allowedSources.includes(source.toLowerCase())) {
+        return res.status(400).json({ error: "Unknown source" });
+        }
+
+    switch (source.toLowerCase()) {
+      case "google":
+        return await getGoogleBookById(req, res);
+      case "openlibrary":
+        return await getOpenLibraryBookById(req, res);
+      case "gutenberg":
+        return await getGutenbergBookById(req, res);
+      default:
+        return res.status(400).json({ error: "Unknown source" });
+    }
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch book" });
+  }
+};
+
+
+module.exports = {allAboutBook};
+

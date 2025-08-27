@@ -2,7 +2,7 @@ const { fetchJson } = require('../../../util/apiClient');
 
 const API_KEY = process.env.GOOGLE_BOOKS_API_KEY || "AIzaSyA4pGs-ia5mfEL6EoJEWPIL-o6KComj0xY";
 
-async function getBookById(req, res) {
+async function getGoogleBookById(req, res) {
   try {
     const { bookId } = req.params;
     const url = `https://www.googleapis.com/books/v1/volumes/${bookId}?key=${API_KEY}`;
@@ -38,4 +38,4 @@ async function getBookById(req, res) {
   }
 }
 
-module.exports = { getBookById };
+module.exports = { getGoogleBookById };

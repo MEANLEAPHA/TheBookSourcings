@@ -24,7 +24,7 @@
 
   switch (source) {
     case "googlebooks":
-      fetch(`/api/aboutBook/${bookId}`)   // 🔥 now calls your backend controller
+      fetch(`/api/aboutBook/Google/${bookId}`)   // 🔥 now calls your backend controller
         .then(res => res.json())
         .then(renderGoogleBook);
       break;

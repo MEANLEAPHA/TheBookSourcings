@@ -19,13 +19,15 @@ app.get('/', (req, res) => {
 
 // Import Routes
 const { TheBookSourcingUser } = require('./routes/userRoute');
-const trendingRoutes = require('./routes/book/trending/trendingRoutes'); // ✅ trending route
-const aboutInfoRoute = require('./routes/book/about/aboutGoogleRoute');
+const trendingRoutes = require('./routes/book/trending/trendingRoutes'); //  trending route
+const aboutBookInfoRoute = require('./routes/book/about/allAboutRoute');
+
 
 // Initialize Routes
 TheBookSourcingUser(app);
 app.use('/api/trending', trendingRoutes); // ✅ mount trending API
-app.use('/api/aboutBook', aboutInfoRoute)
+app.use('/api/aboutBook', aboutBookInfoRoute);
+
 
 
 
