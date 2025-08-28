@@ -9,7 +9,7 @@
   const source = detectSource(bookId);
 
   // Fetch book from your backend unified endpoint
-  fetch(`/api/aboutBook/${source}/${bookId}`)
+  fetch(`https://thebooksourcings.onrender.com/api/aboutBook/${source}/${bookId}`)
     .then(res => res.json())
     .then(renderBook)
     .catch(err => {

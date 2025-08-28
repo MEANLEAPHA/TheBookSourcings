@@ -35,7 +35,7 @@ async function fetchTrendingBooks() {
       // ✅ Build HTML
       const card = `
         <div class="Book-card">
-          <a href='aboutBook.html?bookId=${book.bookId}'>
+          <a href='about/aboutBook.html?bookId=${book.bookId}'>
             <div class="thumbnail">
               <img src="${cover}" class="bookCovers">
             </div>
