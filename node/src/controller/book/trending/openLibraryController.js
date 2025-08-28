@@ -13,7 +13,7 @@ async function getOpenLibraryTrending() {
     title: book.title,
     authors: book.authors?.map(a => a.name) || [],
     cover: book.cover_i
-      ? `https://covers.openlibrary.org/b/id/${book.cover_i}-S.jpg`
+      ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg`
       : null,
     bookId: book.key
   }));

@@ -13,7 +13,7 @@ async function getGoogleTrending() {
     bookId:book.volumeInfo.id,
     title: book.volumeInfo.title,
     authors: book.volumeInfo.authors || [],
-    cover: book.volumeInfo.imageLinks?.smallThumbnail || null,
+    cover: book.volumeInfo.imageLinks?.Thumbnail || null,
     categories: book.volumeInfo.categories || []
   }));
 }

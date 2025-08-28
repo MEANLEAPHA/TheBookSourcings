@@ -22,8 +22,18 @@
 
   // Render book info
   function renderBook(data) {
-    document.querySelector("#title").textContent = data.title || "No title";
-    document.querySelector("#author").textContent = data.authors?.join(", ") || "Unknown author";
-    document.querySelector("#description").innerHTML = data.description || "No description available.";
-    document.querySelector("#cover").src = data.cover || "fallback.jpg";
+    document.querySelector(".BookUrl").src = data.cover;
+    document.querySelector(".title").textContent = data.title;
+    document.querySelector("#description").textContent = data.description;
+    document.querySelector("#channelName").textContent = data.source;
+    document.querySelector("#authorSurname").textContent = data.authors;
+    document.querySelector("#titleBook").textContent = data.title;
+    document.querySelector("#subTitle").textContent = data.subtitle;
+    document.querySelector("#Category").textContent = data.categories;
+    document.querySelector("#language").textContent = data.language;
+    document.querySelector("#pageCount").textContent = data.page;
+    document.querySelector("#ISBN10").textContent = data.ISBN_10;
+    document.querySelector("#ISBN13").textContent = data.ISBN_13;
+    document.querySelector("#publishData").textContent = data.publishDate;
+    document.querySelector("#publisher").textContent = data.publisher;
   }
