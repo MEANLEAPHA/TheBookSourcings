@@ -29,13 +29,20 @@ async function getOpenLibraryBookById(req, res) {
 
     // Extract identifiers (ISBNs, OCLC, LCCN, etc.)
     const identifiers = editionData?.identifiers || {};
+    const authorNames = await Promise.all(
+        (data.authors || []).map(async (a) => {
+          const authorData = await fetchJson(`https://openlibrary.org${a.author.key}.json`);
+          return authorData.name || "Unknown";
+        })
+      );
+
 
     const book = {
       source: "Open Library",
       bookId: data.key || bookId,
       title: data.title || null,
       subtitle: data.subtitle || null,
-      authors: data.authors?.map(a => a.name) || [],
+      authors: authorNames,
       description:
         typeof data.description === "string"
           ? data.description

@@ -14,7 +14,8 @@ async function getGutenbergTrending() {
     authors: book.authors.map(a => a.name),
     cover: book.formats["image/jpeg"] || null,
     subjects: book.subjects || [],
-    bookId: book.id
+    bookId: book.id,
+    categories: book.subjects || []
   }));
 }
 
