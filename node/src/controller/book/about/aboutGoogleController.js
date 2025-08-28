@@ -20,7 +20,9 @@ async function getGoogleBookById(req, res) {
       title: data.volumeInfo.title,
       subtitle: data.volumeInfo.subtitle || null,
       authors: data.volumeInfo.authors || [],
-      description: data.volumeInfo.description || null,
+      description: data.volumeInfo.description
+      ?.replace(/<br\s*\/?>/gi, "\n")
+      .replace(/<[^>]+>/g, "") || null,
       cover: data.volumeInfo.imageLinks?.thumbnail || null,
       categories: data.volumeInfo.categories || [],
       language: data.volumeInfo.language || null,

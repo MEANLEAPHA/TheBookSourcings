@@ -1,32 +1,33 @@
-  const description = document.getElementById('description');
-        const seemore = document.getElementById('seemore');
-        const seeless = document.getElementById('seeless');
-        const descriptions = description.textContent;
-      
+    // after fetching the book
+description.textContent = data.description || "No description available.";
 
-        if(descriptions.length > 1000){
-            const shortText = descriptions.slice(0,1000) + "......";
-            description.innerText = shortText;
-            seemore.style.display = "block";
-            seeless.style.display = "none";
+// now run read more / read less logic
+let descriptions = description.textContent;
 
-            seemore.addEventListener('click', ()=>{
-                description.innerText = descriptions;
-                seemore.style.display = "none";
-                seeless.style.display = "block";
-            });
-            seeless.addEventListener('click', ()=>{
-                description.innerText = shortText;
-                seemore.style.display = "block";
-                seeless.style.display = "none";
-            })
-        }
-        else{
-            seemore.style.visibility =  "none";
-            seeless.style.display =  "none";
-        };
+const seemore = document.getElementById('seemore');
+const seeless = document.getElementById('seeless');
 
+if(descriptions.length > 1000){
+    const shortText = descriptions.slice(0,1000) + "......";
+    description.innerText = shortText;
+    seemore.style.display = "inline"; // or "block"
+    seeless.style.display = "none";
 
+    seemore.addEventListener('click', ()=>{
+        description.innerText = descriptions;
+        seemore.style.display = "none";
+        seeless.style.display = "inline"; // or "block"
+    });
+
+    seeless.addEventListener('click', ()=>{
+        description.innerText = shortText;
+        seemore.style.display = "inline";
+        seeless.style.display = "none";
+    });
+} else {
+    seemore.style.display = "none";
+    seeless.style.display = "none";
+}
 
 
 
