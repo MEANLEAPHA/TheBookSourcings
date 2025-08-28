@@ -41,7 +41,7 @@ async function getOpenLibraryBookById(req, res) {
       source: "Open Library",
       bookId: data.key || bookId,
       title: data.title || null,
-      subtitle: data.subtitle || null,
+      subtitle: editionData?.subtitle || null,
       authors: authorNames,
       description:
         typeof data.description === "string"
