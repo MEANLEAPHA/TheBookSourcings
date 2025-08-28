@@ -12,17 +12,17 @@ async function getOpenLibraryTrending() {
       const workData = await fetchJson(`https://openlibrary.org${book.key}.json`);
 
       // Fetch author names
-      const authorNames = await Promise.all(
-        (book.authors || []).map(async (a) => {
-          const authorData = await fetchJson(`https://openlibrary.org${a.author.key}.json`);
-          return authorData.name || "Unknown";
-        })
-      );
+      // const authorNames = await Promise.all(
+      //   (book.authors || []).map(async (a) => {
+      //     const authorData = await fetchJson(`https://openlibrary.org${a.author.key}.json`);
+      //     return authorData.name || "Unknown";
+      //   })
+      // );
 
       return {
         source: "Open Library",
         title: book.title,
-        authors: authorNames,
+        authors: book.works.author_name || [],
         cover: book.cover_i
           ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg`
           : null,
