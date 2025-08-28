@@ -16,9 +16,9 @@ async function getGutenbergBookById(req, res) {
       title: data.title || null,
       subtitle: null, // Gutenberg does not provide a subtitle
       authors: data.authors?.map(a => a.name) || [],
-      description: data.description || "No Date", // usually missing in Gutendex
+      description: data.summaries?.[0] || "No Date", // usually missing in Gutendex
       cover: data.formats?.["image/jpeg"] || "No Date",
-      subjects: data.subjects || [],
+      categories: data.subjects || [],
       language: data.languages?.[0] || "No Date",
       page: "No Date", // Gutenberg doesn’t provide page count
       ISBN_10: "No Date", // not available in Gutenberg
