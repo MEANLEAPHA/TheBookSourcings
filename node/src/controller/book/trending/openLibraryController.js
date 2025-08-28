@@ -15,7 +15,7 @@ async function getOpenLibraryTrending() {
     cover: book.cover_i
       ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg`
       : null,
-    bookId: book.key
+    bookId: book.key.replace("/works/", "")
   }));
 }
 

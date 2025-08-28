@@ -2,12 +2,12 @@ const { fetchJson } = require("../../../util/apiClient");
 
 async function getGutenbergBookById(req, res) {
   try {
-    const { BookId } = req.params;
-    const url = `https://gutendex.com/books/${BookId}`;
+    const { bookId } = req.params;
+    const url = `https://gutendex.com/books/${bookId}`;
     const data = await fetchJson(url);
 
     if (!data || !data.id) {
-      return res.status(404).json({ lost: "No data about this Book" });
+      return res.status(404).json({ error: "No data about this Book" });
     }
 
     const book = {
