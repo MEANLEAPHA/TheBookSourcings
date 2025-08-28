@@ -8,15 +8,25 @@ async function getGutenbergTrending() {
 
   if (!data || !data.results) return [];
 
-  return data.results.slice(0, 10).map(book => ({
-    source: "Project Gutenberg",
-    title: book.title,
-    authors: book.authors.map(a => a.name),
-    cover: book.formats["image/jpeg"] || null,
-    subjects: book.subjects || [],
-    bookId: book.id,
-    categories: book.subjects || []
-  }));
+  return data.results.slice(0, 10).map(book => {
+    // Clean author names (convert "Last, First" → "First Last")
+    const authors = (book.authors || []).map(a => {
+      if (a.name.includes(",")) {
+        const [last, first] = a.name.split(",").map(s => s.trim());
+        return first && last ? `${first} ${last}` : a.name;
+      }
+      return a.name;
+    });
+
+    return {
+      source: "Project Gutenberg",
+      title: book.title,
+      authors,
+      cover: book.formats["image/jpeg"] || null,
+      categories: book.subjects || [],
+      bookId: book.id
+    };
+  });
 }
 
 // Export the function using CommonJS
