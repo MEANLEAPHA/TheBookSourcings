@@ -21,19 +21,46 @@
     });
 
   // Render book info
-  function renderBook(data) {
-    document.querySelector(".BookUrl").src = data.cover;
-    document.querySelector(".title").textContent = data.title;
-    document.querySelector("#description").textContent = data.description;
-    document.querySelector("#channelName").textContent = data.source;
-    document.querySelector("#authorSurname").textContent = data.authors;
-    document.querySelector("#titleBook").textContent = data.title;
-    document.querySelector("#subTitle").textContent = data.subtitle;
-    document.querySelector("#Category").textContent = data.categories;
-    document.querySelector("#language").textContent = data.language;
-    document.querySelector("#pageCount").textContent = data.page;
-    document.querySelector("#ISBN10").textContent = data.ISBN_10;
-    document.querySelector("#ISBN13").textContent = data.ISBN_13;
-    document.querySelector("#publishData").textContent = data.publishDate;
-    document.querySelector("#publisher").textContent = data.publisher;
+function renderBook(data) {
+  document.querySelector(".BookUrl").src = data.cover;
+  document.querySelector(".title").textContent = data.title;
+  document.querySelector("#channelName").textContent = data.source;
+  document.querySelector("#authorSurname").textContent = data.authors;
+  document.querySelector("#titleBook").textContent = data.title;
+  document.querySelector("#subTitle").textContent = data.subtitle;
+  document.querySelector("#Category").textContent = data.categories;
+  document.querySelector("#language").textContent = data.language;
+  document.querySelector("#pageCount").textContent = data.page;
+  document.querySelector("#ISBN10").textContent = data.ISBN_10;
+  document.querySelector("#ISBN13").textContent = data.ISBN_13;
+  document.querySelector("#publishData").textContent = data.publishDate;
+  document.querySelector("#publisher").textContent = data.publisher;
+
+  // ✅ Description + Read more / Read less
+  const descriptionEl = document.getElementById('description');
+  const seemore = document.getElementById('seemore');
+  const seeless = document.getElementById('seeless');
+
+  const fullText = data.description || "No description available.";
+  if (fullText.length > 1000) {
+    const shortText = fullText.slice(0, 1000) + "......";
+    descriptionEl.innerText = shortText;
+    seemore.style.display = "inline";
+    seeless.style.display = "none";
+
+    seemore.onclick = () => {
+      descriptionEl.innerText = fullText;
+      seemore.style.display = "none";
+      seeless.style.display = "inline";
+    };
+    seeless.onclick = () => {
+      descriptionEl.innerText = shortText;
+      seemore.style.display = "inline";
+      seeless.style.display = "none";
+    };
+  } else {
+    descriptionEl.innerText = fullText;
+    seemore.style.display = "none";
+    seeless.style.display = "none";
   }
+}
