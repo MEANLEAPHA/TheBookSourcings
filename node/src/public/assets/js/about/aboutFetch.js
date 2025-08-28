@@ -45,17 +45,17 @@ function renderBook(data) {
   if (fullText.length > 1000) {
     const shortText = fullText.slice(0, 1000) + "......";
     descriptionEl.innerText = shortText;
-    seemore.style.display = "inline";
+    seemore.style.display = "block";
     seeless.style.display = "none";
 
     seemore.onclick = () => {
       descriptionEl.innerText = fullText;
       seemore.style.display = "none";
-      seeless.style.display = "inline";
+      seeless.style.display = "block";
     };
     seeless.onclick = () => {
       descriptionEl.innerText = shortText;
-      seemore.style.display = "inline";
+      seemore.style.display = "block";
       seeless.style.display = "none";
     };
   } else {
