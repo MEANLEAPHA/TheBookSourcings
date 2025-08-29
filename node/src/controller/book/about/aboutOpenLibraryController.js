@@ -52,20 +52,20 @@ async function getOpenLibraryBookById(req, res) {
       if (ebook?.formats?.pdf) download = ebook.formats.pdf;
     }
 
-    //     let cover = null;
+        let cover = null;
 
-    // // Try work cover first
-    // if (workData?.covers?.length > 0) {
-    //   cover = `https://covers.openlibrary.org/b/id/${workData.covers[0]}-L.jpg`;
-    // }
-    // // If no work cover, try edition cover
-    // else if (editionList?.entries?.[0]?.covers?.length > 0) {
-    //   cover = `https://covers.openlibrary.org/b/id/${editionList.entries[0].covers[0]}-L.jpg`;
-    // }
-    // // Else leave it null, or point to a placeholder
-    // else {
-    //   cover = "/images/placeholder.jpg"; // optional
-    // }
+    // Try work cover first
+    if (workData?.covers?.length > 0) {
+      cover = `https://covers.openlibrary.org/b/id/${workData.covers[0]}-L.jpg`;
+    }
+    // If no work cover, try edition cover
+    else if (editionList?.entries?.[0]?.covers?.length > 0) {
+      cover = `https://covers.openlibrary.org/b/id/${editionList.entries[0].covers[0]}-L.jpg`;
+    }
+    // Else leave it null, or point to a placeholder
+    else {
+      cover = "/images/placeholder.jpg"; // optional
+    }
 
     // 5. Build response
     const book = {
@@ -80,9 +80,7 @@ async function getOpenLibraryBookById(req, res) {
         typeof workData.description === "string"
           ? workData.description
           : workData.description?.value || null,
-      cover: book.cover_i
-          ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg`
-          : null,
+      cover,
       categories: workData.subjects || [],
       language: editionData?.languages?.[0]?.key?.replace("/languages/", "") || null,
       page: editionData?.pagination || editionData?.number_of_pages || null,
