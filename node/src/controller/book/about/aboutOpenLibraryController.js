@@ -6,31 +6,36 @@ async function getOpenLibraryBookById(req, res) {
     const { bookId } = req.params;
 
     // Fetch Work data
-    const url = `https://openlibrary.org/works/${bookId}.json`;
-    const data = await fetchJson(url);
+    const workUrl = `https://openlibrary.org/works/${bookId}.json`;
+    const workData = await fetchJson(workUrl);
 
-    if (!data) {
+    if (!workData) {
       return res.status(404).json({
         error: "No data about this Book",
       });
     }
 
-    // Try to fetch one edition (for ISBNs, pages, publishers, ocaid, etc.)
+    // Get the first edition key
     let editionData = null;
     try {
-      const editionUrl = `https://openlibrary.org/works/${bookId}/editions.json?limit=1`;
-      const editionResponse = await fetchJson(editionUrl);
-      if (editionResponse && editionResponse.entries && editionResponse.entries.length > 0) {
-        editionData = editionResponse.entries[0];
+      const editionListUrl = `https://openlibrary.org/works/${bookId}/editions.json?limit=1`;
+      const editionList = await fetchJson(editionListUrl);
+
+      if (editionList?.entries?.length > 0) {
+        const editionKey = editionList.entries[0].key; // e.g. "/books/OL7353617M"
+        const editionUrl = `https://openlibrary.org${editionKey}.json`;
+        editionData = await fetchJson(editionUrl);
       }
     } catch (err) {
       console.warn("No edition data found for book:", bookId);
     }
 
-    // Extract identifiers (ISBNs, OCLC, LCCN, etc.)
+    // Extract identifiers (ISBNs, OCLC, etc.)
     const identifiers = editionData?.identifiers || {};
+
+    // Fetch author names
     const authorNames = await Promise.all(
-      (data.authors || []).map(async (a) => {
+      (workData.authors || []).map(async (a) => {
         const authorData = await fetchJson(`https://openlibrary.org${a.author.key}.json`);
         return authorData.name || "Unknown";
       })
@@ -39,7 +44,6 @@ async function getOpenLibraryBookById(req, res) {
     // Build read & download links if ocaid exists
     let read = null;
     let download = null;
-
     if (editionData?.ocaid) {
       const ocaid = editionData.ocaid;
       read = `https://archive.org/details/${ocaid}`;
@@ -48,20 +52,20 @@ async function getOpenLibraryBookById(req, res) {
 
     const book = {
       source: "Open Library",
-      bookId: data.key || bookId,
-      title: data.title || null,
+      bookId: workData.key || bookId,
+      title: workData.title || null,
       subtitle: editionData?.subtitle || null,
       authors: authorNames,
       description:
-        typeof data.description === "string"
-          ? data.description
-          : data.description?.value || null,
-      cover: data.covers
-        ? `https://covers.openlibrary.org/b/id/${data.covers[0]}-L.jpg`
+        typeof workData.description === "string"
+          ? workData.description
+          : workData.description?.value || null,
+      cover: workData.covers
+        ? `https://covers.openlibrary.org/b/id/${workData.covers[0]}-L.jpg`
         : null,
-      categories: data.subjects || [],
+      categories: workData.subjects || [],
       language: editionData?.languages?.[0]?.key?.replace("/languages/", "") || null,
-      page: editionData?.pagination || null,
+      page: editionData?.pagination || editionData?.number_of_pages || null,
       ISBN_10: editionData?.isbn_10 ? editionData.isbn_10[0] : null,
       ISBN_13: editionData?.isbn_13 ? editionData.isbn_13[0] : null,
       publishDate: editionData?.publish_date || null,
