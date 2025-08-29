@@ -52,9 +52,9 @@ async function getOpenLibraryBookById(req, res) {
         : null,
       categories: data.subjects || [],
       language: editionData?.languages?.[0]?.key?.replace("/languages/", "") || null,
-      page: editionData?.number_of_pages || null,
-      ISBN_10: identifiers.isbn_10 ? identifiers.isbn_10[0] : null,
-      ISBN_13: identifiers.isbn_13 ? identifiers.isbn_13[0] : null,
+      page: editionData?.pagination || null,
+      ISBN_10: editionData.isbn_10 ? editionData.isbn_10[0] : null,
+      ISBN_13: editionData.isbn_13 ? editionData.isbn_13[0] : null,
       publishDate: editionData?.publish_date || null,
       publisher: editionData?.publishers ? editionData.publishers[0] : null,
     };
