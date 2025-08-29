@@ -35,34 +35,8 @@ function renderBook(data) {
   document.querySelector("#ISBN13").textContent = data.ISBN_13;
   document.querySelector("#publishData").textContent = data.publishDate;
   document.querySelector("#publisher").textContent = data.publisher;
-
-  // ✅ Handle read & download
-  const readBtn = document.querySelector("#read");
-  const downloadBtn = document.querySelector("#download");
-
-  if (data.read) {
-    readBtn.href = data.read;
-  } else {
-    readBtn.removeAttribute("href");
-    if (data.source === "Open Library") {
-      readBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        showToast("❌ This book is not available to read.");
-      });
-    }
-  }
-
-  if (data.download) {
-    downloadBtn.href = data.download;
-  } else {
-    downloadBtn.removeAttribute("href");
-    if (data.source === "Open Library") {
-      downloadBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        showToast("❌ This book is not available for download.");
-      });
-    }
-  }
+  document.querySelector("#read").href = data.read;
+  document.querySelector("#download").href = data.download;
 
   // ✅ Description + Read more / Read less
   const descriptionEl = document.getElementById('description');
@@ -91,14 +65,4 @@ function renderBook(data) {
     seemore.style.display = "none";
     seeless.style.display = "none";
   }
-}
-
-// ✅ Show toast function
-function showToast(message) {
-  const toastEl = document.getElementById("bookToast");
-  const toastMessage = document.getElementById("toastMessage");
-  toastMessage.textContent = message;
-
-  const toast = new bootstrap.Toast(toastEl);
-  toast.show();
 }

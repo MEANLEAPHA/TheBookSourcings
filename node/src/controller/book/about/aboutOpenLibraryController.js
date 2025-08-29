@@ -5,35 +5,32 @@ async function getOpenLibraryBookById(req, res) {
   try {
     const { bookId } = req.params;
 
-    // Fetch Work data
+    // 1. Fetch Work data
     const workUrl = `https://openlibrary.org/works/${bookId}.json`;
     const workData = await fetchJson(workUrl);
 
     if (!workData) {
-      return res.status(404).json({
-        error: "No data about this Book",
-      });
+      return res.status(404).json({ error: "No data about this Book" });
     }
 
-    // Get the first edition key
+    // 2. Get first edition key from editions list
     let editionData = null;
+    let editionKey = null;
     try {
       const editionListUrl = `https://openlibrary.org/works/${bookId}/editions.json?limit=1`;
       const editionList = await fetchJson(editionListUrl);
 
       if (editionList?.entries?.length > 0) {
-        const editionKey = editionList.entries[0].key; // e.g. "/books/OL7353617M"
-        const editionUrl = `https://openlibrary.org${editionKey}.json`;
+        editionKey = editionList.entries[0].key; // "/books/OL57459421M"
+        const editionId = editionKey.replace("/books/", "");
+        const editionUrl = `https://openlibrary.org/books/${editionId}.json`;
         editionData = await fetchJson(editionUrl);
       }
     } catch (err) {
-      console.warn("No edition data found for book:", bookId);
+      console.warn("No edition data found for work:", bookId);
     }
 
-    // Extract identifiers (ISBNs, OCLC, etc.)
-    const identifiers = editionData?.identifiers || {};
-
-    // Fetch author names
+    // 3. Fetch author names
     const authorNames = await Promise.all(
       (workData.authors || []).map(async (a) => {
         const authorData = await fetchJson(`https://openlibrary.org${a.author.key}.json`);
@@ -41,17 +38,40 @@ async function getOpenLibraryBookById(req, res) {
       })
     );
 
-    // Build read & download links if ocaid exists
+    // 4. Build read & download links
     let read = null;
     let download = null;
+
     if (editionData?.ocaid) {
       const ocaid = editionData.ocaid;
       read = `https://archive.org/details/${ocaid}`;
       download = `https://archive.org/download/${ocaid}/${ocaid}.pdf`;
+    } else if (editionData?.ebooks?.length > 0) {
+      const ebook = editionData.ebooks[0];
+      if (ebook?.preview_url) read = ebook.preview_url;
+      if (ebook?.formats?.pdf) download = ebook.formats.pdf;
     }
 
+    //     let cover = null;
+
+    // // Try work cover first
+    // if (workData?.covers?.length > 0) {
+    //   cover = `https://covers.openlibrary.org/b/id/${workData.covers[0]}-L.jpg`;
+    // }
+    // // If no work cover, try edition cover
+    // else if (editionList?.entries?.[0]?.covers?.length > 0) {
+    //   cover = `https://covers.openlibrary.org/b/id/${editionList.entries[0].covers[0]}-L.jpg`;
+    // }
+    // // Else leave it null, or point to a placeholder
+    // else {
+    //   cover = "/images/placeholder.jpg"; // optional
+    // }
+
+    // 5. Build response
     const book = {
       source: "Open Library",
+      workUrl: `https://openlibrary.org/works/${bookId}`,
+      editionUrl: editionKey ? `https://openlibrary.org${editionKey}` : null,
       bookId: workData.key || bookId,
       title: workData.title || null,
       subtitle: editionData?.subtitle || null,
@@ -60,9 +80,9 @@ async function getOpenLibraryBookById(req, res) {
         typeof workData.description === "string"
           ? workData.description
           : workData.description?.value || null,
-      cover: workData.covers
-        ? `https://covers.openlibrary.org/b/id/${workData.covers[0]}-L.jpg`
-        : null,
+      cover: book.cover_i
+          ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg`
+          : null,
       categories: workData.subjects || [],
       language: editionData?.languages?.[0]?.key?.replace("/languages/", "") || null,
       page: editionData?.pagination || editionData?.number_of_pages || null,
@@ -74,10 +94,10 @@ async function getOpenLibraryBookById(req, res) {
       download,
     };
 
-    res.json(book);
+    return res.json(book);
   } catch (err) {
     console.error("openLibraryController.js Error:", err.message);
-    res.status(500).json({
+    return res.status(500).json({
       error: "Failed to fetch the book data",
       status: false,
     });
