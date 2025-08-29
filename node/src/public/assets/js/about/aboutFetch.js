@@ -35,6 +35,8 @@ function renderBook(data) {
   document.querySelector("#ISBN13").textContent = data.ISBN_13;
   document.querySelector("#publishData").textContent = data.publishDate;
   document.querySelector("#publisher").textContent = data.publisher;
+  document.querySelector("#read").href = data.read;
+  document.querySelector("#download").href = data.download;
 
   // ✅ Description + Read more / Read less
   const descriptionEl = document.getElementById('description');

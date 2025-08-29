@@ -5,7 +5,7 @@ async function getOpenLibraryBookById(req, res) {
   try {
     const { bookId } = req.params;
 
-    // Fetch Work data
+    // Open Library API: Example - https://openlibrary.org/works/OL45883W.json
     const url = `https://openlibrary.org/works/${bookId}.json`;
     const data = await fetchJson(url);
 
@@ -15,7 +15,7 @@ async function getOpenLibraryBookById(req, res) {
       });
     }
 
-    // Try to fetch one edition (for ISBNs, pages, publishers, ocaid, etc.)
+    // Try to fetch editions (for ISBNs, page count, publisher, publish date)
     let editionData = null;
     try {
       const editionUrl = `https://openlibrary.org/works/${bookId}/editions.json?limit=1`;
@@ -30,21 +30,12 @@ async function getOpenLibraryBookById(req, res) {
     // Extract identifiers (ISBNs, OCLC, LCCN, etc.)
     const identifiers = editionData?.identifiers || {};
     const authorNames = await Promise.all(
-      (data.authors || []).map(async (a) => {
-        const authorData = await fetchJson(`https://openlibrary.org${a.author.key}.json`);
-        return authorData.name || "Unknown";
-      })
-    );
+        (data.authors || []).map(async (a) => {
+          const authorData = await fetchJson(`https://openlibrary.org${a.author.key}.json`);
+          return authorData.name || "Unknown";
+        })
+      );
 
-    // Build read & download links if ocaid exists
-    let read = null;
-    let download = null;
-
-    if (editionData?.ocaid) {
-      const ocaid = editionData.ocaid;
-      read = `https://archive.org/details/${ocaid}`;
-      download = `https://archive.org/download/${ocaid}/${ocaid}.pdf`;
-    }
 
     const book = {
       source: "Open Library",
@@ -62,12 +53,11 @@ async function getOpenLibraryBookById(req, res) {
       categories: data.subjects || [],
       language: editionData?.languages?.[0]?.key?.replace("/languages/", "") || null,
       page: editionData?.pagination || null,
-      ISBN_10: editionData?.isbn_10 ? editionData.isbn_10[0] : null,
-      ISBN_13: editionData?.isbn_13 ? editionData.isbn_13[0] : null,
+      ISBN_10: editionData.isbn_10 ? editionData.isbn_10[0] : null,
+      ISBN_13: editionData.isbn_13 ? editionData.isbn_13[0] : null,
       publishDate: editionData?.publish_date || null,
       publisher: editionData?.publishers ? editionData.publishers[0] : null,
-      read,
-      download,
+   
     };
 
     res.json(book);

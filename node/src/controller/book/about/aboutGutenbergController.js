@@ -36,6 +36,8 @@ async function getGutenbergBookById(req, res) {
       ISBN_13: "No data", // not available in Gutenberg
       publishDate: data?.copyright || "No data",
       publisher: "No data",
+      read: data.formats?.["text/html"] || "No data",
+      download: data.formats?.["application/epub+zip"] || "No data",
     };
 
     res.json(book);

@@ -30,7 +30,9 @@ async function getGoogleBookById(req, res) {
       ISBN_10: identifiers.find(id => id.type === "ISBN_10")?.identifier || null,
       ISBN_13: identifiers.find(id => id.type === "ISBN_13")?.identifier || null,
       publishDate: data.volumeInfo.publishedDate || null,
-      publisher: data.volumeInfo.publisher || null
+      publisher: data.volumeInfo.publisher || null,
+      read : data.volumeInfo.previewLink,
+      download : data.volumeInfo.previewLink
     };
 
     res.json(book);
