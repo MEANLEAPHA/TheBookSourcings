@@ -42,28 +42,7 @@ async function getGutenbergBookById(req, res) {
       download: data.formats?.["application/epub+zip"] || "No data",
     };
 
-    // --- Try OpenLibrary ---
-    if (book.title && authors !== "Unknown") {
-      const openLibUrl = `https://openlibrary.org/search.json?title=${encodeURIComponent(
-        book.title
-      )}&author=${encodeURIComponent(authors.split(",")[0])}`;
-
-      const olData = await fetchJson(openLibUrl);
-
-      if (olData?.docs?.length > 0) {
-        const olBook = olData.docs[0];
-        book = {
-          ...book,
-          subtitle: book.subtitle || olBook.subtitle || "No data",
-          page: book.page !== "No data" ? book.page : olBook.number_of_pages_median || "No data",
-          ISBN_10: book.ISBN_10 !== "No data" ? book.ISBN_10 : (olBook.isbn?.find(i => i.length === 10) || "No data"),
-          ISBN_13: book.ISBN_13 !== "No data" ? book.ISBN_13 : (olBook.isbn?.find(i => i.length === 13) || "No data"),
-          publishDate: book.publishDate !== "No data" ? book.publishDate : olBook.first_publish_year || "No data",
-          publisher: book.publisher !== "No data" ? book.publisher : olBook.publisher?.[0] || "No data",
-        };
-      }
-    }
-
+    
     // --- Try Google Books if still missing ---
     if (book.title) {
       const googleUrl = `https://www.googleapis.com/books/v1/volumes?q=intitle:${encodeURIComponent(
@@ -77,9 +56,6 @@ async function getGutenbergBookById(req, res) {
         book = {
           ...book,
           subtitle: book.subtitle !== "No data" ? book.subtitle : gBook.subtitle || "No data",
-          description: book.description !== "No data" ? book.description : gBook.description || "No data",
-          cover: book.cover !== "No data" ? book.cover : gBook.imageLinks?.thumbnail || "No data",
-          categories: book.categories.length ? book.categories : gBook.categories || [],
           page: book.page !== "No data" ? book.page : gBook.pageCount || "No data",
           ISBN_10: book.ISBN_10 !== "No data" ? book.ISBN_10 : gBook.industryIdentifiers?.find(i => i.type === "ISBN_10")?.identifier || "No data",
           ISBN_13: book.ISBN_13 !== "No data" ? book.ISBN_13 : gBook.industryIdentifiers?.find(i => i.type === "ISBN_13")?.identifier || "No data",
