@@ -42,7 +42,7 @@ function renderBook(data) {
   const similarLists = document.querySelector(".swiper-wrapper");
   similarLists.innerHTML = "";
   if(similarBooks.length > 0) {
-    similarLists.forEach(bk => {
+    similarBooks.forEach(bk => {
       similarLists.innerHTML += `
             <div class="swiper-slide">
               <a href='aboutBook.html?bookId=${bk.bookId}'>
@@ -55,8 +55,9 @@ function renderBook(data) {
             </div>
       `;
     })
-
-
+  }
+  else{
+    similarLists.innerHTML = "<p>No similar books found.</p>";
   }
 
   // ✅ Handle read & download
