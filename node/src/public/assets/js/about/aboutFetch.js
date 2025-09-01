@@ -95,9 +95,21 @@ function renderBook(data) {
     seemore.style.display = "none";
     seeless.style.display = "none";
   }
-  // --- Call function ---
+
+  const firstCategory = Array.isArray(book.categories)
+    ? (book.categories[0] || "")
+    : (book.categories || "");
+
+  const categoryToUse = (firstCategory && String(firstCategory).trim()) ? firstCategory : "fiction";
+
+  // call the loader with that category
+  loadSimilarBooks(categoryToUse);
+ 
+}
+
+ // --- Call function ---
 const similarLists = document.querySelector(".swiper-wrapper");
-const category = book.categories?.[0] || "fiction"; // fallback
+
 
 // --- Skeleton Loader (5 placeholders) ---
 function showSkeletons(count = 5) {
@@ -137,7 +149,7 @@ function setCachedSimilar(category, data) {
 }
 
 // --- Fetch & Render ---
-async function loadSimilarBooks() {
+async function loadSimilarBooks(category) {
   // 1. Check cache first
   const cached = getCachedSimilar(category);
   if (cached) {
@@ -149,7 +161,7 @@ async function loadSimilarBooks() {
   showSkeletons();
 
   try {
-    const res = await fetch(`/api/books/similar/${encodeURIComponent(category)}`);
+    const res = await fetch(`https://thebooksourcings.onrender.com/api/similar/${encodeURIComponent(category)}`);
     const similarBooks = await res.json();
 
     // Save in cache
@@ -206,9 +218,6 @@ function renderSimilar(similarBooks) {
   });
 }
 
-
-loadSimilarBooks();
-}
 
 
 
