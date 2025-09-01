@@ -29,43 +29,23 @@ async function getGutenbergBookById(req, res) {
       title: data.title || null,
       subtitle: null,
       authors,
-      description: data.summaries?.[0] || "No data",
-      cover: data.formats?.["image/jpeg"] || "No data",
+      description: data.summaries?.[0] || null,
+      cover: data.formats?.["image/jpeg"] || null,
       categories: data.subjects || [],
-      language: data.languages?.[0] || "No data",
-      page: "No data",
-      ISBN_10: "No data",
-      ISBN_13: "No data",
-      publishDate: data?.copyright || "No data",
-      publisher: "No data",
-      read: data.formats?.["text/html"] || "No data",
-      download: data.formats?.["application/epub+zip"] || "No data",
+      language: data.languages?.[0] || null,
+      page: null,
+      ISBN_10: null,
+      ISBN_13: null,
+      publishDate: data?.copyright || null,
+      publisher: null,
+      read: data.formats?.["text/html"] || null,
+      download: data.formats?.["application/epub+zip"] || null,
     };
 
     
-    // --- Try Google Books if still missing ---
-    if (book.title) {
-      const googleUrl = `https://www.googleapis.com/books/v1/volumes?q=intitle:${encodeURIComponent(
-        book.title
-      )}+inauthor:${encodeURIComponent(authors.split(",")[0])}`;
 
-      const gData = await fetchJson(googleUrl);
 
-      if (gData?.items?.length > 0) {
-        const gBook = gData.items[0].volumeInfo;
-        book = {
-          ...book,
-          subtitle: book.subtitle !== "No data" ? book.subtitle : gBook.subtitle || "No data",
-          page: book.page !== "No data" ? book.page : gBook.pageCount || "No data",
-          ISBN_10: book.ISBN_10 !== "No data" ? book.ISBN_10 : gBook.industryIdentifiers?.find(i => i.type === "ISBN_10")?.identifier || "No data",
-          ISBN_13: book.ISBN_13 !== "No data" ? book.ISBN_13 : gBook.industryIdentifiers?.find(i => i.type === "ISBN_13")?.identifier || "No data",
-          publishDate: book.publishDate !== "No data" ? book.publishDate : gBook.publishedDate || "No data",
-          publisher: book.publisher !== "No data" ? book.publisher : gBook.publisher || "No data",
-        };
-      }
-    }
-
-    // --- Fetch Similar Books (from all 3 sources) ---
+ // --- Fetch Similar Books (from all 3 sources) ---
     let similarBooks = [];
 
     if (book.categories.length) {
@@ -77,8 +57,10 @@ async function getGutenbergBookById(req, res) {
         similarBooks.push(
           ...olSimilar.works.map(w => ({
             title: w.title,
+            bookId: w.key.replace("/works/", ""),
+            cover: w.covers?.[0] ? `https://covers.openlibrary.org/b/id/${w.covers[0]}-L.jpg` : null,
             author: w.authors?.[0]?.name || "Unknown",
-            source: "OpenLibrary",
+            source: "Open Library",
           }))
         );
       }
@@ -89,6 +71,8 @@ async function getGutenbergBookById(req, res) {
         similarBooks.push(
           ...gSimilar.items.map(item => ({
             title: item.volumeInfo?.title || "No title",
+            bookId: item.id,
+            cover: item.volumeInfo?.imageLinks?.thumbnail || null,
             author: item.volumeInfo?.authors?.[0] || "Unknown",
             source: "Google Books",
           }))
@@ -101,6 +85,8 @@ async function getGutenbergBookById(req, res) {
         similarBooks.push(
           ...gutSimilar.results.slice(0, 5).map(b => ({
             title: b.title,
+            bookId: b.id,
+            cover: b.formats?.["image/jpeg"] || null,
             author: b.authors?.[0]?.name || "Unknown",
             source: "Project Gutenberg",
           }))
@@ -108,7 +94,7 @@ async function getGutenbergBookById(req, res) {
       }
     }
 
-    res.json({ ...book, similarBooks });
+    res.json({ book, similarBooks });
   } catch (err) {
     console.error("aboutGutenbergController.js Error:", err.message);
     res.status(500).json({

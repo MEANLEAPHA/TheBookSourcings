@@ -22,42 +22,19 @@
 
   // Render book info
 function renderBook(data) {
-  const book = data.book || data;
-  const similarBooks = data.similarBooks || [];
-  document.querySelector(".BookUrl").src = book.cover;
-  document.querySelector(".title").textContent = book.title;
-  document.querySelector("#channelName").textContent = book.source;
-  document.querySelector("#authorSurname").textContent = book.authors;
-  document.querySelector("#titleBook").textContent = book.title;
-  document.querySelector("#subTitle").textContent = book.subtitle;
-  document.querySelector("#Category").textContent = book.categories;
-  document.querySelector("#language").textContent = book.language;
-  document.querySelector("#pageCount").textContent = book.page;
-  document.querySelector("#ISBN10").textContent = book.ISBN_10;
-  document.querySelector("#ISBN13").textContent = book.ISBN_13;
-  document.querySelector("#publishData").textContent = book.publishDate;
-  document.querySelector("#publisher").textContent = book.publisher;
-
-
-  const similarLists = document.querySelector(".swiper-wrapper");
-  similarLists.innerHTML = "";
-  if(similarBooks.length > 0) {
-    similarLists.forEach(bk => {
-      similarLists.innerHTML += `
-            <div class="swiper-slide">
-              <a href='aboutBook.html?bookId=${bk.bookId}'>
-                <img src="${bk.cover}" class="BookCover">
-                <div class="bookInfo">
-                  <p class="BookTitle">${bk.title}</p>
-                  <p class="BookAuthor">${bk.author}</p>
-                </div>
-              </a>
-            </div>
-      `;
-    })
-
-
-  }
+  document.querySelector(".BookUrl").src = data.cover;
+  document.querySelector(".title").textContent = data.title;
+  document.querySelector("#channelName").textContent = data.source;
+  document.querySelector("#authorSurname").textContent = data.authors;
+  document.querySelector("#titleBook").textContent = data.title;
+  document.querySelector("#subTitle").textContent = data.subtitle;
+  document.querySelector("#Category").textContent = data.categories;
+  document.querySelector("#language").textContent = data.language;
+  document.querySelector("#pageCount").textContent = data.page;
+  document.querySelector("#ISBN10").textContent = data.ISBN_10;
+  document.querySelector("#ISBN13").textContent = data.ISBN_13;
+  document.querySelector("#publishData").textContent = data.publishDate;
+  document.querySelector("#publisher").textContent = data.publisher;
 
   // ✅ Handle read & download
   const readBtn = document.querySelector("#read");
