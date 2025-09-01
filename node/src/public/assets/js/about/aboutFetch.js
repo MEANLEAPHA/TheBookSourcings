@@ -161,7 +161,7 @@ async function loadSimilarBooks(category) {
   showSkeletons();
 
   try {
-    const res = await fetch(`https://thebooksourcings.onrender.com/api/similar/${encodeURIComponent(category)}`);
+    const res = await fetch(`https://thebooksourcings.onrender.com/api/similar?category=${encodeURIComponent(category)}`);
     const similarBooks = await res.json();
 
     // Save in cache
