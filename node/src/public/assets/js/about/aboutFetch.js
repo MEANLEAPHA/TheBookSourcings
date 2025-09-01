@@ -23,7 +23,6 @@
   // Render book info
 function renderBook(data) {
   const book = data.book || data;
-  const similarBooks = data.similarBooks || [];
   document.querySelector(".BookUrl").src = book.cover;
   document.querySelector(".title").textContent = book.title;
   document.querySelector("#channelName").textContent = book.source;
@@ -39,26 +38,7 @@ function renderBook(data) {
   document.querySelector("#publisher").textContent = book.publisher;
 
 
-  const similarLists = document.querySelector(".swiper-wrapper");
-  similarLists.innerHTML = "";
-  if(similarBooks.length > 0) {
-    similarBooks.forEach(bk => {
-      similarLists.innerHTML += `
-            <div class="swiper-slide">
-              <a href='aboutBook.html?bookId=${bk.bookId}'>
-                <img src="${bk.cover}" class="BookCover">
-                <div class="bookInfo">
-                  <p class="BookTitle">${bk.title}</p>
-                  <p class="BookAuthor">${bk.author}</p>
-                </div>
-              </a>
-            </div>
-      `;
-    })
-  }
-  else{
-    similarLists.innerHTML = "<p>No similar books found.</p>";
-  }
+ 
 
   // ✅ Handle read & download
   const readBtn = document.querySelector("#read");
@@ -93,7 +73,7 @@ function renderBook(data) {
   const seemore = document.getElementById('seemore');
   const seeless = document.getElementById('seeless');
 
-  const fullText = data.description || "No description available.";
+  const fullText = book.description || "No description available.";
   if (fullText.length > 1000) {
     const shortText = fullText.slice(0, 1000) + "......";
     descriptionEl.innerText = shortText;
@@ -115,7 +95,122 @@ function renderBook(data) {
     seemore.style.display = "none";
     seeless.style.display = "none";
   }
+  // --- Call function ---
+const similarLists = document.querySelector(".swiper-wrapper");
+const category = book.categories?.[0] || "fiction"; // fallback
+
+// --- Skeleton Loader (5 placeholders) ---
+function showSkeletons(count = 5) {
+  similarLists.innerHTML = "";
+  for (let i = 0; i < count; i++) {
+    similarLists.innerHTML += `
+      <div class="swiper-slide skeleton-slide">
+        <div class="skeleton skeleton-img"></div>
+        <div class="skeleton skeleton-text"></div>
+        <div class="skeleton skeleton-text short"></div>
+      </div>
+    `;
+  }
 }
+
+// --- Cache helper ---
+function getCachedSimilar(category) {
+  const cached = localStorage.getItem(`similar_${category}`);
+  if (!cached) return null;
+
+  const { data, expiry } = JSON.parse(cached);
+  if (Date.now() > expiry) {
+    localStorage.removeItem(`similar_${category}`);
+    return null;
+  }
+  return data;
+}
+
+function setCachedSimilar(category, data) {
+  localStorage.setItem(
+    `similar_${category}`,
+    JSON.stringify({
+      data,
+      expiry: Date.now() + 1000 * 60 * 30 // cache 30 mins
+    })
+  );
+}
+
+// --- Fetch & Render ---
+async function loadSimilarBooks() {
+  // 1. Check cache first
+  const cached = getCachedSimilar(category);
+  if (cached) {
+    renderSimilar(cached);
+    return;
+  }
+
+  // 2. Show skeletons
+  showSkeletons();
+
+  try {
+    const res = await fetch(`/api/books/similar/${encodeURIComponent(category)}`);
+    const similarBooks = await res.json();
+
+    // Save in cache
+    setCachedSimilar(category, similarBooks);
+
+    // Render
+    renderSimilar(similarBooks);
+  } catch (err) {
+    console.error(err);
+    similarLists.innerHTML = "<p>Failed to load similar books.</p>";
+  }
+}
+
+// --- Renderer ---
+function renderSimilar(similarBooks) {
+  similarLists.innerHTML = "";
+
+  if (similarBooks.length > 0) {
+    similarBooks.forEach(bk => {
+      similarLists.innerHTML += `
+        <div class="swiper-slide">
+          <a href='aboutBook.html?bookId=${bk.bookId}'>
+            <img 
+              src="${bk.cover}" 
+              class="BookCover lazyload"
+              loading="lazy"
+              alt="${bk.title}"
+            >
+            <div class="bookInfo">
+              <p class="BookTitle">${bk.title}</p>
+              <p class="BookAuthor">${bk.author}</p>
+            </div>
+          </a>
+        </div>
+      `;
+    });
+  } else {
+    similarLists.innerHTML = "<p>No similar books found.</p>";
+  }
+
+  // Re-init Swiper after render
+  new Swiper('.swiper', {
+    loop: true,
+    autoplay: { delay: 1500 },
+    slidesPerView: 'auto',
+    spaceBetween: 15,
+    pagination: { el: '.swiper-pagination', clickable: true },
+    navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+    breakpoints: {
+      640: { slidesPerView: 3, spaceBetween: 20 },
+      768: { slidesPerView: 3, spaceBetween: 20 },
+      1024: { slidesPerView: 5, spaceBetween: 15 }
+    }
+  });
+}
+
+
+loadSimilarBooks();
+}
+
+
 
 // ✅ Show toast function
 function showToast(message) {
