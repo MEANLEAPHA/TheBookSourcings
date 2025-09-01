@@ -3,7 +3,12 @@ const { fetchJson } = require("../../../util/apiClient");
 
 // Controller: Get similar books from 3 sources
 async function getSimilarBooks (req, res){
-  const { category } = req.query; // e.g., /api/books/similar?category=History
+ // Instead of req.query
+const category = req.params.category; // from /similar/:category
+
+
+
+
   if (!category) return res.status(400).json({ error: "Category is required" });
 
   let similarBooks = [];
