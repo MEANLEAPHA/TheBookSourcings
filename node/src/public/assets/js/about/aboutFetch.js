@@ -44,11 +44,11 @@ function renderBook(data) {
   const readBtn = document.querySelector("#read");
   const downloadBtn = document.querySelector("#download");
 
-  if (data.read) {
-    readBtn.href = data.read;
+  if (book.read) {
+    readBtn.href = book.read;
   } else {
     readBtn.removeAttribute("href");
-    if (data.source === "Open Library") {
+    if (book.source === "Open Library") {
       readBtn.addEventListener("click", (e) => {
         e.preventDefault();
         showToast("❌ This book is not available to read.");
@@ -56,8 +56,8 @@ function renderBook(data) {
     }
   }
 
-  if (data.download) {
-    downloadBtn.href = data.download;
+  if (book.download) {
+    downloadBtn.href = book.download;
   } else {
     downloadBtn.removeAttribute("href");
     if (data.source === "Open Library") {
@@ -184,11 +184,10 @@ function renderSimilar(similarBooks) {
         <div class="swiper-slide">
           <a href='aboutBook.html?bookId=${bk.bookId}'>
             <img 
-              src="${bk.cover || 'placeholder-image.jpg'}" 
+              src="${bk.cover}" 
               class="BookCover lazyload"
               loading="lazy"
               alt="${bk.title}"
-              onerror="this.src='placeholder-image.jpg'"
             >
             <div class="bookInfo">
               <p class="BookTitle">${bk.title}</p>
