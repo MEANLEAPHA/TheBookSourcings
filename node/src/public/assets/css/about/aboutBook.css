@@ -444,8 +444,17 @@ a{
     width: 200px;
     position: relative;
     background-color: var(--secondary-color);
-    
-    display: flex;
+     /* display: flex;
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    height:auto;
+    padding: 10px; */
+}
+.swiper-slide a{
+  display: flex;
     flex-direction: column;
     text-align: center;
     justify-content: center;
@@ -453,10 +462,6 @@ a{
     gap: 5px;
     height:auto;
     padding: 10px;
-}
-.swiper-slide a{
-  margin: auto;
-  padding: 0
 }
 .swiper-slide a .bookInfo p{
     font-weight: 500;
