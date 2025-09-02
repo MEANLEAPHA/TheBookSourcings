@@ -20,20 +20,28 @@ const category = req.params.category; // from /similar/:category
 
     if (olSimilar?.works) {
       similarBooks.push(
-        ...olSimilar.works.map((w) => ({
-          title: w.title,
-          bookId: w.key.replace("/works/", ""),
-          cover: w.covers?.[0]
-            ? `https://covers.openlibrary.org/b/id/${w.covers[0]}-L.jpg`
-            : null,
-          author: w.authors?.[0]?.name || "Unknown",
-          source: "Open Library",
-        }))
+        ...olSimilar.works.map((w) => {
+          let cover = null;
+          if (w.cover_id) {
+            cover = `https://covers.openlibrary.org/b/id/${w.cover_id}-L.jpg`;
+          } else if (w.cover_edition_key) {
+            cover = `https://covers.openlibrary.org/b/olid/${w.cover_edition_key}-L.jpg`;
+          }
+
+          return {
+            title: w.title,
+            bookId: w.key.replace("/works/", ""),
+            cover,
+            author: w.authors?.[0]?.name || "Unknown",
+            source: "Open Library",
+          };
+        })
       );
     }
 
+
     // --- Google Books by subject ---
-    const gUrl = `https://www.googleapis.com/books/v1/volumes?q=subject:${encodeURIComponent(category)}&maxResults=5`;
+    const gUrl = `https://www.googleapis.com/books/v1/volumes?q=subject:${encodeURIComponent(category)}&maxResults=5&key=AIzaSyA4pGs-ia5mfEL6EoJEWPIL-o6KComj0xY`;
     const gSimilar = await fetchJson(gUrl);
 
     if (gSimilar?.items) {
