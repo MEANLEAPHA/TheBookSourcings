@@ -24,7 +24,7 @@ async function getGoogleBookById(req, res) {
       ?.replace(/<br\s*\/?>/gi, "\n")
       .replace(/<[^>]+>/g, "") || null,
       cover: data.volumeInfo.imageLinks?.thumbnail || null,
-      categories: data.volumeInfo.categories || [],
+      categories: data.volumeInfo.categories?.replace("/", ",") || [],
       language: data.volumeInfo.language || null,
       page: data.volumeInfo.pageCount || null,
       ISBN_10: identifiers.find(id => id.type === "ISBN_10")?.identifier || null,
