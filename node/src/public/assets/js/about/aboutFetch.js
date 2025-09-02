@@ -162,13 +162,13 @@ async function loadSimilarBooks(category) {
 
   try {
     const res = await fetch(`https://thebooksourcings.onrender.com/api/similar/${encodeURIComponent(category)}`);
-    const {data} = await res.json();
+    const { results } = await res.json();
 
     // Save in cache
-    setCachedSimilar(category, data.results);
+    setCachedSimilar(category, results);
 
     // Render
-    renderSimilar(data.results);
+    renderSimilar(results);
   } catch (err) {
     console.error(err);
     similarLists.innerHTML = "<p>Failed to load similar books.</p>";
