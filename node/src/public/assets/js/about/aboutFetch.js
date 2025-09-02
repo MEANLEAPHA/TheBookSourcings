@@ -162,7 +162,7 @@ async function loadSimilarBooks(category) {
 
   try {
     const res = await fetch(`https://thebooksourcings.onrender.com/api/similar/${encodeURIComponent(category)}`);
-    const data = await res.json();
+    const {data} = await res.json();
 
     // Save in cache
     setCachedSimilar(category, data.results);
