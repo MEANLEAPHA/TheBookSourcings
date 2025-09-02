@@ -455,12 +455,13 @@ a{
     padding: 10px;
 }
 .swiper-slide a{
-  margin: 0;
+  margin: auto;
   padding: 0
 }
-.swiper-slide a.bookInfo p{
+.swiper-slide a .bookInfo p{
     font-weight: 500;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 2px;
 }
 .swiper-slide a img {
     width:100px;
