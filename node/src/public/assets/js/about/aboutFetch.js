@@ -175,7 +175,6 @@ async function loadSimilarBooks(category) {
   }
 }
 
-// --- Renderer ---
 function renderSimilar(similarBooks) {
   similarLists.innerHTML = "";
 
@@ -185,10 +184,11 @@ function renderSimilar(similarBooks) {
         <div class="swiper-slide">
           <a href='aboutBook.html?bookId=${bk.bookId}'>
             <img 
-              src="${bk.cover}" 
+              src="${bk.cover || 'placeholder-image.jpg'}" 
               class="BookCover lazyload"
               loading="lazy"
               alt="${bk.title}"
+              onerror="this.src='placeholder-image.jpg'"
             >
             <div class="bookInfo">
               <p class="BookTitle">${bk.title}</p>
@@ -202,8 +202,19 @@ function renderSimilar(similarBooks) {
     similarLists.innerHTML = "<p>No similar books found.</p>";
   }
 
-  // Re-init Swiper after render
-  new Swiper('.swiper', {
+  // Wait for DOM to update before initializing Swiper
+  setTimeout(() => {
+    initSwiper();
+  }, 100);
+}
+
+function initSwiper() {
+  // Destroy existing Swiper instance if it exists
+  if (window.mySwiper && window.mySwiper.destroy) {
+    window.mySwiper.destroy();
+  }
+  
+  window.mySwiper = new Swiper('.swiper', {
     loop: true,
     autoplay: { delay: 1500 },
     slidesPerView: 'auto',
@@ -217,7 +228,6 @@ function renderSimilar(similarBooks) {
     }
   });
 }
-
 
 
 
