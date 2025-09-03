@@ -184,11 +184,11 @@ function renderSimilar(similarBooks) {
         <div class="swiper-slide">
           <a href='aboutBook.html?bookId=${bk.bookId}'>
             <img 
-              src="${bk.cover || 'placeholder-image.jpg'}" 
+              src="${bk.cover || 'assets/img/noCoverFound.png'}" 
               class="BookCover lazyload"
               loading="lazy"
               alt="${bk.title}"
-              onerror="this.src='placeholder-image.jpg'"
+              onerror="this.src='assets/img/noCoverFound.png'"
             >
             <div class="bookInfo">
               <p class="BookTitle">${bk.title}</p>
