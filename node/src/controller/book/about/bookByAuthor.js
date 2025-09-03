@@ -15,7 +15,7 @@ const authorName = req.params.authorName; // from /similar/:category
 
   try {
     // --- OpenLibrary by subject ---
-    const olUrl = `https://openlibrary.org/search.json?author=${encodeURIComponent(authorName.toLowerCase())}`;
+    const olUrl = `https://openlibrary.org/search.json?author=${encodeURIComponent(authorName.toLowerCase())}&limit=3`;
     const olSimilar = await fetchJson(olUrl);
 
     if (olSimilar?.docs) {
@@ -32,7 +32,7 @@ const authorName = req.params.authorName; // from /similar/:category
             title: w.title,
             bookId: w.key.replace("/works/", ""),
             cover,
-            author: w.author_name?.join(", ") || [],
+            author: w.author_name?.join(", ") || null,
             source: "Open Library",
           };
         })
@@ -41,16 +41,15 @@ const authorName = req.params.authorName; // from /similar/:category
 
 
     // --- Google Books by subject ---
-    const gUrl = `https://www.googleapis.com/books/v1/volumes?q=inauthor:${encodeURIComponent(authorName.toLowerCase())}&maxResults=5&key=AIzaSyA4pGs-ia5mfEL6EoJEWPIL-o6KComj0xY`;
+    const gUrl = `https://www.googleapis.com/books/v1/volumes?q=inauthor:${encodeURIComponent(authorName.toLowerCase())}&maxResults=3&key=AIzaSyA4pGs-ia5mfEL6EoJEWPIL-o6KComj0xY`;
     const gSimilar = await fetchJson(gUrl);
-
     if (gSimilar?.items) {
       authorBooks.push(
         ...gSimilar.items.map((item) => ({
           title: item.volumeInfo?.title || "No title",
           bookId: item.id,
           cover: item.volumeInfo?.imageLinks?.thumbnail || null,
-          author : item.volumeInfo?.authors?.join(", ") || "Unknown",
+          author : item.volumeInfo?.authors?.join(", ") || null,
           source: "Google Books",
         }))
       );
@@ -77,7 +76,7 @@ while (hasMore) {
       title: b.title,
       bookId: b.id,
       cover: b.formats?.["image/jpeg"] || null,
-      author: b.authors?.map(a => a.name).join(", ") || [],
+      author: b.authors?.map(a => a.name).join(", ") || null,
       source: "Project Gutenberg",
    } )));
 
@@ -88,7 +87,7 @@ while (hasMore) {
   }
 }
 
-gutBooks = gutBooks.slice(0, 2);
+gutBooks = gutBooks.slice(0, 3);
 
 
 
