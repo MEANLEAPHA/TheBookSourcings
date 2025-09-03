@@ -444,6 +444,7 @@ a{
     width: 200px;
     position: relative;
     background-color: var(--secondary-color);
+    height: auto;
      /* display: flex;
     flex-direction: column;
     text-align: center;
