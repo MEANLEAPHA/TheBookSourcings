@@ -482,7 +482,7 @@ a{
     background:rgb(10, 89, 145);; 
 }
 .sp{
-    margin-top: 50px;
+    margin-top: 30px;
 }
 @media  (max-width: 768px) {
     .book-carousel .swiper-slide {
@@ -491,9 +491,9 @@ a{
    
         height: auto;
         }
-        .swiper-slide img {
+        .swiper-slide a img {
         width:70px;
-        height: 100px;
+        height: 120px;
         margin: 0;
         /* transition: transform 0.3s ease-in-out; */
     }
@@ -501,7 +501,7 @@ a{
         font-size: small;
     }
     .sp{
-        margin-top: 40px;
+        margin-top: 25px;
     }
     .swiper-slide .bookInfo p{
     font-weight: 500;
