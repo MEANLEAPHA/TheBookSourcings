@@ -98,47 +98,6 @@ function renderBook(data) {
 
 
 
-// other book by author see more and less logic
-const showLessBook = document.getElementById("showLessBook");
-const showAllBook = document.getElementById("showAllBook");
-const books = document.querySelectorAll('.books');
-
-if(books.length > 3){
-    for(let i =3 ; i < books.length; i++ ){
-        books[i].style.display = 'none';
-    }
-     
-        showLessBook.style.display = 'none';
-        showAllBook.style.display = 'flex';
-
-        showAllBook.addEventListener('click', ()=>{
-
-        books.forEach(child => child.style.display = 'flex')
-               
-             
-                showAllBook.style.display = 'none';
-                showLessBook.style.display = 'flex';
-          
-                 })
-
-        showLessBook.addEventListener('click', ()=>{
-              for(let i =3 ; i < books.length; i++ ){
-                 books[i].style.display = 'none';
-                
-              }
-            
-                showAllBook.style.display = 'flex';
-                showLessBook.style.display = 'none';
-        })
-   
-    
-  
-}
-else{
-showLessBook.style.display = 'none';
-showAllBook.style.display = 'none';
-}
-
 
 
 
@@ -305,8 +264,10 @@ function showSkeletonOBBA(count = 3){
       otherBookByAuthorList.innerHTML +=`
         <div class="skeleton-books">
           <div class="skeleton skeleton-bookImg"></div>
-          <div class="skeleton skeleton-title"></div>
-          <div class="skeleton skeleton-author"></div>
+          <div class="skeleton-info">
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-author"></div>
+          </div>
       </div>
       `;
     }
@@ -385,6 +346,48 @@ function renderSimilarOBBA(author){
         </div>
       `;
     });
+    // other book by author see more and less logic
+const showLessBook = document.getElementById("showLessBook");
+const showAllBook = document.getElementById("showAllBook");
+const books = document.querySelectorAll('.books');
+
+if(books.length > 3){
+    for(let i =3 ; i < books.length; i++ ){
+        books[i].style.display = 'none';
+    }
+     
+        showLessBook.style.display = 'none';
+        showAllBook.style.display = 'flex';
+
+        showAllBook.addEventListener('click', ()=>{
+
+        books.forEach(child => child.style.display = 'flex')
+               
+             
+                showAllBook.style.display = 'none';
+                showLessBook.style.display = 'flex';
+          
+                 })
+
+        showLessBook.addEventListener('click', ()=>{
+              for(let i =3 ; i < books.length; i++ ){
+                 books[i].style.display = 'none';
+                
+              }
+            
+                showAllBook.style.display = 'flex';
+                showLessBook.style.display = 'none';
+        })
+   
+    
+  
+}
+else{
+showLessBook.style.display = 'none';
+showAllBook.style.display = 'none';
+}
+
+
   }
   else{
     otherBookByAuthorList.innerHTML = "<p>No similar books found.</p>";

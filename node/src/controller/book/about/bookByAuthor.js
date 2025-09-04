@@ -49,27 +49,21 @@ async function bookByAuthor(req, res) {
       );
     }
 
-    // --- Project Gutenberg (only first page, up to 3 results) ---
+   
+
     const gutUrl = `https://gutendex.com/books?search=${encodeURIComponent(authorName)}`;
     const gutSimilar = await fetchJson(gutUrl);
 
     if (gutSimilar?.results) {
-      const gutBooks = gutSimilar.results
-        .filter((b) =>
-          b.authors.some((a) =>
-            a.name.toLowerCase().includes(authorName.toLowerCase())
-          )
-        )
-        .slice(0, 3)
-        .map((b) => ({
+       authorBooks.push(
+        ...gutSimilar.results.slice(0, 3).map((b) => ({
           title: b.title,
           bookId: b.id,
           cover: b.formats?.["image/jpeg"] || null,
           author: b.authors?.map((a) => a.name).join(", ") || null,
           source: "Project Gutenberg",
-        }));
-
-      authorBooks.push(...gutBooks);
+        }))
+      );
     }
 
     // Return all sources combined
