@@ -64,7 +64,7 @@ let page = 1;
 let hasMore = true;
 
 while (hasMore) {
-  const gutUrl = `https://gutendex.com/books?author=${encodeURIComponent(authorName)}&page=${page}`;
+  const gutUrl = `https://gutendex.com/books?author=${encodeURIComponent(authorName).toLowerCase()}&page=${page}`;
   const gutSimilar = await fetchJson(gutUrl);
 
   if (gutSimilar?.results) {
