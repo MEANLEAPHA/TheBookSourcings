@@ -23,7 +23,7 @@ async function getGoogleBookById(req, res) {
       description: data.volumeInfo.description
       ?.replace(/<br\s*\/?>/gi, "\n")
       .replace(/<[^>]+>/g, "") || null,
-      cover: data.volumeInfo.imageLinks?.thumbnail || null,
+      cover: data.volumeInfo.imageLinks?.thumbnail.replace(/^http:/, 'https:') || null,
       categories: data.volumeInfo.categories?data.volumeInfo.categories.map(cat => cat.replace("/", ", ").replace(" / ", ", ").replace(" /", ", ").replace("/ ", ", ")) : [],
       language: data.volumeInfo.language || null,
       page: data.volumeInfo.pageCount || null,
@@ -31,8 +31,8 @@ async function getGoogleBookById(req, res) {
       ISBN_13: identifiers.find(id => id.type === "ISBN_13")?.identifier || null,
       publishDate: data.volumeInfo.publishedDate || null,
       publisher: data.volumeInfo.publisher || null,
-      read : data.volumeInfo.previewLink,
-      download : data.volumeInfo.previewLink
+      read : data.volumeInfo.previewLink?.replace(/^http:/, 'https:'),
+      download : data.volumeInfo.previewLink?.replace(/^http:/, 'https:')
     };
 
 
