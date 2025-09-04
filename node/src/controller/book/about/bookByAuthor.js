@@ -64,7 +64,7 @@ let page = 1;
 let hasMore = true;
 
 while (hasMore) {
-  const gutUrl = `https://gutendex.com/books?author=${encodeURIComponent(authorName).toLowerCase()}&page=${page}`;
+  const gutUrl = `https://gutendex.com/books?author=${encodeURIComponent(authorName)}&page=${page}`;
   const gutSimilar = await fetchJson(gutUrl);
 
   if (gutSimilar?.results) {
@@ -78,21 +78,30 @@ while (hasMore) {
       cover: b.formats?.["image/jpeg"] || null,
       author: b.authors?.map(a => a.name).join(", ") || null,
       source: "Project Gutenberg",
-   } )));
+    })));
 
-    hasMore = gutSimilar.next !== null;
-    page++;
+    // ✅ Stop fetching more pages if we already have 3 results
+    if (gutBooks.length >= 3) {
+      hasMore = false;
+    } else {
+      hasMore = gutSimilar.next !== null;
+      page++;
+    }
   } else {
     hasMore = false;
   }
 }
 
+
+// Limit Gutenberg results to 3
 gutBooks = gutBooks.slice(0, 3);
 
+// Return all sources combined
+res.json({ 
+  authorName, 
+  results: [...authorBooks, ...gutBooks] 
+});
 
-
-
-    res.json({ authorName, results: authorBooks });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
