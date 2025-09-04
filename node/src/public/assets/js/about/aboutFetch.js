@@ -94,7 +94,56 @@ function renderBook(data) {
     descriptionEl.innerText = fullText;
     seemore.style.display = "none";
     seeless.style.display = "none";
-  }
+  };
+
+
+
+// other book by author see more and less logic
+const showLessBook = document.getElementById("showLessBook");
+const showAllBook = document.getElementById("showAllBook");
+const books = document.querySelectorAll('.books');
+
+if(books.length > 3){
+    for(let i =3 ; i < books.length; i++ ){
+        books[i].style.display = 'none';
+    }
+     
+        showLessBook.style.display = 'none';
+        showAllBook.style.display = 'flex';
+
+        showAllBook.addEventListener('click', ()=>{
+
+        books.forEach(child => child.style.display = 'flex')
+               
+             
+                showAllBook.style.display = 'none';
+                showLessBook.style.display = 'flex';
+          
+                 })
+
+        showLessBook.addEventListener('click', ()=>{
+              for(let i =3 ; i < books.length; i++ ){
+                 books[i].style.display = 'none';
+                
+              }
+            
+                showAllBook.style.display = 'flex';
+                showLessBook.style.display = 'none';
+        })
+   
+    
+  
+}
+else{
+showLessBook.style.display = 'none';
+showAllBook.style.display = 'none';
+}
+
+
+
+
+
+
 
   const firstCategory = Array.isArray(book.categories)
     ? (book.categories[0] || "")
@@ -251,7 +300,7 @@ const otherBookByAuthorList = document.querySelector(".otherBookByAuthor");
 
 // --- Skeleton Loader (3 placeholders) for otherBookByAuthor---
 function showSkeletonOBBA(count = 3){
-    otherBookByAuthorList.innerHtml = "";
+    otherBookByAuthorList.innerHTML = "";
     for(let j=0 ; j<count ; j++){
       otherBookByAuthorList.innerHTML +=`
         <div class="skeleton-books">
@@ -326,7 +375,7 @@ function renderSimilarOBBA(author){
   otherBookByAuthorList.innerHTML = "";
   if(author.length > 0){
     author.forEach(book => {
-      otherBookByAuthorList += `
+      otherBookByAuthorList.innerHTML += `
         <div class="books">
           <a href='aboutBook.html?bookId=${book.bookId}'>
               <img src="${book.cover || 'assets/img/noCoverFound.png'}" alt="${book.title}" class="bookImg lazyload" loading="lazy" onerror= "this.src='assets/img/noCoverFound.png'" >

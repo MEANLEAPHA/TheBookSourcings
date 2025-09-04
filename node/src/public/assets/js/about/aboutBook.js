@@ -1,43 +1,43 @@
 
-const showLessBook = document.getElementById("showLessBook");
-const showAllBook = document.getElementById("showAllBook");
-const books = document.querySelectorAll('.books');
+// const showLessBook = document.getElementById("showLessBook");
+// const showAllBook = document.getElementById("showAllBook");
+// const books = document.querySelectorAll('.books');
 
-if(books.length > 3){
-    for(let i =3 ; i < books.length; i++ ){
-        books[i].style.display = 'none';
-    }
+// if(books.length > 3){
+//     for(let i =3 ; i < books.length; i++ ){
+//         books[i].style.display = 'none';
+//     }
      
-        showLessBook.style.display = 'none';
-        showAllBook.style.display = 'flex';
+//         showLessBook.style.display = 'none';
+//         showAllBook.style.display = 'flex';
 
-        showAllBook.addEventListener('click', ()=>{
+//         showAllBook.addEventListener('click', ()=>{
 
-        books.forEach(child => child.style.display = 'flex')
+//         books.forEach(child => child.style.display = 'flex')
                
              
-                showAllBook.style.display = 'none';
-                showLessBook.style.display = 'flex';
+//                 showAllBook.style.display = 'none';
+//                 showLessBook.style.display = 'flex';
           
-                 })
+//                  })
 
-        showLessBook.addEventListener('click', ()=>{
-              for(let i =3 ; i < books.length; i++ ){
-                 books[i].style.display = 'none';
+//         showLessBook.addEventListener('click', ()=>{
+//               for(let i =3 ; i < books.length; i++ ){
+//                  books[i].style.display = 'none';
                 
-              }
+//               }
             
-                showAllBook.style.display = 'flex';
-                showLessBook.style.display = 'none';
-        })
+//                 showAllBook.style.display = 'flex';
+//                 showLessBook.style.display = 'none';
+//         })
    
     
   
-}
-else{
-showLessBook.style.display = 'none';
-showAllBook.style.display = 'none';
-}
+// }
+// else{
+// showLessBook.style.display = 'none';
+// showAllBook.style.display = 'none';
+// }
 
 
 //  const similarLists = document.querySelector(".swiper-wrapper");

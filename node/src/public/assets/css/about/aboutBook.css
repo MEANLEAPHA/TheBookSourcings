@@ -252,7 +252,7 @@ a{
 #channelInfo{
     padding: 0;
     height: 40px;
-    width: 100px;
+    width: 130px;
 }
 #channelName{
     margin: 0px;
@@ -468,6 +468,9 @@ a{
     font-weight: 500;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 2px;
+}
+.BookAuthor{
+  color: var(--font-color);
 }
 .swiper-slide a img {
     width:100px;
