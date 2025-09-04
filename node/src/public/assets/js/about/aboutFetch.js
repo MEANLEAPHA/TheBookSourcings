@@ -302,29 +302,31 @@ function setCachedSimilarOBBA(authors, data) {
 
 
 // --- Fetch & Render --- obba
-   async function loadOtherBookByAuthor(authorName){
-   // 1. check cache first OBBA
-   const cached  = getCachedSimilarOBBA(authorName);
+async function loadOtherBookByAuthor(authorName){
+   const cached = getCachedSimilarOBBA(authorName);
    if(cached){
-    renderSimilarOBBA(cached);
-    return;
+      renderSimilarOBBA(cached);
+      return;
    }
-   // show skeletons OBBA
+
+   // show skeleton
    showSkeletonOBBA();
+
    try{
-    const res = await fetch(`https://thebooksourcings.onrender.com/api/bookByAuthor/${encodeURIComponent(authorName)}`);
-    const { results } = await res.json();
+      const res = await fetch(`https://thebooksourcings.onrender.com/api/bookByAuthor/${encodeURIComponent(authorName)}`);
+      if (!res.ok) throw new Error("Network response not ok");
 
-    setCachedSimilarOBBA(authorName , results);
+      const { results } = await res.json();
+      setCachedSimilarOBBA(authorName, results);
 
-    renderSimilarOBBA(results);
-
+      renderSimilarOBBA(results);
    }
    catch(err){
-     console.error(err);
-     otherBookByAuthorList.innerHTML = "<p>Failed to load book.</p>";
+      console.error(err);
+      // only show message if results are truly empty or error
+      otherBookByAuthorList.innerHTML = "<p>Failed to load book. Please try again.</p>";
    }
-   }
+}
 
 
 
@@ -332,12 +334,17 @@ function setCachedSimilarOBBA(authors, data) {
 
 function renderSimilarOBBA(author){
   otherBookByAuthorList.innerHTML = "";
+
   if(author.length > 0){
     author.forEach(book => {
       otherBookByAuthorList.innerHTML += `
         <div class="books">
           <a href='aboutBook.html?bookId=${book.bookId}'>
-              <img src="${book.cover || 'assets/img/noCoverFound.png'}" alt="${book.title}" class="bookImg lazyload" loading="lazy" onerror= "this.src='assets/img/noCoverFound.png'" >
+              <img src="${book.cover || 'assets/img/noCoverFound.png'}" 
+                   alt="${book.title}" 
+                   class="bookImg lazyload" 
+                   loading="lazy" 
+                   onerror="this.src='assets/img/noCoverFound.png'">
               <div class="bookInfo">
                   <a id="OtherbookTitle">${book.title}</a>
                   <a id="OtherbookSubTitle">${book.author}</a>
@@ -346,54 +353,43 @@ function renderSimilarOBBA(author){
         </div>
       `;
     });
-    // other book by author see more and less logic
-const showLessBook = document.getElementById("showLessBook");
-const showAllBook = document.getElementById("showAllBook");
-const books = document.querySelectorAll('.books');
 
-if(books.length > 3){
-    for(let i =3 ; i < books.length; i++ ){
+    // ✅ Show more / Show less logic
+    const showLessBook = document.getElementById("showLessBook");
+    const showAllBook = document.getElementById("showAllBook");
+    const books = document.querySelectorAll('.books');
+
+    if(books.length > 3){
+      for(let i = 3; i < books.length; i++){
         books[i].style.display = 'none';
-    }
-     
-        showLessBook.style.display = 'none';
+      }
+
+      showLessBook.style.display = 'none';
+      showAllBook.style.display = 'flex';
+
+      showAllBook.onclick = () => {
+        books.forEach(book => book.style.display = 'flex');
+        showAllBook.style.display = 'none';
+        showLessBook.style.display = 'flex';
+      };
+
+      showLessBook.onclick = () => {
+        for(let i = 3; i < books.length; i++){
+          books[i].style.display = 'none';
+        }
         showAllBook.style.display = 'flex';
+        showLessBook.style.display = 'none';
+      };
+    } else {
+      showLessBook.style.display = 'none';
+      showAllBook.style.display = 'none';
+    }
 
-        showAllBook.addEventListener('click', ()=>{
-
-        books.forEach(child => child.style.display = 'flex')
-               
-             
-                showAllBook.style.display = 'none';
-                showLessBook.style.display = 'flex';
-          
-                 })
-
-        showLessBook.addEventListener('click', ()=>{
-              for(let i =3 ; i < books.length; i++ ){
-                 books[i].style.display = 'none';
-                
-              }
-            
-                showAllBook.style.display = 'flex';
-                showLessBook.style.display = 'none';
-        })
-   
-    
-  
-}
-else{
-showLessBook.style.display = 'none';
-showAllBook.style.display = 'none';
-}
-
-
-  }
-  else{
+  } else {
     otherBookByAuthorList.innerHTML = "<p>No similar books found.</p>";
   }
-
 }
+
 
 
 
