@@ -64,7 +64,7 @@ async function getOpenLibraryBookById(req, res) {
     }
     // Else leave it null, or point to a placeholder
     else {
-      cover = "/images/placeholder.jpg"; // optional
+      cover = "/img/noCoverFound.png"; // optional
     }
 
     // 5. Build response
@@ -81,7 +81,7 @@ async function getOpenLibraryBookById(req, res) {
           ? workData.description
           : workData.description?.value || null,
       cover,
-      categories: workData.subjects.slice(1,5).replace(/[^a-zA-Z0-9]/g, ", ") || [],
+      categories: workData.subjects.slice(1,5) || [],
       language: editionData?.languages?.[0]?.key?.replace("/languages/", "") || null,
       page: editionData?.pagination || editionData?.number_of_pages || null,
       ISBN_10: editionData?.isbn_10 ? editionData.isbn_10[0] : null,

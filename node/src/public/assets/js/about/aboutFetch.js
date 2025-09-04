@@ -339,8 +339,6 @@ function setCachedSimilarOBBA(authors, data) {
   );
 }
 
-// show skeletons OBBA
-   showSkeletonOBBA();
 
 // --- Fetch & Render --- obba
    async function loadOtherBookByAuthor(authorName){
