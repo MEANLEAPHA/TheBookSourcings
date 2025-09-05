@@ -123,12 +123,13 @@ function renderBook(data) {
 
 
 
-   // --- Load author info ---
-  const authorNames = Array.isArray(book.authors)
-    ? book.authors
-    : [book.authors || 'William Shakespeare'];
+ // --- Load author info ---
+const authorNames = Array.isArray(book.authors)
+  ? book.authors
+  : [book.authors || 'William Shakespeare'];
 
-  loadAuthorInfo(authorNames); 
+loadAuthorInfo(authorNames);
+
 
 }
 
@@ -406,6 +407,7 @@ const authorCardBody = document.querySelector('.authorCard .card-body');
 
 // --- Skeleton Loader for Author ---
 function showSkeletonAuthor(count = 1) {
+  const authorCardBody = document.querySelector('.authorCard .card-body');
   authorCardBody.innerHTML = '';
   for (let i = 0; i < count; i++) {
     authorCardBody.innerHTML += `
@@ -454,7 +456,7 @@ async function loadAuthorInfo(authorNames) {
   showSkeletonAuthor(authorNames.length);
 
   try {
-    const res = await fetch(`https://thebooksourcings.onrender.com/api/aboutAuthor${encodeURIComponent(authorNames.join(','))}`);
+    const res = await fetch(`https://thebooksourcings.onrender.com/api/full/${detectSource(bookId)}/${bookId}`);
     if (!res.ok) throw new Error('Network response not ok');
 
     const { authors } = await res.json();
@@ -463,12 +465,14 @@ async function loadAuthorInfo(authorNames) {
     renderAuthorInfo(authors);
   } catch (err) {
     console.error(err);
+    const authorCardBody = document.querySelector('.authorCard .card-body');
     authorCardBody.innerHTML = '<p>Failed to load author info. Please try again.</p>';
   }
 }
 
 // --- Render author info ---
 function renderAuthorInfo(authors) {
+  const authorCardBody = document.querySelector('.authorCard .card-body');
   authorCardBody.innerHTML = '';
 
   if (!authors || authors.length === 0) {
@@ -499,16 +503,6 @@ function renderAuthorInfo(authors) {
     authorCardBody.insertAdjacentHTML('beforeend', authorHTML);
   });
 }
-
-// --- Call this after fetching the book ---
-const firstAuthorNames = Array.isArray(book.authors)
-  ? book.authors
-  : [book.authors || 'William Shakespeare'];
-loadAuthorInfo(firstAuthorNames);
-
-
-
-
 
 
 
