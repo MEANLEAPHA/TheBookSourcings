@@ -1,114 +1,52 @@
-const { getAuthorNameGoogleBook } = require("./aboutAuthorGoogleController");
-const { getAuthorNameGUT } = require("./aboutAuthorGutenbergController");
-const { getAuthorNameOpenLibrary } = require("./aboutAuthorOpenLibraryController");
 const { fetchJson } = require("../../../util/apiClient");
 
-// Helper: fetch author details including image, profession, and description
-async function fetchAuthorDetails(authorName) {
+// Fetch author info from OpenLibrary + Wikidata
+async function getAuthorInfo(req, res) {
   try {
-    // Step 1: Search author in OpenLibrary
-    const searchUrl = `https://openlibrary.org/search/authors.json?q=${encodeURIComponent(authorName)}`;
-    const searchData = await fetchJson(searchUrl);
+    const authorNamesParam = req.params.authorNames;
+    if (!authorNamesParam) return res.status(400).json({ error: 'Author names required' });
 
-    if (!searchData?.docs?.length) {
-      return {
-        name: authorName,
-        wikidataId: null,
-        description: "No author found in OpenLibrary",
-        image: null,
-        profession: null,
-      };
-    }
+    const authorNames = authorNamesParam.split(',');
 
-    const author = searchData.docs[0];
-    const wikidataId = author.wikidata || null;
+    const results = await Promise.all(authorNames.map(async (name) => {
+      // 1️⃣ OpenLibrary search
+      const olUrl = `https://openlibrary.org/search/authors.json?q=${encodeURIComponent(name)}`;
+      const olData = await fetchJson(olUrl);
 
-    // Step 2: Get description from Wikidata if available
-    let description = "No description available";
-    let profession = author.type || null;
-    if (wikidataId) {
-      try {
-        const wikidataUrl = `https://www.wikidata.org/wiki/Special:EntityData/${wikidataId}.json`;
-        const wikidataData = await fetchJson(wikidataUrl);
-        const entity = wikidataData.entities[wikidataId];
-
-        description =
-          entity.descriptions?.en?.value ||
-          entity.labels?.en?.value ||
-          description;
-
-        // Try to extract occupation/profession
-        if (entity.claims?.P106) {
-          // P106 = occupation
-          const occupations = entity.claims.P106.map((occ) => occ?.mainsnak?.datavalue?.value?.id).filter(Boolean);
-          profession = occupations.join(", ") || profession;
-        }
-      } catch (err) {
-        console.warn("Wikidata fetch failed for author:", authorName);
+      if (!olData.docs || olData.docs.length === 0) {
+        return { name, description: 'No author found', profession: '', photo: '', wikidataId: '' };
       }
-    }
 
-    // Step 3: Get author image from OpenLibrary (if exists)
-    let image = null;
-    if (author.key) {
-      // OpenLibrary author covers: https://covers.openlibrary.org/a/olid/{OLID}-M.jpg
-      image = `https://covers.openlibrary.org/a/olid/${author.key.replace("/authors/", "")}-M.jpg`;
-    }
+      const author = olData.docs[0];
+      const wikidataId = author.wikidata;
 
-    return {
-      name: authorName,
-      wikidataId,
-      description,
-      profession,
-      image,
-    };
-  } catch (err) {
-    console.error("fetchAuthorDetails error:", err.message);
-    return {
-      name: authorName,
-      wikidataId: null,
-      description: "Error fetching author details",
-      image: null,
-      profession: null,
-    };
-  }
-}
+      // 2️⃣ Wikidata fetch
+      let description = 'No description available';
+      let profession = '';
+      let photo = '';
 
-// Main endpoint: one call → bookId → authorNames → full author info
-async function getFullAuthorInfo(req, res) {
-  try {
-    const { source, bookId } = req.params;
+      if (wikidataId) {
+        try {
+          const wdUrl = `https://www.wikidata.org/wiki/Special:EntityData/${wikidataId}.json`;
+          const wdData = await fetchJson(wdUrl);
+          const entity = wdData.entities[wikidataId];
 
-    let authorNames = [];
+          description = entity.descriptions?.en?.value || entity.labels?.en?.value || description;
+          profession = entity.claims?.P106?.[0]?.mainsnak?.datavalue?.value?.id || ''; // P106 = occupation
+          photo = entity.claims?.P18?.[0]?.mainsnak?.datavalue?.value || ''; // P18 = image
+        } catch (err) {
+          console.error('Wikidata fetch error for', name, err.message);
+        }
+      }
 
-    if (source === "google") {
-      const data = await getAuthorNameGoogleBook(bookId);
-      authorNames = data.authorNames || [];
-    } else if (source === "gutenberg") {
-      const data = await getAuthorNameGUT(bookId);
-      authorNames = data.authorNames || [];
-    } else if (source === "openlibrary") {
-      const data = await getAuthorNameOpenLibrary(bookId);
-      authorNames = data.authorNames || [];
-    } else {
-      return res.status(400).json({ error: "Invalid source" });
-    }
-
-    if (!authorNames.length) {
-      return res.status(404).json({ error: "No authors found for this book" });
-    }
-
-    const results = await Promise.all(
-      authorNames.map((name) => fetchAuthorDetails(name))
-    );
+      return { name, description, profession, photo, wikidataId: wikidataId || '' };
+    }));
 
     res.json({ authors: results });
   } catch (err) {
-    console.error("getFullAuthorInfo error:", err.message);
-    res.status(500).json({ error: "Failed to fetch author info" });
+    console.error('getAuthorInfo error:', err.message);
+    res.status(500).json({ error: 'Failed to fetch author info' });
   }
 }
 
-module.exports = {
-  getFullAuthorInfo,
-};
+module.exports = { getAuthorInfo };
