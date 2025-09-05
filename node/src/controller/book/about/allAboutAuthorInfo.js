@@ -1,51 +1,60 @@
 const { fetchJson } = require("../../../util/apiClient");
 
-// Fetch author info from OpenLibrary + Wikidata
+// --- Search Wikidata by author name
+async function fetchWikidataId(name) {
+  const searchUrl = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(name)}&language=en&format=json&origin=*`;
+  const data = await fetchJson(searchUrl);
+  if (data.search && data.search.length > 0) return data.search[0].id;
+  return null;
+}
+
+// --- Fetch Wikidata entity by QID
+async function fetchWikidataEntity(qid) {
+  const url = `https://www.wikidata.org/wiki/Special:EntityData/${qid}.json`;
+  const data = await fetchJson(url);
+  return data.entities[qid];
+}
+
+// --- Main controller
 async function getAuthorInfo(req, res) {
   try {
     const authorNamesParam = req.params.authorNames;
-    if (!authorNamesParam) return res.status(400).json({ error: 'Author names required' });
+    if (!authorNamesParam) return res.status(400).json({ error: "Author names required" });
 
-    const authorNames = authorNamesParam.split(',');
+    const authorNames = authorNamesParam.split(",");
 
     const results = await Promise.all(authorNames.map(async (name) => {
-      // 1️⃣ OpenLibrary search
-      const olUrl = `https://openlibrary.org/search/authors.json?q=${encodeURIComponent(name)}`;
-      const olData = await fetchJson(olUrl);
-
-      if (!olData.docs || olData.docs.length === 0) {
-        return { name, description: 'No author found', profession: '', photo: '', wikidataId: '' };
-      }
-
-      const author = olData.docs[0];
-      const wikidataId = author.wikidata;
-
-      // 2️⃣ Wikidata fetch
-      let description = 'No description available';
-      let profession = '';
-      let photo = '';
+      let wikidataId = await fetchWikidataId(name);
+      let description = "No description available";
+      let profession = "";
+      let photo = "";
 
       if (wikidataId) {
         try {
-          const wdUrl = `https://www.wikidata.org/wiki/Special:EntityData/${wikidataId}.json`;
-          const wdData = await fetchJson(wdUrl);
-          const entity = wdData.entities[wikidataId];
-
+          const entity = await fetchWikidataEntity(wikidataId);
           description = entity.descriptions?.en?.value || entity.labels?.en?.value || description;
-          profession = entity.claims?.P106?.[0]?.mainsnak?.datavalue?.value?.id || ''; // P106 = occupation
-          photo = entity.claims?.P18?.[0]?.mainsnak?.datavalue?.value || ''; // P18 = image
+          
+          // Profession (P106) → can be array of items, just take first
+          if (entity.claims?.P106 && entity.claims.P106.length > 0) {
+            profession = entity.claims.P106[0].mainsnak.datavalue.value.id || "";
+          }
+
+          // Image (P18)
+          if (entity.claims?.P18 && entity.claims.P18.length > 0) {
+            photo = entity.claims.P18[0].mainsnak.datavalue.value || "";
+          }
         } catch (err) {
-          console.error('Wikidata fetch error for', name, err.message);
+          console.error(`Wikidata fetch error for ${name}:`, err.message);
         }
       }
 
-      return { name, description, profession, photo, wikidataId: wikidataId || '' };
+      return { name, description, profession, photo, wikidataId: wikidataId || "" };
     }));
 
     res.json({ authors: results });
   } catch (err) {
-    console.error('getAuthorInfo error:', err.message);
-    res.status(500).json({ error: 'Failed to fetch author info' });
+    console.error("getAuthorInfo error:", err.message);
+    res.status(500).json({ error: "Failed to fetch author info" });
   }
 }
 
