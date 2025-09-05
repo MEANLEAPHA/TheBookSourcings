@@ -168,36 +168,36 @@
   }
 
 /* about the author */
-#aboutAuthor{
+.aboutAuthor{
   width: 100%;
   display: flex;
   justify-content: start;
   align-items: center;
   gap: 10px;
 }
-#aboutPf{
+.aboutPf{
   width: 40px;
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
 }
-#authorInfo{
+.authorInfo{
  height: auto;
  display: grid;
 }
 
-#authorName{
+.authorName{
   margin: 0px;
   color: var(--primary-color);
   font-weight: 500;
 }
-#authorProfession{
+.authorProfession{
   margin: 1px;
   color: var(--font-color);
   opacity: 0.8;
   font-weight: 500;
 }
-#aboutAuthorDes{
+.aboutAuthorDes{
   font-size: 15px;
   margin-top: 20px;
   color: var(--font-color);

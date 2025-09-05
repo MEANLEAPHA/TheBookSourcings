@@ -120,6 +120,16 @@ function renderBook(data) {
 
   const authorNameToUse = (firstAuthor && String(firstAuthor).trim()) ? firstAuthor : "William Shakespeare";
   loadOtherBookByAuthor(authorNameToUse);
+
+
+
+   // --- Load author info ---
+  const authorNames = Array.isArray(book.authors)
+    ? book.authors
+    : [book.authors || 'William Shakespeare'];
+
+  loadAuthorInfo(authorNames); 
+
 }
 
  // --- Call function ---
@@ -389,6 +399,112 @@ function renderSimilarOBBA(author){
     otherBookByAuthorList.innerHTML = "<p>No similar books found.</p>";
   }
 }
+
+
+// --- Author info container ---
+const authorCardBody = document.querySelector('.authorCard .card-body');
+
+// --- Skeleton Loader for Author ---
+function showSkeletonAuthor(count = 1) {
+  authorCardBody.innerHTML = '';
+  for (let i = 0; i < count; i++) {
+    authorCardBody.innerHTML += `
+      <div class="skeleton-author-card">
+        <div class="skeleton skeleton-author-img"></div>
+        <div class="skeleton skeleton-author-name"></div>
+        <div class="skeleton skeleton-author-profession"></div>
+        <div class="skeleton skeleton-author-desc"></div>
+      </div>
+    `;
+  }
+}
+
+// --- Cache helper for authors ---
+function getCachedAuthor(authorNames) {
+  const cached = localStorage.getItem(`author_${authorNames}`);
+  if (!cached) return null;
+  const { data, expiry } = JSON.parse(cached);
+  if (Date.now() > expiry) {
+    localStorage.removeItem(`author_${authorNames}`);
+    return null;
+  }
+  return data;
+}
+
+function setCachedAuthor(authorNames, data) {
+  localStorage.setItem(
+    `author_${authorNames}`,
+    JSON.stringify({
+      data,
+      expiry: Date.now() + 1000 * 60 * 30, // cache 30 mins
+    })
+  );
+}
+
+// --- Fetch & Render author info ---
+async function loadAuthorInfo(authorNames) {
+  if (!authorNames || authorNames.length === 0) return;
+
+  const cached = getCachedAuthor(authorNames.join(','));
+  if (cached) {
+    renderAuthorInfo(cached);
+    return;
+  }
+
+  showSkeletonAuthor(authorNames.length);
+
+  try {
+    const res = await fetch(`https://thebooksourcings.onrender.com/api/aboutAuthor${encodeURIComponent(authorNames.join(','))}`);
+    if (!res.ok) throw new Error('Network response not ok');
+
+    const { authors } = await res.json();
+    setCachedAuthor(authorNames.join(','), authors);
+
+    renderAuthorInfo(authors);
+  } catch (err) {
+    console.error(err);
+    authorCardBody.innerHTML = '<p>Failed to load author info. Please try again.</p>';
+  }
+}
+
+// --- Render author info ---
+function renderAuthorInfo(authors) {
+  authorCardBody.innerHTML = '';
+
+  if (!authors || authors.length === 0) {
+    authorCardBody.innerHTML = '<p>No author info available.</p>';
+    return;
+  }
+
+  authors.forEach((author, idx) => {
+    const wikiId = author.wikidataId || '';
+    const name = author.name || 'Unknown Author';
+    const profession = author.profession || '';
+    const description = author.description || 'No description available.';
+    const img = author.photo || 'dog.png';
+
+    const authorHTML = `
+      <div class="aboutAuthor">
+        <img src="${img}" class="aboutPf">
+        <div class="authorInfo">
+          <p class="authorName">${name}</p>
+          <p class="authorProfession">${profession}</p>
+        </div>
+      </div>
+      <p class="aboutAuthorDes">${description}</p>
+      <p><a href="aboutAuthor.html?wikiId=${wikiId}">Know more details</a></p>
+      ${idx < authors.length - 1 ? '<hr>' : ''}
+    `;
+
+    authorCardBody.insertAdjacentHTML('beforeend', authorHTML);
+  });
+}
+
+// --- Call this after fetching the book ---
+const firstAuthorNames = Array.isArray(book.authors)
+  ? book.authors
+  : [book.authors || 'William Shakespeare'];
+loadAuthorInfo(firstAuthorNames);
 
 
 
