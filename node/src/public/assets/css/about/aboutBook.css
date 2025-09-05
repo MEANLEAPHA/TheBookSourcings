@@ -163,7 +163,9 @@
       cursor: pointer;
       justify-content: center;
     }
-
+  #showAllBook, #showLessBook{
+    display: none;
+  }
 
 /* about the author */
 #aboutAuthor{
@@ -231,8 +233,8 @@ a{
 #accessBtn{
     display:flex;
     flex-wrap:wrap;
-    justify-content: space-between;
-     margin:25px 0;
+    justify-content: start;
+    margin:25px 0;
     gap: 10px;
     color: var(--font-color);
 }
@@ -252,7 +254,7 @@ a{
 #channelInfo{
     padding: 0;
     height: 40px;
-    width: 130px;
+    width: 120px;
 }
 #channelName{
     margin: 0px;

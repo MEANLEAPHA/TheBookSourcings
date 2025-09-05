@@ -23,6 +23,7 @@ const trendingRoutes = require('./routes/book/trending/trendingRoutes'); //  tre
 const aboutBookInfoRoute = require('./routes/book/about/allAboutRoute');
 const similarBookRoute = require('./routes/book/about/simiarBookRoute');
 const bookByAuthorRoute = require('./routes/book/about/bookByAuthorsRoute');
+const aboutAuthorInfo = require('./routes/book/about/allAboutAuthorInfoRoute')
 
 
 // Initialize Routes
@@ -31,7 +32,7 @@ app.use('/api/trending', trendingRoutes); // ✅ mount trending API
 app.use('/api/aboutBook', aboutBookInfoRoute);
 app.use('/api/similar', similarBookRoute);
 app.use('/api/bookByAuthor', bookByAuthorRoute);
-
+app.use('/api/aboutAuthor', aboutAuthorInfo);
 
 
 
