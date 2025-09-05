@@ -42,7 +42,7 @@ async function bookByAuthor(req, res) {
         ...gSimilar.items.slice(0, 3).map((item) => ({
           title: item.volumeInfo?.title || "No title",
           bookId: item.id,
-          cover: item.volumeInfo?.imageLinks?.thumbnail || null,
+          cover: item.volumeInfo?.imageLinks?.thumbnail.replace(/^http:/, 'https:') || null,
           author: item.volumeInfo?.authors?.join(", ") || null,
           source: "Google Books",
         }))

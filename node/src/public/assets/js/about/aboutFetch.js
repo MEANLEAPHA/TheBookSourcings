@@ -459,8 +459,17 @@ async function loadAuthorInfo(authorNames) {
 }
 
 // Render
+// Helper: convert Wikidata image filename to Wikimedia Commons URL
+function getWikidataImageUrl(filename) {
+  if (!filename) return 'assets/img/dog.png'; // fallback image
+  const encoded = encodeURIComponent(filename.replace(/ /g, '_'));
+  return `https://commons.wikimedia.org/wiki/Special:FilePath/${encoded}`;
+}
+
+// Render author info
 function renderAuthorInfo(authors) {
-  authorCardBody.innerHTML = '';
+  authorCardBody.innerHTML = ''; // clear previous content
+
   if (!authors || authors.length === 0) {
     authorCardBody.innerHTML = '<p>No author info available.</p>';
     return;
@@ -471,11 +480,11 @@ function renderAuthorInfo(authors) {
     const name = author.name || 'Unknown Author';
     const profession = author.profession || '';
     const description = author.description || 'No description available';
-    const img = author.photo || 'dog.png';
+    const imgUrl = getWikidataImageUrl(author.photo);
 
     const html = `
       <div class="aboutAuthor">
-        <img src="${img}" class="aboutPf">
+        <img src="${imgUrl}" class="aboutPf" alt="${name}">
         <div class="authorInfo">
           <p class="authorName">${name}</p>
           <p class="authorProfession">${profession}</p>
@@ -485,12 +494,10 @@ function renderAuthorInfo(authors) {
       <p><a href="aboutAuthor.html?wikiId=${wikiId}">Know more details</a></p>
       ${idx < authors.length - 1 ? '<hr>' : ''}
     `;
+
     authorCardBody.insertAdjacentHTML('beforeend', html);
   });
 }
-
-
-
 
 
 
