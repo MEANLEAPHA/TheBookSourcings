@@ -1,5 +1,5 @@
 const urlParams = new URLSearchParams(window.location.search);
-const wikiId = urlParams("wikiId");
+const wikiId = urlParams.get("wikiId");
 
 fetch(`https://thebooksourcings.onrender.com/api/author/${wikiId}`)
 .then(res => res.json())

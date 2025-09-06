@@ -72,7 +72,9 @@
   .pb-0{ padding-bottom:0; }
 
 
-  
+  .display-authorInfo{
+    padding-top: 0px;
+  }
    /*description*/
 
    #bookDescription{
