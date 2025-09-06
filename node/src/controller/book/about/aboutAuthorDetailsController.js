@@ -192,14 +192,7 @@ async function getAuthorFullProfile(req, res) {
     const instagram = getStrings(entity, "P2003")[0] || "";
     const linkedinId = getStrings(entity, "P6634")[0] || "";
 
-    const social = {
-      website,
-      youtube: youtubeId ? `https://www.youtube.com/channel/${youtubeId}` : "",
-      facebook: facebookId ? `https://facebook.com/${facebookId}` : "",
-      x: xHandle ? `https://x.com/${xHandle}` : "",
-      instagram: instagram ? `https://instagram.com/${instagram}` : "",
-      linkedin: linkedinId ? `https://www.linkedin.com/in/${linkedinId}` : "",
-    };
+  
 
     // Wikipedia long summary (if we have enwiki sitelink)
     const enwikiTitle = entity?.sitelinks?.enwiki?.title || null;
@@ -209,8 +202,7 @@ async function getAuthorFullProfile(req, res) {
     const aliases =
       (entity?.aliases?.en || []).map((a) => a.value).filter(Boolean);
 
-    // Final JSON (all human-readable)
-    res.json({
+      const data = {
       wikidataId: qid,
       name: label,
       description: shortDescription,
@@ -243,8 +235,18 @@ async function getAuthorFullProfile(req, res) {
       spouse,
       children,
       relatives,
-      social,
+      website,
+      youtube: youtubeId ? `https://www.youtube.com/channel/${youtubeId}` : "",
+      facebook: facebookId ? `https://facebook.com/${facebookId}` : "",
+      x: xHandle ? `https://x.com/${xHandle}` : "",
+      youtube: youtubeId ? `https://youtube.com/${youtubeId}` : "" ,
+      instagram: instagram ? `https://instagram.com/${instagram}` : "",
+      linkedin: linkedinId ? `https://www.linkedin.com/in/${linkedinId}` : "",
       aliases,
+      }
+    // Final JSON (all human-readable)
+    res.json({
+     data
     });
   } catch (err) {
     console.error("getAuthorFullProfile error:", err.message);
