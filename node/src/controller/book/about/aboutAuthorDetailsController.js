@@ -3,8 +3,8 @@ const { fetchJson } = require("../../../util/apiClient");
 const WIKIDATA_API = "https://www.wikidata.org/w/api.php?origin=*";
 
 // --- Fetch entity by QID
-async function fetchWikidataEntity(qid) {
-  const url = `https://www.wikidata.org/wiki/Special:EntityData/${qid}.json`;
+async function fetchWikidataEntity(wikiId) {
+  const url = `https://www.wikidata.org/wiki/Special:EntityData/${wikiId}.json`;
   const data = await fetchJson(url);
   return data?.entities?.[qid];
 }
@@ -83,13 +83,13 @@ async function fetchWikipediaSummaryByTitle(title) {
 // --- Main controller
 async function getAuthorFullProfile(req, res) {
   try {
-    const { qid } = req.params;
-    if (!qid) return res.status(400).json({ error: "QID required" });
+    const { wikiId } = req.params;
+    if (!wikiId) return res.status(400).json({ error: "QID required" });
 
-    const entity = await fetchWikidataEntity(qid);
+    const entity = await fetchWikidataEntity(wikiId);
     if (!entity) return res.status(404).json({ error: "Entity not found" });
 
-    const label = entity?.labels?.en?.value || qid;
+    const label = entity?.labels?.en?.value || wikiId;
     const shortDescription = entity?.descriptions?.en?.value || "";
 
     const itemPidList = [
@@ -158,7 +158,7 @@ async function getAuthorFullProfile(req, res) {
     // Response
     res.json({
       data: {
-        wikidataId: qid,
+        wikidataId: wikiId,
         name: label,
         description: shortDescription,
         summary,
