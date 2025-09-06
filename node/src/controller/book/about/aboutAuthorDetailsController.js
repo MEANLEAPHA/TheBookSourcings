@@ -6,8 +6,9 @@ const WIKIDATA_API = "https://www.wikidata.org/w/api.php?origin=*";
 async function fetchWikidataEntity(wikiId) {
   const url = `https://www.wikidata.org/wiki/Special:EntityData/${wikiId}.json`;
   const data = await fetchJson(url);
-  return data?.entities?.[qid];
+  return data?.entities?.[wikiId]; // ✅ use wikiId
 }
+
 
 // --- Batch resolve QIDs to labels
 async function resolveLabels(qids, lang = "en") {
