@@ -59,12 +59,11 @@ function getFirstTimeString(entity, pid) {
   return t.slice(0, 4);
 }
 
+// --- Commons image URL (direct, usable in <img src>)
 function fileToCommonsUrl(filename) {
   if (!filename) return "";
   const clean = filename.replace(/ /g, "_");
-  return `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(
-    clean
-  )}`;
+  return `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(clean)}`;
 }
 
 // --- Wikipedia summary
