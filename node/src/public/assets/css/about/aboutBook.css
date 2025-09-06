@@ -65,6 +65,9 @@
 
     margin-top: 10px;
   }
+  .aboutAuthor{
+    margin: 24px 0px 0px 24px;
+  }
   .card-body{ padding:24px; }
   .pb-0{ padding-bottom:0; }
 
@@ -235,7 +238,7 @@ a{
 #accessBtn{
     display:flex;
     flex-wrap:wrap;
-    justify-content: start;
+    justify-content: space-between;
     margin:25px 0;
     gap: 10px;
     color: var(--font-color);
@@ -256,7 +259,7 @@ a{
 #channelInfo{
     padding: 0;
     height: 40px;
-    width: 120px;
+    width: 110px;
 }
 #channelName{
     margin: 0px;
