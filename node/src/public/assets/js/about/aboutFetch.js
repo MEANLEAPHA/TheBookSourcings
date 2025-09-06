@@ -488,9 +488,9 @@ function renderAuthorInfo(authors) {
         <div class="authorInfo">
           <p class="authorName">${name}</p>
           <p class="authorProfession">${profession}</p>
+          <p class="aboutAuthorDes">${description}</p>
         </div>
       </div>
-      <p class="aboutAuthorDes">${description}</p>
       <p><a href="aboutAuthor.html?wikiId=${wikiId}">Know more details</a></p>
       ${idx < authors.length - 1 ? '<hr>' : ''}
     `;
