@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+   
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+         <link rel="stylesheet" href="assets/css/about/aboutAuthor.css">
+</head>
+<body>
+    
+
+
+<div class="page-inner">
+    <div id="main-wrapper">
+        <div class="layout">
+            <!-- Left Column -->
+            <div class="col col-left">
+                <div class="card">
+                    <div class="card-body user-profile-card">
+                        <img src="" class="user-profile-image" />
+                        <h4 class="username authorFullName"></h4>
+                        <img src="" class="signature">
+                        
+                    </div>
+                   
+                    <br class="br">
+                    <hr class="hr"/>
+                    <br class="br">
+                  
+                        <h4 class="card-title sM">Social Media</h4>
+                  
+                    <div class="card-body" id="social">
+                        <a href="" class="website"><i class="fa-solid fa-globe"></i></a>
+                        <a href="" class="facebook"><i class="fa-brands fa-facebook"></i> </a>
+                        <a href="" class="instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="" class="linkedin"><i class="fa-brands fa-linkedin"></i></a>
+                        <a href="" class="youtube"><i class="fa-brands fa-youtube"></i></a>
+                        <a href="" class="twitter"><i class="fa-brands fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Middle Column -->
+            <div class="col col-middle">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">About: <span class="aboutAFN"></span></h4>
+                        
+                         <table>
+                            <tbody>
+                                <tr class="trs GivennameTr">
+                                    <td>Given name</td>
+                                    <td class="Givenname"></td>
+                                </tr>
+                                <tr class="trs FamilynameTr">
+                                    <td>Family name</td>
+                                    <td class="Familyname"></td>
+                                </tr>
+                                <tr class="trs aliasesTr">
+                                    <td>Aliases</td>
+                                    <td class="aliases"></td>
+                                </tr>
+                                <tr class="trs dOb">
+                                    <td>Date of birth</td>
+                                    <td class="Dateofbirth"></td>
+                                </tr>
+                                <tr class="trs pOb">
+                                    <td>Place of birth</td>
+                                    <td class="Placeofbirth"></td>
+                                </tr>
+                                <tr class="trs dOd">
+                                    <td>Date of death</td>
+                                    <td class="Dateofdeath"></td>
+                                </tr>
+                                <tr class="trs pOd">
+                                    <td>Place of death</td>
+                                    <td class="Placeofdeath"></td>
+                                </tr>
+                                <tr class="trs cOd">
+                                    <td>Cause of death</td>
+                                    <td class="Causeofdeath"></td>
+                                </tr>
+                                    <tr class="trs GenderTr">
+                                    <td>Gender</td>
+                                    <td class="Gender"></td>
+                                </tr>
+                                <tr class="trs CitizenshipTr">
+                                    <td>Citizenship</td>
+                                    <td class="Citizenship"></td>
+                                </tr>
+                                <tr class="trs religionTr">
+                                    <td>Religion</td>
+                                    <td class="religion"></td>
+                                </tr>
+                                <tr class="trs educationTr">
+                                    <td>Education</td>
+                                    <td class="education"></td>
+                                </tr>
+                                <tr class="trs OccupationTr">
+                                    <td>Occupation</td>
+                                    <td class="Occupation"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br>
+                        <div class=" SummaryTr">
+                          <h4 class="card-title">Summary</h4>
+                          <p class="Summary">
+                          </p>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="card notableWork">
+                    <div class="card-body">
+                        <h4 class="card-title">Book</h4>
+                      <div class="book-carousel swiper">
+                          <div class="swiper-wrapper">
+                          </div>
+                          <div  class="sp"> 
+                          <div class="swiper-pagination"></div>
+                          </div>
+                          <div class="swiper-button-prev" style="color: lightgrey;display: none;" ></div>
+                          <div class="swiper-button-next" style="color: lightgrey;display: none;"></div>
+                      </div>
+                    </div>
+                </div>
+                <div class="card award-card">
+                    <div class="card-body">
+                        <h4 class="card-title">Awards & Recognition</h4>
+                          <div class="awardlist">
+
+                          </div>
+                          
+                    </div>
+                </div>
+
+                
+
+                
+            </div>
+
+            <!-- Right Column -->
+            <div class="col col-right">
+                <div class="card influenced-by-card">
+                    <div class="card-heading">
+                        <h4 class="card-title">Influenced By</h4>
+                    </div>
+                    <div class="card-body team ">
+                        <div class="team-member influenced-By">
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="card influenced-card">
+                    <div class="card-heading">
+                        <h4 class="card-title">Influenced</h4>
+                    </div>
+                    <div class="card-body team">
+                        <div class="team-member influenced">
+                        </div>
+                    </div>
+                </div>
+                <div class="card similar-authors-card">
+                    <div class="card-heading">
+                        <h4 class="card-title">Similar Authors</h4>
+                    </div>
+                    <div class="card-body team">
+                        <div class="team-member similar-authors">
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-heading">
+                        <h4 class="card-title">Some Info</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+  
+</div>
+   <section class="content-item" id="comments">
+  <div class="container">
+    <form>
+      <h3 class="form-title">Say something about this book</h3>
+      <button type="submit" class="btn">Submit</button>
+      <fieldset>
+        <div class="form-row">
+          <div class="avatar">
+            <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="user avatar">
+          </div>
+          <div class="input-box">
+            <textarea class="form-control" id="message" placeholder="Your message" required></textarea>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+
+    <h3>4 Comments</h3>
+
+    <!-- COMMENT 1 -->
+    <div class="media">
+      <div class="avatar">
+        <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="">
+      </div>
+      <div class="media-body">
+        <h4 class="media-heading">John Doe</h4>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+        <ul class="media-detail left">
+          <li><i class="fa fa-calendar"></i>27/02/2014</li>
+          <li><i class="fa fa-thumbs-up"></i>13</li>
+        </ul>
+        <ul class="media-detail right">
+          <li><a href="#">Like</a></li>
+          <li><a href="#">Reply</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- COMMENT 2 -->
+    <div class="media">
+      <div class="avatar">
+        <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="">
+      </div>
+      <div class="media-body">
+        <h4 class="media-heading">John Doe</h4>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+        <ul class="media-detail left">
+          <li><i class="fa fa-calendar"></i>27/02/2014</li>
+          <li><i class="fa fa-thumbs-up"></i>13</li>
+        </ul>
+        <ul class="media-detail right">
+          <li><a href="#">Like</a></li>
+          <li><a href="#">Reply</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- COMMENT 3 -->
+    <div class="media">
+      <div class="avatar">
+        <img src="https://bootdey.com/img/Content/avatar/avatar3.png" alt="">
+      </div>
+      <div class="media-body">
+        <h4 class="media-heading">John Doe</h4>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+        <ul class="media-detail left">
+          <li><i class="fa fa-calendar"></i>27/02/2014</li>
+          <li><i class="fa fa-thumbs-up"></i>13</li>
+        </ul>
+        <ul class="media-detail right">
+          <li><a href="#">Like</a></li>
+          <li><a href="#">Reply</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- COMMENT 4 -->
+    <div class="media">
+      <div class="avatar">
+        <img src="https://bootdey.com/img/Content/avatar/avatar4.png" alt="">
+      </div>
+      <div class="media-body">
+        <h4 class="media-heading">John Doe</h4>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+        <ul class="media-detail left">
+          <li><i class="fa fa-calendar"></i>27/02/2014</li>
+          <li><i class="fa fa-thumbs-up"></i>13</li>
+        </ul>
+        <ul class="media-detail right">
+          <li><a href="#">Like</a></li>
+          <li><a href="#">Reply</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+<script src="assets/js/about/fetchAuthor.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+  const swiper = new Swiper('.swiper', {
+  loop: true,
+  autoplay: { delay: 1500 },
+  slidesPerView: 'auto', // Default for small screens
+  spaceBetween: 15,      // Default space
+  pagination: { el: '.swiper-pagination', clickable: true },
+  navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+  breakpoints: {
+    640: {
+      slidesPerView: 3,
+      spaceBetween: 20 // Optional for medium screens
+    },
+    768: {
+      slidesPerView: 3,
+      spaceBetween: 20 // 💡 Expanded spacing for tablets
+    },
+    1024: {
+      slidesPerView: 5,
+      spaceBetween: 15 // Back to standard spacing for desktop
+    }
+    
+  }
+});
+
+
+
+// const showLessBook = document.getElementById("showLessBook");
+// const showAllBook = document.getElementById("showAllBook");
+// const books = document.querySelectorAll('.books');
+
+// if(books.length > 3){
+//     for(let i =3 ; i < books.length; i++ ){
+//         books[i].style.display = 'none';
+//     }
+     
+//         showLessBook.style.display = 'none';
+//         showAllBook.style.display = 'flex';
+
+//         showAllBook.addEventListener('click', ()=>{
+
+//         books.forEach(child => child.style.display = 'flex')
+               
+             
+//                 showAllBook.style.display = 'none';
+//                 showLessBook.style.display = 'flex';
+          
+//                  })
+
+//         showLessBook.addEventListener('click', ()=>{
+//               for(let i =3 ; i < books.length; i++ ){
+//                  books[i].style.display = 'none';
+                
+//               }
+            
+//                 showAllBook.style.display = 'flex';
+//                 showLessBook.style.display = 'none';
+//         })
+   
+    
+  
+// }
+// else{
+// showLessBook.style.display = 'none';
+// showAllBook.style.display = 'none';
+// }
+
+</script>
+
+</body>
+</html>

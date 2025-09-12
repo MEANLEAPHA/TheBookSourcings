@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About the Book</title>
+</head>
+<body>
+  <!-- <h1 id="title"></h1>
+  <h3 id="author"></h3>
+  <img id="cover" alt="Book cover" />
+  <p id="description"></p> -->
+  <header></header>
+  <main>
+     
+  </main>
+  <footer></footer>
+</body>
+<script>
+  // Detect source from bookId
+  function detectSource(bookId) {
+    if (/^OL\d+(W|M|A)$/.test(bookId)) return "openlibrary";
+    if (/^\d+$/.test(bookId)) return "gutenberg";
+    return "google"; // fallback for Google Books
+  }
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const bookId = urlParams.get("bookId");
+  const source = detectSource(bookId);
+
+  // Fetch book from your backend unified endpoint
+  fetch(`/api/aboutBook/${source}/${bookId}`)
+    .then(res => res.json())
+    .then(renderBook)
+    .catch(err => {
+      console.error("Failed to fetch book:", err);
+      document.querySelector("#title").textContent = "Book not found";
+      document.querySelector("#description").textContent = "";
+      document.querySelector("#cover").src = "fallback.jpg";
+      document.querySelector("#author").textContent = "";
+    });
+
+  // Render book info
+  function renderBook(data) {
+    document.querySelector("#title").textContent = data.title || "No title";
+    document.querySelector("#author").textContent = data.authors?.join(", ") || "Unknown author";
+    document.querySelector("#description").innerHTML = data.description || "No description available.";
+    document.querySelector("#cover").src = data.cover || "fallback.jpg";
+  }
+</script>
+</html>
+    // after fetching the book
+description.textContent = data.description || "No description available.";
+
+// now run read more / read less logic
+let descriptions = description.textContent;
+
+const seemore = document.getElementById('seemore');
+const seeless = document.getElementById('seeless');
+
+if(descriptions.length > 1000){
+    const shortText = descriptions.slice(0,1000) + "......";
+    description.innerText = shortText;
+    seemore.style.display = "inline"; // or "block"
+    seeless.style.display = "none";
+
+    seemore.addEventListener('click', ()=>{
+        description.innerText = descriptions;
+        seemore.style.display = "none";
+        seeless.style.display = "inline"; // or "block"
+    });
+
+    seeless.addEventListener('click', ()=>{
+        description.innerText = shortText;
+        seemore.style.display = "inline";
+        seeless.style.display = "none";
+    });
+} else {
+    seemore.style.display = "none";
+    seeless.style.display = "none";
+}
+
+
+const { fetchJson } = require("../../../util/apiClient");
+
+async function getGutenbergBookById(req, res) {
+  try {
+    const { bookId } = req.params;
+    const url = `https://gutendex.com/books/${bookId}`;
+    const data = await fetchJson(url);
+
+    if (!data || !data.id) {
+      return res.status(404).json({ error: "No data about this Book" });
+    }
+
+    const book = {
+      source: "Project Gutenberg",
+      bookId: data.id || null,
+      title: data.title || null,
+      subtitle: null, // Gutenberg does not provide a subtitle
+      authors: data.authors?.map(a => a.name).replace(",", "") || [],
+      description: data.summaries?.[0] || "No Date", // usually missing in Gutendex
+      cover: data.formats?.["image/jpeg"] || "No Date",
+      categories: data.subjects || [],
+      language: data.languages?.[0] || "No Date",
+      page: "No Date", // Gutenberg doesn’t provide page count
+      ISBN_10: "No Date", // not available in Gutenberg
+      ISBN_13: "No Date", // not available in Gutenberg
+      publishDate: data?.copyright ? data?.copyright : "No Date", // Gutendex rarely has real date
+      publisher: "No Date", // default since publisher info not in API
+    };
+
+    res.json(book);
+  } catch (err) {
+    console.error("aboutGutenbergController.js Error:", err.message);
+    res.status(500).json({
+      error: "Failed to fetch the Book From aboutGutenbergController.js",
+      status: false,
+    });
+  }
+}
+
+module.exports = { getGutenbergBookById };
+// Import fetchJson using require
+const { fetchJson } = require('../../../util/apiClient');
+
+// Define the async function
+async function getOpenLibraryTrending() {
+  const url = "https://openlibrary.org/trending/daily.json";
+  const data = await fetchJson(url);
+
+  if (!data || !data.works) return [];
+  const authorNames = await Promise.all(
+        (data.authors || []).map(async (a) => {
+          const authorData = await fetchJson(`https://openlibrary.org${a.author.key}.json`);
+          return authorData.name || "Unknown";
+        })
+      );
+  return data.works.slice(0, 10).map(book => ({
+    source: "Open Library",
+    title: book.title,
+    authors: authorNames,
+    cover: book.cover_i
+      ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg`
+      : null,
+    bookId: book.key.replace("/works/", ""),
+    categories: book.subjects || [],
+  }));
+}
+
+// Export the function using CommonJS
+module.exports = {
+  getOpenLibraryTrending
+};
+
+
+// Import fetchJson using require
+const { fetchJson } = require('../../../util/apiClient');
+
+// Define the async function
+async function getGutenbergTrending() {
+  const url = "https://gutendex.com/books?sort=popular";
+  const data = await fetchJson(url);
+
+  if (!data || !data.results) return [];
+
+  
+
+  return data.results.slice(0, 10).map(book => ({
+    source: "Project Gutenberg",
+    title: book.title,
+    authors: book.authors.map(a => a.name),
+    cover: book.formats["image/jpeg"] || null,
+    subjects: book.subjects || [],
+    bookId: book.id,
+    categories: book.subjects || []
+  }));
+}
+
+// Export the function using CommonJS
+module.exports = {
+  getGutenbergTrending
+};
+
+
+// controllers/openLibraryController.js
+const { fetchJson } = require("../../../util/apiClient");
+
+async function getOpenLibraryBookById(req, res) {
+  try {
+    const { bookId } = req.params;
+
+    // Fetch Work data
+    const url = `https://openlibrary.org/works/${bookId}.json`;
+    const data = await fetchJson(url);
+
+    if (!data) {
+      return res.status(404).json({
+        error: "No data about this Book",
+      });
+    }
+
+    // Try to fetch one edition (for ISBNs, pages, publishers, ocaid, etc.)
+    let editionData = null;
+    try {
+      const editionUrl = `https://openlibrary.org/works/${bookId}/editions.json?limit=1`;
+      const editionResponse = await fetchJson(editionUrl);
+      if (editionResponse && editionResponse.entries && editionResponse.entries.length > 0) {
+        editionData = editionResponse.entries[0];
+      }
+    } catch (err) {
+      console.warn("No edition data found for book:", bookId);
+    }
+
+    // Extract identifiers (ISBNs, OCLC, LCCN, etc.)
+    const identifiers = editionData?.identifiers || {};
+    const authorNames = await Promise.all(
+      (data.authors || []).map(async (a) => {
+        const authorData = await fetchJson(`https://openlibrary.org${a.author.key}.json`);
+        return authorData.name || "Unknown";
+      })
+    );
+
+    // Build read & download links if ocaid exists
+    let read = null;
+    let download = null;
+
+    if (editionData?.ocaid) {
+      const ocaid = editionData.ocaid;
+      read = `https://archive.org/details/${ocaid}`;
+      download = `https://archive.org/download/${ocaid}/${ocaid}.pdf`;
+    }
+
+    const book = {
+      source: "Open Library",
+      bookId: data.key || bookId,
+      title: data.title || null,
+      subtitle: editionData?.subtitle || null,
+      authors: authorNames,
+      description:
+        typeof data.description === "string"
+          ? data.description
+          : data.description?.value || null,
+      cover: data.covers
+        ? `https://covers.openlibrary.org/b/id/${data.covers[0]}-L.jpg`
+        : null,
+      categories: data.subjects || [],
+      language: editionData?.languages?.[0]?.key?.replace("/languages/", "") || null,
+      page: editionData?.pagination || null,
+      ISBN_10: editionData?.isbn_10 ? editionData.isbn_10[0] : null,
+      ISBN_13: editionData?.isbn_13 ? editionData.isbn_13[0] : null,
+      publishDate: editionData?.publish_date || null,
+      publisher: editionData?.publishers ? editionData.publishers[0] : null,
+      read,
+      download,
+    };
+
+    res.json(book);
+  } catch (err) {
+    console.error("openLibraryController.js Error:", err.message);
+    res.status(500).json({
+      error: "Failed to fetch the book data",
+      status: false,
+    });
+  }
+}
+
+module.exports = { getOpenLibraryBookById };
