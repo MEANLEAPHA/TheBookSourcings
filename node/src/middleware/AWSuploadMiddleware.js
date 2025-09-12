@@ -26,7 +26,7 @@ const uploadToS3 = async (file, folder = "") => {
     Key: `${folder}${Date.now()}-${file.originalname}`,
     Body: file.buffer,
     ContentType: file.mimetype,
-    ACL: "public-read" 
+    // ACL: "public-read" 
   };
 
   const parallelUpload = new Upload({
