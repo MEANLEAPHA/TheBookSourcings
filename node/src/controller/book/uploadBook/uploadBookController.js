@@ -1,37 +1,32 @@
 const db = require('../../../config/db');
 
+const { upload, uploadToS3 } = require("../../../middleware/AWSuploadMiddleware");
+
 const uploadBook = async (req, res) => {
   try {
     const userId = req.user.user_id;
     const userEmail = req.user.email;
 
-    const { title, subtitle, summary, author, category, genre, language, pageCount, isnb10, isnb13, publisher, publishedDate, comment, download, share } = req.body;
+    const { title, subtitle, summary, author, category, genre, language, pageCount, isnb10, isbn13, publisher, publishedDate, comment, download, share } = req.body;
 
-    // Check required fields
     if (!title || !subtitle || !summary || !author || !category || !language || !comment || !share || !download || !req.files.bookCover || !req.files.bookFile) {
-      return res.status(400).json({ message: "Please enter all required fields before upload" });
+      return res.status(400).json({ message: "Please fill all required fields" });
     }
 
-    // Get URLs from S3 upload
-    const coverUrl = req.files.bookCover[0].location;  // multer-s3 provides 'location'
-    const fileUrl  = req.files.bookFile[0].location;
+    // Upload files to S3
+    const bookCoverUrl = await uploadToS3(req.files.bookCover[0], "covers/");
+    const bookFileUrl = await uploadToS3(req.files.bookFile[0], "books/");
 
-    // Save metadata + URLs in MySQL
+    // Save in DB
     const [result] = await db.query(
-      `INSERT INTO todo_tasks 
-      (member_id, member_email, title, subTitle, author, summary, mainCategory, genre, language, pageCount, ISBN10, ISBN13, publisher, publishDate, comment, download, share, coverUrl, fileUrl) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [userId, userEmail, title, subtitle, author, summary, category, genre, language, pageCount, isnb10, isnb13, publisher, publishedDate, comment, download, share, coverUrl, fileUrl]
+      "INSERT INTO todo_tasks (member_id, member_email, title, subTitle, author, summary, mainCategory, genre, language, pageCount, ISBN10, ISBN13, publisher, publishDate, comment, download, share, bookCover, bookFile) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      [userId, userEmail, title, subtitle, author, summary, category, genre, language, pageCount, isnb10, isbn13, publisher, publishedDate, comment, download, share, bookCoverUrl, bookFileUrl]
     );
 
-    res.json({
-      message: "Upload Book successfully",
-      coverUrl,
-      fileUrl
-    });
+    res.json({ message: "Upload Book successfully" });
   } catch (error) {
-    console.error("uploadBookController.js Error:", error.message);
-    res.status(500).json({ message: "Internal Server Error", error: error.message });
+    console.error("uploadBookController.js Error:", error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
 

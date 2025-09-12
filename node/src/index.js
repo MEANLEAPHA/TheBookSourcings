@@ -27,11 +27,11 @@ const aboutAuthorInfo = require('./routes/book/about/allAboutAuthorInfoRoute');
 const aboutAuthorDetails = require('./routes/book/about/aboutAuthorDetailsRoute');
 const similarAuthorDetail = require('./routes/book/about/similarAuthorRoutes');
 const notableWork = require('./routes/book/about/notableWorkRoutes');
-const {upload} = require('./routes/book/uploadBookRoute/upload');
+const {bookRoutes} = require('./routes/book/uploadBookRoute/upload');
 
 // Initialize Routes
 TheBookSourcingUser(app);
-upload(app);
+bookRoutes(app);
 app.use('/api/trending', trendingRoutes); // ✅ mount trending API
 app.use('/api/aboutBook', aboutBookInfoRoute);
 app.use('/api/similar', similarBookRoute);

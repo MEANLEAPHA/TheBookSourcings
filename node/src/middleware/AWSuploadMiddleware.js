@@ -1,29 +1,41 @@
-const AWS = require('aws-sdk');
-const multer = require('multer');
-const multerS3 = require('multer-s3');
+
+
+
+
+const multer = require("multer");
+const { S3Client } = require("@aws-sdk/client-s3");
+const { Upload } = require("@aws-sdk/lib-storage");
 require('dotenv').config();
-
-// Configure AWS S3
-const s3 = new AWS.S3({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,       // from IAM user
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY, // from IAM user
-  region: process.env.AWS_REGION                   // bucket region
+// Create S3 client
+const s3Client = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+  }
 });
 
-// Multer S3 storage
-const uploadAWS = multer({
-  storage: multerS3({
-    s3: s3,
-    bucket: process.env.AWS_BUCKET_NAME,          // your bucket
-    acl: 'public-read',                           // file public
-    metadata: function (req, file, cb) {
-      cb(null, { fieldName: file.fieldname });
-    },
-    key: function (req, file, cb) {
-      const fileName = Date.now() + '-' + file.originalname;
-      cb(null, fileName);
-    }
-  })
-});
+// Multer storage function using v3
+const storage = multer.memoryStorage(); // keep files in memory for lib-storage
 
-module.exports = uploadAWS;
+const upload = multer({ storage });
+
+const uploadToS3 = async (file, folder = "") => {
+  const uploadParams = {
+    Bucket: process.env.AWS_BUCKET_NAME,
+    Key: `${folder}${Date.now()}-${file.originalname}`,
+    Body: file.buffer,
+    ACL: "public-read"
+  };
+
+  const parallelUpload = new Upload({
+    client: s3Client, // must be v3 S3Client
+    params: uploadParams
+  });
+
+  const result = await parallelUpload.done();
+  return result.Location; // the file URL
+};
+
+module.exports = { upload, uploadToS3 };
+
