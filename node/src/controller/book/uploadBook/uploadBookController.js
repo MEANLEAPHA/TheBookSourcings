@@ -19,7 +19,7 @@ const uploadBook = async (req, res) => {
 
     // Save in DB
     const [result] = await db.query(
-      "INSERT INTO todo_tasks (member_id, member_email, title, subTitle, author, summary, mainCategory, genre, language, pageCount, ISBN10, ISBN13, publisher, publishDate, comment, download, share, bookCover, bookFile) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO uploadBook (member_id, member_email, title, subTitle, author, summary, mainCategory, genre, language, pageCount, ISBN10, ISBN13, publisher, publishDate, comment, download, share, bookCover, bookFile) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [userId, userEmail, title, subtitle, author, summary, category, genre, language, pageCount, isnb10, isbn13, publisher, publishedDate, comment, download, share, bookCoverUrl, bookFileUrl]
     );
 
