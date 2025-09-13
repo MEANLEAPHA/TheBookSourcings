@@ -29,7 +29,7 @@ const similarAuthorDetail = require('./routes/book/about/similarAuthorRoutes');
 const notableWork = require('./routes/book/about/notableWorkRoutes');
 const {bookRoutes} = require('./routes/book/uploadBookRoute/upload');
 const getBookByQid = require('./routes/book/uploadBookRoute/paramQueryRoute');
-const getMyBooks = require('./routes/book/uploadBookRoute/queryRoutes');
+const getMyBooksRoutes = require('./routes/book/uploadBookRoute/queryRoutes');
 
 // Initialize Routes
 TheBookSourcingUser(app);
@@ -43,7 +43,7 @@ app.use('/api/author', aboutAuthorDetails);
 app.use('/api/authors/similar', similarAuthorDetail);
 app.use('/api/authors/notableWork', notableWork);
 app.use('/api/getBookByQid', getBookByQid);
-app.use('/api/getMyBooks', getMyBooks);
+app.use('/api/getMyBooks', getMyBooksRoutes);
 
 
 
