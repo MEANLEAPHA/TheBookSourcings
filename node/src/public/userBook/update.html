@@ -1,227 +1,269 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="../assets/css/uploadBook/update.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Update Book</title>
+  <link rel="stylesheet" href="../assets/css/uploadBook/update.css">
+  <style>
+    body { font-family: Arial, sans-serif; background: #f5f5f5; margin:0; padding:0; }
+    .containerx { max-width: 900px; margin: 50px auto; }
+    .card { background: #fff; border-radius: 8px; padding: 20px; }
+    .form-section { margin-bottom: 20px; }
+    .form-label { font-weight: 600; margin-bottom: 5px; display:block; }
+    input, select, textarea { width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc; }
+    .file-preview { width: 150px; height: 200px; border: 1px dashed #ccc; display: flex; align-items:center; justify-content:center; margin-bottom:10px; }
+    .file-preview img, .file-preview iframe { max-width: 100%; max-height: 100%; }
+    button { padding: 10px 15px; border:none; border-radius: 5px; cursor:pointer; margin-right:10px; }
+    .btn-success { background: #4CAF50; color: #fff; }
+    .btn-danger { background: #f44336; color: #fff; }
+    .toggle-switch { position: relative; display: inline-block; width: 50px; height: 24px; }
+    .toggle-switch input { opacity: 0; width:0; height:0; }
+    .toggle-switch label { position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background:#ccc; border-radius: 34px; transition:.4s; }
+    .toggle-switch label:before { position:absolute; content:""; height:20px; width:20px; left:2px; bottom:2px; background:white; transition:.4s; border-radius:50%; }
+    .toggle-switch input:checked + label { background: #4CAF50; }
+    .toggle-switch input:checked + label:before { transform: translateX(26px); }
+  </style>
 </head>
+<body>
+  <div class="containerx">
+    <div class="card">
+      <h2>Update Book</h2>
+      <form id="updateBookForm">
 
-    
-<body class="bg-light">
-  <div class="containerx "> 
-    <div class="card shadow ">
-      <div class="card-body">
-      
-        <!-- Progress bar -->
-        <div class="progress mb-4">
-          <div class="progress-bar " role="progressbar" style="width: 25%;" id="progressBar"></div>
+        <!-- File Uploads -->
+        <div class="form-section">
+          <label class="form-label">Book File</label>
+          <div class="file-preview" id="filePreviewBox">
+            <iframe id="filePreview" style="display:none;" frameborder="0"></iframe>
+            <span id="filePlaceholder"><i class="fa-solid fa-file"></i></span>
+          </div>
+          <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt,.epub">
         </div>
 
-        <form id="bookForm">
-          <!-- Step 1: File Upload -->
-          <div class="step-section active fileInput" id="step-1">
-            <h5 class="mb-3">Upload Book file and Cover</h5>
-            <div class="rows ">
-              <div class="form-section">
-                <label class="form-label">Book File</label>
-                <div class="text-center">
-                    <div class="squares" id="BookFileBox">
-                    <span id="filePlaceholder"><i class="fa-solid fa-file"></i></span>
-                    <iframe id="filePreview" style="display:none;" frameborder="0"></iframe>
-                    </div>
-                    <div class="rowb">
-                        <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt,.epub" hidden required>
-                        <label class="btn btn-success-soft" for="fileInput"><i class="fa-solid fa-file-import"></i></label>
-                        <button type="button" id="fileRemoveBtn" class="btn btn-danger-soft"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                </div>
-              </div>
-              <div class="form-section">
-                  <label class="form-label">Book Cover</label>
-                  <div class="text-center">
-                      <div class="square" id="coverBox">
-                      <span id="coverPlaceholder"><i class="fa-solid fa-file-image"></i></span>
-                      <img id="coverPreview" alt="Cover Preview" style="display:none;">
-                      </div>
-                      <div class="rowb">
-                          <input type="file" id="coverInput" accept="image/*" hidden required>
-                          <label class="btn btn-success-soft" for="coverInput"><i class="fa-solid fa-file-import"></i></label>
-                          <button type="button" id="coverRemoveBtn" class="btn btn-danger-soft"><i class="fa-solid fa-trash"></i></button>
-                      </div>
-                  </div>
-              </div>
-            </div>
+        <div class="form-section">
+          <label class="form-label">Book Cover</label>
+          <div class="file-preview" id="coverPreviewBox">
+            <img id="coverPreview" style="display:none;" alt="Cover Preview">
+            <span id="coverPlaceholder"><i class="fa-solid fa-file-image"></i></span>
           </div>
+          <input type="file" id="coverInput" accept="image/*">
+        </div>
 
-          <!-- Step 2: Basic Info -->
-          <div class="step-section" id="step-2">
-            <h5 class="mb-3">Fill the Book main information</h5>
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label class="form-label">Title</label>
-                <input type="text" class="form-control" required placeholder="Enter book title" id="title">
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Subtitle (Optional)</label>
-                <input type="text" class="form-control" placeholder="Enter subtitle" id="subtitle">
-              </div>
-              <div class="col-12">
-                <label class="form-label">Summary</label>
-                <textarea class="form-control" rows="3" required id="summary" placeholder="Enter book summary"></textarea>
-              </div>
-              <div class="col-12">
-                <label class="form-label">Author</label>
-                <textarea class="form-control" rows="3" required placeholder="Author 1, Author 2, etc." id="authorName"></textarea>
-              </div>
-            </div>
-          </div>
+        <!-- Basic Info -->
+        <div class="form-section">
+          <label class="form-label">Title</label>
+          <input type="text" id="title" required>
+        </div>
 
-          <!-- Step 3: More Details -->
-          <div class="step-section" id="step-3">
-            <h5 class="mb-3">Fill the Book Details</h5>
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label class="form-label">Category</label>
-                <br>
-                <select class="form-select" id="category" required>
-                    <option value="" disabled selected>Select Book Category</option>
-                    <!-- Fiction -->
-                    <option value="Fiction">Fiction</option>
-                    <option value="Fantasy">Fantasy</option>
-                    <option value="ScienceFiction">Science Fiction</option>
-                    <option value="Mystery">Mystery / Thriller</option>
-                    <option value="Romance">Romance</option>
-                    <option value="HistoricalFiction">Historical Fiction</option>
-                    <option value="Horror">Horror</option>
-                    <option value="Adventure">Adventure</option>
-                    <!-- Non-Fiction -->
-                    <option value="Biography">Biography / Autobiography</option>
-                    <option value="Memoir">Memoir</option>
-                    <option value="SelfHelp">Self-Help / Personal Development</option>
-                    <option value="Business">Business / Management</option>
-                    <option value="Finance">Finance / Economics</option>
-                    <option value="History">History</option>
-                    <option value="Science">Science & Technology</option>
-                    <option value="Health">Health & Wellness</option>
-                    <option value="Travel">Travel</option>
-                    <option value="Cookbook">Cookbook / Food</option>
-                    <!-- Academic & Educational -->
-                    <option value="Textbook">Textbook</option>
-                    <option value="Lecture">Lecture</option>
-                    <option value="CaseStudy">Case Study</option>
-                    <option value="Research">Research / Academic Paper</option>
-                    <option value="Reference">Reference / Encyclopedia</option>
-                    <option value="Essay">Essay Collection</option>
-                    <!-- Other -->
-                    <option value="Poetry">Poetry</option>
-                    <option value="Art">Art / Photography</option>
-                    <option value="Comics">Comics / Graphic Novel</option>
-                    <option value="Children">Children's Books</option>
-                    <option value="YoungAdult">Young Adult</option>
-                </select>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Genre (Optional)</label>
-                <input type="text" class="form-control" id="genre" placeholder="Horror, Romance, etc.">
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Language</label>
-                <br>
-                <select class="form-select" id="language" required>
-                  <option value="" disabled selected>Select Language</option>
-                  <option value="English">🇬🇧 English</option>
-                  <option value="French">🇫🇷 French</option>
-                  <option value="Spanish">🇪🇸 Spanish</option>
-                  <option value="German">🇩🇪 German</option>
-                  <option value="Japanese">🇯🇵 Japanese</option>
-                  <option value="Chinese">🇨🇳 Chinese</option>
-                  <option value="Khmer">🇰🇭 Khmer</option>
-                  <option value="Thai">🇹🇭 Thai</option>
-                  <option value="Korean">🇰🇷 Korean</option>
-                  <option value="Indonesian">🇮🇩 Indonesian</option>
-                  <option value="Portuguese">🇧🇷 Portuguese</option>
-                  <option value="Russian">🇷🇺 Russian</option>
-                  <option value="Turkish">🇹🇷 Turkish</option>
-                  <option value="Vietnamese">🇻🇳 Vietnamese</option>
-                  <option value="Arabic">🇦🇪 Arabic</option>
-                  <option value="Hindi">🇮🇳 Hindi</option>
-                  <option value="Italian">🇮🇹 Italy</option>
-              </select>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Page Count (Optional)</label>
-                <input type="number" class="form-control" id="pageCount" placeholder="Enter page count">
-              </div>
-            </div>
-          </div>
+        <div class="form-section">
+          <label class="form-label">Subtitle</label>
+          <input type="text" id="subtitle">
+        </div>
 
-          <!-- Step 4: Final Details -->
-          <div class="step-section" id="step-4">
-            <h5 class="mb-3">Fill the book basic information</h5>
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label class="form-label">ISBN-10 (Optional)</label>
-                <input type="number" class="form-control" id="isbn10">
-              </div>
-               <div class="col-md-6">
-                <label class="form-label">ISBN-13 (Optional)</label>
-                <input type="number" class="form-control" id="isbn13">
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Published Date (Optional)</label>
-                <input type="date" class="form-control" id="publishedDate">
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Publisher (Optional)</label>
-                <input type="text" class="form-control" id="publisher">
-              </div>
-            </div>
-          </div>
-           <!-- Step 5: Final Details -->
-          <div class="step-section" id="step-5">
-            <h5 class="mb-3">Setup the book privacy</h5>
-            <div class="row g-3">
-              <div class="toggleForThree">
-                  <label class="form-label">Comment : </label>
-                  <div class="toggle-switch">
-                      <input type="checkbox" id="comment">
-                      <label for="comment"></label>
-                  </div>
-              </div>
-              <div class="toggleForThree">
-                  <label class="form-label">Download : </label>
-                  <div class="toggle-switch">
-                      <input type="checkbox" id="download">
-                      <label for="download"></label>
-                  </div>
-              </div>
-              <div class="toggleForThree">
-                  <label class="form-label">Share : </label>
-                  <div class="toggle-switch">
-                      <input type="checkbox" id="share">
-                      <label for="share"></label>
-                  </div>
-              </div>
-            </div>
-          </div>
+        <div class="form-section">
+          <label class="form-label">Summary</label>
+          <textarea id="summary" rows="3" required></textarea>
+        </div>
 
-          <!-- Navigation Buttons -->
-          <div class="d-flex justify-content-between mt-4">
-            <button type="button" class="btn btn-secondary" id="prevBtn">Previous</button>
-            <button type="button" class="btn btn-primary" id="nextBtn">Next</button>
+        <div class="form-section">
+          <label class="form-label">Author</label>
+          <textarea id="authorName" rows="2" required></textarea>
+        </div>
+
+        <!-- More Details -->
+        <div class="form-section">
+          <label class="form-label">Category</label>
+          <select id="category" required>
+            <option value="">Select Category</option>
+            <option value="Fiction">Fiction</option>
+            <option value="Fantasy">Fantasy</option>
+            <option value="ScienceFiction">Science Fiction</option>
+            <option value="Mystery">Mystery / Thriller</option>
+            <option value="Romance">Romance</option>
+            <option value="HistoricalFiction">Historical Fiction</option>
+            <option value="Horror">Horror</option>
+            <option value="Adventure">Adventure</option>
+            <option value="Biography">Biography</option>
+            <option value="Memoir">Memoir</option>
+            <option value="SelfHelp">Self-Help</option>
+            <option value="Business">Business</option>
+            <option value="Finance">Finance</option>
+            <option value="History">History</option>
+            <option value="Science">Science</option>
+            <option value="Health">Health</option>
+            <option value="Travel">Travel</option>
+            <option value="Cookbook">Cookbook</option>
+            <option value="Textbook">Textbook</option>
+            <option value="Lecture">Lecture</option>
+            <option value="CaseStudy">Case Study</option>
+            <option value="Research">Research</option>
+            <option value="Reference">Reference</option>
+            <option value="Essay">Essay Collection</option>
+            <option value="Poetry">Poetry</option>
+            <option value="Art">Art</option>
+            <option value="Comics">Comics</option>
+            <option value="Children">Children</option>
+            <option value="YoungAdult">Young Adult</option>
+          </select>
+        </div>
+
+        <div class="form-section">
+          <label class="form-label">Genre</label>
+          <input type="text" id="genre">
+        </div>
+
+        <div class="form-section">
+          <label class="form-label">Language</label>
+          <select id="language" required>
+            <option value="">Select Language</option>
+            <option value="English">English</option>
+            <option value="French">French</option>
+            <option value="Spanish">Spanish</option>
+            <option value="German">German</option>
+            <option value="Japanese">Japanese</option>
+            <option value="Chinese">Chinese</option>
+            <option value="Khmer">Khmer</option>
+            <option value="Thai">Thai</option>
+            <option value="Korean">Korean</option>
+            <option value="Indonesian">Indonesian</option>
+            <option value="Portuguese">Portuguese</option>
+            <option value="Russian">Russian</option>
+            <option value="Turkish">Turkish</option>
+            <option value="Vietnamese">Vietnamese</option>
+            <option value="Arabic">Arabic</option>
+            <option value="Hindi">Hindi</option>
+            <option value="Italian">Italian</option>
+          </select>
+        </div>
+
+        <div class="form-section">
+          <label class="form-label">Page Count</label>
+          <input type="number" id="pageCount">
+        </div>
+
+        <!-- Final Details -->
+        <div class="form-section">
+          <label class="form-label">ISBN-10</label>
+          <input type="text" id="isbn10">
+        </div>
+
+        <div class="form-section">
+          <label class="form-label">ISBN-13</label>
+          <input type="text" id="isbn13">
+        </div>
+
+        <div class="form-section">
+          <label class="form-label">Published Date</label>
+          <input type="date" id="publishedDate">
+        </div>
+
+        <div class="form-section">
+          <label class="form-label">Publisher</label>
+          <input type="text" id="publisher">
+        </div>
+
+        <!-- Privacy toggles -->
+        <div class="form-section">
+          <label class="form-label">Comment</label>
+          <div class="toggle-switch">
+            <input type="checkbox" id="comment"><label for="comment"></label>
           </div>
-        </form>
-      </div>
+        </div>
+        <div class="form-section">
+          <label class="form-label">Download</label>
+          <div class="toggle-switch">
+            <input type="checkbox" id="download"><label for="download"></label>
+          </div>
+        </div>
+        <div class="form-section">
+          <label class="form-label">Share</label>
+          <div class="toggle-switch">
+            <input type="checkbox" id="share"><label for="share"></label>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-success" id="updateBtn">Update Book</button>
+      </form>
     </div>
   </div>
 
+  <script src="../assets/js/jquery.js"></script>
+  <script>
+    $(document).ready(function(){
+      const urlParams = new URLSearchParams(window.location.search);
+      const bookQid = urlParams.get('bookQid');
+      if (!bookQid) { alert("Book ID is missing!"); return; }
 
+      // Fetch existing data
+      $.ajax({
+        url: `https://thebooksourcings.onrender.com/api/getBookByQid/${bookQid}`,
+        type: 'GET',
+        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+        success: function(data){
+          if(!data) return;
 
+          $('#title').val(data.title);
+          $('#subtitle').val(data.subTitle);
+          $('#summary').val(data.summary);
+          $('#authorName').val(data.author);
+          $('#genre').val(data.genre);
+          $('#pageCount').val(data.pageCount);
+          $('#isbn10').val(data.ISBN10);
+          $('#isbn13').val(data.ISBN13);
+          $('#publisher').val(data.publisher);
+          $('#publishedDate').val(data.publishDate);
+          $('#category').val(data.mainCategory);
+          $('#language').val(data.language);
+          $('#comment').prop('checked', data.comment === 1);
+          $('#download').prop('checked', data.download === 1);
+          $('#share').prop('checked', data.share === 1);
 
+          if(data.bookCover){ $('#coverPreview').attr('src', data.bookCover).show(); $('#coverPlaceholder').hide(); }
+          if(data.bookFile){ $('#filePreview').attr('src', data.bookFile).show(); $('#filePlaceholder').hide(); }
+        },
+        error: function(err){ console.error("Error fetching book data:", err); }
+      });
 
-<script src="../assets/js/jquery.js"></script>
-<script src="../assets/js/uploadBook/update.js"></script>
-<script src="../assets/js/uploadBook/updateData.js"></script>
+      // Update handler
+      $('#updateBtn').click(function(){
+        const formData = new FormData();
+        formData.append('title', $('#title').val());
+        formData.append('subTitle', $('#subtitle').val());
+        formData.append('summary', $('#summary').val());
+        formData.append('author', $('#authorName').val());
+        formData.append('genre', $('#genre').val());
+        formData.append('pageCount', $('#pageCount').val());
+        formData.append('ISBN10', $('#isbn10').val());
+        formData.append('ISBN13', $('#isbn13').val());
+        formData.append('publisher', $('#publisher').val());
+        formData.append('publishDate', $('#publishedDate').val());
+        formData.append('mainCategory', $('#category').val());
+        formData.append('language', $('#language').val());
+        formData.append('comment', $('#comment').is(':checked') ? 1 : 0);
+        formData.append('download', $('#download').is(':checked') ? 1 : 0);
+        formData.append('share', $('#share').is(':checked') ? 1 : 0);
+        if($('#fileInput')[0].files[0]) formData.append('bookFile', $('#fileInput')[0].files[0]);
+        if($('#coverInput')[0].files[0]) formData.append('bookCover', $('#coverInput')[0].files[0]);
+
+        $.ajax({
+          url: `https://thebooksourcings.onrender.com/api/getMyBooks/updateBook/${bookQid}`,
+          method: 'PUT',
+          headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function(res){
+            alert("Book updated successfully!");
+            location.reload();
+          },
+          error: function(err){
+            console.error("Error updating book:", err);
+            alert("Failed to update book.");
+          }
+        });
+      });
+    });
+  </script>
 </body>
 </html>

@@ -10,7 +10,7 @@ $(document).ready(function() {
 
     // Fetch existing book data
     $.ajax({
-        url: `/api/books/${bookQid}`, // Your backend endpoint
+        url: `https://thebooksourcings.onrender.com/api/getBookByQid/${bookQid}`, // Your backend endpoint
         type: 'GET',
         success: function(data) {
             if (!data) return;
