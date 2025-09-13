@@ -5,6 +5,7 @@
 const multer = require("multer");
 const { S3Client } = require("@aws-sdk/client-s3");
 const { Upload } = require("@aws-sdk/lib-storage");
+const { DeleteObjectCommand } = require("@aws-sdk/client-s3");
 require('dotenv').config();
 // Create S3 client
 const s3Client = new S3Client({
@@ -38,5 +39,24 @@ const uploadToS3 = async (file, folder = "") => {
   return result.Location; // the file URL
 };
 
-module.exports = { upload, uploadToS3 };
+
+const deleteFromS3 = async (fileUrl) => {
+  try {
+    const bucketName = process.env.AWS_BUCKET_NAME;
+    // Extract key from fileUrl (everything after bucket domain)
+    const key = decodeURIComponent(fileUrl.split(".amazonaws.com/")[1]);
+
+    const command = new DeleteObjectCommand({
+      Bucket: bucketName,
+      Key: key
+    });
+
+    await s3Client.send(command);
+    console.log(`Deleted from S3: ${key}`);
+  } catch (err) {
+    console.error("deleteFromS3 Error:", err.message);
+  }
+};
+
+module.exports = { upload, uploadToS3, deleteFromS3 };
 

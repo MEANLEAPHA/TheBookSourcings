@@ -1,0 +1,130 @@
+/* Multi-step card style */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.containerx {
+    max-width: 900px;
+    margin: 50px auto;
+}
+
+.card {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+/* Step sections */
+.step-section {
+    display: none;
+}
+
+.step-section.active {
+    display: block;
+}
+
+/* Progress bar */
+.progress {
+    height: 8px;
+    border-radius: 5px;
+}
+
+.progress-bar {
+    background-color: #648dff;
+    transition: width 0.3s ease-in-out;
+}
+
+/* File upload boxes */
+.squares, .square {
+    border: 2px dashed #648dff;
+    border-radius: 10px;
+    padding: 20px;
+    width: 200px;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px auto;
+    position: relative;
+}
+
+#coverPreview, #filePreview {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 8px;
+}
+
+/* Buttons */
+.rowb {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-success-soft {
+    background-color: #d7e2ff;
+    border: 1px solid #648dff;
+    color: #648dff;
+}
+
+.btn-success-soft:hover {
+    background-color: #648dff;
+    color: #fff;
+}
+
+.btn-danger-soft {
+    background-color: #ffd7d7;
+    border: 1px solid #ff648d;
+    color: #ff648d;
+}
+
+.btn-danger-soft:hover {
+    background-color: #ff648d;
+    color: #fff;
+}
+
+/* Toggle switches */
+.toggle-switch {
+    position: relative;
+    width: 50px;
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.toggle-switch input {
+    display: none;
+}
+
+.toggle-switch label {
+    background-color: #ccc;
+    border-radius: 34px;
+    cursor: pointer;
+    display: block;
+    height: 24px;
+    position: relative;
+    transition: background-color 0.2s;
+}
+
+.toggle-switch label:before {
+    content: "";
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    left: 1px;
+    top: 1px;
+    background-color: #fff;
+    border-radius: 50%;
+    transition: transform 0.2s;
+}
+
+.toggle-switch input:checked + label {
+    background-color: #648dff;
+}
+
+.toggle-switch input:checked + label:before {
+    transform: translateX(26px);
+}

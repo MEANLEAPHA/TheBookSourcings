@@ -1,6 +1,5 @@
 const db = require('../../../config/db');
-
-const { upload, uploadToS3 } = require("../../../middleware/AWSuploadMiddleware");
+const { upload, uploadToS3, deleteFromS3 } = require("../../../middleware/AWSuploadMiddleware");
 
 const uploadBook = async (req, res) => {
   try {
@@ -17,13 +16,21 @@ const uploadBook = async (req, res) => {
     const bookCoverUrl = await uploadToS3(req.files.bookCover[0], "covers/");
     const bookFileUrl = await uploadToS3(req.files.bookFile[0], "books/");
 
-    // Save in DB
-    const [result] = await db.query(
-      "INSERT INTO uploadBook (member_id, member_email, title, subTitle, author, summary, mainCategory, genre, language, pageCount, ISBN10, ISBN13, publisher, publishDate, comment, download, share, bookCover, bookFile) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-      [userId, userEmail, title, subtitle, author, summary, category, genre, language, pageCount, isnb10, isbn13, publisher, publishedDate, comment, download, share, bookCoverUrl, bookFileUrl]
-    );
+    try {
+      // Save in DB
+      const [result] = await db.query(
+        "INSERT INTO uploadBook (member_id, member_email, title, subTitle, author, summary, mainCategory, genre, language, pageCount, ISBN10, ISBN13, publisher, publishDate, comment, download, share, bookCover, bookFile) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        [userId, userEmail, title, subtitle, author, summary, category, genre, language, pageCount, isnb10, isbn13, publisher, publishedDate, comment, download, share, bookCoverUrl, bookFileUrl]
+      );
 
-    res.json({ message: "Upload Book successfully" });
+      res.json({ message: "Upload Book successfully" });
+    } catch (dbError) {
+      // Rollback: delete files from S3 if DB fails
+      await deleteFromS3(bookCoverUrl);
+      await deleteFromS3(bookFileUrl);
+      throw dbError;
+    }
+
   } catch (error) {
     console.error("uploadBookController.js Error:", error);
     res.status(500).json({ message: "Internal server error", error: error.message });

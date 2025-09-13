@@ -1,49 +1,60 @@
+const db = require('../../../config/db');
+const { uploadToS3, deleteFromS3 } = require("../../../middleware/AWSuploadMiddleware");
+
 const updateBook = async (req, res) => {
   try {
     const { bookQid } = req.params;
-    const { title, subtitle, author, summary, category, genre, language, pageCount, isnb10, isnb13, publisher, publishedDate, comment, download, share } = req.body;
-
     const member_id = req.user.user_id;
 
-  
-    // Ensure the task belongs to the authenticated user
-    const [existingBook] = await db.query(
-      "SELECT * FROM updloadBook WHERE bookQid = ? AND member_id = ?",
+    // Fetch existing book
+    const [books] = await db.query(
+      "SELECT * FROM uploadBook WHERE id = ? AND member_id = ?",
       [bookQid, member_id]
     );
 
-    if (existingBook.length === 0) {
-      return res.status(403).json(
-            { 
-            message: "Unauthorized or Book not found",
-            Result: "False" }
-        );
+    if (books.length === 0) {
+      return res.status(404).json({ message: "Book not found or not authorized" });
     }
 
-    const [result] = await db.query(
-      `UPDATE updloadBook 
-       SET title = ?, subTitle = ?, author = ?, summary = ?, mainCategory = ?, genre = ?, language = ?, pageCount = ? , ISBN10= ?, ISBN13= ? , publisher = ?, publishDate= ? , comment= ?, download = ?, share = ? 
-       WHERE bookQid = ? AND member_id = ?`,
-      [title, subtitle, author, summary, category, genre, language, pageCount, isnb10, isnb13, publisher, publishedDate, comment, download, share, bookQid, member_id]
-    );
+    const oldBook = books[0];
+    let bookCoverUrl = oldBook.bookCover;
+    let bookFileUrl = oldBook.bookFile;
 
-    if (result.affectedRows === 0) {
-      return res.status(404).json(
-        { message: "Book not updated" }
-    );
+    // Handle new file uploads
+    if (req.files?.bookCover) {
+      const newCover = await uploadToS3(req.files.bookCover[0], "covers/");
+      if (oldBook.bookCover) await deleteFromS3(oldBook.bookCover);
+      bookCoverUrl = newCover;
     }
 
-   
-    
+    if (req.files?.bookFile) {
+      const newFile = await uploadToS3(req.files.bookFile[0], "books/");
+      if (oldBook.bookFile) await deleteFromS3(oldBook.bookFile);
+      bookFileUrl = newFile;
+    }
 
-    res.json(
-        { message: "Book updated successfully",}
+    const {
+      title, subtitle, summary, author, category, genre, language,
+      pageCount, isnb10, isbn13, publisher, publishedDate, comment,
+      download, share
+    } = req.body;
+
+    await db.query(
+      `UPDATE uploadBook 
+       SET title=?, subTitle=?, summary=?, author=?, mainCategory=?, genre=?, language=?, 
+           pageCount=?, ISBN10=?, ISBN13=?, publisher=?, publishDate=?, comment=?, download=?, share=?, 
+           bookCover=?, bookFile=? 
+       WHERE id=? AND member_id=?`,
+      [title, subtitle, summary, author, category, genre, language, pageCount, isnb10, isbn13,
+       publisher, publishedDate, comment, download, share, bookCoverUrl, bookFileUrl, bookQid, member_id]
     );
+
+    res.json({ message: "Book updated successfully" });
 
   } catch (error) {
-    console.error("updateBookController.js Error:", error.message);
+    console.error("updateBookController.js Error:", error);
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
 
-module.exports = { updateBook};
+module.exports = { updateBook };
