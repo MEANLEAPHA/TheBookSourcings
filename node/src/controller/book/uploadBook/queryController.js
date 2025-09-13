@@ -31,7 +31,7 @@ const getMyBooks = async (req, res) => {
     const member_id = req.user.user_id;
 
     const [rows] = await db.query(
-      "SELECT * FROM uploadBook WHERE member_id = ? ORDER BY createdAt DESC",
+      "SELECT * FROM uploadBook WHERE member_id = ? ORDER BY UploadAt DESC",
       [member_id]
     );
 
