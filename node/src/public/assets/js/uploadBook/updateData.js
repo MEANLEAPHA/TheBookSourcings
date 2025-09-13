@@ -27,7 +27,7 @@ $('#bookForm').submit(async function(e) {
     const bookQid = new URLSearchParams(window.location.search).get('bookQid');
 
     try {
-        const response = await fetch(`/api/books/update/${bookQid}`, {
+        const response = await fetch(`https://thebooksourcings.onrender.com/api/getMyBooks/updateBook/${bookQid}`, {
             method: 'PUT',
             body: formData
         });
@@ -35,7 +35,7 @@ $('#bookForm').submit(async function(e) {
         const result = await response.json();
         if (response.ok) {
             alert(result.message || "Book updated successfully");
-            window.location.reload(); // refresh page or redirect
+            window.location = `https://thebooksourcings.onrender.com/yourBook.html`; // refresh page or redirect
         } else {
             alert(result.message || "Update failed");
         }

@@ -16,8 +16,8 @@ const bookRoutes = (app) => {
     uploadBook
   );
 
-  app.delete("/deleteBook/:bookQid", authMiddleware, deleteBook);
-  app.put("/updateBook/:bookQid", authMiddleware, updateBook);
+  app.delete("/api/getMyBooks/deleteBook/:bookQid", authMiddleware, deleteBook);
+  app.put("/api/getMyBooks/updateBook/:bookQid", authMiddleware, updateBook);
 };
 
 module.exports = { bookRoutes };
