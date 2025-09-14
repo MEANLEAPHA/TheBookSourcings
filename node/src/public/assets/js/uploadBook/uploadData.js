@@ -21,7 +21,7 @@
     formData.append('genre', $('#genre').val());
     formData.append('language', $('#language').val());
     formData.append('pageCount', $('#pageCount').val());
-    formData.append('isnb10', $('#isnb10').val());
+    formData.append('isbn10', $('#isbn10').val());
     formData.append('isbn13', $('#isbn13').val());
     formData.append('publisher', $('#publisher').val());
     formData.append('publishedDate', $('#publishedDate').val());

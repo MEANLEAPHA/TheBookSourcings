@@ -32,9 +32,9 @@ $(document).ready(function() {
             $('#language').val(data.language);
 
             // Fill toggles
-            $('#comment').prop('checked', data.comment === 1);
-            $('#download').prop('checked', data.download === 1);
-            $('#share').prop('checked', data.share === 1);
+            $('#comment').prop('checked', data.comment === 'active');
+            $('#download').prop('checked', data.download === 'active');
+            $('#share').prop('checked', data.share === 'active');
 
             // Preview existing files
             if (data.bookCover) {
