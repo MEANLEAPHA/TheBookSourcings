@@ -7,7 +7,7 @@ const { authMiddleware } = require('../../../middleware/authMiddleware');
 
 
 // Get all books for dashboard
-router.put("/:bookQid", authMiddleware,getBookByQid);
+router.get("/:bookQid", authMiddleware,getBookByQid);
 
 module.exports = router;
 
