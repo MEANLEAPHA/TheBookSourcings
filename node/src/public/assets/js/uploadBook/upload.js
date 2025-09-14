@@ -72,6 +72,8 @@
     filePreview.style.display = 'none';
     filePlaceholder.style.display = 'inline';
   });
+
+  
   nextBtn.addEventListener("click", () => {
   const currentSection = steps[currentStep];
   const requiredInputs = currentSection.querySelectorAll("[required]");

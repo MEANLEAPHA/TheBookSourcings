@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="step-section active fileInput" id="step-1">
+        <h5 class="mb-3">Upload Book file and Cover</h5>
+        <div class="rows ">
+            <div class="form-section">
+                <label class="form-label">Book File</label>
+                <div class="text-center">
+                        <div class="squares" id="BookFileBox">
+                        <span id="filePlaceholder"><i class="fa-solid fa-file"></i></span>
+                        <iframe id="filePreview" style="display:none;" frameborder="0"></iframe>
+                        </div>
+                        <div class="rowb">
+                            <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt,.epub" hidden required>
+                            <label class="btn btn-success-soft" for="fileInput"><i class="fa-solid fa-file-import"></i></label>
+                        </div>
+                </div>
+            </div>
+            <div class="form-section">
+            <label class="form-label">Book Cover</label>
+                <div class="text-center">
+                      <div class="square" id="coverBox">
+                      <span id="coverPlaceholder"><i class="fa-solid fa-file-image"></i></span>
+                      <img id="coverPreview" alt="Cover Preview" style="display:none;">
+                      </div>
+                      <div class="rowb">
+                          <input type="file" id="coverInput" accept="image/*" hidden required>
+                          <label class="btn btn-success-soft" for="coverInput"><i class="fa-solid fa-file-import"></i></label>
+                      </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+      
+
+
+
+
+
+<!-- File Uploads -->
+        <div class="form-section">
+          <label class="form-label">Book File</label>
+          <div class="file-preview" id="filePreviewBox">
+            <iframe id="filePreview" style="display:none;" frameborder="0"></iframe>
+            <span id="filePlaceholder"><i class="fa-solid fa-file"></i></span>
+          </div>
+          <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt,.epub">
+        </div>
+
+        <div class="form-section">
+          <label class="form-label">Book Cover</label>
+          <div class="file-preview" id="coverPreviewBox">
+            <img id="coverPreview" style="display:none;" alt="Cover Preview">
+            <span id="coverPlaceholder"><i class="fa-solid fa-file-image"></i></span>
+          </div>
+          <input type="file" id="coverInput" accept="image/*">
+        </div>
+
+
+
+
+
+</body>
+</html>
