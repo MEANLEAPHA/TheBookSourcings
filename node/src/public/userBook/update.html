@@ -228,7 +228,7 @@
             $('#coverPlaceholder').hide();
             }
             if (data.bookFile) {
-            $('#filePreview').html(`<a href="${data.bookFile}" target="_blank">View current file</a>`).show();
+            $('#filePreview').html('src', data.bookFile).show();
             $('#filePlaceholder').hide();
             }
         },
