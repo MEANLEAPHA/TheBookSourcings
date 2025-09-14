@@ -8,7 +8,7 @@ const updateBook = async (req, res) => {
 
     // Fetch existing book
     const [books] = await db.query(
-      "SELECT * FROM uploadBook WHERE id = ? AND member_id = ?",
+      "SELECT * FROM uploadBook WHERE bookQid = ? AND member_id = ?",
       [bookQid, member_id]
     );
 
@@ -44,7 +44,7 @@ const updateBook = async (req, res) => {
        SET title=?, subTitle=?, summary=?, author=?, mainCategory=?, genre=?, language=?, 
            pageCount=?, ISBN10=?, ISBN13=?, publisher=?, publishDate=?, comment=?, download=?, share=?, 
            bookCover=?, bookFile=? 
-       WHERE id=? AND member_id=?`,
+       WHERE bookQid=? AND member_id=?`,
       [title, subtitle, summary, author, category, genre, language, pageCount, isnb10, isbn13,
        publisher, publishedDate, comment, download, share, bookCoverUrl, bookFileUrl, bookQid, member_id]
     );
