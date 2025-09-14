@@ -346,7 +346,31 @@
 
   <script src="../assets/js/jquery.js"></script>
   <script>
+  // ---- Book Cover Upload ----
+  const coverInput = document.getElementById('coverInput');
+  const coverPreview = document.getElementById('coverPreview');
+  const coverPlaceholder = document.getElementById('coverPlaceholder');
+  // const coverRemoveBtn = document.getElementById('coverRemoveBtn');
 
+  coverInput.addEventListener('change', function () {
+    const file = this.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        coverPreview.src = e.target.result;
+        coverPreview.style.display = 'block';
+        coverPlaceholder.style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // coverRemoveBtn.addEventListener('click', function () {
+  //   coverPreview.src = '';
+  //   coverPreview.style.display = 'none';
+  //   coverPlaceholder.style.display = 'block';
+  //   coverInput.value = '';
+  // });
 
 // ---- Book File Upload ----
   const fileInput = document.getElementById('fileInput');
