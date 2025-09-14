@@ -34,8 +34,8 @@ const updateBook = async (req, res) => {
     }
 
     const {
-      title, subtitle, summary, author, category, genre, language,
-      pageCount, isnb10, isbn13, publisher, publishedDate, comment,
+      title, subTitle, summary, author, mainCategory, genre, language,
+      pageCount, ISBN10, ISBN13, publisher, publishDate, comment,
       download, share
     } = req.body;
 
@@ -45,8 +45,8 @@ const updateBook = async (req, res) => {
            pageCount=?, ISBN10=?, ISBN13=?, publisher=?, publishDate=?, comment=?, download=?, share=?, 
            bookCover=?, bookFile=? 
        WHERE bookQid=? AND member_id=?`,
-      [title, subtitle, summary, author, category, genre, language, pageCount, isnb10, isbn13,
-       publisher, publishedDate, comment, download, share, bookCoverUrl, bookFileUrl, bookQid, member_id]
+      [title, subTitle, summary, author, mainCategory, genre, language, pageCount, ISBN10, ISBN13,
+       publisher, publishDate, comment, download, share, bookCoverUrl, bookFileUrl, bookQid, member_id]
     );
 
     res.json({ message: "Book updated successfully" });

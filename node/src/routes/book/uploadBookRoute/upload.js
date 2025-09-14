@@ -17,7 +17,17 @@ const bookRoutes = (app) => {
   );
 
   app.delete("/api/getMyBooks/deleteBook/:bookQid", authMiddleware, deleteBook);
-  app.put("/api/getMyBooks/updateBook/:bookQid", authMiddleware, updateBook);
+  // app.put("/api/getMyBooks/updateBook/:bookQid", authMiddleware, updateBook);
+  app.put(
+  "/api/getMyBooks/updateBook/:bookQid",
+  authMiddleware,
+  upload.fields([
+    { name: "bookCover", maxCount: 1 },
+    { name: "bookFile", maxCount: 1 }
+  ]),
+  updateBook
+);
+
 };
 
 module.exports = { bookRoutes };
