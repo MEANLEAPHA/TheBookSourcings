@@ -212,15 +212,25 @@
           $('#isbn10').val(data.ISBN10);
           $('#isbn13').val(data.ISBN13);
           $('#publisher').val(data.publisher);
-          $('#publishedDate').val(data.publishDate);
+          if (data.publishDate) {
+            const date = new Date(data.publishDate);
+            $('#publishedDate').val(date.toISOString().split('T')[0]);
+            }
+
           $('#category').val(data.mainCategory);
           $('#language').val(data.language);
-          $('#comment').prop('checked', data.comment === 1);
-          $('#download').prop('checked', data.download === 1);
-          $('#share').prop('checked', data.share === 1);
+          $('#comment').prop('checked', data.comment === 'active');
+          $('#download').prop('checked', data.download === 'active');
+          $('#share').prop('checked', data.share === 'active');
 
-          if(data.bookCover){ $('#coverPreview').attr('src', data.bookCover).show(); $('#coverPlaceholder').hide(); }
-          if(data.bookFile){ $('#filePreview').attr('src', data.bookFile).show(); $('#filePlaceholder').hide(); }
+          if (data.bookCover) {
+            $('#coverPreview').attr('src', data.bookCover).show();
+            $('#coverPlaceholder').hide();
+            }
+            if (data.bookFile) {
+            $('#filePreview').html(`<a href="${data.bookFile}" target="_blank">View current file</a>`).show();
+            $('#filePlaceholder').hide();
+            }
         },
         error: function(err){ console.error("Error fetching book data:", err); }
       });
@@ -240,9 +250,10 @@
         formData.append('publishDate', $('#publishedDate').val());
         formData.append('mainCategory', $('#category').val());
         formData.append('language', $('#language').val());
-        formData.append('comment', $('#comment').is(':checked') ? 1 : 0);
-        formData.append('download', $('#download').is(':checked') ? 1 : 0);
-        formData.append('share', $('#share').is(':checked') ? 1 : 0);
+        formData.append('comment', $('#comment').is(':checked') ? 'active' : 'inactive');
+        formData.append('download', $('#download').is(':checked') ? 'active' : 'inactive');
+        formData.append('share', $('#share').is(':checked') ? 'active' : 'inactive');
+
         if($('#fileInput')[0].files[0]) formData.append('bookFile', $('#fileInput')[0].files[0]);
         if($('#coverInput')[0].files[0]) formData.append('bookCover', $('#coverInput')[0].files[0]);
 

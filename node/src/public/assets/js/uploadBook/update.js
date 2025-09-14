@@ -25,7 +25,13 @@ $(document).ready(function() {
             $('#isbn10').val(data.ISBN10);
             $('#isbn13').val(data.ISBN13);
             $('#publisher').val(data.publisher);
-            $('#publishedDate').val(data.publishDate);
+            // $('#publishedDate').val(data.publishDate);
+
+            // --- Publish date ---
+            if (data.publishDate) {
+            const date = new Date(data.publishDate);
+            $('#publishedDate').val(date.toISOString().split('T')[0]);
+            }
 
             // Fill selects
             $('#category').val(data.mainCategory);
@@ -37,13 +43,23 @@ $(document).ready(function() {
             $('#share').prop('checked', data.share === 'active');
 
             // Preview existing files
+            // if (data.bookCover) {
+            //     $('#coverPreview').attr('src', data.bookCover).show();
+            //     $('#coverPlaceholder').hide();
+            // }
+            // if (data.bookFile) {
+            //     $('#filePreview').attr('src', data.bookFile).show();
+            //     $('#filePlaceholder').hide();
+            // }
+
+            // --- File preview ---
             if (data.bookCover) {
-                $('#coverPreview').attr('src', data.bookCover).show();
-                $('#coverPlaceholder').hide();
+            $('#coverPreview').attr('src', data.bookCover).show();
+            $('#coverPlaceholder').hide();
             }
             if (data.bookFile) {
-                $('#filePreview').attr('src', data.bookFile).show();
-                $('#filePlaceholder').hide();
+            $('#filePreview').html(`<a href="${data.bookFile}" target="_blank">View current file</a>`).show();
+            $('#filePlaceholder').hide();
             }
         },
         error: function(err) {

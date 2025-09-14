@@ -16,9 +16,10 @@ $('#bookForm').submit(async function(e) {
     formData.append('isbn13', $('#isbn13').val());
     formData.append('publisher', $('#publisher').val());
     formData.append('publishedDate', $('#publishedDate').val());
-    formData.append('comment', $('#comment').is(':checked') ? 1 : 0);
-    formData.append('download', $('#download').is(':checked') ? 1 : 0);
-    formData.append('share', $('#share').is(':checked') ? 1 : 0);
+    formData.append('comment', $('#comment').is(':checked') ? 'active' : 'inactive');
+    formData.append('download', $('#download').is(':checked') ? 'active' : 'inactive');
+    formData.append('share', $('#share').is(':checked') ? 'active' : 'inactive');
+
 
     // Files
     if ($('#fileInput')[0].files[0]) formData.append('bookFile', $('#fileInput')[0].files[0]);
