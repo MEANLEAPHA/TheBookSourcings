@@ -81,4 +81,28 @@ function deleteBook(id){
         }
     });         
 }
-    
+     <!-- <tr>
+                                    <td><img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" width="60px" height="90px" id="imgCover"></td>
+                                    <td>
+                                        <div id="titleTd">
+                                            <div class="tdC">Same as ever more inivc and heh </div>
+                                            <div class="rowTdc">
+                                                <div><i class="fa-brands fa-readme "></i> <span>123</span></div>
+                                                <div><i class="fa-solid fa-eye "></i> <span>432</span></div>
+                                                <div><i class="fa-solid fa-file-arrow-down "></i> <span>665</span></div>
+                                                <div><i class="fa-solid fa-share "></i> <span>244</span></div>
+
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td id="readTd"><div class="tdCs">98</div></td>
+                                    <td id="viewTd"><div class="tdCs">345</div></td>
+                                    <td id="downloadTd"><div class="tdCs">223</div></td>
+                                    <td id="shareTd"><div class="tdCs">987</div></td>
+                                    <td >
+                                        <div id="actionTd">
+                                        <button><a href="#"><i class="fa-solid fa-pen-to-square" ></i></a> </button>
+                                        <button><a href="#"><i class="fa-solid fa-trash"></i></a></button>
+                                        </div>
+                                    </td>
+                                </tr> -->
