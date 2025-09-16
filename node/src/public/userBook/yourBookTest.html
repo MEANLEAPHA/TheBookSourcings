@@ -327,6 +327,23 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- ✅ One global toast container -->
+            <div class="toast-container position-fixed top-0 end-0 p-3">
+            <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                <strong class="me-auto toast-title">Delete Confirmation</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                <p id="toastMessage"></p>
+                <button id="confirmDeleteBtn" class="btn btn-sm btn-primary">Yes</button>
+                <button class="btn btn-sm btn-danger" data-bs-dismiss="toast">No</button>
+                </div>
+            </div>
+            </div>
+
+            
            
         </body>
         <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
@@ -345,6 +362,12 @@
         </script>
          <script>
            
+
+      let deleteBookId = null; // store book id for confirmation
+      const toastEl = document.getElementById('liveToast');
+      const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastEl);
+      const toastMessage = document.getElementById('toastMessage');
+      const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
 async function yourBooks() {
   try {
     const res = await fetch("https://thebooksourcings.onrender.com/api/getMyBooks/notableWork", {
@@ -373,8 +396,7 @@ async function yourBooks() {
       const shareCount = book.shareCount;
       const readCount = book.readCount;
       const downloadCount = book.downloadCount;
-    
-    //   const createAt = new Date(book.UploadAt).toLocaleDateString() || "No Data";
+ 
       const card = `     <tr>
                 <td><img src="${cover}" width="60px" height="90px" class="imgCover"></td>
                 <td>
@@ -396,10 +418,11 @@ async function yourBooks() {
                 <td >
                     <div id="actionTd">
                     <button><a href='update.html?bookQid=${bookId}'><i class="fa-solid fa-pen-to-square" ></i></a> </button>
-                    <button onclick="deleteBook('${bookId}')"><a><i class="fa-solid fa-trash"></i></a></button>
+                    <button class="deleteBtn" data-id="${bookId}" data-title="${title}"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 </td>
-            </tr>`;
+            </tr>
+            `;
 
      
 
@@ -419,6 +442,30 @@ async function yourBooks() {
             });
 }
 
+
+// Delegate delete button clicks
+document.addEventListener("click", function(e) {
+  if (e.target.closest(".deleteBtn")) {
+    const btn = e.target.closest(".deleteBtn");
+    deleteBookId = btn.getAttribute("data-id");
+    const bookTitle = btn.getAttribute("data-title");
+
+    // update toast message
+    toastMessage.innerHTML = `Are you sure you want to delete <strong>${bookTitle}</strong>?`;
+    
+    // show toast
+    toastBootstrap.show();
+  }
+});
+
+// confirm delete action
+confirmDeleteBtn.addEventListener("click", function() {
+  if (deleteBookId) {
+    deleteBook(deleteBookId);
+    toastBootstrap.hide();
+  }
+});
+
 // Load on page
 yourBooks();
 const table = document.getElementById('example');
@@ -428,26 +475,7 @@ table.style.width = "100%";
 
 
 
-//   function responsive() {
-//     const readTd = document.querySelectorAll('readTd');
-//     const shareTd = document.querySelectorAll('shareTd');
-//     const downloadTd = document.querySelectorAll('downloadTd');
-//     const viewTd = document.querySelectorAll('viewTd');
-//       if (window.innerWidth <= 920) {
-//         readTd.forEach(td => td.style.display = "none");
-//         shareTd.forEach(td => td.style.display = "none");
-//         downloadTd.forEach(td => td.style.display = "none");
-//         viewTd.forEach(td => td.style.display = "none");
-//       }  else {
-//         readTd.forEach(td => td.style.display = "table-cell");
-//         shareTd.forEach(td => td.style.display = "table-cell");
-//         downloadTd.forEach(td => td.style.display = "table-cell");
-//         viewTd.forEach(td => td.style.display = "table-cell");
-//       }
-//   }
-
  
-
 
 
 function deleteBook(id){
