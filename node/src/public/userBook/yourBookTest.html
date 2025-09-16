@@ -338,125 +338,71 @@ async function yourBooks() {
   try {
     const res = await fetch("https://thebooksourcings.onrender.com/api/getMyBooks/notableWork", {
       headers: {
-        "Authorization": `Bearer ${localStorage.getItem("token")}`
+        "Authorization": `Bearer ${localStorage.getItem("token")}` // JWT token
       }
     });
 
     if (!res.ok) throw new Error("Network response not ok");
-    const books = await res.json();
+    const books = await res.json(); // Direct array
 
     const tbody = document.getElementById("tbody");
     tbody.innerHTML = ""; // Clear old content
 
     if (books.length === 0) {
-      const row = document.createElement("tr");
-      const cell = document.createElement("td");
-      cell.colSpan = 7;
-      cell.textContent = "You haven't uploaded any books yet.";
-      row.appendChild(cell);
-      tbody.appendChild(row);
+      tbody.innerHTML = `<p>You haven't uploaded any books yet.</p>`;
       return;
     }
 
     books.forEach(book => {
-      const row = document.createElement("tr");
+      const cover = book.bookCover || "default.jpg";
+      const author = book.author || "Unknown Author";
+      const bookId = book.bookQid; // ✅ use your DB's bookQid
+      const title = book.title || "Untitled";
+      const viewCount = book.viewCount || null;
+      const shareCount = book.shareCount || null;
+      const readCount = book.readCount || null;
+      const downloadCount = book.downloadCount || null;
+      const likeCount = book.likeCount || null;
+    //   const createAt = new Date(book.UploadAt).toLocaleDateString() || "No Data";
+      const card = `     <tr>
+                <td><img src="${cover}" width="60px" height="90px" class="imgCover"></td>
+                <td>
+                    <div class="titleTd">
+                        <div class="tdC">${title}</div>
+                        <div class="rowTdc">
+                            <div><i class="fa-brands fa-readme "></i> <span>${readCount}</span></div>
+                            <div><i class="fa-solid fa-eye "></i> <span>${viewCount}</span></div>
+                            <div><i class="fa-solid fa-file-arrow-down "></i> <span>${downloadCount}</span></div>
+                            <div><i class="fa-solid fa-share "></i> <span>${shareCount}</span></div>
 
-      // Cover Image
-      const coverCell = document.createElement("td");
-      const img = document.createElement("img");
-      img.src = book.bookCover || "default.jpg";
-      img.width = 60;
-      img.height = 90;
-      img.className = "imgCover";
-      coverCell.appendChild(img);
-      row.appendChild(coverCell);
+                        </div>
+                    </div>
+                </td>
+                <td class="readTd"><div class="tdCs">${readCount}</div></td>
+                <td class="viewTd"><div class="tdCs">${viewCount}</div></td>
+                <td class="downloadTd"><div class="tdCs">${downloadCount}</div></td>
+                <td class="shareTd"><div class="tdCs">${shareCount}</div></td>
+                <td >
+                    <div id="actionTd">
+                    <button><a href='update.html?bookQid=${bookId}'><i class="fa-solid fa-pen-to-square" ></i></a> </button>
+                    <button onclick="deleteBook('${bookId}')"><a><i class="fa-solid fa-trash"></i></a></button>
+                    </div>
+                </td>
+            </tr>`;
 
-      // Title and Stats
-      const titleCell = document.createElement("td");
-      const titleDiv = document.createElement("div");
-      titleDiv.className = "titleTd";   // ✅ changed to class
+     
 
-      const titleText = document.createElement("div");
-      titleText.className = "tdC";
-      titleText.textContent = book.title || "Untitled";
-
-      const statsDiv = document.createElement("div");
-      statsDiv.className = "rowTdc";
-
-      const stats = [
-        { icon: "fa-readme", value: book.readCount },
-        { icon: "fa-eye", value: book.viewCount },
-        { icon: "fa-file-arrow-down", value: book.downloadCount },
-        { icon: "fa-share", value: book.shareCount }
-      ];
-
-      stats.forEach(stat => {
-        const statDiv = document.createElement("div");
-        const icon = document.createElement("i");
-        icon.className = `fa ${stat.icon}`;
-        const span = document.createElement("span");
-        span.textContent = stat.value || 0;
-        statDiv.appendChild(icon);
-        statDiv.appendChild(span);
-        statsDiv.appendChild(statDiv);
-      });
-
-      titleDiv.appendChild(titleText);
-      titleDiv.appendChild(statsDiv);
-      titleCell.appendChild(titleDiv);
-      row.appendChild(titleCell);
-
-      // Individual Stats Cells
-      const statFields = ["readCount", "viewCount", "downloadCount", "shareCount"];
-      statFields.forEach(field => {
-        const cell = document.createElement("td");
-        cell.className = `${field.replace("Count", "").toLowerCase()}Td`;
-        const div = document.createElement("div");
-        div.className = "tdCs";
-        div.textContent = book[field] || 0;
-        cell.appendChild(div);
-        row.appendChild(cell);
-      });
-
-      // Action Buttons
-      const actionCell = document.createElement("td");
-      const actionDiv = document.createElement("div");
-      actionDiv.className = "actionTd";   // ✅ changed to class
-
-      const updateBtn = document.createElement("button");
-      const updateLink = document.createElement("a");
-      updateLink.href = `update.html?bookQid=${book.bookQid}`;
-      const updateIcon = document.createElement("i");
-      updateIcon.className = "fa-solid fa-pen-to-square";
-      updateLink.appendChild(updateIcon);
-      updateBtn.appendChild(updateLink);
-
-      const deleteBtn = document.createElement("button");
-      const deleteLink = document.createElement("a");
-      const deleteIcon = document.createElement("i");
-      deleteIcon.className = "fa-solid fa-trash";
-      deleteLink.appendChild(deleteIcon);
-      deleteBtn.appendChild(deleteLink);
-      deleteBtn.onclick = () => deleteBook(book.bookQid);
-
-      actionDiv.appendChild(updateBtn);
-      actionDiv.appendChild(deleteBtn);
-      actionCell.appendChild(actionDiv);
-      row.appendChild(actionCell);
-
-      tbody.appendChild(row);
+      tbody.insertAdjacentHTML("beforeend", card);
     });
-    // Run once at load
-     window.addEventListener("resize", () => {
-      responsive();
-  });
- 
+    window.addEventListener('resize', ()=>{
+        responsive();
+    })
   } catch (err) {
     console.error("Error fetching my books:", err);
   }
 }
 
-   
+// Load on page
 yourBooks();
 
 const table = document.getElementById('example');
