@@ -119,29 +119,33 @@
             }
             #coverC{
                 width: 65px;
+                display : table-cell;
          
                 
             }
             #titleC{
                 width: 250px;
+                display : table-cell;
             }
             #viewC{
                 width: 100px;
-                
+                display : table-cell;
             }
             #shareC{
                 width: 100px;
+                display : table-cell;
             }
             #readC{
                 width: 100px;
+                display : table-cell;
             }
-            
-            
             #downloadC{
                 width: 100px;
+                display : table-cell;
             }
             #actionC{
                 width: 110px;
+                display : table-cell;
             }
             td:nth-child(2){
                 text-align:start;
@@ -169,7 +173,6 @@
             }
             .rowTdc{
                 display:none
-            
             }
             .actionTd{
                
@@ -251,9 +254,7 @@
             } #viewC,#shareC,#readC,#downloadC{
                 display:none
             }
-            #actionC{
-                width: 110px;
-            }
+           
              .rowTdc{
                 width:100% ;
                
@@ -269,7 +270,7 @@
                 align-items: center;
                 width: 100%;
                 max-height: 60px;
-                height: auto;
+                height: auto; 
                 
                 margin-bottom: 5px;
                 overflow: hidden;
@@ -394,12 +395,13 @@ async function yourBooks() {
 
       tbody.insertAdjacentHTML("beforeend", card);
     });
-    window.addEventListener('resize', ()=>{
-        responsive();
-    })
+    
   } catch (err) {
     console.error("Error fetching my books:", err);
   }
+//   window.addEventListener('resize', ()=>{
+//         responsive();
+//     })
 }
 
 // Load on page
@@ -408,49 +410,27 @@ yourBooks();
 const table = document.getElementById('example');
 table.style.width = "100%";
 
-const readC = document.getElementById('readC');
-const shareC = document.getElementById('shareC');
-const downloadC = document.getElementById('downloadC');
-const viewC = document.getElementById('viewC');
-
-window.addEventListener("resize", ()=>{
-    if(window.innerWidth <= 920){
-        readC.style.display = 'none';
-        shareC.style.display = 'none';
-        viewC.style.display = 'none';
-        downloadC.style.display = 'none';
-    }
-    else{
-        readC.style.dsiplay = 'table-cell';
-        readC.style.width = '100px';
-        downloadC.style.dsiplay = 'table-cell';
-        downloadC.style.width = '100px';
-        shareC.style.dsiplay = 'table-cell';
-        shareC.style.width = '100px';
-        viewC.style.dsiplay = 'table-cell';
-        viewC.style.width = '100px';
-    }
-})
 
 
 
-  function responsive() {
-    const readTd = document.querySelectorAll('readTd');
-    const shareTd = document.querySelectorAll('shareTd');
-    const downloadTd = document.querySelectorAll('downloadTd');
-    const viewTd = document.querySelectorAll('viewTd');
-      if (window.innerWidth <= 920) {
-        readTd.forEach(td => td.style.display = "none");
-        shareTd.forEach(td => td.style.display = "none");
-        downloadTd.forEach(td => td.style.display = "none");
-        viewTd.forEach(td => td.style.display = "none");
-      }  else {
-        readTd.forEach(td => td.style.display = "table-cell");
-        shareTd.forEach(td => td.style.display = "table-cell");
-        downloadTd.forEach(td => td.style.display = "table-cell");
-        viewTd.forEach(td => td.style.display = "table-cell");
-      }
-  }
+
+//   function responsive() {
+//     const readTd = document.querySelectorAll('readTd');
+//     const shareTd = document.querySelectorAll('shareTd');
+//     const downloadTd = document.querySelectorAll('downloadTd');
+//     const viewTd = document.querySelectorAll('viewTd');
+//       if (window.innerWidth <= 920) {
+//         readTd.forEach(td => td.style.display = "none");
+//         shareTd.forEach(td => td.style.display = "none");
+//         downloadTd.forEach(td => td.style.display = "none");
+//         viewTd.forEach(td => td.style.display = "none");
+//       }  else {
+//         readTd.forEach(td => td.style.display = "table-cell");
+//         shareTd.forEach(td => td.style.display = "table-cell");
+//         downloadTd.forEach(td => td.style.display = "table-cell");
+//         viewTd.forEach(td => td.style.display = "table-cell");
+//       }
+//   }
 
  
 
