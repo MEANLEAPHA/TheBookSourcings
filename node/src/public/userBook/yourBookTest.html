@@ -276,13 +276,7 @@
                 overflow: hidden;
             }
             }
-            @media (min-width: 769px) {
-  #shareC, #readC, #downloadC,
-  #shareTd, #readTd, #downloadTd {
-    display: table-cell;
-    width: 100px;
-  }
-}
+            
         </style>
     </head>
     <body>
@@ -333,7 +327,26 @@
                     </tbody>
                 </table>
             </div>
-            <script>
+           
+        </body>
+        <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+        <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        <script>
+            $(document).ready(function() {
+                $('#example').DataTable();
+            
+            });
+            $(document).ready(function() {
+                $('#btnupdate').click(function(){
+                    $('#txtUpdate').show();
+                    $('#txtsave').hide();
+                
+                })
+            });
+        </script>
+         <script>
            
 async function yourBooks() {
   try {
@@ -359,11 +372,11 @@ async function yourBooks() {
       const author = book.author || "Unknown Author";
       const bookId = book.bookQid; // ✅ use your DB's bookQid
       const title = book.title || "Untitled";
-      const viewCount = book.viewCount || null;
-      const shareCount = book.shareCount || null;
-      const readCount = book.readCount || null;
-      const downloadCount = book.downloadCount || null;
-      const likeCount = book.likeCount || null;
+      const viewCount = book.viewCount;
+      const shareCount = book.shareCount;
+      const readCount = book.readCount;
+      const downloadCount = book.downloadCount;
+    
     //   const createAt = new Date(book.UploadAt).toLocaleDateString() || "No Data";
       const card = `     <tr>
                 <td><img src="${cover}" width="60px" height="90px" class="imgCover"></td>
@@ -454,24 +467,6 @@ function deleteBook(id){
 }
 
  
-        </script>
-        </body>
-        <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-        <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-        <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-        <script>
-            $(document).ready(function() {
-                $('#example').DataTable();
-            
-            });
-            $(document).ready(function() {
-                $('#btnupdate').click(function(){
-                    $('#txtUpdate').show();
-                    $('#txtsave').hide();
-                
-                })
-            });
         </script>
         
         
