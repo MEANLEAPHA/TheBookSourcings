@@ -56,7 +56,7 @@ async function userDisplayBook() {
                         <div class="channel-name">${channel}</div>
                     </div>
                     <div class="tags">
-                        <div class="tag">${category}</div>
+                        <div class="tag">#${category}</div>
                         ${genres.map(g => `<div class="tag">#${g}</div>`).join("")}
                     </div>
                 </div>
