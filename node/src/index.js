@@ -32,6 +32,7 @@ const getBookByQidRoute = require('./routes/book/uploadBookRoute/paramQueryRoute
 const getMyBooksRoutes = require('./routes/book/uploadBookRoute/queryRoutes');
 const displayUserUploadBookRoute = require('./routes/book/displayUserBook/displayBookRoutes');
 const viewRoute = require('./routes/book/bookActivity/viewRoute');
+const RDSroute = require('./routes/book/bookActivity/RDSroute');
 
 // Initialize Routes
 TheBookSourcingUser(app);
@@ -48,7 +49,7 @@ app.use('/api/getBookByQid', getBookByQidRoute);
 app.use('/api/getMyBooks', getMyBooksRoutes);
 app.use('/api/books', displayUserUploadBookRoute);
 app.use('/api/books/view', viewRoute);
-
+app.use('/api/books', RDSroute);
 
 
 

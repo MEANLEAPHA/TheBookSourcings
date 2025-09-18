@@ -4,7 +4,7 @@ const db = require("../../../config/db"); // adjust path to your db connection
 async function addBookView(req, res) {
   try {
     const { bookId } = req.params;
-      const userId = req.user.user_id; // comes from JWT middleware
+    const userId = req.user.user_id; // comes from JWT middleware
 
     if (!userId) {
       return res.status(401).json({ error: "Unauthorized. User not logged in." });
@@ -15,6 +15,12 @@ async function addBookView(req, res) {
       `INSERT INTO user_book_activity (user_id, bookQid, activity_type) 
        VALUES (?, ?, 'view')`,
       [userId, bookId]
+    );
+
+    // ✅ Update book viewCount
+    await db.query(
+      "UPDATE uploadBook SET viewCount = viewCount + 1 WHERE bookQid = ?",
+      [bookId]
     );
 
     res.json({ message: "View recorded successfully" });

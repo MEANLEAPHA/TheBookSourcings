@@ -22,6 +22,31 @@
     .then(data => console.log(data))
     .catch(err => console.error("Error recording view:", err));
 
+
+    // READ, Share, Download
+    const read = document.querySelector(".readBtn");
+    const download = document.querySelector(".downloadBtn");
+    const share = document.querySelector(".shareBtn");
+
+    function recordActivity(type, bookId) {
+      fetch(`https://thebooksourcings.onrender.com/api/books/${type}/${bookId}`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json"
+        }
+      })
+        .then(res => res.json())
+        .then(data => console.log(`${type} recorded:`, data))
+        .catch(err => console.error(`Error recording ${type} activity:`, err));
+    }
+
+    if (read) read.addEventListener("click", () => recordActivity("read", bookId));
+    if (download) download.addEventListener("click", () => recordActivity("download", bookId));
+    if (share) share.addEventListener("click", () => recordActivity("share", bookId));
+
+
+
   // Fetch book from your backend unified endpoint
   fetch(`https://thebooksourcings.onrender.com/api/aboutBook/${source}/${bookId}`)
     .then(res => res.json())
@@ -53,6 +78,8 @@ function renderBook(data) {
 
 
  
+  
+
 
   // ✅ Handle read & download
   const readBtn = document.querySelector("#read");

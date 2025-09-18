@@ -59,7 +59,9 @@ const getTheBookSourcingById = async (req, res) => {
       page: bookRow.pageCount,
       ISBN_10: bookRow.ISBN10,
       ISBN_13: bookRow.ISBN13,
-      publishDate: bookRow.publishDate,
+      publishDate: bookRow.publishDate
+    ? new Date(bookRow.publishDate).toLocaleDateString("en-CA") // en-CA gives YYYY-MM-DD
+    : null,
       publisher: bookRow.publisher,
       read: bookRow.bookFile,
       download: bookRow.bookFile,
