@@ -4,7 +4,7 @@ const db = require("../../../config/db");
 const getBookDetailsWithStatus = async (req, res) => {
   try {
     const { bookId } = req.params;
-    const userId = req.user.id;
+    const userId = req.user.user_id;
 
     // Book info
     const [bookRows] = await db.query(
@@ -39,7 +39,7 @@ const getBookDetailsWithStatus = async (req, res) => {
 const toggleLike = async (req, res) => {
   try {
     const { bookId } = req.params;
-    const userId = req.user.id;
+    const userId = req.user.user_id;
 
     // Check current status
     const [rows] = await db.query(
@@ -80,7 +80,7 @@ const toggleLike = async (req, res) => {
 const toggleFavorite = async (req, res) => {
   try {
     const { bookId } = req.params;
-    const userId = req.user.id;
+    const userId = req.user.user_id;
 
     // Check current status
     const [rows] = await db.query(
