@@ -2,7 +2,7 @@
 const {getGoogleBookById} = require("./aboutGoogleController")
 const {getOpenLibraryBookById} = require("./aboutOpenLibraryController")
 const {getGutenbergBookById} = require("./aboutGutenbergController")
-const {getTheBookSourcingById} = require("./aboutThebooksourcingController")
+const {getTheBookSourcingById} = require("./aboutTheBooksourcingController")
 
 
 
