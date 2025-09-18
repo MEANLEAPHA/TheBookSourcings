@@ -14,7 +14,7 @@
 const likeBtn = document.querySelector('.like');
 const readLaterBtn = document.querySelector('.readLater');
 const likeIcon = document.querySelector('.likeIcon');
-const readLateIcon = document.querySelector('.readLateIcon');
+const readLaterIcon = document.querySelector('.readLaterIcon');
 const likeCount = document.querySelector('.likeCount');
 const readLaterCount = document.querySelector('.readLaterCount');
 
@@ -36,7 +36,7 @@ async function fetchBookStatus() {
 
         // Update icon colors based on user status
         likeIcon.style.color = userStatus.liked ? "gold" : "black";
-        readLateIcon.style.color = userStatus.favorited ? "gold" : "black";
+        readLaterIcon.style.color = userStatus.favorited ? "gold" : "black";
     } catch (err) {
         console.error(err);
     }
@@ -60,7 +60,7 @@ async function toggleActivity(type) {
             likeIcon.style.color = data.liked ? "gold" : "black";
             likeCount.textContent = parseInt(likeCount.textContent) + (data.liked ? 1 : -1);
         } else if (type === "favorite") {
-            readLateIcon.style.color = data.favorited ? "gold" : "black";
+            readLaterIcon.style.color = data.favorited ? "gold" : "black";
             readLaterCount.textContent = parseInt(readLaterCount.textContent) + (data.favorited ? 1 : -1);
         }
     } catch (err) {
