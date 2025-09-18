@@ -4,7 +4,7 @@ const db = require("../../../config/db");
 const recordActivity = async (req, res) => {
   try {
     const { bookId, type } = req.params; // activity type comes from URL
-    const userId = req.user.userId; // from JWT middleware
+    const userId = req.user.user_id; // from JWT middleware
 
     const allowedTypes = ["read", "download", "share"];
     if (!allowedTypes.includes(type)) {
