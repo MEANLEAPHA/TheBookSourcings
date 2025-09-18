@@ -52,8 +52,8 @@ const getTheBookSourcingById = async (req, res) => {
       description: bookRow.summary,
       cover: bookRow.bookCover,
       categories: bookRow.mainCategory,
-      genre: existingBook.genre 
-    ? existingBook.genre.split(",").map(g => g.trim()) 
+      genre: bookRow.genre 
+    ? bookRow.genre.split(",").map(g => g.trim()) 
     : [],
       language: bookRow.language,
       page: bookRow.pageCount,
