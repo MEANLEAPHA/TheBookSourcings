@@ -1,4 +1,5 @@
   function detectSource(bookId) {
+    if (/^TB\d+S$/.test(bookId)) return "thebooksourcing";
     if (/^OL\d+(W|M|A)$/.test(bookId)) return "openlibrary";
     if (/^\d+$/.test(bookId)) return "gutenberg";
     return "google"; // fallback for Google Books
@@ -7,6 +8,19 @@
   const urlParams = new URLSearchParams(window.location.search);
   const bookId = urlParams.get("bookId");
   const source = detectSource(bookId);
+
+
+      // Call backend to add a view
+    fetch(`https://thebooksourcings.onrender.com/api/books/view/${bookId}`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json"
+      }
+    })
+    .then(res => res.json())
+    .then(data => console.log(data))
+    .catch(err => console.error("Error recording view:", err));
 
   // Fetch book from your backend unified endpoint
   fetch(`https://thebooksourcings.onrender.com/api/aboutBook/${source}/${bookId}`)
