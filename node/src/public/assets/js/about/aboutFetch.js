@@ -10,6 +10,76 @@
   const source = detectSource(bookId);
 
 
+  // DOM elements
+const likeBtn = document.querySelector('.like');
+const readLaterBtn = document.querySelector('.readLater');
+const likeIcon = document.querySelector('.likeIcon');
+const readLateIcon = document.querySelector('.readLateIcon');
+const likeCount = document.querySelector('.likeCount');
+const readLaterCount = document.querySelector('.readLaterCount');
+
+// Helper to fetch book status
+async function fetchBookStatus() {
+    try {
+        const res = await fetch(`https://thebooksourcings.onrender.com/api/LAFbook/status/${bookId}`, {
+            headers: {
+                "Authorization": `Bearer ${localStorage.getItem("token")}`
+            }
+        });
+        if (!res.ok) throw new Error("Failed to fetch status");
+        const data = await res.json();
+        const { book, userStatus } = data;
+
+        // Update counts
+        likeCount.textContent = book.likeCount;
+        readLaterCount.textContent = book.favoriteCount;
+
+        // Update icon colors based on user status
+        likeIcon.style.color = userStatus.liked ? "gold" : "black";
+        readLateIcon.style.color = userStatus.favorited ? "gold" : "black";
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+// Toggle like/favorite
+async function toggleActivity(type) {
+    try {
+        const res = await fetch(`https://thebooksourcings.onrender.com/api/LAFbook/${type}/${bookId}`, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                "Content-Type": "application/json"
+            }
+        });
+        if (!res.ok) throw new Error(`Failed to toggle ${type}`);
+        const data = await res.json();
+
+        // Update icons and counts
+        if (type === "like") {
+            likeIcon.style.color = data.liked ? "gold" : "black";
+            likeCount.textContent = parseInt(likeCount.textContent) + (data.liked ? 1 : -1);
+        } else if (type === "favorite") {
+            readLateIcon.style.color = data.favorited ? "gold" : "black";
+            readLaterCount.textContent = parseInt(readLaterCount.textContent) + (data.favorited ? 1 : -1);
+        }
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+// Event listeners
+likeBtn.addEventListener("click", () => toggleActivity("like"));
+readLaterBtn.addEventListener("click", () => toggleActivity("favorite"));
+
+// Initial load
+fetchBookStatus();
+
+
+
+
+
+
       // Call backend to add a view
     fetch(`https://thebooksourcings.onrender.com/api/books/view/${bookId}`, {
       method: "POST",
