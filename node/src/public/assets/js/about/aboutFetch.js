@@ -284,7 +284,7 @@ function renderBook(data) {
 const authorNames = Array.isArray(book.authors) ? book.authors : [book.authors || 'William Shakespeare'];
 loadAuthorInfo(authorNames);
 
-const channel = book.memberQid;
+const channel = book.channel;
 loadChannelInfo(channel);
 followBtn.addEventListener('click', () => toggleFollowActivity(channel));
 
