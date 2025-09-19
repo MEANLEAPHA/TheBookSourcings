@@ -28,7 +28,8 @@ const getTheBookSourcingById = async (req, res) => {
         b.publishDate,
         b.publisher,
         b.bookFile,
-        u.username
+        u.username,
+        u.memberQid
       FROM uploadBook b
       JOIN users u ON b.member_id = u.user_id
       WHERE b.bookQid = ?`,
