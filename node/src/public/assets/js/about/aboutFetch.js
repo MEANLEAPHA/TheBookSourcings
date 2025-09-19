@@ -42,6 +42,52 @@ async function fetchBookStatus() {
     }
 }
 
+
+const followIcon = document.querySelector('.followIcon');
+const followCount = document.querySelector('.followCount');
+const followBtn = document.querySelector('.followBtn');
+
+async function loadChannelInfo(memberQid){
+  try{
+    const res = await fetch(`https://thrbooksourcings.onrender.com/api/followStatus/${memberQid}`,{
+      headers: {
+        "Authorization": `bearer ${localStorage.getItem("token")}`
+      }
+    });
+    if(!res.ok) throw new Error("failed to fetch follow status");
+      const {followNum, userFollowStatus} = data;
+      followCount.textContent = followNum.followCount;
+
+      followIcon.style.color = userFollowStatus.followed ? "gold" : "black";
+  }
+  catch(err){
+    console.error(err)
+  }
+}
+
+async function toggleFollowActivity(memberQid){
+  try{
+     const res = await fetch(`https://thebooksourcings.onrender.com/api/channel/follow/${memberQid}`, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                "Content-Type": "application/json"
+            }
+        });
+        if (!res.ok) throw new Error(`Failed to toggle follow logic`);
+        const data = await res.json();
+
+        followIcon.style.color = data.followed ? "gold" : "black";
+        followCount.textContent = parseInt(followCount.textContent) + (data.followed ? 1 : -1);
+  }
+  catch(err){
+    console.err(err);
+  }
+
+}
+followBtn.addEventListener('click', () => toggleFollowActivity)
+loadChannelInfo();
+
 // Toggle like/favorite
 async function toggleActivity(type) {
     try {
@@ -237,7 +283,9 @@ function renderBook(data) {
 const authorNames = Array.isArray(book.authors) ? book.authors : [book.authors || 'William Shakespeare'];
 loadAuthorInfo(authorNames);
 
-
+const channel = book.memberQid;
+loadChannelInfo(channel);
+toggleFollowActivity(channel);
 
 }
 

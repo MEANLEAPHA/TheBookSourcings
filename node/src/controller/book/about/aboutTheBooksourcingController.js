@@ -68,6 +68,7 @@ const getTheBookSourcingById = async (req, res) => {
       views: bookRow.viewCount,
       uploaded: dayjs(bookRow.UploadAt).fromNow(), // e.g. "3 days ago"
       username: bookRow.username,
+      channel: bookRow.memberQid
     };
 
     res.json(book);
