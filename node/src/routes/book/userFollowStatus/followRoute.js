@@ -7,10 +7,10 @@ const {
 } = require("../../../controller/book/userFollowStatus/followController");
 
 // Get book details + user status
-router.get("/status/:memberQid", authMiddleware, getFollowDetailsWithStatus);
+router.get("/followStatus/:memberQid", authMiddleware, getFollowDetailsWithStatus);
 
 // Toggle like
-router.post("/follow/:memberQid", authMiddleware, toggleFollow);
+router.post("/channel/follow/:memberQid", authMiddleware, toggleFollow);
 
 // Toggle favorite
 

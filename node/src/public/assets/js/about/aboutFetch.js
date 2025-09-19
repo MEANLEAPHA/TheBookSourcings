@@ -47,46 +47,47 @@ const followIcon = document.querySelector('.followIcon');
 const followCount = document.querySelector('.followCount');
 const followBtn = document.querySelector('.followBtn');
 
-async function loadChannelInfo(memberQid){
-  try{
-    const res = await fetch(`https://thrbooksourcings.onrender.com/api/followStatus/${memberQid}`,{
+async function loadChannelInfo(memberQid) {
+  try {
+    const res = await fetch(`https://thebooksourcings.onrender.com/api/followStatus/${memberQid}`, {
       headers: {
-        "Authorization": `bearer ${localStorage.getItem("token")}`
+        "Authorization": `Bearer ${localStorage.getItem("token")}`
       }
     });
-    if(!res.ok) throw new Error("failed to fetch follow status");
-      const {followNum, userFollowStatus} = data;
-      followCount.textContent = followNum.followCount;
+    if (!res.ok) throw new Error("Failed to fetch follow status");
 
-      followIcon.style.color = userFollowStatus.followed ? "gold" : "black";
-  }
-  catch(err){
-    console.error(err)
+    const data = await res.json();
+
+    followCount.textContent = data.member.followCount;
+    followIcon.style.color = data.userStatus.followed ? "gold" : "black";
+  } catch (err) {
+    console.error(err);
   }
 }
 
-async function toggleFollowActivity(memberQid){
-  try{
-     const res = await fetch(`https://thebooksourcings.onrender.com/api/channel/follow/${memberQid}`, {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${localStorage.getItem("token")}`,
-                "Content-Type": "application/json"
-            }
-        });
-        if (!res.ok) throw new Error(`Failed to toggle follow logic`);
-        const data = await res.json();
+async function toggleFollowActivity(memberQid) {
+  try {
+    const res = await fetch(`https://thebooksourcings.onrender.com/api/channel/follow/${memberQid}`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json"
+      }
+    });
+    if (!res.ok) throw new Error(`Failed to toggle follow`);
 
-        followIcon.style.color = data.followed ? "gold" : "black";
-        followCount.textContent = parseInt(followCount.textContent) + (data.followed ? 1 : -1);
-  }
-  catch(err){
-    console.err(err);
-  }
+    const data = await res.json();
 
+    // Update UI with returned state
+    followIcon.style.color = data.followed ? "gold" : "black";
+
+    // Safer: re-fetch updated count instead of manual increment
+    await loadChannelInfo(memberQid);
+
+  } catch (err) {
+    console.error(err);
+  }
 }
-followBtn.addEventListener('click', () => toggleFollowActivity)
-loadChannelInfo();
 
 // Toggle like/favorite
 async function toggleActivity(type) {
@@ -285,7 +286,7 @@ loadAuthorInfo(authorNames);
 
 const channel = book.memberQid;
 loadChannelInfo(channel);
-toggleFollowActivity(channel);
+followBtn.addEventListener('click', () => toggleFollowActivity(channel));
 
 }
 

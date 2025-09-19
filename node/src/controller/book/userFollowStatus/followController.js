@@ -7,30 +7,30 @@ const getFollowDetailsWithStatus = async (req, res) => {
     const userId = req.user.user_id;
 
     // Book info
-    const [bookRows] = await db.query(
-      "SELECT bookQid, title, author, likeCount, favoriteCount FROM uploadBook WHERE bookQid = ?",
-      [bookId]
+    const [memberRows] = await db.query(
+      "SELECT  followCount FROM users WHERE memberQid = ?",
+      [memberQid]
     );
 
-    if (bookRows.length === 0) {
-      return res.status(404).json({ message: "Book not found" });
+    if (memberRows.length === 0) {
+      return res.status(404).json({ message: "memberQid not found" });
     }
-    const book = bookRows[0];
+    const member = memberRows[0];
 
     // User status
     const [statusRows] = await db.query(
-      "SELECT liked, favorited FROM user_book_status WHERE user_id = ? AND bookQid = ?",
-      [userId, bookId]
+      "SELECT followed FROM user_follow_status WHERE user_id = ? AND memberQid = ?",
+      [userId, memberQid]
     );
 
-    const status = statusRows.length > 0 ? statusRows[0] : { liked: 0, favorited: 0 };
+    const status = statusRows.length > 0 ? statusRows[0] : { followed: 0 };
 
     res.json({
-      book,
+      member,
       userStatus: status
     });
   } catch (err) {
-    console.error("Error in getBookDetailsWithStatus:", err);
+    console.error("Error in getFollowDetailsWithStatus:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -38,40 +38,40 @@ const getFollowDetailsWithStatus = async (req, res) => {
 // Toggle follow
 const toggleFollow = async (req, res) => {
   try {
-    const { member } = req.params;
+    const { memberQid } = req.params;
     const userId = req.user.user_id;
 
     // Check current status
     const [rows] = await db.query(
-      "SELECT liked FROM user_book_status WHERE user_id = ? AND bookQid = ?",
-      [userId, bookId]
+      "SELECT followed FROM user_follow_status WHERE user_id = ? AND memberQid = ?",
+      [userId, memberQid]
     );
 
-    let liked = 0;
+    let followed = 0;
 
     if (rows.length > 0) {
-      liked = rows[0].liked ? 0 : 1;
+      followed = rows[0].followed ? 0 : 1;
       await db.query(
-        "UPDATE user_book_status SET liked = ?, updated_at = NOW() WHERE user_id = ? AND bookQid = ?",
-        [liked, userId, bookId]
+        "UPDATE user_follow_status SET followed = ?, updated_at = NOW() WHERE user_id = ? AND memberQid = ?",
+        [followed, userId, memberQid]
       );
     } else {
-      liked = 1;
+      followed = 1;
       await db.query(
-        "INSERT INTO user_book_status (user_id, bookQid, liked) VALUES (?, ?, 1)",
-        [userId, bookId]
+        "INSERT INTO user_follow_status (user_id, memberQid, followed) VALUES (?, ?, 1)",
+        [userId, memberQid]
       );
     }
 
     // Update uploadBook count
     await db.query(
-      "UPDATE uploadBook SET likeCount = (SELECT COUNT(*) FROM user_book_status WHERE bookQid = ? AND liked = 1) WHERE bookQid = ?",
-      [bookId, bookId]
+      "UPDATE users SET followCount = (SELECT COUNT(*) FROM user_follow_status WHERE memberQid = ? AND followed = 1) WHERE memberQid = ?",
+      [memberQid, memberQid]
     );
 
-    res.json({ liked });
+    res.json({ followed });
   } catch (err) {
-    console.error("Error in toggleLike:", err);
+    console.error("Error in toggleFollow:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
