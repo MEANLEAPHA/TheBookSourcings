@@ -2,7 +2,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-
+const http = require('http'); 
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -56,11 +56,30 @@ app.use('/api/LAFbook', LAF);
 app.use('/api', followRoute);
 
 
+// Create HTTP server from Express app
+const server = http.createServer(app);
 
+// Attach Socket.IO to the same server
+const { Server } = require('socket.io');
+const io = new Server(server, {
+    cors: {
+        origin : ['https://thebooksourcings.onrender.com/']
+        // origin: ['http://127.0.0.1:5500'],
+    }
+});
+
+io.on('connection', socket => {
+    console.log('Socket connected:', socket.id);
+    socket.on('send-message', message=>{
+        socket.broadcast.emit('receive-message', message)
+    })
+});
 
 
 // Start Server
 const port = 3000;
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`🚀 Server running at http://localhost:${port}`);
 });
+
+
