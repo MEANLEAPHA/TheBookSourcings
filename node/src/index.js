@@ -1,11 +1,16 @@
 // Import Express & Middleware
-const {instrument} = require('@socket.io/admin-ui')
+const { instrument } = require("@socket.io/admin-ui")
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const http = require('http'); 
 const app = express();
-app.use(cors());
+app.use(cors(
+    {
+        origin: ["https://admin.socket.io", "https://thebooksourcings.onrender.com"],
+        credentials: true
+    }
+));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -64,8 +69,8 @@ const server = http.createServer(app);
 const { Server } = require('socket.io');
 const io = new Server(server, {
     cors: {
-        // origin : ['https://thebooksourcings.onrender.com/']
-        origin: ['https://thebooksourcings.onrender.com', "https://admin.socket.io"],
+    origin: ["https://admin.socket.io", "https://thebooksourcings.onrender.com"],
+    credentials: true
     }
 });
 
