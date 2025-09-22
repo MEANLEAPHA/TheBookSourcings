@@ -18,21 +18,22 @@
 
 // module.exports = verifySocketToken;
 
+
+
+// socket middleware
 const jwt = require("jsonwebtoken");
 
-function verifySocketToken(socket, next) {
-  try {
-    const token = socket.handshake.auth?.token;
-    if (!token) {
-      return next(new Error("Token required"));
-    }
+const verifySocketToken = (socket, next) => {
+  const token = socket.handshake.auth?.token; // token comes from client io({ auth: { token } })
+  if (!token) return next(new Error("Authentication error"));
 
+  try {
     const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
-    socket.user = decoded; // attach decoded user to socket
+    socket.user = decoded; // attach user info to socket
     next();
   } catch (err) {
-    next(new Error("Invalid or expired token"));
+    next(new Error("Authentication error"));
   }
-}
+};
 
-module.exports =  verifySocketToken ;
+module.exports = verifySocketToken ;

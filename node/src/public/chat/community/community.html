@@ -1,84 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Community Chat</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    background: #f0f2f5;
-  }
-  #message-container {
-    border: 1px solid #ccc;
-    padding: 10px;
-    height: 400px;
-    overflow-y: auto;
-    background: white;
-  }
-  #message-container div {
-    margin-bottom: 10px;
-    padding: 5px;
-    border-radius: 5px;
-    position: relative;
-  }
-  .owner-btn {
-    margin-left: 10px;
-    cursor: pointer;
-    color: red;
-    font-size: 0.85em;
-  }
-  #form {
-    margin-top: 10px;
-    display: flex;
-  }
-  #message-input {
-    flex: 1;
-    padding: 5px;
-    font-size: 1em;
-  }
-  #form button {
-    padding: 5px 10px;
-    margin-left: 5px;
-    font-size: 1em;
-  }
-</style>
+    <meta charset="UTF-8">
+    <title>Community Chat</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        #message-container div { 
+            margin-bottom: 10px; 
+            padding: 8px 10px; 
+            background: #fff; 
+            border-radius: 5px; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
+        }
+        .msg-text { margin-right: 10px; }
+        .owner-btn { margin-left: 5px; cursor: pointer; color: red; font-weight: bold; }
+        #form { margin-top: 20px; display: flex; }
+        #message-input { flex: 1; padding: 8px; border-radius: 5px; border: 1px solid #ccc; }
+        #form button { margin-left: 10px; padding: 8px 15px; border: none; border-radius: 5px; background: #4CAF50; color: white; cursor: pointer; }
+        #form button:hover { background: #45a049; }
+    </style>
 </head>
 <body>
 
 <div id="message-container"></div>
 
 <form id="form">
-    <input type="text" id="message-input" placeholder="Type message..." required>
+    <input type="text" id="message-input" placeholder="Type your message..." required>
     <button type="submit">Send</button>
 </form>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
-const token = localStorage.getItem("token"); // your JWT
 const API_URL = "https://thebooksourcings.onrender.com";
+const token = localStorage.getItem("token");  // JWT stored in localStorage
 
+// Initialize Socket.IO with auth
 const socket = io(API_URL, { auth: { token } });
 
 socket.on("connect", () => console.log("Connected:", socket.id));
-
-// Display all messages
-async function loadMessages() {
-    try {
-        const res = await fetch(`${API_URL}/api/community`, {
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
-        });
-        const msgs = await res.json();
-        msgs.forEach(displayMessage);
-    } catch (err) {
-        console.error("Error loading messages:", err);
-    }
-}
-loadMessages();
-
-// Socket events
 socket.on("receive-message", displayMessage);
 socket.on("message-updated", ({ message_id, newText }) => {
     const div = document.querySelector(`div[data-id='${message_id}']`);
@@ -89,7 +48,22 @@ socket.on("message-deleted", ({ message_id }) => {
     if(div) div.remove();
 });
 
-// Form submit
+// Load all messages from DB
+async function loadMessages() {
+    try {
+        const res = await fetch(`${API_URL}/api/community/`, {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        if(!res.ok) throw new Error("Failed to fetch messages");
+        const msgs = await res.json();
+        msgs.forEach(displayMessage);
+    } catch (err) {
+        console.error("Error loading messages:", err);
+    }
+}
+loadMessages();
+
+// Handle form submit
 const form = document.getElementById("form");
 const messageInput = document.getElementById("message-input");
 
@@ -107,15 +81,17 @@ form.addEventListener("submit", async e => {
             },
             body: JSON.stringify({ message: msg })
         });
+        if(!res.ok) throw new Error("Failed to send message");
         const savedMsg = await res.json();
         displayMessage(savedMsg);
+        socket.emit("send-message", savedMsg);
         messageInput.value = "";
     } catch (err) {
         console.error("Error sending message:", err);
     }
 });
 
-// Display message
+// Display message with edit/delete for owner
 function displayMessage(msg) {
     const div = document.createElement("div");
     div.dataset.id = msg.message_id;
@@ -123,7 +99,7 @@ function displayMessage(msg) {
 
     const userMemberQid = JSON.parse(atob(token.split('.')[1])).memberQid; // decode token
 
-    if(msg.memberQid === userMemberQid) { // owner buttons
+    if(msg.memberQid === userMemberQid) {
         const editBtn = document.createElement("span");
         editBtn.textContent = " [Edit]";
         editBtn.className = "owner-btn";
@@ -171,5 +147,6 @@ function displayMessage(msg) {
     document.getElementById("message-container").appendChild(div);
 }
 </script>
+
 </body>
 </html>
