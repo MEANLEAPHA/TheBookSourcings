@@ -24,16 +24,24 @@
 const jwt = require("jsonwebtoken");
 
 const verifySocketToken = (socket, next) => {
-  const token = socket.handshake.auth?.token; // token comes from client io({ auth: { token } })
-  if (!token) return next(new Error("Authentication error"));
+  const token = socket.handshake.auth?.token;
+
+  if (!token) {
+    // Guest user → allow connection but no user info
+    socket.user = null;
+    return next();
+  }
 
   try {
     const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
-    socket.user = decoded; // attach user info to socket
+    socket.user = decoded; // attach user info for insiders
     next();
   } catch (err) {
-    next(new Error("Authentication error"));
+    // Invalid token → treat as guest
+    socket.user = null;
+    next();
   }
 };
 
-module.exports = verifySocketToken ;
+module.exports = verifySocketToken;
+

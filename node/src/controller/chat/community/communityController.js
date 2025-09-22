@@ -5,11 +5,16 @@ const db = require("../../../config/db");
 const getAllMessages = async (req, res) => {
     try {
         const [rows] = await db.query(
-            `SELECT c.*, u.username 
-             FROM community c 
-             JOIN users u ON c.memberQid = u.memberQid 
-             WHERE c.deleted_at IS NULL 
-             ORDER BY c.created_at ASC`
+            `   SELECT 
+                c.message_id, 
+                c.message_text AS message, 
+                c.memberQid, 
+                u.username
+                FROM community c
+                JOIN users u ON c.memberQid = u.memberQid
+                WHERE c.deleted_at IS NULL
+                ORDER BY c.created_at ASC
+            `
         );
         res.json(rows);
     } catch (err) {

@@ -80,21 +80,40 @@ const io = new Server(server, {
 });
 
 io.use(verifySocketToken); // middleware to decode JWT for socket
+// io.on("connection", (socket) => {
+//     console.log("Socket connected:", socket.user.memberQid);
+
+//     socket.on("send-message", (data) => {
+//         io.emit("receive-message", { ...data, memberQid: socket.user.memberQid });
+//     });
+
+//     socket.on("edit-message", (data) => {
+//         io.emit("message-updated", data);
+//     });
+
+//     socket.on("delete-message", (data) => {
+//         io.emit("message-deleted", data);
+//     });
+// });
 io.on("connection", (socket) => {
-    console.log("Socket connected:", socket.user.memberQid);
+  console.log("Socket connected:", socket.user?.memberQid || "Guest");
 
-    socket.on("send-message", (data) => {
-        io.emit("receive-message", { ...data, memberQid: socket.user.memberQid });
-    });
+  socket.on("send-message", (data) => {
+    if (!socket.user) return; // guest cannot send
+    io.emit("receive-message", { ...data, memberQid: socket.user.memberQid });
+  });
 
-    socket.on("edit-message", (data) => {
-        io.emit("message-updated", data);
-    });
+  socket.on("edit-message", (data) => {
+    if (!socket.user) return;
+    io.emit("message-updated", data);
+  });
 
-    socket.on("delete-message", (data) => {
-        io.emit("message-deleted", data);
-    });
+  socket.on("delete-message", (data) => {
+    if (!socket.user) return;
+    io.emit("message-deleted", data);
+  });
 });
+
 
 
 instrument(io, {
