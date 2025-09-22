@@ -21,7 +21,7 @@
 
             if(message === "") return 
             displayMessage(message) // display the message after submit 
-            socket.emit('send-message', message)
+            socket.emit('send-message', message, room)
 
             messageInput.value = ""; // clear the input 
 
@@ -29,6 +29,9 @@
 
         joinRoomButton.addEventListener("click", () => {
             const room = roomInput.value;
+            socket.emit('join-room', room ,message =>{
+                displayMessage(message)
+            })
 
         })
 

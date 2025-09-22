@@ -1,4 +1,5 @@
 // Import Express & Middleware
+const {instrument} = require('@socket.io/admin-ui')
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -63,18 +64,29 @@ const server = http.createServer(app);
 const { Server } = require('socket.io');
 const io = new Server(server, {
     cors: {
-        origin : ['https://thebooksourcings.onrender.com/']
-        // origin: ['http://127.0.0.1:5500'],
+        // origin : ['https://thebooksourcings.onrender.com/']
+        origin: ['https://thebooksourcings.onrender.com', "https://admin.socket.io"],
     }
 });
 
 io.on('connection', socket => {
     console.log('Socket connected:', socket.id);
-    socket.on('send-message', message=>{
-        socket.broadcast.emit('receive-message', message)
+    socket.on('send-message', (message, room)=>{
+        if(room === ''){
+            socket.broadcast.emit('receive-message', message)
+        }
+        else{
+            socket.to(room).emit('receive-message', message)
+        }
+        
+    })
+    socket.on('join-room', (room, cb) =>{
+        socket.join(room);
+        cb(`Joined ${room}`)
     })
 });
 
+instrument(io, {auth: false})
 
 // Start Server
 const port = 3000;
