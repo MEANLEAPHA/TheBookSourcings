@@ -100,7 +100,7 @@ io.on("connection", (socket) => {
 
   socket.on("send-message", (data) => {
     if (!socket.user) return; // guest cannot send
-    io.broadcast.emit("receive-message", { ...data, memberQid: socket.user.memberQid });
+    socket.broadcast.emit("receive-message", { ...data, memberQid: socket.user.memberQid });
   });
 
   socket.on("edit-message", (data) => {
