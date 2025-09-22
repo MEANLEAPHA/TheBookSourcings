@@ -91,7 +91,11 @@ io.on('connection', socket => {
     })
 });
 
-instrument(io, {auth: false})
+instrument(io, {
+  namespaceName: "/admin",
+  auth: false
+});
+
 
 // Start Server
 const port = 3000;
