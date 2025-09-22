@@ -51,9 +51,7 @@ socket.on("message-deleted", ({ message_id }) => {
 // Load all messages from DB
 async function loadMessages() {
     try {
-        const res = await fetch(`${API_URL}/api/community/`, {
-            headers: { "Authorization": `Bearer ${token}` }
-        });
+        const res = await fetch(`${API_URL}/api/community/`); // i delete the header no need Authorization
         if(!res.ok) throw new Error("Failed to fetch messages");
         const msgs = await res.json();
         msgs.forEach(displayMessage);
