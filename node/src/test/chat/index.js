@@ -4,7 +4,6 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const http = require('http'); 
-const db = require("./config/db"); // your MySQL pool/connection
 const app = express();
 app.use(cors(
     {
@@ -42,8 +41,6 @@ const viewRoute = require('./routes/book/bookActivity/viewRoute');
 const RDSroute = require('./routes/book/bookActivity/RDSroute');
 const LAF = require('./routes/book/userBookStatus/LAFroutes');
 const followRoute = require('./routes/book/userFollowStatus/followRoute');
-const communityRoutes = require('./routes/chat/community/communityRoutes');
-const verifySocketToken  = require('./middleware/verifySocketToken');
 
 // Initialize Routes
 TheBookSourcingUser(app);
@@ -63,8 +60,6 @@ app.use('/api/books/view', viewRoute);
 app.use('/api/books', RDSroute);
 app.use('/api/LAFbook', LAF);
 app.use('/api', followRoute);
-app.use("/api/community", communityRoutes);
-
 
 
 // Create HTTP server from Express app
@@ -79,23 +74,22 @@ const io = new Server(server, {
     }
 });
 
-io.use(verifySocketToken); // middleware to decode JWT for socket
-io.on("connection", (socket) => {
-    console.log("Socket connected:", socket.user.memberQid);
-
-    socket.on("send-message", (data) => {
-        io.emit("receive-message", { ...data, memberQid: socket.user.memberQid });
-    });
-
-    socket.on("edit-message", (data) => {
-        io.emit("message-updated", data);
-    });
-
-    socket.on("delete-message", (data) => {
-        io.emit("message-deleted", data);
-    });
+io.on('connection', socket => {
+    console.log('Socket connected:', socket.id);
+    socket.on('send-message', (message, room)=>{
+        if(room === ''){
+            socket.broadcast.emit('receive-message', message)
+        }
+        else{
+            socket.to(room).emit('receive-message', message)
+        }
+        
+    })
+    socket.on('join-room', (room, cb) =>{
+        socket.join(room);
+        cb(`Joined ${room}`)
+    })
 });
-
 
 instrument(io, {
   namespaceName: "/admin",
@@ -108,7 +102,5 @@ const port = 3000;
 server.listen(port, () => {
     console.log(`🚀 Server running at http://localhost:${port}`);
 });
-
-
 
 
