@@ -1,11 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const { getAllMessages, sendMessage, editMessage, deleteMessage } = require("../../../controller/chat/community/communityController");
-const  verifySocketToken = require("../../../middleware/verifySocketToken"); // JWT middleware
+const  verifyHttpToken = require("../../../middleware/verifyHttpToken"); // JWT middleware
 
-router.get("/display", verifySocketToken, getAllMessages);
-router.post("/send", verifySocketToken, sendMessage);
-router.put("/edit", verifySocketToken, editMessage);
-router.delete("/delete", verifySocketToken, deleteMessage);
+router.get("/display", verifyHttpToken, getAllMessages);
+router.post("/send", verifyHttpToken, sendMessage);
+router.put("/edit", verifyHttpToken, editMessage);
+router.delete("/delete", verifyHttpToken, deleteMessage);
 
 module.exports = router;
