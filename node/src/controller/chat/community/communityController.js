@@ -1,5 +1,7 @@
 const db = require("../../../config/db");
 
+
+// diplay all messages logic
 const getAllMessages = async (req, res) => {
     try {
         const [rows] = await db.query(
