@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Community Chat</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        #message-container div { 
+            margin-bottom: 10px; 
+            padding: 8px 10px; 
+            background: #fff; 
+            border-radius: 5px; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
+        }
+        .msg-text { margin-right: 10px; }
+        .owner-btn { margin-left: 5px; cursor: pointer; color: red; font-weight: bold; }
+        #form { margin-top: 20px; display: flex; }
+        #message-input { flex: 1; padding: 8px; border-radius: 5px; border: 1px solid #ccc; }
+        #form button { margin-left: 10px; padding: 8px 15px; border: none; border-radius: 5px; background: #4CAF50; color: white; cursor: pointer; }
+        #form button:hover { background: #45a049; }
+    </style>
+</head>
+<body>
+
+<div id="message-container"></div>
+
+<form id="form">
+    <input type="text" id="message-input" placeholder="Type your message..." required>
+    <button type="submit">Send</button>
+</form>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const API_URL = "https://thebooksourcings.onrender.com";
+const token = localStorage.getItem("token");  // JWT stored in localStorage
+
+// Initialize Socket.IO with auth
+const socket = io(API_URL, { auth: { token } });
+
+socket.on("connect", () => console.log("Connected:", socket.id));
+socket.on("receive-message", displayMessage);
+socket.on("message-updated", ({ message_id, newText }) => {
+    const div = document.querySelector(`div[data-id='${message_id}']`);
+    if(div) div.querySelector(".msg-text").textContent = newText;
+});
+socket.on("message-deleted", ({ message_id }) => {
+    const div = document.querySelector(`div[data-id='${message_id}']`);
+    if(div) div.remove();
+});
+
+// Load all messages from DB
+async function loadMessages() {
+    try {
+        const res = await fetch(`${API_URL}/api/community/display`); // i delete the header no need Authorization
+        if(!res.ok) throw new Error("Failed to fetch messages");
+        const msgs = await res.json();
+        msgs.forEach(displayMessage);
+    } catch (err) {
+        console.error("Error loading messages:", err);
+    }
+}
+loadMessages();
+
+// Handle form submit
+const form = document.getElementById("form");
+const messageInput = document.getElementById("message-input");
+
+form.addEventListener("submit", async e => {
+    e.preventDefault();
+    const msg = messageInput.value.trim();
+    if(!msg) return;
+
+    try {
+        const res = await fetch(`${API_URL}/api/community/send`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ message: msg })
+        });
+        if(!res.ok) throw new Error("Failed to send message");
+        const savedMsg = await res.json();
+        displayMessage(savedMsg);
+        socket.emit("send-message", savedMsg);
+        messageInput.value = "";
+    } catch (err) {
+        console.error("Error sending message:", err);
+    }
+});
+
+// Display message with edit/delete for owner
+function displayMessage(msg) {
+    const div = document.createElement("div");
+    div.dataset.id = msg.message_id;
+    div.innerHTML = `<span class="msg-text">${msg.message}</span>`;
+
+    const userMemberQid = JSON.parse(atob(token.split('.')[1])).memberQid; // decode token
+
+    if(msg.memberQid === userMemberQid) {
+        const editBtn = document.createElement("span");
+        editBtn.textContent = " [Edit]";
+        editBtn.className = "owner-btn";
+        editBtn.onclick = async () => {
+            const newText = prompt("Edit message", msg.message);
+            if(!newText) return;
+            try {
+                await fetch(`${API_URL}/api/community/edit`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ message_id: msg.message_id, newText })
+                });
+                socket.emit("edit-message", { message_id: msg.message_id, newText });
+            } catch(err) {
+                console.error(err);
+            }
+        };
+
+        const delBtn = document.createElement("span");
+        delBtn.textContent = " [Delete]";
+        delBtn.className = "owner-btn";
+        delBtn.onclick = async () => {
+            if(!confirm("Delete this message?")) return;
+            try {
+                await fetch(`${API_URL}/api/community/delete`, {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ message_id: msg.message_id })
+                });
+                socket.emit("delete-message", { message_id: msg.message_id });
+            } catch(err) {
+                console.error(err);
+            }
+        };
+
+        div.append(editBtn, delBtn);
+    }
+
+    document.getElementById("message-container").appendChild(div);
+}
+</script>
+
+</body>
+</html>

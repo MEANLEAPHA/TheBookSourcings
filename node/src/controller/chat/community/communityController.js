@@ -1,5 +1,9 @@
 const db = require("../../../config/db");
+const dayjs = require("dayjs");
+const relativeTime = require("dayjs/plugin/relativeTime");
 
+// Extend dayjs with relative time plugin
+dayjs.extend(relativeTime);
 
 // diplay all messages logic
 const getAllMessages = async (req, res) => {
@@ -9,6 +13,7 @@ const getAllMessages = async (req, res) => {
                 c.message_id, 
                 c.message_text AS message, 
                 c.memberQid, 
+                c.created_at,
                 u.username
                 FROM community c
                 JOIN users u ON c.memberQid = u.memberQid
@@ -16,7 +21,12 @@ const getAllMessages = async (req, res) => {
                 ORDER BY c.created_at ASC
             `
         );
-        res.json(rows);
+
+        const message = rows.map(row =>({
+            ...row,
+            createFormNow : dayjs(row.created_at).fromNow()
+        }));
+        res.json(message);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -75,10 +85,7 @@ const deleteMessage = async (req, res) => {
         if (rows.length === 0) return res.status(404).json({ error: "Message not found" });
         if (rows[0].memberQid !== memberQid) return res.status(403).json({ error: "Not authorized" });
 
-        await db.query(
-            "UPDATE community SET deleted_at = NOW() WHERE message_id = ?",
-            [message_id]
-        );
+        await db.query("DELETE FROM community WHERE message_id = ?", [message_id]);
 
         res.json({ message_id });
     } catch (err) {

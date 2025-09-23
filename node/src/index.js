@@ -26,7 +26,7 @@ app.get('/', (req, res) => {
 
 // Import Routes
 const { TheBookSourcingUser } = require('./routes/userRoute');
-const trendingRoutes = require('./routes/book/trending/trendingRoutes'); //  trending route
+const trendingRoutes = require('./routes/book/trending/trendingRoutes'); 
 const aboutBookInfoRoute = require('./routes/book/about/allAboutRoute');
 const similarBookRoute = require('./routes/book/about/simiarBookRoute');
 const bookByAuthorRoute = require('./routes/book/about/bookByAuthorsRoute');
@@ -79,22 +79,7 @@ const io = new Server(server, {
     }
 });
 
-io.use(verifySocketToken); // middleware to decode JWT for socket
-// io.on("connection", (socket) => {
-//     console.log("Socket connected:", socket.user.memberQid);
-
-//     socket.on("send-message", (data) => {
-//         io.emit("receive-message", { ...data, memberQid: socket.user.memberQid });
-//     });
-
-//     socket.on("edit-message", (data) => {
-//         io.emit("message-updated", data);
-//     });
-
-//     socket.on("delete-message", (data) => {
-//         io.emit("message-deleted", data);
-//     });
-// });
+io.use(verifySocketToken); 
 io.on("connection", (socket) => {
   console.log("Socket connected:", socket.user?.memberQid || "Guest");
 
