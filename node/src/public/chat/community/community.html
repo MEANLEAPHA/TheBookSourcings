@@ -24,7 +24,7 @@
     #form button { margin-left: 10px; padding: 8px 15px; border: none; border-radius: 5px; background: #4CAF50; color: white; cursor: pointer; }
     #form button:hover { background: #45a049; }
 
-    /* Center toast in the page */
+    /* Center edit toast in the page */
     #editToastWrapper {
         position: fixed;
         top: 50%;
@@ -32,6 +32,16 @@
         transform: translate(-50%, -50%);
         z-index: 1080;
     }
+
+    /* Center delete toast in the page */
+    #deleteToastWrapper {
+        position: fixed;
+        top: 60%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1080;
+    }
+
   </style>
 </head>
 <body>
@@ -56,6 +66,20 @@
   </div>
 </div>
 
+<!-- Bootstrap Toast for deleting -->
+<div id="deleteToastWrapper">
+  <div id="deleteToast" class="toast align-items-center text-bg-light border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-body">
+      <p>Are you sure you want to delete this message?</p>
+      <div class="d-flex justify-content-end">
+        <button id="cancelDeleteBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
+        <button id="confirmDeleteBtn" type="button" class="btn btn-sm btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -63,10 +87,17 @@ const API_URL = "https://thebooksourcings.onrender.com";
 const token = localStorage.getItem("token");
 const socket = io(API_URL, { auth: { token } });
 
+
+// edit declaration
 let editingMessageId = null;
 const editToastEl = document.getElementById("editToast");
 const editToast = new bootstrap.Toast(editToastEl, { autohide: false });
 const editInput = document.getElementById("editMessageInput");
+
+// delete declaration
+let deletingMessageId = null;
+const deleteToastEl = document.getElementById("deleteToast");
+const deleteToast = new bootstrap.Toast(deleteToastEl, { autohide: false });
 
 // Socket listeners
 socket.on("connect", () => console.log("Connected:", socket.id));
@@ -125,7 +156,7 @@ form.addEventListener("submit", async e => {
 function displayMessage(msg) {
   const div = document.createElement("div");
   div.dataset.id = msg.message_id;
-  div.innerHTML = `<span class="msg-text">${msg.message}</span><span class='createdAt'>${msg.created_from_now}<span>`;
+  div.innerHTML = `<span class="msg-text">${msg.message}</span><span class='createdAt'>${msg.createFormNow}<span>`;
 
   const userMemberQid = JSON.parse(atob(token.split('.')[1])).memberQid;
   if(msg.memberQid === userMemberQid) {
@@ -141,22 +172,11 @@ function displayMessage(msg) {
     const delBtn = document.createElement("span");
     delBtn.textContent = " [Delete]";
     delBtn.className = "owner-btn";
-    delBtn.onclick = async () => {
-      if(!confirm("Delete this message?")) return;
-      try {
-        await fetch(`${API_URL}/api/community/delete`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify({ message_id: msg.message_id })
-        });
-        socket.emit("delete-message", { message_id: msg.message_id });
-      } catch(err) {
-        console.error(err);
-      }
+    delBtn.onclick = () => {
+    deletingMessageId = msg.message_id;
+    deleteToast.show();
     };
+
 
     div.append(editBtn, delBtn);
   }
@@ -184,11 +204,36 @@ document.getElementById("saveEditBtn").onclick = async () => {
     console.error(err);
   }
 };
+// Confirm delete
+document.getElementById("confirmDeleteBtn").onclick = async () => {
+  if(!deletingMessageId) return;
+  try {
+    await fetch(`${API_URL}/api/community/delete`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ message_id: deletingMessageId })
+    });
+    socket.emit("delete-message", { message_id: deletingMessageId });
+    deleteToast.hide();
+    deletingMessageId = null;
+  } catch(err) {
+    console.error(err);
+  }
+};
 
 // Cancel edit
 document.getElementById("cancelEditBtn").onclick = () => {
   editingMessageId = null;
   editToast.hide();
+};
+
+// Cancel delete
+document.getElementById("cancelDeleteBtn").onclick = () => {
+  deletingMessageId = null;
+  deleteToast.hide();
 };
 </script>
 </body>
