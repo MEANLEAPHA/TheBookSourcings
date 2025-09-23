@@ -101,7 +101,12 @@ const deleteToast = new bootstrap.Toast(deleteToastEl, { autohide: false });
 
 // Socket listeners
 socket.on("connect", () => console.log("Connected:", socket.id));
-socket.on("receive-message", displayMessage);
+socket.on("receive-message", (msg) => {
+  if (!msg.createFormNow) {
+    msg.createFormNow = "just now";
+  }
+  displayMessage(msg);
+});
 socket.on("message-updated", ({ message_id, newText }) => {
   const div = document.querySelector(`div[data-id='${message_id}']`);
   if(div) div.querySelector(".msg-text").textContent = newText;
@@ -144,6 +149,8 @@ form.addEventListener("submit", async e => {
     });
     if(!res.ok) throw new Error("Failed to send message");
     const savedMsg = await res.json();
+    // Add "just now" for instant feedback
+    savedMsg.createFormNow = "just now";  
     displayMessage(savedMsg);
     socket.emit("send-message", savedMsg);
     messageInput.value = "";
