@@ -47,6 +47,9 @@ const communityLikeRoute =  require('./routes/chat/community/communityLike/commu
 const verifySocketToken  = require('./middleware/verifySocketToken');
 
 
+// report
+const reportCommunityRoute = require('./routes/chat/community/reportPAC/reportRoutes')
+
 // Initialize Routes
 TheBookSourcingUser(app);
 bookRoutes(app);
@@ -66,7 +69,11 @@ app.use('/api/books', RDSroute);
 app.use('/api/LAFbook', LAF);
 app.use('/api', followRoute);
 app.use("/api/community", communityRoutes);
-app.use('/api/communityPostLike', communityLikeRoute)
+app.use('/api/communityPostLike', communityLikeRoute);
+
+
+// report 
+app.use("/api/community", reportCommunityRoute)
 
 
 
