@@ -111,6 +111,12 @@
 <script>
 const API_URL = "https://thebooksourcings.onrender.com";
 const token = localStorage.getItem("token");
+  let userMemberQid = null;
+
+  if (token) {
+    const decoded = jwt_decode(token);
+    userMemberQid = decoded.memberQid;  // make sure your token includes this field
+  }
 const socket = io(API_URL, { auth: { token } });
 
 // ====== DECLARATIONS ======
