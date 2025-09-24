@@ -159,14 +159,52 @@ form.addEventListener("submit", async e => {
   }
 });
 
+
+
+
+
+
+
+
+
+// Display message
 // Display message
 function displayMessage(msg) {
   const div = document.createElement("div");
   div.dataset.id = msg.message_id;
-  div.innerHTML = `<span class="msg-text">${msg.message}</span><span class='createdAt'>${msg.createFormNow}<span>`;
+  div.innerHTML = `
+    <span class="msg-text">${msg.message}</span>
+    <span class='createdAt'>${msg.createFormNow}<span>
+  `;
 
+  // Like section
+  const likeSection = document.createElement("div");
+  likeSection.style.marginTop = "5px";
+
+  const likeIcon = document.createElement("i");
+  likeIcon.className = "fa fa-heart"; // fontawesome heart
+  likeIcon.style.cursor = "pointer";
+  likeIcon.style.marginRight = "5px";
+  likeIcon.style.color = "black";
+
+  const likeCount = document.createElement("span");
+  likeCount.textContent = msg.like_count || 0;
+
+  // Load initial like status + count
+  loadLikeInfoForMessage(msg.message_id, likeIcon, likeCount);
+
+  // Toggle like on click
+  likeIcon.onclick = async () => {
+    await toggleLikeActivityForMessage(msg.message_id, likeIcon, likeCount);
+  };
+
+  likeSection.appendChild(likeIcon);
+  likeSection.appendChild(likeCount);
+  div.appendChild(likeSection);
+
+  // Owner buttons
   const userMemberQid = JSON.parse(atob(token.split('.')[1])).memberQid;
-  if(msg.memberQid === userMemberQid) {
+  if (msg.memberQid === userMemberQid) {
     const editBtn = document.createElement("span");
     editBtn.textContent = " [Edit]";
     editBtn.className = "owner-btn";
@@ -180,15 +218,54 @@ function displayMessage(msg) {
     delBtn.textContent = " [Delete]";
     delBtn.className = "owner-btn";
     delBtn.onclick = () => {
-    deletingMessageId = msg.message_id;
-    deleteToast.show();
+      deletingMessageId = msg.message_id;
+      deleteToast.show();
     };
-
 
     div.append(editBtn, delBtn);
   }
 
   document.getElementById("message-container").appendChild(div);
+}
+
+// Load like info for one message
+async function loadLikeInfoForMessage(messageId, likeIcon, likeCount) {
+  try {
+    const res = await fetch(`${API_URL}/api/communityPostLike/status/${messageId}`, {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    if (!res.ok) throw new Error("Failed to fetch like status");
+
+    const data = await res.json();
+    likeCount.textContent = data.post.like_count;
+    likeIcon.style.color = data.userStatus.liked ? "gold" : "black";
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// Toggle like activity for one message
+async function toggleLikeActivityForMessage(messageId, likeIcon, likeCount) {
+  try {
+    const res = await fetch(`${API_URL}/api/communityPostLike/like/${messageId}`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
+    });
+    if (!res.ok) throw new Error("Failed to toggle like");
+
+    const data = await res.json();
+
+    // Update icon immediately
+    likeIcon.style.color = data.liked ? "gold" : "black";
+
+    // Re-fetch count
+    await loadLikeInfoForMessage(messageId, likeIcon, likeCount);
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 // Save edit

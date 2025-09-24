@@ -43,7 +43,9 @@ const RDSroute = require('./routes/book/bookActivity/RDSroute');
 const LAF = require('./routes/book/userBookStatus/LAFroutes');
 const followRoute = require('./routes/book/userFollowStatus/followRoute');
 const communityRoutes = require('./routes/chat/community/communityRoutes');
+const communityLikeRoute =  require('./routes/chat/community/communityLike/communityPostLikeRoutes')
 const verifySocketToken  = require('./middleware/verifySocketToken');
+
 
 // Initialize Routes
 TheBookSourcingUser(app);
@@ -64,6 +66,7 @@ app.use('/api/books', RDSroute);
 app.use('/api/LAFbook', LAF);
 app.use('/api', followRoute);
 app.use("/api/community", communityRoutes);
+app.use('/api/communityPostLike', communityLikeRoute)
 
 
 
