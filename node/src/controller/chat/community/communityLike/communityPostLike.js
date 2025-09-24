@@ -8,7 +8,7 @@ const getPostDetailsWithStatus = async (req, res) => {
 
     // Book info
     const [rows] = await db.query(
-      "SELECT like_count FROM community WHERE messageId = ?",
+      "SELECT like_count FROM community WHERE message_id = ?",
       [messageId]
     );
 
