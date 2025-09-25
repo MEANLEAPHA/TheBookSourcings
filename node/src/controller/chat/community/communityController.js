@@ -46,23 +46,23 @@ const sendMessage = async (req, res) => {
     let mediaUrl = null;
 
     if (req.file) {
-      console.log("File detected:", req.file.originalname, req.file.mimetype);
+  console.log("File detected:", req.file.originalname, req.file.mimetype);
 
-      if (req.file.mimetype.startsWith("image/")) mediaType = "image";
-      else if (req.file.mimetype.startsWith("video/")) mediaType = "video";
+  if (req.file.mimetype.startsWith("image/")) mediaType = "image";
+  else if (req.file.mimetype.startsWith("video/")) mediaType = "video";
 
-      try {
-        const uploadRes = await uploadToS3(req.file, "community/");
-        console.log("S3 upload result:", uploadRes);
-        if (!uploadRes || !uploadRes.Location) {
-          throw new Error("S3 upload returned no Location URL");
-        }
-        mediaUrl = uploadRes.Location;
-      } catch (uploadErr) {
-        console.error("S3 upload error:", uploadErr);
-        return res.status(500).json({ error: "Failed to upload media", details: uploadErr.message });
-      }
+  try {
+    mediaUrl = await uploadToS3(req.file, "community/"); 
+    if (!mediaUrl) {
+      throw new Error("S3 upload failed, no URL returned");
     }
+    console.log("S3 upload URL:", mediaUrl);
+  } catch (uploadErr) {
+    console.error("S3 upload error:", uploadErr);
+    return res.status(500).json({ error: "Failed to upload media", details: uploadErr.message });
+  }
+}
+
 
     if (!message && !mediaUrl) {
       return res.status(400).json({ error: "Message or media required" });
