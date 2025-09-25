@@ -43,16 +43,25 @@ const sendMessage = async (req, res) => {
     let mediaType = null;
     let mediaUrl = null;
 
-    // If file uploaded
-   if (req.file) {
-  if (req.file.mimetype.startsWith("image/")) mediaType = "image";
-  else if (req.file.mimetype.startsWith("video/")) mediaType = "video";
+    // Handle file if uploaded
+    if (req.file) {
+      if (req.file.mimetype.startsWith("image/")) mediaType = "image";
+      else if (req.file.mimetype.startsWith("video/")) mediaType = "video";
 
-  const s3Res = await uploadToS3(req.file, "community/");
-  mediaUrl = s3Res.Location; // <-- ensure this is the URL string
-}
+      // Upload to S3
+      const uploadRes = await uploadToS3(req.file, "community/");
+      if (!uploadRes || !uploadRes.Location) {
+        return res.status(500).json({ error: "Failed to upload media" });
+      }
+      mediaUrl = uploadRes.Location;
+    }
 
+    // Validate at least one of message or media
+    if (!message && !mediaUrl) {
+      return res.status(400).json({ error: "Message or media required" });
+    }
 
+    // Insert into DB
     const [result] = await db.query(
       "INSERT INTO community (memberQid, message_text, media_type, media_url) VALUES (?, ?, ?, ?)",
       [memberQid, message || null, mediaType, mediaUrl]
@@ -61,7 +70,7 @@ const sendMessage = async (req, res) => {
     const msgObj = {
       message_id: result.insertId,
       memberQid,
-      message,
+      message: message || "",
       media_type: mediaType,
       media_url: mediaUrl,
       createFormNow: "just now",
@@ -69,6 +78,7 @@ const sendMessage = async (req, res) => {
     };
 
     res.json(msgObj);
+
   } catch (err) {
     console.error("sendMessage error:", err);
     res.status(500).json({ error: err.message });
