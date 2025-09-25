@@ -27,7 +27,7 @@ const uploadToS3 = async (file, folder = "") => {
     Key: `${folder}${Date.now()}-${file.originalname}`,
     Body: file.buffer,
     ContentType: file.mimetype,
-    ACL: "public-read" // used to clode for upload book but for testing community i have to open it back
+    // ACL: "public-read" 
   };
 
   const parallelUpload = new Upload({
