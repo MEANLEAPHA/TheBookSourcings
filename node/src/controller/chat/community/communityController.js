@@ -40,28 +40,34 @@ const sendMessage = async (req, res) => {
     const memberQid = req.user.memberQid;
     const { message } = req.body;
 
+    console.log("sendMessage called", { memberQid, message, file: req.file?.originalname });
+
     let mediaType = null;
     let mediaUrl = null;
 
-    // Handle file if uploaded
     if (req.file) {
+      console.log("File detected:", req.file.originalname, req.file.mimetype);
+
       if (req.file.mimetype.startsWith("image/")) mediaType = "image";
       else if (req.file.mimetype.startsWith("video/")) mediaType = "video";
 
-      // Upload to S3
-      const uploadRes = await uploadToS3(req.file, "community/");
-      if (!uploadRes || !uploadRes.Location) {
-        return res.status(500).json({ error: "Failed to upload media" });
+      try {
+        const uploadRes = await uploadToS3(req.file, "community/");
+        console.log("S3 upload result:", uploadRes);
+        if (!uploadRes || !uploadRes.Location) {
+          throw new Error("S3 upload returned no Location URL");
+        }
+        mediaUrl = uploadRes.Location;
+      } catch (uploadErr) {
+        console.error("S3 upload error:", uploadErr);
+        return res.status(500).json({ error: "Failed to upload media", details: uploadErr.message });
       }
-      mediaUrl = uploadRes.Location;
     }
 
-    // Validate at least one of message or media
     if (!message && !mediaUrl) {
       return res.status(400).json({ error: "Message or media required" });
     }
 
-    // Insert into DB
     const [result] = await db.query(
       "INSERT INTO community (memberQid, message_text, media_type, media_url) VALUES (?, ?, ?, ?)",
       [memberQid, message || null, mediaType, mediaUrl]
@@ -77,11 +83,13 @@ const sendMessage = async (req, res) => {
       like_count: 0
     };
 
+    console.log("Message saved to DB:", msgObj);
+
     res.json(msgObj);
 
   } catch (err) {
-    console.error("sendMessage error:", err.message);
-    res.status(500).json({ error: err.message });
+    console.error("sendMessage unexpected error:", err.stack || err);
+    res.status(500).json({ error: "Internal Server Error", details: err.message });
   }
 };
 
