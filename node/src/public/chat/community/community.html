@@ -225,7 +225,7 @@ form.addEventListener("submit", async (e) => {
   try {
     const formData = new FormData();
     formData.append("message", text);
-    if (selectedFile) formData.append("file", selectedFile);
+    if (selectedFile) formData.append("media", selectedFile);
 
     const res = await fetch(`${API_URL}/api/community/send`, {
       method: "POST",
@@ -381,7 +381,7 @@ async function toggleLikeActivityForMessage(messageId, likeIcon, likeCount) {
   }
 }
 
-// ====== EDIT ======
+// ====== EDIT  Fetch======
 document.getElementById("saveEditBtn").onclick = async () => {
   const newText = editInput.value.trim();
   if (!newText || !editingMessageId) return;
@@ -402,7 +402,7 @@ document.getElementById("saveEditBtn").onclick = async () => {
   }
 };
 
-// ====== DELETE ======
+// ====== DELETE Fetch ======
 document.getElementById("confirmDeleteBtn").onclick = async () => {
   if (!deletingMessageId) return;
   try {
@@ -422,7 +422,7 @@ document.getElementById("confirmDeleteBtn").onclick = async () => {
   }
 };
 
-// ====== REPORT ======
+// ====== REPORT Fetch======
 document.getElementById("submitReportBtn").onclick = async () => {
   const reasonTxt = reportReasonInput.value.trim();
   if (!reasonTxt || !reportingTargetId) return;
@@ -452,17 +452,26 @@ document.getElementById("submitReportBtn").onclick = async () => {
   }
 };
 
+
+
+
 // ====== CANCEL BUTTONS ======
+
+
+// cancel edit btn
 document.getElementById("cancelEditBtn").onclick = () => {
   editingMessageId = null;
   editToast.hide();
 };
 
+
+// cancel delete btn
 document.getElementById("cancelDeleteBtn").onclick = () => {
   deletingMessageId = null;
   deleteToast.hide();
 };
 
+// cancel report btn
 document.getElementById("cancelReportBtn").onclick = () => {
   reportingTargetId = null;
   reportReasonInput.value = "";

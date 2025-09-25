@@ -43,13 +43,15 @@ const sendMessage = async (req, res) => {
     let mediaType = null;
     let mediaUrl = null;
 
-    // If uploading file(s)
+    // If file uploaded
     if (req.file) {
       // Detect type (image/video)
       if (req.file.mimetype.startsWith("image/")) mediaType = "image";
       else if (req.file.mimetype.startsWith("video/")) mediaType = "video";
 
-      mediaUrl = await uploadToS3(req.file, "community/");
+      // Upload to S3
+      mediaUrl = await uploadToS3(req.file, "community/"); 
+      if (!mediaUrl) throw new Error("Failed to upload media");
     }
 
     const [result] = await db.query(
@@ -63,14 +65,17 @@ const sendMessage = async (req, res) => {
       message,
       media_type: mediaType,
       media_url: mediaUrl,
-      createFormNow: "just now"
+      createFormNow: "just now",
+      like_count: 0
     };
 
     res.json(msgObj);
   } catch (err) {
+    console.error("sendMessage error:", err);
     res.status(500).json({ error: err.message });
   }
 };
+
 
 // 📌 Edit message (replace media if new file uploaded)
 const editMessage = async (req, res) => {
