@@ -94,9 +94,21 @@ io.on("connection", (socket) => {
   console.log("Socket connected:", socket.user?.memberQid || "Guest");
 
   socket.on("send-message", (data) => {
-    if (!socket.user) return; // guest cannot send
-    socket.broadcast.emit("receive-message", { ...data, memberQid: socket.user.memberQid });
+  if (!socket.user) return; // guest cannot send
+
+  // Ensure media info is included
+  const broadcastData = {
+    message_id: data.message_id,
+    memberQid: socket.user.memberQid,
+    message: data.message || null,
+    media_url: data.media_url || null,
+    media_type: data.media_type || null,
+    createFormNow: data.createFormNow || "just now"
+  };
+
+  socket.broadcast.emit("receive-message", broadcastData);
   });
+
 
   socket.on("edit-message", (data) => {
     if (!socket.user) return;

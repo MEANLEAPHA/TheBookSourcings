@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .post{
+            width: 50%;
+            height: auto;
+            padding: 20px;
+            margin: auto;
+            padding-left: 10px;
+            border-radius: 15px;
+            box-shadow: 0px 0px 3px rgba(86, 86, 86, 0.144);
+        }
+       
+        
+         .post .post-header{
+            width: 100%;
+            display: flex;
+            padding: 5px;
+            gap: 15px;
+            position: relative;
+            
+        }
+        .userProfile{
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        /* .post-header-child-right{
+
+
+        } */
+         .username{
+            font-family: monospace;
+            margin: 0;
+            font-size: large;
+         }
+         .postAt{
+            color: gray;
+            opacity: 0.8;
+            font-size: small;
+            font-family: monospace;
+            margin: 0;
+         }
+         .absolute-top-right{
+            font-size: large;
+            color: rgb(0, 0, 0);
+            
+            position: absolute;
+            top: 5px;
+            right: 25px;
+            
+         }
+         .post .post-body{
+            width: 100%;
+            padding: 5px;
+         }
+         .post-text{
+            font-family: sans-serif;
+            margin: 0;
+         }
+         /* .post-thumbnail{
+            width: 100%;
+            height: 350px;
+            margin: auto;
+            background-color: aqua;
+            object-fit:fill;
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+         }
+         .post-thumbnail-img{
+            height: 100%;
+            margin: auto;
+         } */
+          .post-thumbnail {
+  position: relative;
+  width: 100%;
+  height: 350px;
+  margin: auto;
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.post-thumbnail::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url('../../public//assets//img/pf.jpg') center/cover no-repeat;
+  filter: blur(20px);
+  transform: scale(1.1); /* prevents blur edges from showing */
+  z-index: 0;
+}
+
+.post-thumbnail-img {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  object-fit: contain; /* keeps aspect ratio, leaves side gaps */
+}
+
+        .post .post-body .post-media-count{
+            
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            margin: 10px;
+            font-family: sans-serif;
+        
+            
+            font-size: 14px;
+            opacity: 0.9;
+            padding: 0;
+         }
+         .post-media-count div{
+            margin: 0;
+            padding: 0;
+         }
+         .post-media-count div span{
+            padding: 0;
+            margin: 0;
+         }
+         .post-media-count-child-right{
+            display: flex;
+            gap: 25px;
+         }
+         .post-hr{
+            color: gainsboro;
+            background-color: gainsboro;
+            opacity: 0.3;
+         }
+         .post-media-button{
+            display: flex;
+            border-top: 1px gainsboro solid;
+            justify-content: space-between;
+            padding: 0;
+           
+            margin: 0;
+         }
+         .media-btn{
+            width: calc(100%/3.06);
+            padding: 20px;
+            margin: 0;
+            background:none;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            
+         }
+         .media-btn span{
+            margin-top: 2px;
+             color:gray;
+         }
+         .media-btn:hover{
+            background-color: gainsboro;
+         }
+         .fa-solid{
+            font-size: large;
+            color:gray;
+         }
+          @media screen and (max-width: 768px) {
+              .post{
+            width: 90%;
+        }
+    }
+    </style>
+</head>
+<body>
+    <div class="post">
+        <div class="post-header">
+            <img src="../../public/assets/img/pf.jpg" alt="user-profile" class="userProfile">
+            <div class="post-header-child-right">
+                <p class="username">Username</p>
+                <span class="postAt">4 days ago</span>
+            </div>
+            <i class="fa-solid fa-ellipsis absolute-top-right"></i>
+        </div>
+        <div class="post-body">
+            <p class="post-text">
+                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Aliquid ipsa quaerat quos iste vitae porro, expedita cupiditate magni maxime dolorem. Dolore ad similique perspiciatis cupiditate minus incidunt nam ut odio.
+            </p>
+            <div class="post-thumbnail">
+                <img src="../../public//assets//img/pf.jpg" class="post-thumbnail-img">
+
+            </div>
+            <div class="post-media-count">
+                <div>
+                    <span class="post-like-count">120 likes</span>
+                </div>
+                <div class="post-media-count-child-right">
+                    <span class="post-comment-count">5 comments</span>
+                    <span class="post-repost-count">8 reposts</span>
+                </div>
+            </div>
+           
+            <div class="post-media-button">
+                <button class="likeBtn media-btn"><i class="fa-solid fa-heart"></i> <span>Like</span></button>
+                <button class="likeBtn media-btn"><i class="fa-solid fa-comment"></i> <span>Comment</span></button>
+                <button class="likeBtn media-btn"><i class="fa-solid fa-share-from-square"></i> <span>Repost</span></button>
+
+            </div>
+        </div>
+        <div class="post-footer">
+
+        </div>
+
+    </div>
+    
+</body>
+</html>

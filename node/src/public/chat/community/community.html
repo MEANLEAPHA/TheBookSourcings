@@ -59,10 +59,19 @@
 
 <div id="message-container"></div>
 
+
 <form id="form">
-  <input type="text" id="message-input" placeholder="Type your message..." required>
-  <button type="submit">Send</button>
+  <textarea id="message-input" placeholder="Type your message..." rows="3"></textarea>
+  <div class="d-flex align-items-center mt-2">
+    <label for="mediaInput" style="cursor: pointer; margin-right: 10px;">
+      <i class="fa-solid fa-photo-film fa-lg"></i>
+    </label>
+    <input type="file" id="mediaInput" accept="image/*,video/*" style="display: none;">
+    <button type="submit">Send</button>
+  </div>
+  <div id="media-preview" class="mt-2"></div>
 </form>
+
 
 <!-- Bootstrap Toast for editing -->
 <div id="editToastWrapper">
@@ -178,32 +187,69 @@ loadMessages();
 // ====== SEND MESSAGE ======
 const form = document.getElementById("form");
 const messageInput = document.getElementById("message-input");
+const mediaInput = document.getElementById("mediaInput");
+const mediaPreview = document.getElementById("media-preview");
 
+let selectedFile = null;
+
+// Show preview when user selects a file
+mediaInput.addEventListener("change", () => {
+  selectedFile = mediaInput.files[0];
+  mediaPreview.innerHTML = ""; // clear previous preview
+
+  if (!selectedFile) return;
+
+  if (selectedFile.type.startsWith("image/")) {
+    const img = document.createElement("img");
+    img.src = URL.createObjectURL(selectedFile);
+    img.style.maxWidth = "200px";
+    img.style.marginTop = "5px";
+    mediaPreview.appendChild(img);
+  } else if (selectedFile.type.startsWith("video/")) {
+    const video = document.createElement("video");
+    video.src = URL.createObjectURL(selectedFile);
+    video.controls = true;
+    video.style.maxWidth = "200px";
+    video.style.marginTop = "5px";
+    mediaPreview.appendChild(video);
+  }
+});
+
+// Send message (text + optional media)
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const msg = messageInput.value.trim();
-  if (!msg) return;
+
+  const text = messageInput.value.trim();
+  if (!text && !selectedFile) return; // must have text or media
 
   try {
+    const formData = new FormData();
+    formData.append("message", text);
+    if (selectedFile) formData.append("file", selectedFile);
+
     const res = await fetch(`${API_URL}/api/community/send`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify({ message: msg })
+      headers: { "Authorization": `Bearer ${token}` },
+      body: formData
     });
-    if (!res.ok) throw new Error("Failed to send message");
-    const savedMsg = await res.json();
 
+    if (!res.ok) throw new Error("Failed to send message");
+
+    const savedMsg = await res.json();
     savedMsg.createFormNow = "just now"; // instant display
     displayMessage(savedMsg);
     socket.emit("send-message", savedMsg);
+
+    // Reset form
     messageInput.value = "";
+    mediaInput.value = "";
+    mediaPreview.innerHTML = "";
+    selectedFile = null;
   } catch (err) {
-    console.error("Error sending message:", err);
+    console.error(err);
   }
 });
+
 
 // ====== DISPLAY MESSAGE ======
 function displayMessage(msg) {
@@ -214,6 +260,16 @@ function displayMessage(msg) {
     <span class='createdAt'>${msg.createFormNow}</span>
   `;
 
+
+  // Render media if exists
+  if (msg.media_url && msg.media_type) {
+    const mediaEl = document.createElement(msg.media_type === "image" ? "img" : "video");
+    mediaEl.src = msg.media_url;
+    if (msg.media_type === "video") mediaEl.controls = true;
+    mediaEl.style.maxWidth = "200px";
+    mediaEl.style.marginTop = "5px";
+    div.appendChild(mediaEl);
+  }
   // --- LIKE SECTION ---
   const likeSection = document.createElement("div");
   likeSection.style.marginTop = "5px";
