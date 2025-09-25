@@ -44,15 +44,14 @@ const sendMessage = async (req, res) => {
     let mediaUrl = null;
 
     // If file uploaded
-    if (req.file) {
-      // Detect type (image/video)
-      if (req.file.mimetype.startsWith("image/")) mediaType = "image";
-      else if (req.file.mimetype.startsWith("video/")) mediaType = "video";
+   if (req.file) {
+  if (req.file.mimetype.startsWith("image/")) mediaType = "image";
+  else if (req.file.mimetype.startsWith("video/")) mediaType = "video";
 
-      // Upload to S3
-      mediaUrl = await uploadToS3(req.file, "community/"); 
-      if (!mediaUrl) throw new Error("Failed to upload media");
-    }
+  const s3Res = await uploadToS3(req.file, "community/");
+  mediaUrl = s3Res.Location; // <-- ensure this is the URL string
+}
+
 
     const [result] = await db.query(
       "INSERT INTO community (memberQid, message_text, media_type, media_url) VALUES (?, ?, ?, ?)",
