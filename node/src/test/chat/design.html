@@ -64,20 +64,7 @@
             font-family: sans-serif;
             margin: 0;
          }
-         /* .post-thumbnail{
-            width: 100%;
-            height: 350px;
-            margin: auto;
-            background-color: aqua;
-            object-fit:fill;
-            margin-top: 10px;
-            display: flex;
-            justify-content: center;
-         }
-         .post-thumbnail-img{
-            height: 100%;
-            margin: auto;
-         } */
+        
           .post-thumbnail {
   position: relative;
   width: 100%;
@@ -90,21 +77,13 @@
   overflow: hidden;
 }
 
-.post-thumbnail::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: url('../../public//assets//img/pf.jpg') center/cover no-repeat;
-  filter: blur(20px);
-  transform: scale(1.1); /* prevents blur edges from showing */
-  z-index: 0;
-}
+
 
 .post-thumbnail-img {
   position: relative;
   z-index: 1;
   height: 100%;
-  object-fit: contain; /* keeps aspect ratio, leaves side gaps */
+  object-fit: contain; 
 }
 
         .post .post-body .post-media-count{
@@ -179,43 +158,187 @@
 <body>
     <div class="post">
         <div class="post-header">
-            <img src="../../public/assets/img/pf.jpg" alt="user-profile" class="userProfile">
+            <img src="../../public/assets/img/pf.jpg" alt="user-profile" class="userProfile"> <!--will get the user PF by decoded later-->
             <div class="post-header-child-right">
-                <p class="username">Username</p>
-                <span class="postAt">4 days ago</span>
+                <p class="username">Username</p> <!--will get the username by decoded later-->
+                <span class="postAt">4 days ago</span> <!--This is msg.createFormNow-->
             </div>
-            <i class="fa-solid fa-ellipsis absolute-top-right"></i>
+            <i class="fa-solid fa-ellipsis absolute-top-right"></i> <!-- This is the DROPDOWN MENU logic (Owner will see edit,delete and rport. other user see only report when click)-->
         </div>
         <div class="post-body">
             <p class="post-text">
                 Lorem, ipsum dolor sit amet consectetur adipisicing elit. Aliquid ipsa quaerat quos iste vitae porro, expedita cupiditate magni maxime dolorem. Dolore ad similique perspiciatis cupiditate minus incidunt nam ut odio.
-            </p>
+            </p> <!--This is msg.message-->
             <div class="post-thumbnail">
                 <img src="../../public//assets//img/pf.jpg" class="post-thumbnail-img">
-
-            </div>
+            </div><!--This is post-thumbnail is where the logic img or video should display-->
             <div class="post-media-count">
                 <div>
-                    <span class="post-like-count">120 likes</span>
+                    <p><span class="post-like-count">120 </span>Likes</p><!--The post-like-count is the number total which query from the community.like_count-->
                 </div>
                 <div class="post-media-count-child-right">
-                    <span class="post-comment-count">5 comments</span>
-                    <span class="post-repost-count">8 reposts</span>
+                    <p><span class="post-comment-count">5 </span> comments</p><!--The post-comment-count is the number total which query from the community.comment_count-->
+                    <p><span class="post-repost-count">8 </span> reposts</p><!--The post-repost-count is the number total which query from the community.repost_count-->
                 </div>
             </div>
-           
             <div class="post-media-button">
-                <button class="likeBtn media-btn"><i class="fa-solid fa-heart"></i> <span>Like</span></button>
-                <button class="likeBtn media-btn"><i class="fa-solid fa-comment"></i> <span>Comment</span></button>
-                <button class="likeBtn media-btn"><i class="fa-solid fa-share-from-square"></i> <span>Repost</span></button>
-
+                <button class="likeBtn media-btn"><i class="fa-solid fa-heart"></i> <span>Like</span></button><!--This is the like button that toggle when like go back gray when display so normal is gary before click-->
+                <button class="likeBtn media-btn"><i class="fa-solid fa-comment"></i> <span>Comment</span></button><!--This is the comment button when user click it i want user to go to page aboutPost.html?post_id=${msg.message_id} so which mean this button hold href and also the message_id(mean post id that will user to query again to displaya lager comment this comment logic will working later)-->
+                <button class="likeBtn media-btn"><i class="fa-solid fa-share-from-square"></i> <span>Repost</span></button><!--thay button will working last but just set dataset or i need the button to hold message_id first-->
             </div>
-        </div>
-        <div class="post-footer">
-
-        </div>
-
+        </div>    
     </div>
-    
 </body>
 </html>
+<script>
+    function displayMessage(msg) {
+  const div = document.createElement("div");
+  div.className = "post";
+  div.dataset.id = msg.message_id;
+
+  // --- POST HEADER ---
+  const header = document.createElement("div");
+  header.className = "post-header";
+
+  const profileImg = document.createElement("img");
+  profileImg.src = msg.profile_url || "../../public/assets/img/pf.jpg"; // placeholder
+  profileImg.alt = "user-profile";
+  profileImg.className = "userProfile";
+
+  const headerRight = document.createElement("div");
+  headerRight.className = "post-header-child-right";
+  headerRight.innerHTML = `
+    <p class="username">${msg.username || "Unknown"}</p>
+    <span class="postAt">${msg.createFormNow || "just now"}</span>
+  `;
+
+  // Dropdown menu
+  const dropdownWrapper = document.createElement("div");
+  dropdownWrapper.className = "dropdown absolute-top-right";
+
+  const ellipsisBtn = document.createElement("i");
+  ellipsisBtn.className = "fa-solid fa-ellipsis";
+  ellipsisBtn.setAttribute("data-bs-toggle", "dropdown");
+  ellipsisBtn.style.cursor = "pointer";
+
+  const dropdownMenu = document.createElement("ul");
+  dropdownMenu.className = "dropdown-menu";
+  if (msg.memberQid === userMemberQid) {
+    dropdownMenu.innerHTML = `
+      <li><a class="dropdown-item edit-option" href="#">Edit</a></li>
+      <li><a class="dropdown-item delete-option" href="#">Delete</a></li>
+      <li><a class="dropdown-item report-option" href="#">Report</a></li>
+    `;
+  } else {
+    dropdownMenu.innerHTML = `
+      <li><a class="dropdown-item report-option" href="#">Report</a></li>
+    `;
+  }
+  dropdownWrapper.appendChild(ellipsisBtn);
+  dropdownWrapper.appendChild(dropdownMenu);
+
+  header.appendChild(profileImg);
+  header.appendChild(headerRight);
+  header.appendChild(dropdownWrapper);
+
+  // --- POST BODY ---
+  const body = document.createElement("div");
+  body.className = "post-body";
+
+  if (msg.message) {
+    const textP = document.createElement("p");
+    textP.className = "post-text";
+    textP.textContent = msg.message;
+    body.appendChild(textP);
+  }
+
+  // Media
+  if (msg.media_url && msg.media_type) {
+    const mediaWrapper = document.createElement("div");
+    mediaWrapper.className = "post-thumbnail";
+    const mediaEl = document.createElement(msg.media_type === "image" ? "img" : "video");
+    mediaEl.className = "post-thumbnail-img";
+    mediaEl.src = msg.media_url;
+    if (msg.media_type === "video") mediaEl.controls = true;
+    mediaWrapper.appendChild(mediaEl);
+    body.appendChild(mediaWrapper);
+  }
+
+  // Like / comment / repost counts
+  const counts = document.createElement("div");
+  counts.className = "post-media-count";
+  counts.innerHTML = `
+    <div>
+      <p><span class="post-like-count">${msg.like_count || 0}</span> Likes</p>
+    </div>
+    <div class="post-media-count-child-right">
+      <p><span class="post-comment-count">${msg.comment_count || 0}</span> comments</p>
+      <p><span class="post-repost-count">${msg.repost_count || 0}</span> reposts</p>
+    </div>
+  `;
+  body.appendChild(counts);
+
+  // --- BUTTONS ---
+  const btnRow = document.createElement("div");
+  btnRow.className = "post-media-button";
+
+  // Like btn
+  const likeBtn = document.createElement("button");
+  likeBtn.className = "likeBtn media-btn";
+  likeBtn.dataset.id = msg.message_id;
+  likeBtn.innerHTML = `<i class="fa-solid fa-heart"></i> <span>Like</span>`;
+
+  // Comment btn
+  const commentBtn = document.createElement("button");
+  commentBtn.className = "commentBtn media-btn";
+  commentBtn.dataset.id = msg.message_id;
+  commentBtn.innerHTML = `<i class="fa-solid fa-comment"></i> <span>Comment</span>`;
+  commentBtn.onclick = () => {
+    window.location.href = `aboutPost.html?post_id=${msg.message_id}`;
+  };
+
+  // Repost btn
+  const repostBtn = document.createElement("button");
+  repostBtn.className = "repostBtn media-btn";
+  repostBtn.dataset.id = msg.message_id;
+  repostBtn.innerHTML = `<i class="fa-solid fa-share-from-square"></i> <span>Repost</span>`;
+
+  btnRow.appendChild(likeBtn);
+  btnRow.appendChild(commentBtn);
+  btnRow.appendChild(repostBtn);
+
+  body.appendChild(btnRow);
+
+  // Append together
+  div.appendChild(header);
+  div.appendChild(body);
+  document.getElementById("message-container").prepend(div);
+
+  // === Attach like toggle logic ===
+  const likeIcon = likeBtn.querySelector("i");
+  const likeCount = counts.querySelector(".post-like-count");
+  loadLikeInfoForMessage(msg.message_id, likeIcon, likeCount);
+  likeBtn.onclick = async () => {
+    await toggleLikeActivityForMessage(msg.message_id, likeIcon, likeCount);
+  };
+
+  // === Dropdown click handlers ===
+  dropdownMenu.querySelectorAll("a").forEach((item) => {
+    item.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (item.classList.contains("edit-option")) {
+        editingMessageId = msg.message_id;
+        editInput.value = msg.message;
+        editToast.show();
+      } else if (item.classList.contains("delete-option")) {
+        deletingMessageId = msg.message_id;
+        deleteToast.show();
+      } else if (item.classList.contains("report-option")) {
+        reportingTargetId = msg.message_id;
+        reportToast.show();
+      }
+    });
+  });
+}
+
+</script>

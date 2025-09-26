@@ -45,6 +45,7 @@ const loginMember = async (req, res) => {
         const token = createToken({
             user_id: user.user_id,
             memberQid: user.memberQid,
+            username: user.username,
             email: user.email,
             timezone: user.timezone || 'UTC'
         });
@@ -101,6 +102,7 @@ const createMember = async (req, res) => {
     // You need the new user's email as well — since you inserted it, you have it in req.body.email
       const token = createToken({
         user_id: result.insertId,
+        username,
         memberQid,
         email,
         timezone: timezone || 'UTC'

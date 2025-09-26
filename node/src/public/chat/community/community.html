@@ -52,12 +52,159 @@
       width: 300px;
     }
 
+     .post{
+            width: 50%;
+            height: auto;
+            padding: 20px;
+            margin: auto;
+            padding-left: 10px;
+            border-radius: 15px;
+            box-shadow: 0px 0px 3px rgba(86, 86, 86, 0.144);
+        }
+       
+        
+         .post .post-header{
+            width: 100%;
+            display: flex;
+            padding: 5px;
+            gap: 15px;
+            position: relative;
+            
+        }
+        .userProfile{
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        /* .post-header-child-right{
+
+
+        } */
+         .username{
+            font-family: monospace;
+            margin: 0;
+            font-size: large;
+         }
+         .postAt{
+            color: gray;
+            opacity: 0.8;
+            font-size: small;
+            font-family: monospace;
+            margin: 0;
+         }
+         .absolute-top-right{
+            font-size: large;
+            color: rgb(0, 0, 0);
+            
+            position: absolute;
+            top: 5px;
+            right: 25px;
+            
+         }
+         .post .post-body{
+            width: 100%;
+            padding: 5px;
+         }
+         .post-text{
+            font-family: sans-serif;
+            margin: 0;
+         }
+        
+          .post-thumbnail {
+  position: relative;
+  width: 100%;
+  height: 350px;
+  margin: auto;
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+
+
+.post-thumbnail-img {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  object-fit: contain; 
+}
+
+        .post .post-body .post-media-count{
+            
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            margin: 10px;
+            font-family: sans-serif;
+        
+            
+            font-size: 14px;
+            opacity: 0.9;
+            padding: 0;
+         }
+         .post-media-count div{
+            margin: 0;
+            padding: 0;
+         }
+         .post-media-count div span{
+            padding: 0;
+            margin: 0;
+         }
+         .post-media-count-child-right{
+            display: flex;
+            gap: 25px;
+         }
+         .post-hr{
+            color: gainsboro;
+            background-color: gainsboro;
+            opacity: 0.3;
+         }
+         .post-media-button{
+            display: flex;
+            border-top: 1px gainsboro solid;
+            justify-content: space-between;
+            padding: 0;
+           
+            margin: 0;
+         }
+         .media-btn{
+            width: calc(100%/3.06);
+            padding: 20px;
+            margin: 0;
+            background:none;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            
+         }
+         .media-btn span{
+            margin-top: 2px;
+             color:gray;
+         }
+         .media-btn:hover{
+            background-color: gainsboro;
+         }
+         .fa-solid{
+            font-size: large;
+            color:gray;
+         }
+          @media screen and (max-width: 768px) {
+              .post{
+            width: 90%;
+        }
+    }
 
   </style>
 </head>
 <body>
 
-<div id="message-container"></div>
+
 
 
 <form id="form">
@@ -71,6 +218,7 @@
   </div>
   <div id="media-preview" class="mt-2"></div>
 </form>
+<div id="message-container"></div>
 
 
 <!-- Bootstrap Toast for editing -->
@@ -132,10 +280,12 @@ const API_URL = "https://thebooksourcings.onrender.com";
 
 const token = localStorage.getItem("token");
 let userMemberQid = null;
+let username = null;
 
 if (token) {
   const decoded = parseJwt(token);
   userMemberQid = decoded?.memberQid || null;
+  username = decoded?.username || null;
 }
 
 const socket = io(API_URL, { auth: { token } });
@@ -256,52 +406,28 @@ form.addEventListener("submit", async (e) => {
 // ====== DISPLAY MESSAGE ======
 function displayMessage(msg) {
   const div = document.createElement("div");
+  div.className = "post";
   div.dataset.id = msg.message_id;
-  div.innerHTML = `
-    <span class="msg-text">${msg.message}</span>
-    <span class='createdAt'>${msg.createFormNow}</span>
+
+  // --- POST HEADER ---
+  const header = document.createElement("div");
+  header.className = "post-header";
+
+  const profileImg = document.createElement("img");
+  profileImg.src = msg.profile_url || "../../public/assets/img/pf.jpg"; // placeholder
+  profileImg.alt = "user-profile";
+  profileImg.className = "userProfile";
+
+  const headerRight = document.createElement("div");
+  headerRight.className = "post-header-child-right";
+  headerRight.innerHTML = `
+    <p class="username">${msg.username || "Unknown"}</p>
+    <span class="postAt">${msg.createFormNow || "just now"}</span>
   `;
 
-
-  // Render media if exists
-  if (msg.media_url && msg.media_type) {
-    const mediaEl = document.createElement(msg.media_type === "image" ? "img" : "video");
-    mediaEl.src = msg.media_url;
-    if (msg.media_type === "video") mediaEl.controls = true;
-    mediaEl.style.maxWidth = "200px";
-    mediaEl.style.marginTop = "5px";
-    div.appendChild(mediaEl);
-  }
-  // --- LIKE SECTION ---
-  const likeSection = document.createElement("div");
-  likeSection.style.marginTop = "5px";
-
-  const likeIcon = document.createElement("i");
-  likeIcon.className = "fa fa-heart";
-  likeIcon.style.cursor = "pointer";
-  likeIcon.style.marginRight = "5px";
-  likeIcon.style.color = "black";
-
-  const likeCount = document.createElement("span");
-  likeCount.textContent = msg.like_count || 0;
-
-  // Load initial like status
-  loadLikeInfoForMessage(msg.message_id, likeIcon, likeCount);
-
-  // Toggle like
-  likeIcon.onclick = async () => {
-    await toggleLikeActivityForMessage(msg.message_id, likeIcon, likeCount);
-  };
-
-  likeSection.appendChild(likeIcon);
-  likeSection.appendChild(likeCount);
-  div.appendChild(likeSection);
-
-  // --- DROPDOWN MENU ---
+  // Dropdown menu
   const dropdownWrapper = document.createElement("div");
-  dropdownWrapper.className = "dropdown";
-  dropdownWrapper.style.display = "inline-block";
-  dropdownWrapper.style.float = "right";
+  dropdownWrapper.className = "dropdown absolute-top-right";
 
   const ellipsisBtn = document.createElement("i");
   ellipsisBtn.className = "fa-solid fa-ellipsis";
@@ -310,7 +436,6 @@ function displayMessage(msg) {
 
   const dropdownMenu = document.createElement("ul");
   dropdownMenu.className = "dropdown-menu";
-
   if (msg.memberQid === userMemberQid) {
     dropdownMenu.innerHTML = `
       <li><a class="dropdown-item edit-option" href="#">Edit</a></li>
@@ -322,12 +447,95 @@ function displayMessage(msg) {
       <li><a class="dropdown-item report-option" href="#">Report</a></li>
     `;
   }
-
   dropdownWrapper.appendChild(ellipsisBtn);
   dropdownWrapper.appendChild(dropdownMenu);
-  div.appendChild(dropdownWrapper);
 
-  // Dropdown click handlers
+  header.appendChild(profileImg);
+  header.appendChild(headerRight);
+  header.appendChild(dropdownWrapper);
+
+  // --- POST BODY ---
+  const body = document.createElement("div");
+  body.className = "post-body";
+
+  if (msg.message) {
+    const textP = document.createElement("p");
+    textP.className = "post-text";
+    textP.textContent = msg.message;
+    body.appendChild(textP);
+  }
+
+  // Media
+  if (msg.media_url && msg.media_type) {
+    const mediaWrapper = document.createElement("div");
+    mediaWrapper.className = "post-thumbnail";
+    const mediaEl = document.createElement(msg.media_type === "image" ? "img" : "video");
+    mediaEl.className = "post-thumbnail-img";
+    mediaEl.src = msg.media_url;
+    if (msg.media_type === "video") mediaEl.controls = true;
+    mediaWrapper.appendChild(mediaEl);
+    body.appendChild(mediaWrapper);
+  }
+
+  // Like / comment / repost counts
+  const counts = document.createElement("div");
+  counts.className = "post-media-count";
+  counts.innerHTML = `
+    <div>
+      <p><span class="post-like-count">${msg.like_count || 0}</span> Likes</p>
+    </div>
+    <div class="post-media-count-child-right">
+      <p><span class="post-comment-count">${msg.comment_count || 0}</span> comments</p>
+      <p><span class="post-repost-count">${msg.repost_count || 0}</span> reposts</p>
+    </div>
+  `;
+  body.appendChild(counts);
+
+  // --- BUTTONS ---
+  const btnRow = document.createElement("div");
+  btnRow.className = "post-media-button";
+
+  // Like btn
+  const likeBtn = document.createElement("button");
+  likeBtn.className = "likeBtn media-btn";
+  likeBtn.dataset.id = msg.message_id;
+  likeBtn.innerHTML = `<i class="fa-solid fa-heart"></i> <span>Like</span>`;
+
+  // Comment btn
+  const commentBtn = document.createElement("button");
+  commentBtn.className = "commentBtn media-btn";
+  commentBtn.dataset.id = msg.message_id;
+  commentBtn.innerHTML = `<i class="fa-solid fa-comment"></i> <span>Comment</span>`;
+  commentBtn.onclick = () => {
+    window.location.href = `aboutPost.html?post_id=${msg.message_id}`;
+  };
+
+  // Repost btn
+  const repostBtn = document.createElement("button");
+  repostBtn.className = "repostBtn media-btn";
+  repostBtn.dataset.id = msg.message_id;
+  repostBtn.innerHTML = `<i class="fa-solid fa-share-from-square"></i> <span>Repost</span>`;
+
+  btnRow.appendChild(likeBtn);
+  btnRow.appendChild(commentBtn);
+  btnRow.appendChild(repostBtn);
+
+  body.appendChild(btnRow);
+
+  // Append together
+  div.appendChild(header);
+  div.appendChild(body);
+  document.getElementById("message-container").prepend(div);
+
+  // === Attach like toggle logic ===
+  const likeIcon = likeBtn.querySelector("i");
+  const likeCount = counts.querySelector(".post-like-count");
+  loadLikeInfoForMessage(msg.message_id, likeIcon, likeCount);
+  likeBtn.onclick = async () => {
+    await toggleLikeActivityForMessage(msg.message_id, likeIcon, likeCount);
+  };
+
+  // === Dropdown click handlers ===
   dropdownMenu.querySelectorAll("a").forEach((item) => {
     item.addEventListener("click", (e) => {
       e.preventDefault();
@@ -344,9 +552,8 @@ function displayMessage(msg) {
       }
     });
   });
-
-  document.getElementById("message-container").appendChild(div);
 }
+
 
 // ====== LIKE FUNCTIONS ======
 async function loadLikeInfoForMessage(messageId, likeIcon, likeCount) {
