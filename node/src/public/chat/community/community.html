@@ -19,6 +19,11 @@
         float: right;
         color: grey;
     } */
+     #message-container{
+      display: grid;
+      gap: 15px;
+      width: 70%;
+     }
     .owner-btn { margin-left: 5px; cursor: pointer; color: red; font-weight: bold; }
     #form { margin-top: 20px; display: flex; }
     #message-input { flex: 1; padding: 8px; border-radius: 5px; border: 1px solid #ccc; }
@@ -52,8 +57,42 @@
       width: 300px;
     }
 
+     #PostToastWrapper {
+      position: fixed;
+      top: 55%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1080;
+      width: 80%;
+      height: auto;
+  
+     
+     
+      border-radius: 10px;
+    }
+    .toastOfPost{
+        width: 70%;
+        height: auto;
+        margin: auto;
+        
+        border-radius: 10px
+    }
+    #searchButton{
+        width: 70%;
+        background: none;
+        border: 1px solid gainsboro;
+        border-radius: 10px;
+        margin: auto;
+        margin-top: 10px;
+        display: flex;
+        height: 50px;
+        justify-content: start;
+        padding: 10px;
+        color: gray;
+    }
+
      .post{
-            width: 50%;
+            width: 100%;
             height: auto;
             padding: 10px 20px 10px 20px;
             margin: auto;
@@ -183,7 +222,7 @@
             align-items: end;
             
          }
-         .post-media-count div span{
+         .post-media-count div p{
             padding: 0;
           margin-bottom: 0;
          }
@@ -231,10 +270,11 @@
             color:gray;
          }
           @media screen and (max-width: 768px) {
-              .post{
-            width: 90%;
+             #message-container{
+              width: 97%;
+             }
         }
-    }
+    
 
   </style>
 </head>
@@ -243,7 +283,7 @@
 
 
 
-<form id="form">
+<!-- <form id="form">
   <textarea id="message-input" placeholder="Type your message..." rows="3"></textarea>
   <div class="d-flex align-items-center mt-2">
     <label for="mediaInput" style="cursor: pointer; margin-right: 10px;">
@@ -253,7 +293,34 @@
     <button type="submit">Send</button>
   </div>
   <div id="media-preview" class="mt-2"></div>
-</form>
+</form> -->
+<div style="display: flex; width: 90%;justify-content: start;gap: 10px;">
+  <img src="../../assets/img/pf.jpg" style="width: 50px;height: 50px;border-radius: 50%;object-fit: cover;">
+<button id="searchButton">Share your thought, Meanleap Ha? </button>
+</div>
+
+
+<!-- Post Toast -->
+<div id="PostToastWrapper">
+  <div id="PostToast" class="toast align-items-center text-bg-light border-0 toastOfPost" role="alert" aria-live="assertive" aria-atomic="true">
+    <form id="form">
+      <div class="toast-body">
+        
+        <textarea id="message-input" class="form-control mb-2" placeholder="Share your thought"></textarea>
+        <div id="media-preview" class="mt-2"></div>
+         <label for="mediaInput" style="cursor: pointer;margin-top: 5px;opacity: 0.7;">
+                <i class="fa-solid fa-photo-film fa-lg" style="color: green;"></i> Photo/Video
+            </label>
+            <input type="file" id="mediaInput" accept="image/*,video/*" style="display: none;">
+        <div class="d-flex justify-content-end">
+           
+          <button id="cancelPostBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
+          <button id="submitPostBtn" type="submit" class="btn btn-sm btn-success">Post</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
 <div id="message-container"></div>
 
 
@@ -297,11 +364,29 @@
   </div>
 </div>
 
+<!-- Post Toast -->
+<div id="PostToastWrapper">
+  <div id="PostToast" class="toast align-items-center text-bg-light border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <form id="form">
+      <div class="toast-body">
+        <h6>Report Post</h6>
+        <textarea id="postReasonInput" class="form-control mb-2" placeholder="Reason..."></textarea>
+        <div class="d-flex justify-content-end">
+          <button id="cancelPostBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
+          <button id="submitPostBtn" type="button" class="btn btn-sm btn-danger">Submit</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 
 <script>
+
+  
 const API_URL = "https://thebooksourcings.onrender.com";
 
  function parseJwt (token) {
@@ -736,8 +821,19 @@ document.getElementById("submitReportBtn").onclick = async () => {
   }
 };
 
+ // Post toast
+  const postToast = new bootstrap.Toast(document.getElementById("PostToast"), { autohide: false });
+  const searchBtn = document.getElementById("searchButton");
 
+  searchBtn.addEventListener("click", () => {
+    postToast.show();
+  });
 
+  document.getElementById("cancelPostBtn").onclick = () => {
+    postToast.hide();
+  };
+
+  
 
 // ====== CANCEL BUTTONS ======
 
