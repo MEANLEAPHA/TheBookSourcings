@@ -340,5 +340,181 @@
     });
   });
 }
+</script>
+<script>
+
+
+function displayMessage(msg) {
+  const div = document.createElement("div");
+  div.className = "post";
+  div.dataset.id = msg.message_id;
+
+  // --- POST HEADER ---
+  const header = document.createElement("div");
+  header.className = "post-header";
+
+  const profileImg = document.createElement("img");
+  profileImg.src = msg.profile_url || "../../assets/img/pf.jpg"; // placeholder
+  profileImg.alt = "user-profile";
+  profileImg.className = "userProfile";
+
+  const headerRight = document.createElement("div");
+  headerRight.className = "post-header-child-right";
+  headerRight.innerHTML = `
+    <p class="username">${msg.username || "Unknown"}</p>
+    <span class="postAt">${msg.createFormNow || "just now"}</span>
+  `;
+
+  // Dropdown menu
+  const dropdownWrapper = document.createElement("div");
+  dropdownWrapper.className = "dropdown absolute-top-right";
+
+  const ellipsisBtn = document.createElement("i");
+  ellipsisBtn.className = "fa-solid fa-ellipsis";
+  ellipsisBtn.setAttribute("data-bs-toggle", "dropdown");
+  ellipsisBtn.style.cursor = "pointer";
+
+  const dropdownMenu = document.createElement("ul");
+  dropdownMenu.className = "dropdown-menu";
+  if (msg.memberQid === userMemberQid) {
+    dropdownMenu.innerHTML = `
+      <li><a class="dropdown-item edit-option" href="#">Edit</a></li>
+      <li><a class="dropdown-item delete-option" href="#">Delete</a></li>
+      <li><a class="dropdown-item report-option" href="#">Report</a></li>
+    `;
+  } else {
+    dropdownMenu.innerHTML = `
+      <li><a class="dropdown-item report-option" href="#">Report</a></li>
+    `;
+  }
+  dropdownWrapper.appendChild(ellipsisBtn);
+  dropdownWrapper.appendChild(dropdownMenu);
+
+  header.appendChild(profileImg);
+  header.appendChild(headerRight);
+  header.appendChild(dropdownWrapper);
+
+  // --- POST BODY ---
+  const body = document.createElement("div");
+  body.className = "post-body";
+
+  if (msg.message) {
+    const textP = document.createElement("p");
+    textP.className = "post-text";
+    textP.textContent = msg.message;
+    body.appendChild(textP);
+  }
+
+  // Media
+if (msg.media_url && msg.media_type) {
+  const mediaWrapper = document.createElement("div");
+  mediaWrapper.className = "post-thumbnail";
+
+  // Check if media_url is a blob (local preview)
+  if (!msg.media_url.startsWith("blob:")) {
+    // Only apply blur background for real URLs (S3, CDN, etc.)
+    mediaWrapper.style.setProperty("--bg-url", `url(${msg.media_url})`);
+  }
+
+  const mediaEl = document.createElement(msg.media_type === "image" ? "img" : "video");
+  mediaEl.className = "post-thumbnail-img";
+  mediaEl.src = msg.media_url;
+
+  if (msg.media_type === "video") {
+    mediaEl.controls = true;
+  }
+
+  mediaWrapper.appendChild(mediaEl);
+  body.appendChild(mediaWrapper);
+}
+
+
+  // if (msg.media_url && msg.media_type) {
+  //   const mediaWrapper = document.createElement("div");
+  //   mediaWrapper.className = "post-thumbnail";
+  //   const mediaEl = document.createElement(msg.media_type === "image" ? "img" : "video");
+  //   mediaEl.className = "post-thumbnail-img";
+  //   mediaEl.src = msg.media_url;
+  //   if (msg.media_type === "video") mediaEl.controls = true;
+  //   mediaWrapper.appendChild(mediaEl);
+  //   body.appendChild(mediaWrapper);
+  // }
+
+  // Like / comment / repost counts
+  const counts = document.createElement("div");
+  counts.className = "post-media-count";
+  counts.innerHTML = `
+    <div>
+      <p><span class="post-like-count">${msg.like_count || 0}</span> Likes</p>
+    </div>
+    <div class="post-media-count-child-right">
+      <p><span class="post-comment-count">${msg.comment_count || 0}</span> comments</p>
+      <p><span class="post-repost-count">${msg.repost_count || 0}</span> reposts</p>
+    </div>
+  `;
+  body.appendChild(counts);
+
+  // --- BUTTONS ---
+  const btnRow = document.createElement("div");
+  btnRow.className = "post-media-button";
+
+  // Like btn
+  const likeBtn = document.createElement("button");
+  likeBtn.className = "likeBtn media-btn";
+  likeBtn.dataset.id = msg.message_id;
+  likeBtn.innerHTML = `<i class="fa-solid fa-heart"></i> <span>Like</span>`;
+
+  // Comment btn
+  const commentBtn = document.createElement("button");
+  commentBtn.className = "commentBtn media-btn";
+  commentBtn.dataset.id = msg.message_id;
+  commentBtn.innerHTML = `<i class="fa-solid fa-comment"></i> <span>Comment</span>`;
+  commentBtn.onclick = () => {
+    window.location.href = `aboutPost.html?post_id=${msg.message_id}`;
+  };
+
+  // Repost btn
+  const repostBtn = document.createElement("button");
+  repostBtn.className = "repostBtn media-btn";
+  repostBtn.dataset.id = msg.message_id;
+  repostBtn.innerHTML = `<i class="fa-solid fa-share-from-square"></i> <span>Repost</span>`;
+
+  btnRow.appendChild(likeBtn);
+  btnRow.appendChild(commentBtn);
+  btnRow.appendChild(repostBtn);
+
+  body.appendChild(btnRow);
+
+  // Append together
+  div.appendChild(header);
+  div.appendChild(body);
+  document.getElementById("message-container").prepend(div);
+
+  // === Attach like toggle logic ===
+  const likeIcon = likeBtn.querySelector("i");
+  const likeCount = counts.querySelector(".post-like-count");
+  loadLikeInfoForMessage(msg.message_id, likeIcon, likeCount);
+  likeBtn.onclick = async () => {
+    await toggleLikeActivityForMessage(msg.message_id, likeIcon, likeCount);
+  };
+
+  // === Dropdown click handlers ===
+  dropdownMenu.querySelectorAll("a").forEach((item) => {
+    item.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (item.classList.contains("edit-option")) {
+        editingMessageId = msg.message_id;
+        editInput.value = msg.message;
+        editToast.show();
+      } else if (item.classList.contains("delete-option")) {
+        deletingMessageId = msg.message_id;
+        deleteToast.show();
+      } else if (item.classList.contains("report-option")) {
+        reportingTargetId = msg.message_id;
+        reportToast.show();
+      }
+    });
+  });
+}
 
 </script>
