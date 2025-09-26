@@ -9,6 +9,7 @@ app.use(cors(
     {
         origin: ["https://admin.socket.io", "https://thebooksourcings.onrender.com"],
         credentials: true
+        
     }
 ));
 app.use(express.json());
