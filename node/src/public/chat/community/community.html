@@ -77,14 +77,17 @@
             border-radius: 50%;
             object-fit: cover;
         }
-        /* .post-header-child-right{
+        .post-header-child-right{
+          display: grid;
+          gap: 0px;
 
-
-        } */
+        }
          .username{
             font-family: monospace;
             margin: 0;
             font-size: large;
+            text-decoration: none;
+            color: black;
          }
          .postAt{
             color: gray;
@@ -173,7 +176,8 @@
          }
          .post-media-count div{
             margin: 0;
-            padding: 0;
+            height: auto;
+            
          }
          .post-media-count div span{
             padding: 0;
@@ -205,12 +209,13 @@
             cursor: pointer;
             text-align: center;
             display: flex;
+            align-items: center;
             justify-content: center;
             gap: 5px;
             
          }
          .media-btn span{
-            margin-top: 2px;
+            /* margin-top: 2px; */
              color:gray;
          }
          .media-btn:hover{
@@ -521,23 +526,26 @@ function displayMessage(msg) {
   }
 
   // Media
-  if (msg.media_url && msg.media_type) {
-    const mediaWrapper = document.createElement("div");
-    mediaWrapper.className = "post-thumbnail";
+  // Media
+if (msg.media_url && msg.media_type) {
+  const mediaWrapper = document.createElement("div");
+  mediaWrapper.className = "post-thumbnail";
 
-    if (!msg.media_url.startsWith("blob:")) {
-      mediaWrapper.style.setProperty("--bg-url", `url(${msg.media_url})`);
-    }
-
-    const mediaEl = document.createElement(msg.media_type === "image" ? "img" : "video");
-    mediaEl.className = "post-thumbnail-img";
-    mediaEl.src = msg.media_url;
-
-    if (msg.media_type === "video") mediaEl.controls = true;
-
-    mediaWrapper.appendChild(mediaEl);
-    body.appendChild(mediaWrapper);
+  // Only apply blur background for images
+  if (msg.media_type === "image" && !msg.media_url.startsWith("blob:")) {
+    mediaWrapper.style.setProperty("--bg-url", `url(${msg.media_url})`);
   }
+
+  const mediaEl = document.createElement(msg.media_type === "image" ? "img" : "video");
+  mediaEl.className = "post-thumbnail-img";
+  mediaEl.src = msg.media_url;
+
+  if (msg.media_type === "video") mediaEl.controls = true;
+
+  mediaWrapper.appendChild(mediaEl);
+  body.appendChild(mediaWrapper);
+}
+
 
   // Like / comment / repost counts
   const counts = document.createElement("div");

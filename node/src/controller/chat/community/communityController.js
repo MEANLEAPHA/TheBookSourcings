@@ -22,7 +22,7 @@ const getAllMessages = async (req, res) => {
        WHERE c.deleted_at IS NULL
        ORDER BY c.created_at ASC`
     );
-
+ 
     const messages = rows.map(row => ({
       ...row,
       createFormNow: dayjs(row.created_at).fromNow()
@@ -38,6 +38,7 @@ const getAllMessages = async (req, res) => {
 const sendMessage = async (req, res) => {
   try {
     const memberQid = req.user.memberQid;
+    const username = req.user.username;
     const { message } = req.body;
 
     console.log("sendMessage called", { memberQid, message, file: req.file?.originalname });
@@ -76,6 +77,7 @@ const sendMessage = async (req, res) => {
     const msgObj = {
       message_id: result.insertId,
       memberQid,
+      username,
       message: message || "",
       media_type: mediaType,
       media_url: mediaUrl,
