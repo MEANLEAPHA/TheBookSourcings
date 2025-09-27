@@ -132,7 +132,8 @@
         .feelingDisplay{
           color: gray;
           font-family: sans-serif;
-          font-size: 14px;
+          font-size: 12px;
+          margin: 2px 0px 0px 3px;
         
         }
 
@@ -1088,6 +1089,12 @@ document.getElementById("submitReportBtn").onclick = async () => {
 
   document.getElementById("cancelPostBtn").onclick = () => {
     postToast.hide();
+    messageInput.value = "";
+    mediaInput.value = "";
+    mediaPreview.innerHTML = "";
+    feelingInput.value = "";
+    selectedFile = null;
+    displayFeeling.textContent = "";
   };
 
   

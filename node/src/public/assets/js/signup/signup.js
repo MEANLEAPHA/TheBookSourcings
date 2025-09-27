@@ -40,7 +40,7 @@
           success: function (response) {
             $('#msg').text(response.message).css('color', 'green');
             localStorage.setItem('verify_token', response.token);
-            location.href = 'https://thebooksourcings.onrender.com/signup/verify.html';
+            location.href = 'https://thebooksourcings.onrender.com/userSign/verify.html';
             // Optionally clear the form or redirect here
           },
           // error: function (xhr, status, error) {
