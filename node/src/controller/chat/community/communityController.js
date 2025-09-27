@@ -12,6 +12,7 @@ const getAllMessages = async (req, res) => {
       `SELECT 
           c.message_id, 
           c.message_text AS message, 
+          c.feeling,
           c.media_type,
           c.media_url,
           c.memberQid, 
@@ -39,7 +40,7 @@ const sendMessage = async (req, res) => {
   try {
     const memberQid = req.user.memberQid;
     const username = req.user.username;
-    const { message } = req.body;
+    const { message, feeling } = req.body;
 
     console.log("sendMessage called", { memberQid, message, file: req.file?.originalname });
 
@@ -47,7 +48,7 @@ const sendMessage = async (req, res) => {
     let mediaUrl = null;
 
     if (req.file) {
-  console.log("File detected:", req.file.originalname, req.file.mimetype);
+    console.log("File detected:", req.file.originalname, req.file.mimetype);
 
   if (req.file.mimetype.startsWith("image/")) mediaType = "image";
   else if (req.file.mimetype.startsWith("video/")) mediaType = "video";
@@ -70,14 +71,15 @@ const sendMessage = async (req, res) => {
     }
 
     const [result] = await db.query(
-      "INSERT INTO community (memberQid, message_text, media_type, media_url) VALUES (?, ?, ?, ?)",
-      [memberQid, message || null, mediaType, mediaUrl]
+      "INSERT INTO community (memberQid, message_text, feeling, media_type, media_url) VALUES (?, ?, ?, ?, ?)",
+      [memberQid, message || null, feeling || null ,mediaType, mediaUrl]
     );
 
     const msgObj = {
       message_id: result.insertId,
       memberQid,
       username,
+      feeling,
       message: message || "",
       media_type: mediaType,
       media_url: mediaUrl,

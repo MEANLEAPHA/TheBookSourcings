@@ -19,6 +19,13 @@
         float: right;
         color: grey;
     } */
+
+    .userPfFrom{
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
      #message-container{
       display: grid;
       gap: 15px;
@@ -65,12 +72,9 @@
       z-index: 1080;
       width: 80%;
       height: auto;
-  
-     
-     
       border-radius: 10px;
     }
-    .toastOfPost{
+    #toastOfPost{
         width: 70%;
         height: auto;
         margin: auto;
@@ -121,6 +125,15 @@
           gap: 0px;
 
         }
+        .post-header-child-right-top{
+          display: flex;
+          justify-content: start;
+        }
+        .feelingDisplay{
+          color: gray;
+          font-family: monospace;
+        }
+
          .username{
             font-family: monospace;
             margin: 0;
@@ -275,6 +288,46 @@
              }
         }
     
+/* feeling toast */
+         #FeelingToastWrapper {
+      position: fixed;
+      top: 55%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1090;
+     
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      height: 300px;
+      overflow-y: auto;
+    }
+
+    .feeling-option {
+      padding: 8px;
+      background-color: #f8f9fa;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: start;
+      transition: background-color 0.2s;
+      font-size: 1rem;
+    }
+
+    .feeling-option:hover {
+      background-color: #e2e6ea;
+    }
+
+    #displayFeeling {
+      font-family: monospace;
+      color:gray;
+    }
+
+    #feelingValue {
+      display: none;
+    }
 
   </style>
 </head>
@@ -294,6 +347,7 @@
   </div>
   <div id="media-preview" class="mt-2"></div>
 </form> -->
+
 <div style="display: flex; width: 90%;justify-content: start;gap: 1px;">
   <img src="../../assets/img/pf.jpg" style="width: 50px;height: 50px;border-radius: 50%;object-fit: cover;">
 <button id="searchButton">Share your thought, Meanleap Ha? </button>
@@ -303,17 +357,64 @@
 <!-- Post Toast -->
 <div id="PostToastWrapper">
   <div id="PostToast" class="toast align-items-center text-bg-light border-0 toastOfPost" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+      <img src="../../assets/img/pf.jpg" class="userPfFrom">
+      <p class="usernameFrom"> <span id="displayFeeling"></span></p>
+    </div>
     <form id="form">
       <div class="toast-body">
-        
         <textarea id="message-input" class="form-control mb-2" placeholder="Share your thought"></textarea>
         <div id="media-preview" class="mt-2"></div>
-         <label for="mediaInput" style="cursor: pointer;margin-top: 5px;opacity: 0.7;">
+        <div>
+          <label for="mediaInput" style="cursor: pointer">
                 <i class="fa-solid fa-photo-film fa-lg" style="color: green;"></i> Photo/Video
-            </label>
-            <input type="file" id="mediaInput" accept="image/*,video/*" style="display: none;">
+          </label>
+          <label for="feelingGrid" id="feelingLabel" style="cursor:pointer;">
+                <i class="fa-solid fa-face-smile" style="color:gold; font-size: 1.5rem;"></i> Feeling
+          </label>
+        </div>
+           <select id="feelingValue" hidden>
+            <option value="happy">😊 happy</option>
+            <option value="sad">😢 sad</option>
+            <option value="angry">😡 angry</option>
+            <option value="blissful">😇 blissful</option>
+            <option value="in love">😍 in love</option>
+            <option value="silly">😜 silly</option>
+            <option value="cool">😎 cool</option>
+            <option value="relaxed">😌 relaxed</option>
+            <option value="sleepy">😴 sleepy</option>
+            <option value="sick">🤒 sick</option>
+            <option value="loved">🤗 loved</option>
+            <option value="shocked">😱 shocked</option>
+            <option value="disappointed">😞 disappointed</option>
+            <option value="frustrated">😤 frustrated</option>
+            <option value="excited">🤩 excited</option>
+            <option value="festive">🥳 festive</option>
+            <option value="down">😔 down</option>
+            <option value="confused">😕 confused</option>
+            <option value="nervous">😬 nervous</option>
+            <option value="blessed">😇 blessed</option>
+            <option value="thankful">🙏 thankful</option>
+            <option value="amused">😅 amused</option>
+            <option value="curious">🤓 curious</option>
+            <option value="overwhelmed">😩 overwhelmed</option>
+            <option value="fantastic">😆 fantastic</option>
+            <option value="meh">😶 meh</option>
+            <option value="heartbroken">😢 heartbroken</option>
+            <option value="determined">😤 determined</option>
+            <option value="inspired">😇 inspired</option>
+            <option value="crazy">😵‍💫 crazy</option>
+            <option value="ok">😐 OK</option>
+            <option value="proud">😃 proud</option>
+            <option value="satisfied">😋 satisfied</option>
+            <option value="embarrassed">😳 embarrassed</option>
+            <option value="thoughtful">🤔 thoughtful</option>
+            <option value="lovely">😍 lovely</option>
+            <option value="miserable">😖 miserable</option>
+            <option value="grateful">😇 grateful</option>
+          </select>
+          <input type="file" id="mediaInput" accept="image/*,video/*" style="display: none;" hidden>
         <div class="d-flex justify-content-end">
-           
           <button id="cancelPostBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
           <button id="submitPostBtn" type="submit" class="btn btn-sm btn-success">Post</button>
         </div>
@@ -380,13 +481,64 @@
   </div>
 </div>
 
+<!--Feeling Toast-->
+<div id="FeelingToastWrapper">
+    <div id="FeelingToast" class="toast align-items-center text-bg-light border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-body">
+         <div id="feelingGrid" class="grid-container">
+          <div class="feeling-option">😊 happy</div>
+          <div class="feeling-option">😢 sad</div>
+          <div class="feeling-option">😡 angry</div>
+          <div class="feeling-option">😇 blissful</div>
+          <div class="feeling-option">😍 in love</div>
+          <div class="feeling-option">😜 silly</div>
+          <div class="feeling-option">😎 cool</div>
+          <div class="feeling-option">😌 relaxed</div>
+          <div class="feeling-option">😴 sleepy</div>
+          <div class="feeling-option">🤒 sick</div>
+          <div class="feeling-option">🤗 loved</div>
+          <div class="feeling-option">😱 shocked</div>
+          <div class="feeling-option">😞 disappointed</div>
+          <div class="feeling-option">😤 frustrated</div>
+          <div class="feeling-option">🤩 excited</div>
+          <div class="feeling-option">🥳 festive</div>
+          <div class="feeling-option">😔 down</div>
+          <div class="feeling-option">😕 confused</div>
+          <div class="feeling-option">😬 nervous</div>
+          <div class="feeling-option">😇 blessed</div>
+          <div class="feeling-option">🙏 thankful</div>
+          <div class="feeling-option">😅 amused</div>
+          <div class="feeling-option">🤓 curious</div>
+          <div class="feeling-option">😩 overwhelmed</div>
+          <div class="feeling-option">😆 fantastic</div>
+          <div class="feeling-option">😶 meh</div>
+          <div class="feeling-option">😢 heartbroken</div>
+          <div class="feeling-option">😤 determined</div>
+          <div class="feeling-option">😇 inspired</div>
+          <div class="feeling-option">😵‍💫 crazy</div>
+          <div class="feeling-option">😐 OK</div>
+          <div class="feeling-option">😃 proud</div>
+          <div class="feeling-option">😋 satisfied</div>
+          <div class="feeling-option">😳 embarrassed</div>
+          <div class="feeling-option">🤔 thoughtful</div>
+          <div class="feeling-option">😍 lovely</div>
+          <div class="feeling-option">😖 miserable</div>
+          <div class="feeling-option">😇 grateful</div>
+        </div>
+          <div class="d-flex justify-content-end mt-2">
+            <button id="cancelFeelingBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
+          </div>
+        </div>
+    </div>
+  </div>
+
+
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 
 <script>
 
-  
 const API_URL = "https://thebooksourcings.onrender.com";
 
  function parseJwt (token) {
@@ -458,10 +610,39 @@ loadMessages();
 // ====== SEND MESSAGE ======
 const form = document.getElementById("form");
 const messageInput = document.getElementById("message-input");
+
 const mediaInput = document.getElementById("mediaInput");
 const mediaPreview = document.getElementById("media-preview");
 
 let selectedFile = null;
+
+    // feeling toast logic
+    const feelingLabel = document.getElementById('feelingLabel');
+    const displayFeeling = document.getElementById("displayFeeling");
+    const feelingInput = document.getElementById("feelingValue");
+ 
+    const FeelingToast = new bootstrap.Toast(document.getElementById("FeelingToast"), { autohide: false });
+    const feelingOptions = document.querySelectorAll('.feeling-option');
+
+    // Show toast on label click
+    feelingLabel.addEventListener('click', () => {
+      FeelingToast.show();
+    });
+
+    // Handle click on each feeling option
+    feelingOptions.forEach(option => {
+      option.addEventListener("click", () => {
+        const text = option.textContent;
+        displayFeeling.textContent = text;
+
+        // Save selected feeling (strip emoji if needed)
+        feelingInput.value = text.replace(/^[^\w]+/, "").trim().toLowerCase();
+
+        FeelingToast.hide();
+      });
+    });
+    
+
 
 // Show preview when user selects a file
 mediaInput.addEventListener("change", () => {
@@ -491,11 +672,13 @@ form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const text = messageInput.value.trim();
-  if (!text && !selectedFile) return; // must have text or media
+  const feeling = feelingInput.value; // <-- comes from hidden input
+  if (!text && !selectedFile && !feeling) return; // must have text or media
 
   try {
     const formData = new FormData();
     formData.append("message", text);
+    formData.append("feeling", feeling);
     if (selectedFile) formData.append("media", selectedFile);
 
     const res = await fetch(`${API_URL}/api/community/send`, {
@@ -515,6 +698,7 @@ form.addEventListener("submit", async (e) => {
     messageInput.value = "";
     mediaInput.value = "";
     mediaPreview.innerHTML = "";
+    feelingInput.value = "";
     selectedFile = null;
     postToast.hide();
   } catch (err) {
@@ -544,19 +728,37 @@ function displayMessage(msg) {
   profileLink.appendChild(profileImg);
 
   // Username link
+  
+
+  const headerRight = document.createElement("div");
+  headerRight.className = "post-header-child-right";
+
+  const headerRightTop = document.createElement("div");
+  headerRightTop.className = "post-header-child-right-top";
+
+  const headerRightBottom = document.createElement("div");
+  headerRightBottom.className = "post-header-child-right-bottom";
+
+  headerRight.appendChild(headerRightTop);
+  headerRight.appendChild(headerRightBottom);
+
   const usernameLink = document.createElement("a");
   usernameLink.href = `aboutUser?memberId=${msg.memberQid}`;
   usernameLink.textContent = msg.username || "Unknown";
   usernameLink.className = "username";
+  headerRightTop.appendChild(usernameLink);
 
-  const headerRight = document.createElement("div");
-  headerRight.className = "post-header-child-right";
-  headerRight.appendChild(usernameLink);
+  const feeling = document.createElement("span");
+  feeling.className = "feelingDisplay";
+  feeling.textContent = msg.feeling;
+  headerRightTop.appendChild(feeling);
 
   const postAt = document.createElement("span");
   postAt.className = "postAt";
   postAt.textContent = msg.createFormNow || "just now";
-  headerRight.appendChild(postAt);
+  headerRightBottom.appendChild(postAt);
+
+  
 
   // Dropdown menu
   const dropdownWrapper = document.createElement("div");
@@ -859,6 +1061,14 @@ document.getElementById("cancelReportBtn").onclick = () => {
   reportToast.hide();
 };
 
+
+
+    // Cancel button
+    document.getElementById("cancelFeelingBtn").onclick = () => {
+      FeelingToast.hide();
+      displayFeeling.textContent = "";
+      feelingInput.value = "";
+    };
 </script>
 </body>
 </html>
