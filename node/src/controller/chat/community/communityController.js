@@ -66,9 +66,9 @@ const sendMessage = async (req, res) => {
 }
 
 
-    if (!message && !mediaUrl) {
-      return res.status(400).json({ error: "Message or media required" });
-    }
+   if (!message && !mediaUrl && !feeling) {
+  return res.status(400).json({ error: "Message, media, or feeling required" });
+}
 
     const [result] = await db.query(
       "INSERT INTO community (memberQid, message_text, feeling, media_type, media_url) VALUES (?, ?, ?, ?, ?)",

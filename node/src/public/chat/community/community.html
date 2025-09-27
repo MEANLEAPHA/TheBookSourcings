@@ -132,6 +132,7 @@
         .feelingDisplay{
           color: gray;
           font-family: monospace;
+          margin-left: 5px;
         }
 
          .username{
@@ -538,6 +539,47 @@
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 
 <script>
+// --- Feeling Dictionary (global) ---
+const feelingMap = {
+  happy: "😊 happy",
+  sad: "😢 sad",
+  angry: "😡 angry",
+  blissful: "😇 blissful",
+  "in love": "😍 in love",
+  silly: "😜 silly",
+  cool: "😎 cool",
+  relaxed: "😌 relaxed",
+  sleepy: "😴 sleepy",
+  sick: "🤒 sick",
+  loved: "🤗 loved",
+  shocked: "😱 shocked",
+  disappointed: "😞 disappointed",
+  frustrated: "😤 frustrated",
+  excited: "🤩 excited",
+  festive: "🥳 festive",
+  down: "😔 down",
+  confused: "😕 confused",
+  nervous: "😬 nervous",
+  blessed: "😇 blessed",
+  thankful: "🙏 thankful",
+  amused: "😅 amused",
+  curious: "🤓 curious",
+  overwhelmed: "😩 overwhelmed",
+  fantastic: "😆 fantastic",
+  meh: "😶 meh",
+  heartbroken: "😢 heartbroken",
+  determined: "😤 determined",
+  inspired: "😇 inspired",
+  crazy: "😵‍💫 crazy",
+  ok: "😐 OK",
+  proud: "😃 proud",
+  satisfied: "😋 satisfied",
+  embarrassed: "😳 embarrassed",
+  thoughtful: "🤔 thoughtful",
+  lovely: "😍 lovely",
+  miserable: "😖 miserable",
+  grateful: "😇 grateful"
+};
 
 const API_URL = "https://thebooksourcings.onrender.com";
 
@@ -557,6 +599,12 @@ if (token) {
   const decoded = parseJwt(token);
   userMemberQid = decoded?.memberQid || null;
   username = decoded?.username || null;
+}
+
+const usernameFrom = document.querySelector(".usernameFrom");
+
+if (username) {
+  usernameFrom.textContent = username;
 }
 
 const socket = io(API_URL, { auth: { token } });
@@ -581,6 +629,7 @@ socket.on("connect", () => console.log("Connected:", socket.id));
 
 socket.on("receive-message", (msg) => {
   if (!msg.createFormNow) msg.createFormNow = "just now";
+  msg.feeling = feelingMap[msg.feeling] || msg.feeling;
   displayMessage(msg);
 });
 
@@ -700,6 +749,7 @@ form.addEventListener("submit", async (e) => {
     mediaPreview.innerHTML = "";
     feelingInput.value = "";
     selectedFile = null;
+    displayFeeling.textContent = "";
     postToast.hide();
   } catch (err) {
     console.error(err);
@@ -750,7 +800,7 @@ function displayMessage(msg) {
 
   const feeling = document.createElement("span");
   feeling.className = "feelingDisplay";
-  feeling.textContent = msg.feeling;
+  feeling.textContent = "is feeling " + feelingMap[msg.feeling] || msg.feeling || "";
   headerRightTop.appendChild(feeling);
 
   const postAt = document.createElement("span");
