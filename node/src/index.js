@@ -100,6 +100,8 @@ io.on("connection", (socket) => {
   const broadcastData = {
     message_id: data.message_id,
     memberQid: socket.user.memberQid,
+    username:data.username,
+    feeling: data.feeling || null,
     message: data.message || null,
     media_url: data.media_url || null,
     media_type: data.media_type || null,
