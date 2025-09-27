@@ -655,7 +655,7 @@ socket.on("receive-message", (msg) => {
 
 socket.on("message-updated", ({ message_id, newText }) => {
   const div = document.querySelector(`div[data-id='${message_id}']`);
-  if (div) div.querySelector(".msg-text").textContent = newText;
+  if (div) div.querySelector(".post-text").textContent = newText;
 });
 
 socket.on("message-deleted", ({ message_id }) => {
@@ -918,70 +918,50 @@ function displayMessage(msg) {
   // Media
   // Media
 // --- MEDIA SECTION ---
-if (msg.media_url && msg.media_url.length > 0 && msg.media_type && msg.media_type.length > 0) {
+if (msg.media_url && msg.media_url.length > 0) {
   const mediaWrapper = document.createElement("div");
-  mediaWrapper.className = "post-thumbnail";
+  mediaWrapper.className = "post-thumbnail position-relative"; // position relative for counter
+
+  // Generate unique carousel ID per post
+  const carouselId = `carousel-${msg.message_id}`;
 
   if (msg.media_url.length === 1) {
-    // Single file
-    let mediaEl;
-    if (msg.media_type[0] === "image") {
-      mediaEl = document.createElement("img");
-      mediaEl.src = msg.media_url[0];
-      mediaEl.className = "d-block w-100";
-      if (!msg.media_url[0].startsWith("blob:")) {
-        mediaWrapper.style.setProperty("--bg-url", `url(${msg.media_url[0]})`);
-      }
-    } else if (msg.media_type[0] === "video") {
-      mediaEl = document.createElement("video");
-      mediaEl.src = msg.media_url[0];
-      mediaEl.className = "d-block w-100";
-      mediaEl.controls = true;
+    // Single media: display normally
+    const singleMedia = msg.media_type[0] === "image" ? document.createElement("img") : document.createElement("video");
+    singleMedia.src = msg.media_url[0];
+    if (msg.media_type[0] === "video") singleMedia.controls = true;
+
+    // Apply blur background for single image
+    if (msg.media_type[0] === "image" && !msg.media_url[0].startsWith("blob:")) {
+      mediaWrapper.style.setProperty("--bg-url", `url(${msg.media_url[0]})`);
     }
-    mediaWrapper.appendChild(mediaEl);
+
+    singleMedia.className = "post-thumbnail-img";
+    mediaWrapper.appendChild(singleMedia);
   } else {
-    // Multiple files -> carousel
-    const carouselId = `carousel-${msg.message_id}`;
+    // Multiple media: create carousel
     const carousel = document.createElement("div");
-    carousel.id = carouselId;
     carousel.className = "carousel slide";
+    carousel.id = carouselId;
     carousel.setAttribute("data-bs-ride", "carousel");
 
-    const indicators = document.createElement("div");
-    indicators.className = "carousel-indicators";
     const inner = document.createElement("div");
     inner.className = "carousel-inner";
 
     msg.media_url.forEach((url, index) => {
-      const type = msg.media_type[index];
-      // Indicator button
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.setAttribute("data-bs-target", `#${carouselId}`);
-      btn.setAttribute("data-bs-slide-to", index);
-      if (index === 0) btn.className = "active";
-      btn.setAttribute("aria-current", index === 0 ? "true" : "false");
-      btn.setAttribute("aria-label", `Slide ${index + 1}`);
-      indicators.appendChild(btn);
-
-      // Carousel item
       const item = document.createElement("div");
-      item.className = "carousel-item" + (index === 0 ? " active" : "");
+      item.className = index === 0 ? "carousel-item active" : "carousel-item";
 
-      if (type === "image") {
+      if (msg.media_type[index] === "image") {
         const img = document.createElement("img");
-        img.src = url;
         img.className = "d-block w-100";
+        img.src = url;
+        item.style.setProperty("--bg-url", `url(${url})`); // blur background
         item.appendChild(img);
-
-        if (!url.startsWith("blob:") && index === 0) {
-          // Apply blur background to first image
-          mediaWrapper.style.setProperty("--bg-url", `url(${url})`);
-        }
-      } else if (type === "video") {
+      } else if (msg.media_type[index] === "video") {
         const video = document.createElement("video");
-        video.src = url;
         video.className = "d-block w-100";
+        video.src = url;
         video.controls = true;
         item.appendChild(video);
       }
@@ -989,37 +969,137 @@ if (msg.media_url && msg.media_url.length > 0 && msg.media_type && msg.media_typ
       inner.appendChild(item);
     });
 
-    // Controls
-    const prevBtn = document.createElement("button");
-    prevBtn.className = "carousel-control-prev";
-    prevBtn.type = "button";
-    prevBtn.setAttribute("data-bs-target", `#${carouselId}`);
-    prevBtn.setAttribute("data-bs-slide", "prev");
-    prevBtn.innerHTML = `
-      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Previous</span>
-    `;
-
-    const nextBtn = document.createElement("button");
-    nextBtn.className = "carousel-control-next";
-    nextBtn.type = "button";
-    nextBtn.setAttribute("data-bs-target", `#${carouselId}`);
-    nextBtn.setAttribute("data-bs-slide", "next");
-    nextBtn.innerHTML = `
-      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Next</span>
-    `;
-
-    carousel.appendChild(indicators);
     carousel.appendChild(inner);
-    carousel.appendChild(prevBtn);
-    carousel.appendChild(nextBtn);
-
     mediaWrapper.appendChild(carousel);
+
+    // --- Slide counter ---
+    const counter = document.createElement("div");
+    counter.className = "carousel-counter position-absolute";
+    counter.style.top = "10px";
+    counter.style.right = "10px";
+    counter.style.background = "rgba(0,0,0,0.5)";
+    counter.style.color = "#fff";
+    counter.style.padding = "2px 8px";
+    counter.style.borderRadius = "12px";
+    counter.style.fontSize = "0.9rem";
+    counter.textContent = `1/${msg.media_url.length}`;
+    mediaWrapper.appendChild(counter);
+
+    // --- Bootstrap carousel event to update counter ---
+    carousel.addEventListener("slid.bs.carousel", () => {
+      const activeIndex = Array.from(inner.children).findIndex(c => c.classList.contains("active"));
+      counter.textContent = `${activeIndex + 1}/${msg.media_url.length}`;
+    });
+
+    // Optional: hide default prev/next buttons
+    carousel.querySelectorAll(".carousel-control-prev, .carousel-control-next").forEach(btn => btn.style.display = "none");
   }
 
   body.appendChild(mediaWrapper);
 }
+
+// if (msg.media_url && msg.media_url.length > 0 && msg.media_type && msg.media_type.length > 0) {
+//   const mediaWrapper = document.createElement("div");
+//   mediaWrapper.className = "post-thumbnail";
+
+//   if (msg.media_url.length === 1) {
+//     // Single file
+//     let mediaEl;
+//     if (msg.media_type[0] === "image") {
+//       mediaEl = document.createElement("img");
+//       mediaEl.src = msg.media_url[0];
+//       mediaEl.className = "d-block w-100";
+//       if (!msg.media_url[0].startsWith("blob:")) {
+//         mediaWrapper.style.setProperty("--bg-url", `url(${msg.media_url[0]})`);
+//       }
+//     } else if (msg.media_type[0] === "video") {
+//       mediaEl = document.createElement("video");
+//       mediaEl.src = msg.media_url[0];
+//       mediaEl.className = "d-block w-100";
+//       mediaEl.controls = true;
+//     }
+//     mediaWrapper.appendChild(mediaEl);
+//   } else {
+//     // Multiple files -> carousel
+//     const carouselId = `carousel-${msg.message_id}`;
+//     const carousel = document.createElement("div");
+//     carousel.id = carouselId;
+//     carousel.className = "carousel slide";
+//     carousel.setAttribute("data-bs-ride", "carousel");
+
+//     const indicators = document.createElement("div");
+//     indicators.className = "carousel-indicators";
+//     const inner = document.createElement("div");
+//     inner.className = "carousel-inner";
+
+//     msg.media_url.forEach((url, index) => {
+//       const type = msg.media_type[index];
+//       // Indicator button
+//       const btn = document.createElement("button");
+//       btn.type = "button";
+//       btn.setAttribute("data-bs-target", `#${carouselId}`);
+//       btn.setAttribute("data-bs-slide-to", index);
+//       if (index === 0) btn.className = "active";
+//       btn.setAttribute("aria-current", index === 0 ? "true" : "false");
+//       btn.setAttribute("aria-label", `Slide ${index + 1}`);
+//       indicators.appendChild(btn);
+
+//       // Carousel item
+//       const item = document.createElement("div");
+//       item.className = "carousel-item" + (index === 0 ? " active" : "");
+
+//       if (type === "image") {
+//         const img = document.createElement("img");
+//         img.src = url;
+//         img.className = "d-block w-100";
+//         item.appendChild(img);
+
+//         if (!url.startsWith("blob:") && index === 0) {
+//           // Apply blur background to first image
+//           mediaWrapper.style.setProperty("--bg-url", `url(${url})`);
+//         }
+//       } else if (type === "video") {
+//         const video = document.createElement("video");
+//         video.src = url;
+//         video.className = "d-block w-100";
+//         video.controls = true;
+//         item.appendChild(video);
+//       }
+
+//       inner.appendChild(item);
+//     });
+
+//     // Controls
+//     const prevBtn = document.createElement("button");
+//     prevBtn.className = "carousel-control-prev";
+//     prevBtn.type = "button";
+//     prevBtn.setAttribute("data-bs-target", `#${carouselId}`);
+//     prevBtn.setAttribute("data-bs-slide", "prev");
+//     prevBtn.innerHTML = `
+//       <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+//       <span class="visually-hidden">Previous</span>
+//     `;
+
+//     const nextBtn = document.createElement("button");
+//     nextBtn.className = "carousel-control-next";
+//     nextBtn.type = "button";
+//     nextBtn.setAttribute("data-bs-target", `#${carouselId}`);
+//     nextBtn.setAttribute("data-bs-slide", "next");
+//     nextBtn.innerHTML = `
+//       <span class="carousel-control-next-icon" aria-hidden="true"></span>
+//       <span class="visually-hidden">Next</span>
+//     `;
+
+//     carousel.appendChild(indicators);
+//     carousel.appendChild(inner);
+//     carousel.appendChild(prevBtn);
+//     carousel.appendChild(nextBtn);
+
+//     mediaWrapper.appendChild(carousel);
+//   }
+
+//   body.appendChild(mediaWrapper);
+// }
 
 
   // Like / comment / repost counts
