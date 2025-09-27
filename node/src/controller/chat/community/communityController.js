@@ -15,6 +15,9 @@ const getAllMessages = async (req, res) => {
           c.feeling,
           c.media_type,
           c.media_url,
+          c.like_count,
+          c.comment_count,
+          c.repost_count,
           c.memberQid, 
           c.created_at,
           u.username

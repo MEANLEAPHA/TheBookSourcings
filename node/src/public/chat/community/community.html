@@ -127,18 +127,19 @@
         .post-header-child-right-top{
           display: flex;
           justify-content: start;
-          background-color: aquamarine;
+          /* background-color: aquamarine; */
         }
         .post-header-child-right-bottom{
-          background-color: blueviolet;
+          /* background-color: blueviolet; */
           margin: 0;
           padding: 0;
+          position: relative;
         }
         .feelingDisplay{
           color: gray;
           font-family: sans-serif;
           font-size: 14px;
-          margin: 4px 0px 0px 3px;
+          margin: 6px 0px 0px 5px;
         
         }
 
@@ -155,6 +156,7 @@
             font-size: small;
             font-family: monospace;
             margin: 0;
+            float: left;
          }
          .absolute-top-right{
             font-size: large;
@@ -989,7 +991,7 @@ async function loadLikeInfoForMessage(messageId, likeIcon, likeCount) {
 
     const data = await res.json();
     likeCount.textContent = data.post.like_count;
-    likeIcon.style.color = data.userStatus.liked ? "red" : "black";
+    likeIcon.style.color = data.userStatus.liked ? "red" : "gray";
   } catch (err) {
     console.error(err);
   }
@@ -1007,7 +1009,7 @@ async function toggleLikeActivityForMessage(messageId, likeIcon, likeCount) {
     if (!res.ok) throw new Error("Failed to toggle like");
 
     const data = await res.json();
-    likeIcon.style.color = data.liked ? "red" : "black";
+    likeIcon.style.color = data.liked ? "red" : "gray";
     await loadLikeInfoForMessage(messageId, likeIcon, likeCount);
   } catch (err) {
     console.error(err);
