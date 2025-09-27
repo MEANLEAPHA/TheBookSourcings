@@ -138,8 +138,8 @@
         .feelingDisplay{
           color: gray;
           font-family: sans-serif;
-          font-size: 14px;
-          margin: 6px 0px 0px 5px;
+          font-size: larger;
+          
         
         }
 
@@ -811,7 +811,7 @@ function displayMessage(msg) {
   headerRightTop.appendChild(usernameLink);
 
   if (msg.feeling) {
-    const feeling = document.createElement("span");
+    const feeling = document.createElement("p");
     feeling.className = "feelingDisplay";
     feeling.textContent = "is feeling " + feelingMap[msg.feeling] || msg.feeling || "";
     headerRightTop.appendChild(feeling);
