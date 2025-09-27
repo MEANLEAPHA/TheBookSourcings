@@ -429,7 +429,7 @@
             <option value="miserable">😖 miserable</option>
             <option value="grateful">😇 grateful</option>
           </select>
-          <input type="file" id="mediaInput" accept="image/*,video/*" style="display: none;" hidden>
+          <input type="file" id="mediaInput" accept="image/*,video/*" multiple hidden>
         <div class="d-flex justify-content-end">
           <button id="cancelPostBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
           <button id="submitPostBtn" type="submit" class="btn btn-sm btn-success">Post</button>
@@ -598,6 +598,9 @@ const feelingMap = {
   grateful: "😇 grateful"
 };
 
+
+
+
 const API_URL = "https://thebooksourcings.onrender.com";
 
  function parseJwt (token) {
@@ -676,11 +679,26 @@ loadMessages();
 // ====== SEND MESSAGE ======
 const form = document.getElementById("form");
 const messageInput = document.getElementById("message-input");
-
 const mediaInput = document.getElementById("mediaInput");
 const mediaPreview = document.getElementById("media-preview");
 
 let selectedFile = null;
+
+// limit of 5 multi file upload 
+
+
+mediaInput.addEventListener("change", (e) => {
+  const files = Array.from(e.target.files);
+
+  if (files.length > 5) {
+    alert("You can only upload up to 5 files.");
+    mediaInput.value = ""; // clear selection
+    return;
+  }
+
+  // ✅ safe to proceed
+  console.log("Selected files:", files);
+});
 
     // feeling toast logic
     const feelingLabel = document.getElementById('feelingLabel');
@@ -710,42 +728,53 @@ let selectedFile = null;
     
 
 
-// Show preview when user selects a file
+// Show preview when user selects files
 mediaInput.addEventListener("change", () => {
-  selectedFile = mediaInput.files[0];
+  const files = mediaInput.files; // can be multiple
   mediaPreview.innerHTML = ""; // clear previous preview
 
-  if (!selectedFile) return;
+  if (!files || files.length === 0) return;
 
-  if (selectedFile.type.startsWith("image/")) {
-    const img = document.createElement("img");
-    img.src = URL.createObjectURL(selectedFile);
-    img.style.maxWidth = "200px";
-    img.style.marginTop = "5px";
-    mediaPreview.appendChild(img);
-  } else if (selectedFile.type.startsWith("video/")) {
-    const video = document.createElement("video");
-    video.src = URL.createObjectURL(selectedFile);
-    video.controls = true;
-    video.style.maxWidth = "200px";
-    video.style.marginTop = "5px";
-    mediaPreview.appendChild(video);
-  }
+  // Loop through all selected files
+  Array.from(files).forEach(file => {
+    if (file.type.startsWith("image/")) {
+      const img = document.createElement("img");
+      img.src = URL.createObjectURL(file);
+      img.style.maxWidth = "150px";
+      img.style.margin = "5px";
+      img.style.borderRadius = "5px";
+      mediaPreview.appendChild(img);
+    } else if (file.type.startsWith("video/")) {
+      const video = document.createElement("video");
+      video.src = URL.createObjectURL(file);
+      video.controls = true;
+      video.style.maxWidth = "150px";
+      video.style.margin = "5px";
+      video.style.borderRadius = "5px";
+      mediaPreview.appendChild(video);
+    }
+  });
 });
 
-// Send message (text + optional media)
+// Send message (text + optional multiple media)
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const text = messageInput.value.trim();
-  const feeling = feelingInput.value; // <-- comes from hidden input
-  if (!text && !selectedFile && !feeling) return; // must have text or media
+  const feeling = feelingInput.value; // hidden input
+  const files = mediaInput.files; // multiple files
+
+  if (!text && files.length === 0 && !feeling) return; // must have text, media, or feeling
 
   try {
     const formData = new FormData();
     formData.append("message", text);
     formData.append("feeling", feeling);
-    if (selectedFile) formData.append("media", selectedFile);
+
+    // Append all selected files
+    Array.from(files).forEach(file => {
+      formData.append("media", file); // "media" field matches backend
+    });
 
     const res = await fetch(`${API_URL}/api/community/send`, {
       method: "POST",
@@ -888,22 +917,107 @@ function displayMessage(msg) {
 
   // Media
   // Media
-if (msg.media_url && msg.media_type) {
+// --- MEDIA SECTION ---
+if (msg.media_url && msg.media_url.length > 0 && msg.media_type && msg.media_type.length > 0) {
   const mediaWrapper = document.createElement("div");
   mediaWrapper.className = "post-thumbnail";
 
-  // Only apply blur background for images
-  if (msg.media_type === "image" && !msg.media_url.startsWith("blob:")) {
-    mediaWrapper.style.setProperty("--bg-url", `url(${msg.media_url})`);
+  if (msg.media_url.length === 1) {
+    // Single file
+    let mediaEl;
+    if (msg.media_type[0] === "image") {
+      mediaEl = document.createElement("img");
+      mediaEl.src = msg.media_url[0];
+      mediaEl.className = "d-block w-100";
+      if (!msg.media_url[0].startsWith("blob:")) {
+        mediaWrapper.style.setProperty("--bg-url", `url(${msg.media_url[0]})`);
+      }
+    } else if (msg.media_type[0] === "video") {
+      mediaEl = document.createElement("video");
+      mediaEl.src = msg.media_url[0];
+      mediaEl.className = "d-block w-100";
+      mediaEl.controls = true;
+    }
+    mediaWrapper.appendChild(mediaEl);
+  } else {
+    // Multiple files -> carousel
+    const carouselId = `carousel-${msg.message_id}`;
+    const carousel = document.createElement("div");
+    carousel.id = carouselId;
+    carousel.className = "carousel slide";
+    carousel.setAttribute("data-bs-ride", "carousel");
+
+    const indicators = document.createElement("div");
+    indicators.className = "carousel-indicators";
+    const inner = document.createElement("div");
+    inner.className = "carousel-inner";
+
+    msg.media_url.forEach((url, index) => {
+      const type = msg.media_type[index];
+      // Indicator button
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.setAttribute("data-bs-target", `#${carouselId}`);
+      btn.setAttribute("data-bs-slide-to", index);
+      if (index === 0) btn.className = "active";
+      btn.setAttribute("aria-current", index === 0 ? "true" : "false");
+      btn.setAttribute("aria-label", `Slide ${index + 1}`);
+      indicators.appendChild(btn);
+
+      // Carousel item
+      const item = document.createElement("div");
+      item.className = "carousel-item" + (index === 0 ? " active" : "");
+
+      if (type === "image") {
+        const img = document.createElement("img");
+        img.src = url;
+        img.className = "d-block w-100";
+        item.appendChild(img);
+
+        if (!url.startsWith("blob:") && index === 0) {
+          // Apply blur background to first image
+          mediaWrapper.style.setProperty("--bg-url", `url(${url})`);
+        }
+      } else if (type === "video") {
+        const video = document.createElement("video");
+        video.src = url;
+        video.className = "d-block w-100";
+        video.controls = true;
+        item.appendChild(video);
+      }
+
+      inner.appendChild(item);
+    });
+
+    // Controls
+    const prevBtn = document.createElement("button");
+    prevBtn.className = "carousel-control-prev";
+    prevBtn.type = "button";
+    prevBtn.setAttribute("data-bs-target", `#${carouselId}`);
+    prevBtn.setAttribute("data-bs-slide", "prev");
+    prevBtn.innerHTML = `
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    `;
+
+    const nextBtn = document.createElement("button");
+    nextBtn.className = "carousel-control-next";
+    nextBtn.type = "button";
+    nextBtn.setAttribute("data-bs-target", `#${carouselId}`);
+    nextBtn.setAttribute("data-bs-slide", "next");
+    nextBtn.innerHTML = `
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    `;
+
+    carousel.appendChild(indicators);
+    carousel.appendChild(inner);
+    carousel.appendChild(prevBtn);
+    carousel.appendChild(nextBtn);
+
+    mediaWrapper.appendChild(carousel);
   }
 
-  const mediaEl = document.createElement(msg.media_type === "image" ? "img" : "video");
-  mediaEl.className = "post-thumbnail-img";
-  mediaEl.src = msg.media_url;
-
-  if (msg.media_type === "video") mediaEl.controls = true;
-
-  mediaWrapper.appendChild(mediaEl);
   body.appendChild(mediaWrapper);
 }
 

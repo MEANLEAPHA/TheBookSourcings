@@ -1,3 +1,4 @@
+
 const db = require("../../../config/db");
 const dayjs = require("dayjs");
 const relativeTime = require("dayjs/plugin/relativeTime");
@@ -29,7 +30,9 @@ const getAllMessages = async (req, res) => {
  
     const messages = rows.map(row => ({
       ...row,
-      createFormNow: dayjs(row.created_at).fromNow()
+      createFormNow: dayjs(row.created_at).fromNow(),
+      media_url: row.media_url ? JSON.parse(row.media_url) : [],
+      media_type: row.media_type ? JSON.parse(row.media_type) : []
     }));
 
     res.json(messages);
@@ -38,44 +41,37 @@ const getAllMessages = async (req, res) => {
   }
 };
 
-// 📌 Send message with optional media
+
+// 📌 Send message with multiple media
 const sendMessage = async (req, res) => {
   try {
     const memberQid = req.user.memberQid;
     const username = req.user.username;
     const { message, feeling } = req.body;
 
-    console.log("sendMessage called", { memberQid, message, file: req.file?.originalname });
+    let mediaUrls = [];
+    let mediaTypes = [];
 
-    let mediaType = null;
-    let mediaUrl = null;
+    // Support multiple file uploads (req.files instead of req.file)
+    if (req.files && req.files.length > 0) {
+      for (const file of req.files) {
+        let type = null;
+        if (file.mimetype.startsWith("image/")) type = "image";
+        else if (file.mimetype.startsWith("video/")) type = "video";
 
-    if (req.file) {
-    console.log("File detected:", req.file.originalname, req.file.mimetype);
-
-  if (req.file.mimetype.startsWith("image/")) mediaType = "image";
-  else if (req.file.mimetype.startsWith("video/")) mediaType = "video";
-
-  try {
-    mediaUrl = await uploadToS3(req.file, "community/"); 
-    if (!mediaUrl) {
-      throw new Error("S3 upload failed, no URL returned");
+        const url = await uploadToS3(file, "community/");
+        mediaUrls.push(url);
+        mediaTypes.push(type);
+      }
     }
-    console.log("S3 upload URL:", mediaUrl);
-  } catch (uploadErr) {
-    console.error("S3 upload error:", uploadErr);
-    return res.status(500).json({ error: "Failed to upload media", details: uploadErr.message });
-  }
-}
 
-
-   if (!message && !mediaUrl && !feeling) {
-  return res.status(400).json({ error: "Message, media, or feeling required" });
-}
+    if (!message && mediaUrls.length === 0 && !feeling) {
+      return res.status(400).json({ error: "Message, media, or feeling required" });
+    }
 
     const [result] = await db.query(
       "INSERT INTO community (memberQid, message_text, feeling, media_type, media_url) VALUES (?, ?, ?, ?, ?)",
-      [memberQid, message || null, feeling || null ,mediaType, mediaUrl]
+      [memberQid, message || null, feeling || null, JSON.stringify(mediaTypes), JSON.stringify(mediaUrls)]
     );
 
     const msgObj = {
@@ -84,21 +80,20 @@ const sendMessage = async (req, res) => {
       username,
       feeling,
       message: message || "",
-      media_type: mediaType,
-      media_url: mediaUrl,
+      media_type: mediaTypes,
+      media_url: mediaUrls,
       createFormNow: "just now",
       like_count: 0
     };
 
-    console.log("Message saved to DB:", msgObj);
-
     res.json(msgObj);
-
   } catch (err) {
-    console.error("sendMessage unexpected error:", err.stack || err);
+    console.error("sendMessage error:", err);
     res.status(500).json({ error: "Internal Server Error", details: err.message });
   }
 };
+
+
 
 
 // 📌 Edit message (replace media if new file uploaded)
@@ -126,7 +121,7 @@ const editMessage = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
-// 📌 Delete message (also delete media from S3 if exists)
+// 📌 Delete message (also delete multiple media from S3 if exists)
 const deleteMessage = async (req, res) => {
   try {
     const memberQid = req.user.memberQid;
@@ -140,13 +135,32 @@ const deleteMessage = async (req, res) => {
     if (rows.length === 0) return res.status(404).json({ error: "Message not found" });
     if (rows[0].memberQid !== memberQid) return res.status(403).json({ error: "Not authorized" });
 
-    // delete media from S3
-    if (rows[0].media_url) await deleteFromS3(rows[0].media_url);
+    // delete each media URL from S3 if exists
+    if (rows[0].media_url) {
+      let mediaUrls = [];
+      try {
+        mediaUrls = JSON.parse(rows[0].media_url);
+      } catch (err) {
+        console.warn("Failed to parse media_url JSON:", err);
+      }
 
+      for (const url of mediaUrls) {
+        if (url) {
+          try {
+            await deleteFromS3(url);
+          } catch (err) {
+            console.error("Failed to delete S3 file:", url, err);
+          }
+        }
+      }
+    }
+
+    // delete message from DB
     await db.query("DELETE FROM community WHERE message_id = ?", [message_id]);
 
     res.json({ message_id });
   } catch (err) {
+    console.error("deleteMessage error:", err);
     res.status(500).json({ error: err.message });
   }
 };

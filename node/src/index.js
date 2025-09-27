@@ -103,8 +103,8 @@ io.on("connection", (socket) => {
     username:data.username,
     feeling: data.feeling || null,
     message: data.message || null,
-    media_url: data.media_url || null,
-    media_type: data.media_type || null,
+    media_url: data.media_url || [],
+    media_type: data.media_type || [],
     createFormNow: data.createFormNow || "just now"
   };
 

@@ -14,12 +14,15 @@ router.get("/display", getAllMessages);
 
 // Send message with optional photo/video
 // Accepts "media" field (image or video file)
+// Send message with multiple photos/videos
+// Accepts "media" field (can upload multiple files)
 router.post(
   "/send", 
   verifyHttpToken, 
-  upload.single("media"), // handles one file upload (photo/video)
+  upload.array("media", 5), // max 5 files
   sendMessage
 );
+
 
 // Edit message
 router.put("/edit", verifyHttpToken, editMessage);

@@ -6,7 +6,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+    /* body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
     #message-container div { 
         margin-bottom: 10px; 
         padding: 8px 10px; 
@@ -18,12 +18,25 @@
     .createdAt{
         float: right;
         color: grey;
+    } */
+
+    .userPfFrom{
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
     }
-    .owner-btn { margin-left: 5px; cursor: pointer; color: red; font-weight: bold; }
+     #message-container{
+      display: grid;
+      gap: 15px;
+      width: 50%;
+      margin: auto;
+     }
+    /* .owner-btn { margin-left: 5px; cursor: pointer; color: red; font-weight: bold; }
     #form { margin-top: 20px; display: flex; }
-    #message-input { flex: 1; padding: 8px; border-radius: 5px; border: 1px solid #ccc; }
-    #form button { margin-left: 10px; padding: 8px 15px; border: none; border-radius: 5px; background: #4CAF50; color: white; cursor: pointer; }
-    #form button:hover { background: #45a049; }
+    #message-input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;} */
+    /* #form button { margin-left: 10px; padding: 8px 15px; border: none; border-radius: 5px; background: #4CAF50; color: white; cursor: pointer; }
+    #form button:hover { background: #45a049; } */
 
     /* Center edit toast in the page */
     #editToastWrapper {
@@ -52,17 +65,382 @@
       width: 300px;
     }
 
+     #PostToastWrapper {
+      position: fixed;
+      top: 55%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1080;
+      width: 80%;
+      height: auto;
+      border-radius: 10px;
+    }
+    #toastOfPost{
+        width: 70%;
+        height: auto;
+        margin: auto;
+        
+        border-radius: 10px
+    }
+    #searchButton{
+        width: 70%;
+        background: none;
+        border: 1px solid gainsboro;
+        border-radius: 10px;
+        display: flex;
+        height: 50px;
+        justify-content: start;
+        padding: 10px;
+        color: gray;
+    }
+
+     .post{
+            width: 100%;
+            height: auto;
+            padding: 10px 20px 10px 20px;
+            margin: auto;
+            padding-left: 10px;
+            border-radius: 15px;
+            box-shadow: 0px 0px 3px rgba(86, 86, 86, 0.144);
+        }
+       
+        
+         .post .post-header{
+            width: 100%;
+            display: flex;
+            padding: 5px;
+            gap: 15px;
+            position: relative;
+            
+        }
+        .userProfile{
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .post-header-child-right{
+          display: grid;
+          gap: 0px;
+
+        }
+        .post-header-child-right-top{
+          display: flex;
+          justify-content: start;
+          /* background-color: aquamarine; */
+          padding: 0;
+          margin: 0;
+          align-items: center;
+        }
+        .post-header-child-right-bottom{
+          /* background-color: blueviolet; */
+          margin: 0;
+          padding: 0;
+          position: relative;
+        }
+        .feelingDisplay{
+          color: gray;
+          font-family: sans-serif;
+          font-size: medium;
+          text-decoration: none;
+          margin-left: 5px;
+        
+        }
+
+         .username{
+            font-family: monospace;
+            margin: 0;
+            font-size: larger;
+            text-decoration: none;
+            color: black;
+         }
+         .postAt{
+            color: gray;
+            opacity: 0.8;
+            font-size: small;
+            font-family: monospace;
+            margin: 0;
+           
+         }
+         .absolute-top-right{
+            font-size: large;
+            color: rgb(0, 0, 0);
+            
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            
+         }
+         .post .post-body{
+            width: 100%;
+            padding: 5px;
+         }
+         .post-text{
+            font-family: sans-serif;
+            margin: 0;
+         }
+        
+          /* .post-thumbnail {
+            position: relative;
+            width: 100%;
+            height: 350px;
+            margin: auto;
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+          }
+
+            .post-thumbnail-img {
+              position: relative;
+              z-index: 1;
+              height: 100%;
+              object-fit: contain; 
+            } */
+             .post-thumbnail {
+                position: relative;
+                width: 100%;
+                height: 350px;
+                margin: auto;
+                margin-top: 10px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                overflow: hidden;
+              }
+
+              .post-thumbnail::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: var(--bg-url) center/cover no-repeat;
+                filter: blur(30px);
+                transform: scale(1.1); /* prevents blur edges from showing */
+                z-index: 0;
+              }
+
+              .post-thumbnail-img {
+                position: relative;
+                z-index: 1;
+                height: 100%;
+                object-fit: contain;
+              }
+
+
+        .post .post-body .post-media-count{
+            
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-family: sans-serif;
+            align-items: end;
+            font-size: 14px;
+            opacity: 0.9;
+            padding: 0;
+         }
+         .post-media-count div{
+            margin: 0;
+            height: auto;
+           
+            display: flex;
+            justify-content: start;
+            align-items: end;
+            
+         }
+         .post-media-count div p{
+            padding: 0;
+          margin-bottom: 0;
+         }
+         .post-media-count-child-right{
+            display: flex;
+            gap: 25px;
+         }
+         
+         .post-hr{
+            color: gainsboro;
+            background-color: gainsboro;
+            opacity: 0.3;
+         }
+         .post-media-button{
+            display: flex;
+            border-top: 1px gainsboro solid;
+            justify-content: space-between;
+            padding: 0;
+            
+            align-items: end;
+            margin: 0;
+         }
+         .media-btn{
+            width: calc(100%/3.06);
+            padding: 18px;
+            margin: 0;
+            background:none;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            
+         }
+         .media-btn span{
+            /* margin-top: 2px; */
+             color:gray;
+         }
+         .media-btn:hover{
+            background-color: gainsboro;
+         }
+         .fa-solid{
+            font-size: large;
+            color:gray;
+         }
+          @media screen and (max-width: 768px) {
+             #message-container{
+              width: 97%;
+             }
+        }
+    
+/* feeling toast */
+         #FeelingToastWrapper {
+      position: fixed;
+      top: 55%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1090;
+     
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      height: 300px;
+      overflow-y: auto;
+    }
+
+    .feeling-option {
+      padding: 8px;
+      background-color: #f8f9fa;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: start;
+      transition: background-color 0.2s;
+      font-size: 1rem;
+    }
+
+    .feeling-option:hover {
+      background-color: #e2e6ea;
+    }
+
+    #displayFeeling {
+      font-family: monospace;
+      color:gray;
+    }
+
+    #feelingValue {
+      display: none;
+    }
 
   </style>
 </head>
 <body>
 
+
+
+
+<!-- <form id="form">
+  <textarea id="message-input" placeholder="Type your message..." rows="3"></textarea>
+  <div class="d-flex align-items-center mt-2">
+    <label for="mediaInput" style="cursor: pointer; margin-right: 10px;">
+      <i class="fa-solid fa-photo-film fa-lg"></i>
+    </label>
+    <input type="file" id="mediaInput" accept="image/*,video/*" style="display: none;">
+    <button type="submit">Send</button>
+  </div>
+  <div id="media-preview" class="mt-2"></div>
+</form> -->
+
+<div style="display: flex; width: 90%;justify-content: center;gap: 1px;margin:auto">
+  <img src="../../assets/img/pf.jpg" style="width: 50px;height: 50px;border-radius: 50%;object-fit: cover;">
+<button id="searchButton">Share your thought, Meanleap Ha? </button>
+</div>
+
+
+<!-- Post Toast -->
+<div id="PostToastWrapper">
+  <div id="PostToast" class="toast align-items-center text-bg-light border-0 toastOfPost" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+      <img src="../../assets/img/pf.jpg" class="userPfFrom">
+      <p class="usernameFrom"></p> <span id="displayFeeling"></span>
+    </div>
+    <form id="form">
+      <div class="toast-body">
+        <textarea id="message-input" class="form-control mb-2" placeholder="Share your thought"></textarea>
+        <div id="media-preview" class="mt-2"></div>
+        <div>
+          <label for="mediaInput" style="cursor: pointer">
+                <i class="fa-solid fa-photo-film fa-lg" style="color: green;"></i> Photo/Video
+          </label>
+          <label for="feelingGrid" id="feelingLabel" style="cursor:pointer;">
+                <i class="fa-solid fa-face-smile" style="color:gold; font-size: 1.5rem;"></i> Feeling
+          </label>
+        </div>
+           <select id="feelingValue" hidden>
+            <option value="" disabled selected>Select a feeling</option>
+            <option value="happy">😊 happy</option>
+            <option value="sad">😢 sad</option>
+            <option value="angry">😡 angry</option>
+            <option value="blissful">😇 blissful</option>
+            <option value="in love">😍 in love</option>
+            <option value="silly">😜 silly</option>
+            <option value="cool">😎 cool</option>
+            <option value="relaxed">😌 relaxed</option>
+            <option value="sleepy">😴 sleepy</option>
+            <option value="sick">🤒 sick</option>
+            <option value="loved">🤗 loved</option>
+            <option value="shocked">😱 shocked</option>
+            <option value="disappointed">😞 disappointed</option>
+            <option value="frustrated">😤 frustrated</option>
+            <option value="excited">🤩 excited</option>
+            <option value="festive">🥳 festive</option>
+            <option value="down">😔 down</option>
+            <option value="confused">😕 confused</option>
+            <option value="nervous">😬 nervous</option>
+            <option value="blessed">😇 blessed</option>
+            <option value="thankful">🙏 thankful</option>
+            <option value="amused">😅 amused</option>
+            <option value="curious">🤓 curious</option>
+            <option value="overwhelmed">😩 overwhelmed</option>
+            <option value="fantastic">😆 fantastic</option>
+            <option value="meh">😶 meh</option>
+            <option value="heartbroken">😢 heartbroken</option>
+            <option value="determined">😤 determined</option>
+            <option value="inspired">😇 inspired</option>
+            <option value="crazy">😵‍💫 crazy</option>
+            <option value="ok">😐 OK</option>
+            <option value="proud">😃 proud</option>
+            <option value="satisfied">😋 satisfied</option>
+            <option value="embarrassed">😳 embarrassed</option>
+            <option value="thoughtful">🤔 thoughtful</option>
+            <option value="lovely">😍 lovely</option>
+            <option value="miserable">😖 miserable</option>
+            <option value="grateful">😇 grateful</option>
+          </select>
+          <input type="file" id="mediaInput" accept="image/*,video/*" style="display: none;" hidden>
+        <div class="d-flex justify-content-end">
+          <button id="cancelPostBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
+          <button id="submitPostBtn" type="submit" class="btn btn-sm btn-success">Post</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<br>
 <div id="message-container"></div>
 
-<form id="form">
-  <input type="text" id="message-input" placeholder="Type your message..." required>
-  <button type="submit">Send</button>
-</form>
 
 <!-- Bootstrap Toast for editing -->
 <div id="editToastWrapper">
@@ -104,11 +482,122 @@
   </div>
 </div>
 
+<!-- Post Toast -->
+<div id="PostToastWrapper">
+  <div id="PostToast" class="toast align-items-center text-bg-light border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <form id="form">
+      <div class="toast-body">
+        <h6>Report Post</h6>
+        <textarea id="postReasonInput" class="form-control mb-2" placeholder="Reason..."></textarea>
+        <div class="d-flex justify-content-end">
+          <button id="cancelPostBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
+          <button id="submitPostBtn" type="button" class="btn btn-sm btn-danger">Submit</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!--Feeling Toast-->
+<div id="FeelingToastWrapper">
+    <div id="FeelingToast" class="toast align-items-center text-bg-light border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-body">
+         <div id="feelingGrid" class="grid-container">
+          
+          <div class="feeling-option">😊 happy</div>
+          <div class="feeling-option">😢 sad</div>
+          <div class="feeling-option">😡 angry</div>
+          <div class="feeling-option">😇 blissful</div>
+          <div class="feeling-option">😍 in love</div>
+          <div class="feeling-option">😜 silly</div>
+          <div class="feeling-option">😎 cool</div>
+          <div class="feeling-option">😌 relaxed</div>
+          <div class="feeling-option">😴 sleepy</div>
+          <div class="feeling-option">🤒 sick</div>
+          <div class="feeling-option">🤗 loved</div>
+          <div class="feeling-option">😱 shocked</div>
+          <div class="feeling-option">😞 disappointed</div>
+          <div class="feeling-option">😤 frustrated</div>
+          <div class="feeling-option">🤩 excited</div>
+          <div class="feeling-option">🥳 festive</div>
+          <div class="feeling-option">😔 down</div>
+          <div class="feeling-option">😕 confused</div>
+          <div class="feeling-option">😬 nervous</div>
+          <div class="feeling-option">😇 blessed</div>
+          <div class="feeling-option">🙏 thankful</div>
+          <div class="feeling-option">😅 amused</div>
+          <div class="feeling-option">🤓 curious</div>
+          <div class="feeling-option">😩 overwhelmed</div>
+          <div class="feeling-option">😆 fantastic</div>
+          <div class="feeling-option">😶 meh</div>
+          <div class="feeling-option">😢 heartbroken</div>
+          <div class="feeling-option">😤 determined</div>
+          <div class="feeling-option">😇 inspired</div>
+          <div class="feeling-option">😵‍💫 crazy</div>
+          <div class="feeling-option">😐 OK</div>
+          <div class="feeling-option">😃 proud</div>
+          <div class="feeling-option">😋 satisfied</div>
+          <div class="feeling-option">😳 embarrassed</div>
+          <div class="feeling-option">🤔 thoughtful</div>
+          <div class="feeling-option">😍 lovely</div>
+          <div class="feeling-option">😖 miserable</div>
+          <div class="feeling-option">😇 grateful</div>
+        </div>
+          <div class="d-flex justify-content-end mt-2">
+            <button id="cancelFeelingBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
+          </div>
+        </div>
+    </div>
+  </div>
 
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
 <script>
+// --- Feeling Dictionary (global) ---
+const feelingMap = {
+  happy: "😊 happy",
+  sad: "😢 sad",
+  angry: "😡 angry",
+  blissful: "😇 blissful",
+  "in love": "😍 in love",
+  silly: "😜 silly",
+  cool: "😎 cool",
+  relaxed: "😌 relaxed",
+  sleepy: "😴 sleepy",
+  sick: "🤒 sick",
+  loved: "🤗 loved",
+  shocked: "😱 shocked",
+  disappointed: "😞 disappointed",
+  frustrated: "😤 frustrated",
+  excited: "🤩 excited",
+  festive: "🥳 festive",
+  down: "😔 down",
+  confused: "😕 confused",
+  nervous: "😬 nervous",
+  blessed: "😇 blessed",
+  thankful: "🙏 thankful",
+  amused: "😅 amused",
+  curious: "🤓 curious",
+  overwhelmed: "😩 overwhelmed",
+  fantastic: "😆 fantastic",
+  meh: "😶 meh",
+  heartbroken: "😢 heartbroken",
+  determined: "😤 determined",
+  inspired: "😇 inspired",
+  crazy: "😵‍💫 crazy",
+  ok: "😐 OK",
+  proud: "😃 proud",
+  satisfied: "😋 satisfied",
+  embarrassed: "😳 embarrassed",
+  thoughtful: "🤔 thoughtful",
+  lovely: "😍 lovely",
+  miserable: "😖 miserable",
+  grateful: "😇 grateful"
+};
+
 const API_URL = "https://thebooksourcings.onrender.com";
 
  function parseJwt (token) {
@@ -121,10 +610,18 @@ const API_URL = "https://thebooksourcings.onrender.com";
 
 const token = localStorage.getItem("token");
 let userMemberQid = null;
+let username = null;
 
 if (token) {
   const decoded = parseJwt(token);
   userMemberQid = decoded?.memberQid || null;
+  username = decoded?.username || null;
+}
+
+const usernameFrom = document.querySelector(".usernameFrom");
+
+if (username) {
+  usernameFrom.textContent = username;
 }
 
 const socket = io(API_URL, { auth: { token } });
@@ -149,6 +646,7 @@ socket.on("connect", () => console.log("Connected:", socket.id));
 
 socket.on("receive-message", (msg) => {
   if (!msg.createFormNow) msg.createFormNow = "just now";
+  msg.feeling = feelingMap[msg.feeling] || msg.feeling;
   displayMessage(msg);
 });
 
@@ -179,71 +677,160 @@ loadMessages();
 const form = document.getElementById("form");
 const messageInput = document.getElementById("message-input");
 
+const mediaInput = document.getElementById("mediaInput");
+const mediaPreview = document.getElementById("media-preview");
+
+let selectedFile = null;
+
+    // feeling toast logic
+    const feelingLabel = document.getElementById('feelingLabel');
+    const displayFeeling = document.getElementById("displayFeeling");
+    const feelingInput = document.getElementById("feelingValue");
+ 
+    const FeelingToast = new bootstrap.Toast(document.getElementById("FeelingToast"), { autohide: false });
+    const feelingOptions = document.querySelectorAll('.feeling-option');
+
+    // Show toast on label click
+    feelingLabel.addEventListener('click', () => {
+      FeelingToast.show();
+    });
+
+    // Handle click on each feeling option
+    feelingOptions.forEach(option => {
+      option.addEventListener("click", () => {
+        const text = option.textContent;
+        displayFeeling.textContent = text;
+
+        // Save selected feeling (strip emoji if needed)
+        feelingInput.value = text.replace(/^[^\w]+/, "").trim().toLowerCase();
+
+        FeelingToast.hide();
+      });
+    });
+    
+
+
+// Show preview when user selects a file
+mediaInput.addEventListener("change", () => {
+  selectedFile = mediaInput.files[0];
+  mediaPreview.innerHTML = ""; // clear previous preview
+
+  if (!selectedFile) return;
+
+  if (selectedFile.type.startsWith("image/")) {
+    const img = document.createElement("img");
+    img.src = URL.createObjectURL(selectedFile);
+    img.style.maxWidth = "200px";
+    img.style.marginTop = "5px";
+    mediaPreview.appendChild(img);
+  } else if (selectedFile.type.startsWith("video/")) {
+    const video = document.createElement("video");
+    video.src = URL.createObjectURL(selectedFile);
+    video.controls = true;
+    video.style.maxWidth = "200px";
+    video.style.marginTop = "5px";
+    mediaPreview.appendChild(video);
+  }
+});
+
+// Send message (text + optional media)
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const msg = messageInput.value.trim();
-  if (!msg) return;
+
+  const text = messageInput.value.trim();
+  const feeling = feelingInput.value; // <-- comes from hidden input
+  if (!text && !selectedFile && !feeling) return; // must have text or media
 
   try {
+    const formData = new FormData();
+    formData.append("message", text);
+    formData.append("feeling", feeling);
+    if (selectedFile) formData.append("media", selectedFile);
+
     const res = await fetch(`${API_URL}/api/community/send`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify({ message: msg })
+      headers: { "Authorization": `Bearer ${token}` },
+      body: formData
     });
-    if (!res.ok) throw new Error("Failed to send message");
-    const savedMsg = await res.json();
 
+    if (!res.ok) throw new Error("Failed to send message");
+
+    const savedMsg = await res.json();
     savedMsg.createFormNow = "just now"; // instant display
     displayMessage(savedMsg);
     socket.emit("send-message", savedMsg);
+
+    // Reset form
     messageInput.value = "";
+    mediaInput.value = "";
+    mediaPreview.innerHTML = "";
+    feelingInput.value = "";
+    selectedFile = null;
+    displayFeeling.textContent = "";
+    postToast.hide();
   } catch (err) {
-    console.error("Error sending message:", err);
+    console.error(err);
   }
 });
+
 
 // ====== DISPLAY MESSAGE ======
 function displayMessage(msg) {
   const div = document.createElement("div");
+  div.className = "post";
   div.dataset.id = msg.message_id;
-  div.innerHTML = `
-    <span class="msg-text">${msg.message}</span>
-    <span class='createdAt'>${msg.createFormNow}</span>
-  `;
 
-  // --- LIKE SECTION ---
-  const likeSection = document.createElement("div");
-  likeSection.style.marginTop = "5px";
+  // --- POST HEADER ---
+  const header = document.createElement("div");
+  header.className = "post-header";
 
-  const likeIcon = document.createElement("i");
-  likeIcon.className = "fa fa-heart";
-  likeIcon.style.cursor = "pointer";
-  likeIcon.style.marginRight = "5px";
-  likeIcon.style.color = "black";
+  const profileImg = document.createElement("img");
+  profileImg.src = msg.profile_url || "../../assets/img/pf.jpg"; // placeholder
+  profileImg.alt = "user-profile";
+  profileImg.className = "userProfile";
 
-  const likeCount = document.createElement("span");
-  likeCount.textContent = msg.like_count || 0;
+  // Wrap profile image in link
+  const profileLink = document.createElement("a");
+  profileLink.href = `aboutUser?memberId=${msg.memberQid}`;
+  profileLink.appendChild(profileImg);
 
-  // Load initial like status
-  loadLikeInfoForMessage(msg.message_id, likeIcon, likeCount);
+  // Username link
+  
 
-  // Toggle like
-  likeIcon.onclick = async () => {
-    await toggleLikeActivityForMessage(msg.message_id, likeIcon, likeCount);
-  };
+  const headerRight = document.createElement("div");
+  headerRight.className = "post-header-child-right";
 
-  likeSection.appendChild(likeIcon);
-  likeSection.appendChild(likeCount);
-  div.appendChild(likeSection);
+  const headerRightTop = document.createElement("div");
+  headerRightTop.className = "post-header-child-right-top";
 
-  // --- DROPDOWN MENU ---
+  const headerRightBottom = document.createElement("div");
+  headerRightBottom.className = "post-header-child-right-bottom";
+
+  headerRight.appendChild(headerRightTop);
+  headerRight.appendChild(headerRightBottom);
+
+  const usernameLink = document.createElement("a");
+  usernameLink.href = `aboutUser?memberId=${msg.memberQid}`;
+  usernameLink.textContent = msg.username || "Unknown";
+  usernameLink.className = "username";
+  headerRightTop.appendChild(usernameLink);
+
+  if (msg.feeling) {
+    const feeling = document.createElement("a");
+    feeling.className = "feelingDisplay";
+    feeling.textContent = "is feeling " + feelingMap[msg.feeling] || msg.feeling || "";
+    headerRightTop.appendChild(feeling);
+  }
+  const postAt = document.createElement("p");
+  postAt.className = "postAt";
+  postAt.textContent = msg.createFormNow || "just now";
+  headerRightBottom.appendChild(postAt);
+
+  
+
+  // Dropdown menu
   const dropdownWrapper = document.createElement("div");
-  dropdownWrapper.className = "dropdown";
-  dropdownWrapper.style.display = "inline-block";
-  dropdownWrapper.style.float = "right";
+  dropdownWrapper.className = "dropdown absolute-top-right";
 
   const ellipsisBtn = document.createElement("i");
   ellipsisBtn.className = "fa-solid fa-ellipsis";
@@ -252,7 +839,6 @@ function displayMessage(msg) {
 
   const dropdownMenu = document.createElement("ul");
   dropdownMenu.className = "dropdown-menu";
-
   if (msg.memberQid === userMemberQid) {
     dropdownMenu.innerHTML = `
       <li><a class="dropdown-item edit-option" href="#">Edit</a></li>
@@ -264,12 +850,123 @@ function displayMessage(msg) {
       <li><a class="dropdown-item report-option" href="#">Report</a></li>
     `;
   }
-
   dropdownWrapper.appendChild(ellipsisBtn);
   dropdownWrapper.appendChild(dropdownMenu);
-  div.appendChild(dropdownWrapper);
 
-  // Dropdown click handlers
+  header.appendChild(profileLink);
+  header.appendChild(headerRight);
+  header.appendChild(dropdownWrapper);
+
+  // --- POST BODY ---
+  const body = document.createElement("div");
+  body.className = "post-body";
+
+  // Post text with truncation
+  if (msg.message) {
+    const textP = document.createElement("p");
+    textP.className = "post-text";
+
+    if (msg.message.length > 250) {
+      const shortText = msg.message.slice(0, 250);
+      textP.textContent = shortText + "... ";
+
+      const seeMore = document.createElement("a");
+      seeMore.href = "#";
+      seeMore.textContent = "see more";
+      seeMore.addEventListener("click", (e) => {
+        e.preventDefault();
+        textP.textContent = msg.message; // show full text
+      });
+
+      textP.appendChild(seeMore);
+    } else {
+      textP.textContent = msg.message;
+    }
+
+    body.appendChild(textP);
+  }
+
+  // Media
+  // Media
+if (msg.media_url && msg.media_type) {
+  const mediaWrapper = document.createElement("div");
+  mediaWrapper.className = "post-thumbnail";
+
+  // Only apply blur background for images
+  if (msg.media_type === "image" && !msg.media_url.startsWith("blob:")) {
+    mediaWrapper.style.setProperty("--bg-url", `url(${msg.media_url})`);
+  }
+
+  const mediaEl = document.createElement(msg.media_type === "image" ? "img" : "video");
+  mediaEl.className = "post-thumbnail-img";
+  mediaEl.src = msg.media_url;
+
+  if (msg.media_type === "video") mediaEl.controls = true;
+
+  mediaWrapper.appendChild(mediaEl);
+  body.appendChild(mediaWrapper);
+}
+
+
+  // Like / comment / repost counts
+  const counts = document.createElement("div");
+  counts.className = "post-media-count";
+  counts.innerHTML = `
+    <div>
+      <p><span class="post-like-count">${msg.like_count || 0}</span> Likes</p>
+    </div>
+    <div class="post-media-count-child-right">
+      <p><span class="post-comment-count">${msg.comment_count || 0}</span> comments</p>
+      <p><span class="post-repost-count">${msg.repost_count || 0}</span> reposts</p>
+    </div>
+  `;
+  body.appendChild(counts);
+
+  // --- BUTTONS ---
+  const btnRow = document.createElement("div");
+  btnRow.className = "post-media-button";
+
+  // Like btn
+  const likeBtn = document.createElement("button");
+  likeBtn.className = "likeBtn media-btn";
+  likeBtn.dataset.id = msg.message_id;
+  likeBtn.innerHTML = `<i class="fa-solid fa-heart"></i> <span>Like</span>`;
+
+  // Comment btn
+  const commentBtn = document.createElement("button");
+  commentBtn.className = "commentBtn media-btn";
+  commentBtn.dataset.id = msg.message_id;
+  commentBtn.innerHTML = `<i class="fa-solid fa-comment"></i> <span>Comment</span>`;
+  commentBtn.onclick = () => {
+    window.location.href = `aboutPost.html?post_id=${msg.message_id}`;
+  };
+
+  // Repost btn
+  const repostBtn = document.createElement("button");
+  repostBtn.className = "repostBtn media-btn";
+  repostBtn.dataset.id = msg.message_id;
+  repostBtn.innerHTML = `<i class="fa-solid fa-share-from-square"></i> <span>Repost</span>`;
+
+  btnRow.appendChild(likeBtn);
+  btnRow.appendChild(commentBtn);
+  btnRow.appendChild(repostBtn);
+
+  body.appendChild(btnRow);
+
+  // Append together
+  div.appendChild(header);
+  div.appendChild(body);
+  document.getElementById("message-container").prepend(div);
+
+  // === Attach like toggle logic ===
+  const likeIcon = likeBtn.querySelector("i");
+  const likeCount = counts.querySelector(".post-like-count");
+  loadLikeInfoForMessage(msg.message_id, likeIcon, likeCount);
+  likeBtn.onclick = async () => {
+    await toggleLikeActivityForMessage(msg.message_id, likeIcon, likeCount);
+  };
+
+  // === Dropdown click handlers ===
   dropdownMenu.querySelectorAll("a").forEach((item) => {
     item.addEventListener("click", (e) => {
       e.preventDefault();
@@ -286,9 +983,8 @@ function displayMessage(msg) {
       }
     });
   });
-
-  document.getElementById("message-container").appendChild(div);
 }
+
 
 // ====== LIKE FUNCTIONS ======
 async function loadLikeInfoForMessage(messageId, likeIcon, likeCount) {
@@ -300,7 +996,7 @@ async function loadLikeInfoForMessage(messageId, likeIcon, likeCount) {
 
     const data = await res.json();
     likeCount.textContent = data.post.like_count;
-    likeIcon.style.color = data.userStatus.liked ? "red" : "black";
+    likeIcon.style.color = data.userStatus.liked ? "red" : "gray";
   } catch (err) {
     console.error(err);
   }
@@ -318,14 +1014,14 @@ async function toggleLikeActivityForMessage(messageId, likeIcon, likeCount) {
     if (!res.ok) throw new Error("Failed to toggle like");
 
     const data = await res.json();
-    likeIcon.style.color = data.liked ? "red" : "black";
+    likeIcon.style.color = data.liked ? "red" : "gray";
     await loadLikeInfoForMessage(messageId, likeIcon, likeCount);
   } catch (err) {
     console.error(err);
   }
 }
 
-// ====== EDIT ======
+// ====== EDIT  Fetch======
 document.getElementById("saveEditBtn").onclick = async () => {
   const newText = editInput.value.trim();
   if (!newText || !editingMessageId) return;
@@ -346,7 +1042,7 @@ document.getElementById("saveEditBtn").onclick = async () => {
   }
 };
 
-// ====== DELETE ======
+// ====== DELETE Fetch ======
 document.getElementById("confirmDeleteBtn").onclick = async () => {
   if (!deletingMessageId) return;
   try {
@@ -366,7 +1062,7 @@ document.getElementById("confirmDeleteBtn").onclick = async () => {
   }
 };
 
-// ====== REPORT ======
+// ====== REPORT Fetch======
 document.getElementById("submitReportBtn").onclick = async () => {
   const reasonTxt = reportReasonInput.value.trim();
   if (!reasonTxt || !reportingTargetId) return;
@@ -396,26 +1092,61 @@ document.getElementById("submitReportBtn").onclick = async () => {
   }
 };
 
+ // Post toast
+  const postToast = new bootstrap.Toast(document.getElementById("PostToast"), { autohide: false });
+  const searchBtn = document.getElementById("searchButton");
+
+  searchBtn.addEventListener("click", () => {
+    postToast.show();
+  });
+
+  document.getElementById("cancelPostBtn").onclick = () => {
+    postToast.hide();
+    messageInput.value = "";
+    mediaInput.value = "";
+    mediaPreview.innerHTML = "";
+    feelingInput.value = "";
+    selectedFile = null;
+    displayFeeling.textContent = "";
+  };
+
+  
+
 // ====== CANCEL BUTTONS ======
+
+
+// cancel edit btn
 document.getElementById("cancelEditBtn").onclick = () => {
   editingMessageId = null;
   editToast.hide();
 };
 
+
+// cancel delete btn
 document.getElementById("cancelDeleteBtn").onclick = () => {
   deletingMessageId = null;
   deleteToast.hide();
 };
 
+// cancel report btn
 document.getElementById("cancelReportBtn").onclick = () => {
   reportingTargetId = null;
   reportReasonInput.value = "";
   reportToast.hide();
 };
 
+
+
+    // Cancel button
+    document.getElementById("cancelFeelingBtn").onclick = () => {
+      FeelingToast.hide();
+      displayFeeling.textContent = "";
+      feelingInput.value = "";
+    };
 </script>
 </body>
 </html>
+
 
 
 
