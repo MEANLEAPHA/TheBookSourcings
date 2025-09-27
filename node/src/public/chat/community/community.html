@@ -29,11 +29,12 @@
      #message-container{
       display: grid;
       gap: 15px;
-      width: 70%;
+      width: 50%;
+      margin: auto;
      }
-    .owner-btn { margin-left: 5px; cursor: pointer; color: red; font-weight: bold; }
+    /* .owner-btn { margin-left: 5px; cursor: pointer; color: red; font-weight: bold; }
     #form { margin-top: 20px; display: flex; }
-    #message-input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;}
+    #message-input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;} */
     /* #form button { margin-left: 10px; padding: 8px 15px; border: none; border-radius: 5px; background: #4CAF50; color: white; cursor: pointer; }
     #form button:hover { background: #45a049; } */
 
@@ -86,8 +87,6 @@
         background: none;
         border: 1px solid gainsboro;
         border-radius: 10px;
-        margin: auto;
-        margin-top: 10px;
         display: flex;
         height: 50px;
         justify-content: start;
@@ -128,19 +127,25 @@
         .post-header-child-right-top{
           display: flex;
           justify-content: start;
+          background-color: aquamarine;
+        }
+        .post-header-child-right-bottom{
+          background-color: blueviolet;
+          margin: 0;
+          padding: 0;
         }
         .feelingDisplay{
           color: gray;
           font-family: sans-serif;
-          font-size: 12px;
-          margin: 2px 0px 0px 3px;
+          font-size: 14px;
+          margin: 4px 0px 0px 3px;
         
         }
 
          .username{
             font-family: monospace;
             margin: 0;
-            font-size: large;
+            font-size: larger;
             text-decoration: none;
             color: black;
          }
@@ -246,6 +251,7 @@
             display: flex;
             gap: 25px;
          }
+         
          .post-hr{
             color: gainsboro;
             background-color: gainsboro;
@@ -351,7 +357,7 @@
   <div id="media-preview" class="mt-2"></div>
 </form> -->
 
-<div style="display: flex; width: 90%;justify-content: start;gap: 1px;">
+<div style="display: flex; width: 90%;justify-content: start;gap: 1px;margin:auto">
   <img src="../../assets/img/pf.jpg" style="width: 50px;height: 50px;border-radius: 50%;object-fit: cover;">
 <button id="searchButton">Share your thought, Meanleap Ha? </button>
 </div>
