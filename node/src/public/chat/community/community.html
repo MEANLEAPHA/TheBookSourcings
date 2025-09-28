@@ -757,9 +757,23 @@ socket.on("receive-message", (msg) => {
   displayMessage(msg);
 });
 
+// socket.on("message-updated", ({ message_id, newText }) => {
+//   const div = document.querySelector(`div[data-id='${message_id}']`);
+//   if (div) div.querySelector(".post-text").textContent = newText;
+// });
+
 socket.on("message-updated", ({ message_id, newText }) => {
   const div = document.querySelector(`div[data-id='${message_id}']`);
-  if (div) div.querySelector(".post-text").textContent = newText;
+  if (div) {
+    let postText = div.querySelector(".post-text");
+    if (!postText) {
+      // create the element if it doesn't exist
+      postText = document.createElement("div");
+      postText.classList.add("post-text");
+      div.appendChild(postText);
+    }
+    postText.textContent = newText;
+  }
 });
 
 socket.on("message-deleted", ({ message_id }) => {
