@@ -227,18 +227,26 @@
                 object-fit: contain;
               } */
 
-             .post-thumbnail {
+            /* Outer wrapper still applies general blur for single media */
+.post-thumbnail {
   position: relative;
   width: 100%;
   height: 350px;
   margin-top: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   overflow: hidden;
 }
 
-.post-thumbnail::before {
+/* Each slide gets its own blur */
+.blur-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.blur-wrapper::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -248,35 +256,22 @@
   z-index: 0;
 }
 
-.post-thumbnail-img,
-.post-thumbnail-video {
+.media-container {
   position: relative;
   z-index: 1;
+  max-width: 100%;
+  max-height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.post-thumbnail-img,
+.post-thumbnail-video {
   max-height: 100%;
   max-width: 100%;
   object-fit: contain;
 }
-
-.media-container {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  z-index: 1;
-}
-
-.carousel-counter {
-  top: 10px;
-  right: 10px;
-  background: rgba(0,0,0,0.6);
-  color: #fff;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 0.9rem;
-  z-index: 2;
-}
-
 
 
         .post .post-body .post-media-count{
@@ -1019,47 +1014,50 @@ if (msg.media_url && msg.media_url.length > 0) {
     carousel.className = "carousel slide";
     carousel.id = carouselId;
     carousel.setAttribute("data-bs-ride", "carousel");
-    carousel.setAttribute("data-bs-interval", "5000");
+    carousel.setAttribute("data-bs-interval", "8000");
 
     const inner = document.createElement("div");
     inner.className = "carousel-inner";
 
     msg.media_url.forEach((url, index) => {
-      const item = document.createElement("div");
-      item.className = index === 0 ? "carousel-item active" : "carousel-item";
+  const item = document.createElement("div");
+  item.className = index === 0 ? "carousel-item active" : "carousel-item";
 
-      // Blurred background (only for images)
-      if (msg.media_type[index] === "image" && !url.startsWith("blob:")) {
-        item.style.setProperty("--bg-url", `url(${url})`);
-        item.classList.add("post-thumbnail"); // reuse CSS blur
-      } else {
-        item.classList.add("post-thumbnail"); // still apply bg fallback
-      }
+  // Blur wrapper inside each item
+  const blurWrapper = document.createElement("div");
+  blurWrapper.className = "blur-wrapper";
 
-      // Media container
-      const mediaContainer = document.createElement("div");
-      mediaContainer.className = "media-container";
+  // Media container
+  const mediaContainer = document.createElement("div");
+  mediaContainer.className = "media-container";
 
-      if (msg.media_type[index] === "image") {
-        const img = document.createElement("img");
-        img.src = url;
-        img.className = "post-thumbnail-img";
-        mediaContainer.appendChild(img);
-      } else if (msg.media_type[index] === "video") {
-        const video = document.createElement("video");
-        video.src = url;
-        video.controls = true;
-        video.muted = true;
-        video.loop = true;
-        video.className = "post-thumbnail-video";
-        mediaContainer.appendChild(video);
+  if (msg.media_type[index] === "image") {
+    const img = document.createElement("img");
+    img.src = url;
+    img.className = "post-thumbnail-img";
+    mediaContainer.appendChild(img);
 
-        observeVideo(video); // add observer
-      }
+    // background for blur
+    blurWrapper.style.setProperty("--bg-url", `url(${url})`);
+  } else if (msg.media_type[index] === "video") {
+    const video = document.createElement("video");
+    video.src = url;
+    video.controls = true;
+    video.muted = true;
+    video.loop = true;
+    video.className = "post-thumbnail-video";
+    mediaContainer.appendChild(video);
+    observeVideo(video);
 
-      item.appendChild(mediaContainer);
-      inner.appendChild(item);
-    });
+    // fallback blur (black bg)
+    blurWrapper.style.background = "rgba(0,0,0,0.8)";
+  }
+
+  blurWrapper.appendChild(mediaContainer);
+  item.appendChild(blurWrapper);
+  inner.appendChild(item);
+});
+
 
     carousel.appendChild(inner);
     mediaWrapper.appendChild(carousel);
