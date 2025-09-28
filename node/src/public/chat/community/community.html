@@ -901,6 +901,8 @@ function displayMessage(msg) {
 
       const seeMore = document.createElement("a");
       seeMore.href = "#";
+      seeMore.style.cursor = "pointer";
+      seeMore.style.textDecoration = "none";
       seeMore.textContent = "see more";
       seeMore.addEventListener("click", (e) => {
         e.preventDefault();
@@ -909,63 +911,129 @@ function displayMessage(msg) {
 
       textP.appendChild(seeMore);
     } else {
+      const seeLess = document.createElement("a");
+      seeLess.href = "#";
+      seeLess.style.cursor = "pointer";
+      seeLess.style.textDecoration = "none";
+      seeLess.textContent = "see less";
+      seeLess.addEventListener("click", (e) => {
+        e.preventDefault();
+        textP.textContent = shortText + "... "; // show truncated text
+      });
+
       textP.textContent = msg.message;
+      textP.appendChild(seeLess);
     }
 
     body.appendChild(textP);
   }
 
   // Media
-  // Media
 // --- MEDIA SECTION ---
-// --- MEDIA CAROUSEL ---
 if (msg.media_url && msg.media_url.length > 0) {
   const mediaWrapper = document.createElement("div");
-  mediaWrapper.className = "post-thumbnail position-relative";
+  mediaWrapper.className = "post-thumbnail position-relative"; // allow overlay
 
   const carouselId = `carousel-${msg.message_id}`;
-  mediaWrapper.innerHTML = `
-    <div id="${carouselId}" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
-      <div class="carousel-inner"></div>
-      <div class="carousel-counter position-absolute top-0 end-0 m-2 px-2 py-1 bg-dark text-white rounded" style="opacity:0.7;"></div>
-    </div>
-  `;
 
-  const carouselInner = mediaWrapper.querySelector(".carousel-inner");
-  const counterDiv = mediaWrapper.querySelector(".carousel-counter");
+  if (msg.media_url.length === 1) {
+    // --- Single file ---
+    const type = msg.media_type[0];
+    const singleMedia = type === "image" ? document.createElement("img") : document.createElement("video");
+    singleMedia.src = msg.media_url[0];
+    singleMedia.className = "post-thumbnail-img";
 
-  msg.media_url.forEach((url, idx) => {
-    const item = document.createElement("div");
-    item.className = "carousel-item" + (idx === 0 ? " active" : "");
+    if (type === "video") singleMedia.controls = true;
 
-    if (msg.media_type[idx] === "image") {
-      // blur background for image
-      item.style.setProperty("--bg-url", `url(${url})`);
-      item.innerHTML = `<img src="${url}" class="d-block w-100" alt="media">`;
-    } else if (msg.media_type[idx] === "video") {
-      item.innerHTML = `<video src="${url}" class="d-block w-100" controls></video>`;
+    // Apply blur background for images
+    if (type === "image" && !msg.media_url[0].startsWith("blob:")) {
+      mediaWrapper.style.setProperty("--bg-url", `url(${msg.media_url[0]})`);
     }
 
-    carouselInner.appendChild(item);
-  });
+    mediaWrapper.appendChild(singleMedia);
+  } else {
+    // --- Multiple files -> Bootstrap carousel ---
+    const carousel = document.createElement("div");
+    carousel.className = "carousel slide";
+    carousel.id = carouselId;
+    carousel.setAttribute("data-bs-ride", "carousel");
+    carousel.setAttribute("data-bs-interval", "5000");
 
-  // --- Counter update ---
-  const carousel = new bootstrap.Carousel(mediaWrapper.querySelector(".carousel"), {
-    interval: 3000,
-    ride: "carousel",
-    wrap: true,
-  });
+    const inner = document.createElement("div");
+    inner.className = "carousel-inner";
 
-  const updateCounter = () => {
-    const activeIndex = Array.from(carouselInner.children).findIndex(i => i.classList.contains("active"));
-    counterDiv.textContent = `${activeIndex + 1}/${msg.media_url.length}`;
-  };
+    msg.media_url.forEach((url, index) => {
+      const item = document.createElement("div");
+      item.className = index === 0 ? "carousel-item active" : "carousel-item";
 
-  carouselInner.addEventListener("slid.bs.carousel", updateCounter);
-  updateCounter(); // initial
+      if (msg.media_type[index] === "image") {
+        const img = document.createElement("img");
+        img.className = "d-block w-100";
+        img.src = url;
+
+        // blur background for each image item
+        if (!url.startsWith("blob:")) {
+          item.style.setProperty("--bg-url", `url(${url})`);
+        }
+
+        item.appendChild(img);
+      } else if (msg.media_type[index] === "video") {
+        const video = document.createElement("video");
+        video.className = "d-block w-100";
+        video.src = url;
+        video.controls = true;
+        item.appendChild(video);
+      }
+
+      inner.appendChild(item);
+    });
+
+    carousel.appendChild(inner);
+    mediaWrapper.appendChild(carousel);
+
+    // --- Modern counter ---
+    const counter = document.createElement("div");
+    counter.className = "carousel-counter position-absolute";
+    counter.style.top = "10px";
+    counter.style.right = "10px";
+    counter.style.background = "rgba(0,0,0,0.6)";
+    counter.style.color = "#fff";
+    counter.style.padding = "2px 8px";
+    counter.style.borderRadius = "12px";
+    counter.style.fontSize = "0.9rem";
+    counter.textContent = `1/${msg.media_url.length}`;
+    mediaWrapper.appendChild(counter);
+
+    // --- Prev & Next buttons ---
+    const prevBtn = document.createElement("button");
+    prevBtn.className = "carousel-control-prev";
+    prevBtn.type = "button";
+    prevBtn.setAttribute("data-bs-target", `#${carouselId}`);
+    prevBtn.setAttribute("data-bs-slide", "prev");
+    prevBtn.innerHTML = `<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                         <span class="visually-hidden">Previous</span>`;
+
+    const nextBtn = document.createElement("button");
+    nextBtn.className = "carousel-control-next";
+    nextBtn.type = "button";
+    nextBtn.setAttribute("data-bs-target", `#${carouselId}`);
+    nextBtn.setAttribute("data-bs-slide", "next");
+    nextBtn.innerHTML = `<span class="carousel-control-next-icon" aria-hidden="true"></span>
+                         <span class="visually-hidden">Next</span>`;
+
+    mediaWrapper.appendChild(prevBtn);
+    mediaWrapper.appendChild(nextBtn);
+
+    // --- Update counter on slide change ---
+    carousel.addEventListener("slid.bs.carousel", () => {
+      const activeIndex = Array.from(inner.children).findIndex(c => c.classList.contains("active"));
+      counter.textContent = `${activeIndex + 1}/${msg.media_url.length}`;
+    });
+  }
 
   body.appendChild(mediaWrapper);
 }
+
 
 
   // Like / comment / repost counts
