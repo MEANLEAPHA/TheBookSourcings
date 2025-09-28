@@ -243,6 +243,7 @@
 .carousel-item {
   width: 100%;
   height: 100%;
+  position: relative;
 }
 
 .carousel-item {
@@ -297,12 +298,14 @@
 }
 .carousel {
   width: 100%;
-  height: 350px;  /* same as .post-thumbnail */
+  height: 350px;
+  position: relative;  /* same as .post-thumbnail */
 }
 
 /* Image centered, original size */
 .post-thumbnail-img {
   max-height: 100%;
+  position: relative;
   width: auto;
   object-fit: contain; 
     z-index: 1;/* disable fitting */
@@ -312,6 +315,7 @@
 .post-thumbnail-video {
   max-height: 100%;
   width: auto;
+  position: relative;
   object-fit: contain;
     z-index: 1;
 }
