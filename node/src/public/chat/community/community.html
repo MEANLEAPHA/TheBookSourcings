@@ -240,6 +240,7 @@
             overflow: hidden;
           }
 /* Each slide gets its own blur */
+
 .blur-wrapper {
   position: relative;
   width: 100%;
@@ -275,7 +276,6 @@
   max-width: 100%;
   object-fit: contain;
 }
-
 .carousel-counter{
   position: absolute;
   top: 10px;
@@ -998,29 +998,38 @@ if (msg.media_url && msg.media_url.length > 0) {
 
   const carouselId = `carousel-${msg.message_id}`;
 
-  if (msg.media_url.length === 1) {
-    // --- Single file ---
-    const type = msg.media_type[0];
-    const singleMedia = type === "image" ? document.createElement("img") : document.createElement("video");
-    singleMedia.src = msg.media_url[0];
-    singleMedia.className = "post-thumbnail-img";
+ if (msg.media_url.length === 1) {
+  const type = msg.media_type[0];
+  const itemWrapper = document.createElement("div");
+  itemWrapper.className = "blur-wrapper";
 
-    if (type === "video") {
-      singleMedia.controls = true;
-      singleMedia.muted = true;
-      singleMedia.loop = true;
-    }
+  const mediaContainer = document.createElement("div");
+  mediaContainer.className = "media-container";
 
-    // Blur background (only for images)
-    if (type === "image" && !msg.media_url[0].startsWith("blob:")) {
-      mediaWrapper.style.setProperty("--bg-url", `url(${msg.media_url[0]})`);
-    }
+  if (type === "image") {
+    const img = document.createElement("img");
+    img.src = msg.media_url[0];
+    img.className = "post-thumbnail-img";
+    mediaContainer.appendChild(img);
 
-    mediaWrapper.appendChild(singleMedia);
+    itemWrapper.style.setProperty("--bg-url", `url(${msg.media_url[0]})`);
+  } else if (type === "video") {
+    const video = document.createElement("video");
+    video.src = msg.media_url[0];
+    video.controls = true;
+    video.muted = true;
+    video.loop = true;
+    video.className = "post-thumbnail-video";
+    mediaContainer.appendChild(video);
+    observeVideo(video);
 
-    // Add to observer for video autoplay
-    if (type === "video") observeVideo(singleMedia);
-  } else {
+    itemWrapper.style.background = "rgba(0,0,0,0.8)";
+  }
+
+  itemWrapper.appendChild(mediaContainer);
+  mediaWrapper.appendChild(itemWrapper);
+}
+else {
     // --- Multiple files -> Bootstrap carousel ---
     const carousel = document.createElement("div");
     carousel.className = "carousel slide";
@@ -1110,14 +1119,14 @@ if (msg.media_url && msg.media_url.length > 0) {
 
 // --- VIDEO OBSERVER ---
 // Autoplay when visible, pause when out of view
+
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
-    if (entry.target.tagName === "VIDEO") {
-      if (entry.isIntersecting) {
-        entry.target.play().catch(() => {});
-      } else {
-        entry.target.pause();
-      }
+    const video = entry.target;
+    if (entry.isIntersecting) {
+      video.play().catch(() => {});
+    } else {
+      video.pause();
     }
   });
 }, { threshold: 0.5 });
@@ -1125,6 +1134,7 @@ const observer = new IntersectionObserver((entries) => {
 function observeVideo(video) {
   observer.observe(video);
 }
+
 
 
 
