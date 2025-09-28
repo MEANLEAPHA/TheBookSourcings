@@ -246,10 +246,14 @@
 }
 
 .carousel-item {
+  width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
 }
+
 
 /* Blur background wrapper */
 /* .blur-wrapper {
@@ -262,7 +266,9 @@
   overflow: hidden;
 } */
  .blur-wrapper {
-  position: absolute; /* absolutely cover the carousel-item */
+    width: 100%;
+  height: 100%;
+  position: relative; /* absolutely cover the carousel-item */
   inset: 0;
   display: flex;
   justify-content: center;
@@ -288,6 +294,10 @@
   justify-content: center;
   align-items: center;
   height: 100%;
+}
+.carousel {
+  width: 100%;
+  height: 350px;  /* same as .post-thumbnail */
 }
 
 /* Image centered, original size */
