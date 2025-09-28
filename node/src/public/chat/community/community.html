@@ -1066,40 +1066,42 @@ if (msg.media_url && msg.media_url.length > 0) {
     const inner = document.createElement("div");
     inner.className = "carousel-inner";
 
-    msg.media_url.forEach((url, index) => {
-      const item = document.createElement("div");
-      item.className = index === 0 ? "carousel-item active" : "carousel-item";
+   msg.media_url.forEach((url, index) => {
+  const item = document.createElement("div");
+  item.className = index === 0 ? "carousel-item active" : "carousel-item";
 
-      const blurWrapper = document.createElement("div");
-      blurWrapper.className = "blur-wrapper";
+  const blurWrapper = document.createElement("div");
+  blurWrapper.className = "blur-wrapper";
 
-      const mediaContainer = document.createElement("div");
-      mediaContainer.className = "media-container";
+  const mediaContainer = document.createElement("div");
+  mediaContainer.className = "media-container";
 
-      if (msg.media_type[index] === "image") {
-        const img = document.createElement("img");
-        img.src = url;
-        img.className = "post-thumbnail-img";
-        mediaContainer.appendChild(img);
+  if (msg.media_type[index] === "image") {
+    const img = document.createElement("img");
+    img.src = url;
+    img.className = "post-thumbnail-img";
+    mediaContainer.appendChild(img);
 
-        blurWrapper.style.setProperty("--bg-url", `url(${url})`);
-      } else if (msg.media_type[index] === "video") {
-        const video = document.createElement("video");
-        video.src = url;
-        video.controls = true;
-        video.muted = true;
-        video.loop = true;
-        video.className = "post-thumbnail-video";
-        mediaContainer.appendChild(video);
-        observeVideo(video);
+    // ✅ set --bg-url for blur
+    blurWrapper.style.setProperty("--bg-url", `url(${url})`);
+  } else if (msg.media_type[index] === "video") {
+    const video = document.createElement("video");
+    video.src = url;
+    video.controls = true;
+    video.muted = true;
+    video.loop = true;
+    video.className = "post-thumbnail-video";
+    mediaContainer.appendChild(video);
+    observeVideo(video);
 
-        blurWrapper.style.background = "rgba(0,0,0,0.8)";
-      }
+    // ✅ fallback for blur: set --bg-url to a dark transparent color
+    blurWrapper.style.setProperty("--bg-url", `linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8))`);
+  }
 
-      blurWrapper.appendChild(mediaContainer);
-      item.appendChild(blurWrapper);
-      inner.appendChild(item);
-    });
+  blurWrapper.appendChild(mediaContainer);
+  item.appendChild(blurWrapper);
+  inner.appendChild(item);
+});
 
     carousel.appendChild(inner);
     mediaWrapper.appendChild(carousel);
