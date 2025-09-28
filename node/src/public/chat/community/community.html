@@ -891,42 +891,47 @@ function displayMessage(msg) {
   body.className = "post-body";
 
   // Post text with truncation
-  if (msg.message) {
-    const textP = document.createElement("p");
-    textP.className = "post-text";
+ if (msg.message) {
+  const textP = document.createElement("p");
+  textP.className = "post-text";
 
-    if (msg.message.length > 250) {
-      const shortText = msg.message.slice(0, 250);
-      textP.textContent = shortText + "... ";
+  if (msg.message.length > 250) {
+    const shortText = msg.message.slice(0, 250);
+    textP.textContent = shortText + "... ";
 
-      const seeMore = document.createElement("a");
-      seeMore.href = "#";
-      seeMore.style.cursor = "pointer";
-      seeMore.style.textDecoration = "none";
-      seeMore.textContent = "see more";
-      seeMore.addEventListener("click", (e) => {
-        e.preventDefault();
-        textP.textContent = msg.message; // show full text
-      });
+    const seeMore = document.createElement("a");
+    seeMore.href = "#";
+    seeMore.style.cursor = "pointer";
+    seeMore.style.textDecoration = "none";
+    seeMore.textContent = "see more";
 
-      textP.appendChild(seeMore);
-    } else {
+    seeMore.addEventListener("click", (e) => {
+      e.preventDefault();
+      textP.textContent = msg.message + " ";
+
       const seeLess = document.createElement("a");
       seeLess.href = "#";
       seeLess.style.cursor = "pointer";
       seeLess.style.textDecoration = "none";
       seeLess.textContent = "see less";
+
       seeLess.addEventListener("click", (e) => {
         e.preventDefault();
-        textP.textContent = shortText + "... "; // show truncated text
+        textP.textContent = shortText + "... ";
+        textP.appendChild(seeMore);
       });
 
-      textP.textContent = msg.message;
       textP.appendChild(seeLess);
-    }
+    });
 
-    body.appendChild(textP);
+    textP.appendChild(seeMore);
+  } else {
+    textP.textContent = msg.message; // just show short text, no links
   }
+
+  body.appendChild(textP);
+}
+
 
   // Media
 // --- MEDIA SECTION ---
@@ -953,43 +958,63 @@ if (msg.media_url && msg.media_url.length > 0) {
     mediaWrapper.appendChild(singleMedia);
   } else {
     // --- Multiple files -> Bootstrap carousel ---
-    const carousel = document.createElement("div");
-    carousel.className = "carousel slide";
-    carousel.id = carouselId;
-    carousel.setAttribute("data-bs-ride", "carousel");
-    carousel.setAttribute("data-bs-interval", "5000");
+ const carousel = document.createElement("div");
+carousel.className = "carousel slide";
+carousel.id = carouselId;
+carousel.setAttribute("data-bs-ride", "carousel");
+carousel.setAttribute("data-bs-interval", "5000");
 
-    const inner = document.createElement("div");
-    inner.className = "carousel-inner";
+const inner = document.createElement("div");
+inner.className = "carousel-inner";
 
-    msg.media_url.forEach((url, index) => {
-      const item = document.createElement("div");
-      item.className = index === 0 ? "carousel-item active" : "carousel-item";
+msg.media_url.forEach((url, index) => {
+  const item = document.createElement("div");
+  item.className = index === 0 ? "carousel-item active" : "carousel-item";
 
-      if (msg.media_type[index] === "image") {
-        const img = document.createElement("img");
-        img.className = "d-block w-100";
-        img.src = url;
+  // Apply blur background for images only
+  if (msg.media_type[index] === "image" && !url.startsWith("blob:")) {
+    item.style.backgroundImage = `url(${url})`;
+    item.style.backgroundSize = "cover";
+    item.style.backgroundPosition = "center";
+    item.style.filter = "blur(20px)";
+    item.style.position = "relative";
+  }
 
-        // blur background for each image item
-        if (!url.startsWith("blob:")) {
-          item.style.setProperty("--bg-url", `url(${url})`);
-        }
+  // Overlay for actual media
+  const mediaContainer = document.createElement("div");
+  mediaContainer.style.position = "absolute";
+  mediaContainer.style.top = "50%";
+  mediaContainer.style.left = "50%";
+  mediaContainer.style.transform = "translate(-50%, -50%)";
+  mediaContainer.style.maxWidth = "100%";
+  mediaContainer.style.maxHeight = "100%";
+  mediaContainer.style.display = "flex";
+  mediaContainer.style.justifyContent = "center";
+  mediaContainer.style.alignItems = "center";
 
-        item.appendChild(img);
-      } else if (msg.media_type[index] === "video") {
-        const video = document.createElement("video");
-        video.className = "d-block w-100";
-        video.src = url;
-        video.controls = true;
-        item.appendChild(video);
-      }
+  if (msg.media_type[index] === "image") {
+    const img = document.createElement("img");
+    img.src = url;
+    img.style.maxWidth = "100%";
+    img.style.maxHeight = "100%";
+    img.style.objectFit = "contain"; // keep aspect ratio
+    mediaContainer.appendChild(img);
+  } else if (msg.media_type[index] === "video") {
+    const video = document.createElement("video");
+    video.src = url;
+    video.controls = true;
+    video.style.maxWidth = "100%";
+    video.style.maxHeight = "100%";
+    video.style.objectFit = "contain"; // keep aspect ratio
+    mediaContainer.appendChild(video);
+  }
 
-      inner.appendChild(item);
-    });
+  item.appendChild(mediaContainer);
+  inner.appendChild(item);
+});
 
-    carousel.appendChild(inner);
-    mediaWrapper.appendChild(carousel);
+carousel.appendChild(inner);
+mediaWrapper.appendChild(carousel);
 
     // --- Modern counter ---
     const counter = document.createElement("div");
