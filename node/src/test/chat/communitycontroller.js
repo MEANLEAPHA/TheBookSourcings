@@ -128,7 +128,7 @@ const editMessage = async (req, res) => {
 };
 // 📌 Delete message (also delete media from S3 if exists)
 const deleteMessage = async (req, res) => {
-  try {
+  try { 
     const memberQid = req.user.memberQid;
     const { message_id } = req.body;
 
