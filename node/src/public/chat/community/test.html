@@ -729,6 +729,8 @@ function displayMessage(msg) {
   usernameLink.href = `aboutUser?memberId=${msg.memberQid}`;
   usernameLink.textContent = msg.username || "Unknown";
   usernameLink.className = "username";
+  usernameLink.style.cursor = "pointer";
+  usernameLink.style.margin = "0";
   headerRightTop.appendChild(usernameLink);
 
   if (msg.feeling) {

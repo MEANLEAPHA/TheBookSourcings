@@ -769,18 +769,18 @@ padding-left: 10px;
             padding: 10px 20px 10px 20px;
             margin: auto;
             padding-left: 10px;
-         
-            border-bottom: 1px solid var(--secondary-color);
+            border-radius: 15px;
+            border: 1px solid var(--secondary-color);
         }
        
         
          .post .post-header{
             width: 100%;
             display: flex;
-            padding: 5px;
+            justify-content: start;
             gap: 15px;
             position: relative;
-            background: greenyellow;
+            
         }
         .userProfile{
             width: 55px;
@@ -794,8 +794,7 @@ padding-left: 10px;
 
         }
         .post-header-child-right-top{
-          display: flex;
-          justify-content: start;
+         
           background-color: aquamarine;
           padding: 0;
           margin: 0;
@@ -813,7 +812,7 @@ padding-left: 10px;
           font-family: sans-serif;
           font-size: medium;
           text-decoration: none;
-          margin-left: 2px;
+          margin: 0;
         
         }
 
@@ -1235,7 +1234,9 @@ top:0px;
   height: 100%;
   width: 100%;
 }
+.username{
 
+}
 
 #allowEmailUpdate{
     display: flex;
