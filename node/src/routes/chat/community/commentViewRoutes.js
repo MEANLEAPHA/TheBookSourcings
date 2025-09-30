@@ -20,7 +20,7 @@ router.post(
     upload.single("media"),
     sendComment
 );
-router.put("edit/comment", verifyHttpToken, editComment);
-router.delete("delete/comment", verifyHttpToken,deleteComment );
+router.put("/edit/comment", verifyHttpToken, editComment);
+router.delete("/delete/comment", verifyHttpToken,deleteComment );
 
 module.exports = router;

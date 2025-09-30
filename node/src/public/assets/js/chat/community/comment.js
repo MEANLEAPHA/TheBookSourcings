@@ -566,8 +566,7 @@ document.getElementById("submitReportBtn").onclick = async () => {
 };
 
 
-// ====== CANCEL BUTTONS ======
-
+// ====== CANCEL BUTTONS For POST======
 
 // cancel edit btn
 document.getElementById("cancelEditBtn").onclick = () => {
@@ -685,7 +684,7 @@ form.addEventListener("submit", async (e) => {
   };
 
 
-// ====== DECLARATIONS FOR POST======
+// ====== DECLARATIONS FOR Comment======
 // Edit
 let editingCommentId = null;
 const editCommentToast = new bootstrap.Toast(document.getElementById("editCommentToast"), { autohide: false });
@@ -735,7 +734,7 @@ async function loadComment() {
 loadComment();
 
 
-// ====== DISPLAY MESSAGE ======
+// ====== DISPLAY Comment ======
 function displayComment(cmt) {
   const div = document.createElement("div");
   div.className = "comment"; // div of comment
@@ -907,9 +906,9 @@ if (cmt.media_url && cmt.media_type) {
   // === Attach like toggle logic ===
   const likeIcon = likeBtn.querySelector("i");
   const likeCount = counts.querySelector(".post-like-count");
-  loadLikeInfoForMessage(cmt.comment_id, likeIcon, likeCount);
+  loadLikeInfoForComment(cmt.comment_id, likeIcon, likeCount);
   likeBtn.onclick = async () => {
-    await toggleLikeActivityForMessage(cmt.comment_id, likeIcon, likeCount);
+    await toggleLikeActivityForComment(cmt.comment_id, likeIcon, likeCount);
   };
 
   // === Dropdown click handlers ===
@@ -930,3 +929,154 @@ if (cmt.media_url && cmt.media_type) {
     });
   });
 }
+
+
+
+// ====== LIKE FUNCTIONS FOR COMMENT ======
+async function loadLikeInfoForComment(commentId, likeIcon, likeCount) {
+  try {
+    const res = await fetch(`${API_URL}/api/communityCommentLike/status/${commentId}`, {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    if (!res.ok) throw new Error("Failed to fetch like status");
+
+    const data = await res.json();
+    likeCount.textContent = data.post.like_count;
+    likeIcon.style.color = data.userStatus.liked ? "red" : "gray";
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function toggleLikeActivityForComment(commentId, likeIcon, likeCount) {
+  try {
+    const res = await fetch(`${API_URL}/api/communityCommentLike/like/${commentId}`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
+    });
+    if (!res.ok) throw new Error("Failed to toggle like");
+
+    const data = await res.json();
+    likeIcon.style.color = data.liked ? "red" : "gray";
+    await loadLikeInfoForComment(commentId, likeIcon, likeCount);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+
+// ====== EDIT  Comment Fetch======
+document.getElementById("saveEditCommentBtn").onclick = async () => {
+  const newComment = editCommentInput.value.trim();
+  if (!newComment || !editingCommentId) return;
+  try {
+    await fetch(`${API_URL}/api/communityComment/edit/comment`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ comment_id: editingCommentId, newComment })
+    });
+    socket.emit("edit-comment", { comment_id: editingCommentId, newComment });
+    editCommentToast.hide();
+    editingCommentId = null;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+// ====== DELETE Fetch ======
+document.getElementById("confirmDeleteBtn").onclick = async () => {
+  if (!deletingMessageId) return;
+  try {
+    await fetch(`${API_URL}/api/communityComment/delete/comment`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ comment_id: deletingCommentId })
+    });
+    socket.emit("delete-message", { comment_id: deletingCommentId });
+    deleteCommentToast.hide();
+    deletingCommentId = null;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+// ====== REPORT Comment Fetch======
+document.getElementById("submitReportCommentBtn").onclick = async () => {
+  const reasonCommentTxt = reportReasonCommentInput.value.trim();
+  if (!reasonCommentTxt || !reportingTargetCommentId) return;
+
+  try {
+    const res = await fetch(`${API_URL}/api/community/reportComment`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        reasonCommentTxt,
+        comment_id: reportingTargetCommentId
+      })
+    });
+
+    if (!res.ok) throw new Error("Failed to submit report");
+
+    const data = await res.json();
+    alert(data.message); // the session display messgae back if succucess use for future not alert
+    reportCommentToast.hide();
+    reportingTargetCommentId = null;
+    reportReasonCommentInput.value = "";
+  } catch (err) {
+    console.error("Report error:", err);
+  }
+};
+
+
+ // comment toast
+  const commentToast = new bootstrap.Toast(document.getElementById("commentToast"), { autohide: false });
+  const commentBtn = document.getElementById("commentButton");
+
+  commentBtn.addEventListener("click", () => {
+    commentToast.show();
+  });
+
+ 
+
+
+// ====== CANCEL BUTTONS COMMENT ======
+// cancel edit btn
+document.getElementById("cancelEditCommentBtn").onclick = () => {
+  editingCommentId = null;
+  editCommentToast.hide();
+};
+
+
+// cancel delete btn
+document.getElementById("cancelDeleteCommentBtn").onclick = () => {
+  deletingCommentId = null;
+  deleteCommentToast.hide();
+};
+
+// cancel report btn
+document.getElementById("cancelReportCommentBtn").onclick = () => {
+  reportingTargetCommentId = null;
+  reportReasonCommentInput.value = "";
+  reportCommentToast.hide();
+};
+
+// cancel comment btn 
+ document.getElementById("cancelCommentBtn").onclick = () => {
+    commentToast.hide();
+    commentInput.value = "";
+    mediaCommentInput.value = "";
+    mediaCommentPreview.innerHTML = "";
+    selectedFile = null;
+  };

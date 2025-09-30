@@ -25,6 +25,7 @@ const getPostDetailsWithStatus = async (req, res) => {
 
     const status = statusRows.length > 0 ? statusRows[0] : { liked: 0 };
 
+
     res.json({
       post,
       userStatus: status

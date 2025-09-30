@@ -44,12 +44,14 @@ const LAF = require('./routes/book/userBookStatus/LAFroutes');
 const followRoute = require('./routes/book/userFollowStatus/followRoute');
 const communityRoutes = require('./routes/chat/community/communityRoutes');
 // community comment post
-const communityCommentRoute = require('./routes/chat/community/commentViewRoutes')
-const communityLikeRoute =  require('./routes/chat/community/communityLike/communityPostLikeRoutes')
+const communityCommentRoute = require('./routes/chat/community/commentViewRoutes');
+const communityLikeRoute =  require('./routes/chat/community/communityLike/communityPostLikeRoutes');
+
+const communityCommentLikeRoutes = require('./routes/chat/community/communityLike/communityCommentLikeRoutes');
 const verifySocketToken  = require('./middleware/verifySocketToken');
 
 
-// report
+// report post and comment
 const reportCommunityRoute = require('./routes/chat/community/reportPAC/reportRoutes')
 
 // Initialize Routes
@@ -74,7 +76,12 @@ app.use("/api/community", communityRoutes);
 
 // community comment post 
 app.use("/api/communityComment", communityCommentRoute);
+
 app.use('/api/communityPostLike', communityLikeRoute);
+
+//community comment like 
+app.use('/api/communityCommentLike', communityCommentLikeRoutes);
+
 
 
 // report 
