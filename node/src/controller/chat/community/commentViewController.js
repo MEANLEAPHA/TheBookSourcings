@@ -110,12 +110,12 @@ const sendComment = async (req,res)=>{
       }
       
       
-         if (!commentText && !mediaUrl) {
+         if (!commentText && !mediaUrl &&!postId) {
         return res.status(400).json({ error: "comment or media is required" });
       }
       
           const [result] = await db.query(
-            "INSERT INTO community_post_comment (message_id, memberQid, comment_text, media_type, media_url) VALUES (?, ?, ?, ?)",
+            "INSERT INTO community_post_comment (message_id, memberQid, comment_text, media_type, media_url) VALUES (?, ?, ?, ?, ?)",
             [postId, memberQid, commentText || null, mediaType, mediaUrl]
           );
       
