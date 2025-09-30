@@ -759,7 +759,7 @@ function displayComment(cmt) {
   headerRight.appendChild(headerRightBottom);
 
   const usernameLink = document.createElement("a");
-  usernameLink.href = `aboutUser?memberId=${msg.memberQid}`;
+  usernameLink.href = `aboutUser?memberId=${cmt.memberQid}`;
   usernameLink.textContent = msg.username || "Unknown";
   usernameLink.className = "username";
   headerRightTop.appendChild(usernameLink);
