@@ -84,7 +84,7 @@ const sendComment = async (req,res)=>{
     try{
       const memberQid = req.user.memberQid;
           const username = req.user.username;
-          const { commentText } = req.body;
+          const { commentText, postId} = req.body;
       
           console.log("sendMessage called", { memberQid, commentText, file: req.file?.originalname });
       
@@ -115,8 +115,8 @@ const sendComment = async (req,res)=>{
       }
       
           const [result] = await db.query(
-            "INSERT INTO community_post_comment (memberQid, comment_text, media_type, media_url) VALUES (?, ?, ?, ?)",
-            [memberQid, commentText || null, mediaType, mediaUrl]
+            "INSERT INTO community_post_comment (message_id, memberQid, comment_text, media_type, media_url) VALUES (?, ?, ?, ?)",
+            [postId, memberQid, commentText || null, mediaType, mediaUrl]
           );
       
           const msgObj = {

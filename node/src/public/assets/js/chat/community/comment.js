@@ -640,7 +640,8 @@ form.addEventListener("submit", async (e) => {
 
   try {
     const formData = new FormData();
-    formData.append("comment", text);
+    formData.append("commentText", text);
+    formData.append("postId", postId);
     if (selectedFile) formData.append("media", selectedFile);
 
     const res = await fetch(`${API_URL}/api/communityComment/comment`, {
