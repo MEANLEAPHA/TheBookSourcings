@@ -701,7 +701,7 @@ if (msg.media_url && msg.media_url.length > 0) {
   commentBtn.dataset.id = msg.message_id;
   commentBtn.innerHTML = `<i class="fa-solid fa-comment"></i> <span>Comment</span>`;
   commentBtn.onclick = () => {
-    window.location.href = `aboutPost.html?post_id=${msg.message_id}`;
+    window.location.href = `commentView.html?post_id=${msg.message_id}`;
   };
 
   // Repost btn

@@ -661,27 +661,15 @@ form.addEventListener("submit", async (e) => {
     mediaCommentInput.value = "";
     mediaCommentPreview.innerHTML = "";
     selectedFile = null;
-    postCommentToast.hide();
+    commentToast.hide();
   } catch (err) {
     console.error(err);
   }
 });
 
-// Post toast
-  const postCommentToast = new bootstrap.Toast(document.getElementById("PostCommentToast"), { autohide: false });
-  const postCommentBtn = document.getElementById("postCommentButton");
 
-  postCommentBtn.addEventListener("click", () => {
-    postCommentToast.show();
-  });
 
-  document.getElementById("cancelPostCommentBtn").onclick = () => {
-    postCommentToast.hide();
-    commentInput.value = "";
-    mediaCommentInput.value = "";
-    mediaCommentPreview.innerHTML = "";
-    selectedFile = null;
-  };
+ 
 
 
 // ====== DECLARATIONS FOR Comment======
@@ -901,7 +889,7 @@ if (cmt.media_url && cmt.media_type) {
   // Append together
   div.appendChild(header);
   div.appendChild(body);
-  document.getElementById("message-container").prepend(div);
+  document.getElementById("comment-container").prepend(div);
 
   // === Attach like toggle logic ===
   const likeIcon = likeBtn.querySelector("i");
