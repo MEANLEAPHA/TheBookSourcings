@@ -43,6 +43,8 @@ const RDSroute = require('./routes/book/bookActivity/RDSroute');
 const LAF = require('./routes/book/userBookStatus/LAFroutes');
 const followRoute = require('./routes/book/userFollowStatus/followRoute');
 const communityRoutes = require('./routes/chat/community/communityRoutes');
+// community comment post
+const communityCommentRoute = require('./routes/chat/community/commentViewRoutes')
 const communityLikeRoute =  require('./routes/chat/community/communityLike/communityPostLikeRoutes')
 const verifySocketToken  = require('./middleware/verifySocketToken');
 
@@ -69,6 +71,9 @@ app.use('/api/books', RDSroute);
 app.use('/api/LAFbook', LAF);
 app.use('/api', followRoute);
 app.use("/api/community", communityRoutes);
+
+// community comment post 
+app.use("/api/communityComment", communityCommentRoute);
 app.use('/api/communityPostLike', communityLikeRoute);
 
 
@@ -93,10 +98,12 @@ io.use(verifySocketToken);
 io.on("connection", (socket) => {
   console.log("Socket connected:", socket.user?.memberQid || "Guest");
 
+  // Community Post 
+
   socket.on("send-message", (data) => {
   if (!socket.user) return; // guest cannot send
 
-  // Ensure media info is included
+
   const broadcastData = {
     message_id: data.message_id,
     memberQid: socket.user.memberQid,
@@ -111,7 +118,6 @@ io.on("connection", (socket) => {
   socket.broadcast.emit("receive-message", broadcastData);
   });
 
-
   socket.on("edit-message", (data) => {
     if (!socket.user) return;
     io.emit("message-updated", data);
@@ -121,8 +127,34 @@ io.on("connection", (socket) => {
     if (!socket.user) return;
     io.emit("message-deleted", data);
   });
-});
 
+
+  // COMMUNITY Comment post socket logical
+  socket.on("send-comment", (data) => {
+    if(!socket.user) return;
+    const broadcastData = {
+      comment_id : data.comment_id,
+      memeberQid:socket.user.memberQid,
+      username:data.username,
+      comment: data.comment || null,
+      media_url: data.media_url || null,
+      media_type: data.media_type || null,
+      createFormNow: data.createFormNow || "just now"
+    };
+    socket.broadcast.emit("receive-comment", broadcastData)
+  })
+
+  socket.on("edit-comment", (data) => {
+    if(!socket.user) return;
+    io.emit("comment-updated", data)
+  });
+
+  socket.on("delete-comment", (data) => {
+    if(!socket.user) return;
+    io.emit("comment-deleted", data)
+  });
+
+});
 
 
 instrument(io, {

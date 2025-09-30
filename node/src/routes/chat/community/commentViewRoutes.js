@@ -15,7 +15,7 @@ const { upload } = require("../../../middleware/AWSuploadMiddleware");
 router.get("/display/:postId", displayPostById);
 router.get("/dipslayAllComments", displayAllComment);
 router.post(
-    "/post/comment/",
+    "/comment",
     verifyHttpToken,
     upload.single("media"),
     sendComment

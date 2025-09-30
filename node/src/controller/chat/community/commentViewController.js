@@ -51,6 +51,7 @@ const displayAllComment = async (req,res)=>{
   try{
     const [rows] = await db.query(
       `SELECT  
+          c.comment_id,
           c.comment_text AS comment, 
           c.media_type,
           c.media_url,

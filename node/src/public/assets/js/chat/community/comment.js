@@ -22,6 +22,48 @@ const reportReasonInput = document.getElementById("reportReasonInput");
 // Global URL of TheBooksourcing
 const API_URL = "https://thebooksourcings.onrender.com";
 
+// --- Feeling Dictionary (global) ---
+const feelingMap = {
+  happy: "😊 happy",
+  sad: "😢 sad",
+  angry: "😡 angry",
+  blissful: "😇 blissful",
+  "in love": "😍 in love",
+  silly: "😜 silly",
+  cool: "😎 cool",
+  relaxed: "😌 relaxed",
+  sleepy: "😴 sleepy",
+  sick: "🤒 sick",
+  loved: "🤗 loved",
+  shocked: "😱 shocked",
+  disappointed: "😞 disappointed",
+  frustrated: "😤 frustrated",
+  excited: "🤩 excited",
+  festive: "🥳 festive",
+  down: "😔 down",
+  confused: "😕 confused",
+  nervous: "😬 nervous",
+  blessed: "😇 blessed",
+  thankful: "🙏 thankful",
+  amused: "😅 amused",
+  curious: "🤓 curious",
+  overwhelmed: "😩 overwhelmed",
+  fantastic: "😆 fantastic",
+  meh: "😶 meh",
+  heartbroken: "😢 heartbroken",
+  determined: "😤 determined",
+  inspired: "😇 inspired",
+  crazy: "😵‍💫 crazy",
+  ok: "😐 OK",
+  proud: "😃 proud",
+  satisfied: "😋 satisfied",
+  embarrassed: "😳 embarrassed",
+  thoughtful: "🤔 thoughtful",
+  lovely: "😍 lovely",
+  miserable: "😖 miserable",
+  grateful: "😇 grateful"
+};
+
 
 // Token from localStorage for using to communicate with sever by each user
  function parseJwt (token) {
@@ -42,11 +84,7 @@ if (token) {
   username = decoded?.username || null;
 }
 
-const usernameFromComment = document.querySelector(".usernameFromComment");
 
-if (username) {
-  usernameFromComment.textContent = username;
-}
 
 const socket = io(API_URL, { auth: { token } });
 
@@ -555,6 +593,13 @@ document.getElementById("cancelReportBtn").onclick = () => {
 
 // POST COMMENT LOGICAL
 
+
+// get username to display on user comment form
+const usernameFromComment = document.querySelector(".usernameFromComment");
+if (username) {
+  usernameFromComment.textContent = username;
+}
+
 // ====== SEND Comment Declaration ======
 const form = document.getElementById("form-comment");
 const commentInput = document.getElementById("comment-input");
@@ -599,7 +644,7 @@ form.addEventListener("submit", async (e) => {
     formData.append("comment", text);
     if (selectedFile) formData.append("media", selectedFile);
 
-    const res = await fetch(`${API_URL}/api/communityComment/send`, {
+    const res = await fetch(`${API_URL}/api/communityComment/comment`, {
       method: "POST",
       headers: { "Authorization": `Bearer ${token}` },
       body: formData
@@ -607,10 +652,10 @@ form.addEventListener("submit", async (e) => {
 
     if (!res.ok) throw new Error("Failed to send message");
 
-    const savedMsg = await res.json();
-    savedMsg.createFormNow = "just now"; // instant display
-    displayComment(savedMsg);
-    socket.emit("send-comment", savedMsg);
+    const savedCmt = await res.json();
+    savedCmt.createFormNow = "just now"; // instant display
+    displayComment(savedCmt);
+    socket.emit("send-comment", savedCmt);
 
     // Reset form
     commentInput.value = "";
@@ -640,9 +685,248 @@ form.addEventListener("submit", async (e) => {
   };
 
 
+// ====== DECLARATIONS FOR POST======
+// Edit
+let editingCommentId = null;
+const editCommentToast = new bootstrap.Toast(document.getElementById("editCommentToast"), { autohide: false });
+const editCommentInput = document.getElementById("editCommentInput");
+
+// Delete
+let deletingCommentId = null;
+const deleteCommentToast = new bootstrap.Toast(document.getElementById("deleteCommentToast"), { autohide: false });
+
+// Report
+let reportingTargetCommentId = null;
+const reportCommentToast = new bootstrap.Toast(document.getElementById("reportCommentToast"), { autohide: false });
+const reportReasonCommentInput = document.getElementById("reportReasonCommentInput");
+
+// ====== SOCKET LISTENERS FOR COMMENT ======
 
 
+socket.on("receive-comment", (cmt) => {
+  if (!cmt.createFormNow) cmt.createFormNow = "just now";
+  displayComment(cmt);
+});
+
+socket.on("comment-updated", ({ comment_id, newComment }) => {
+  const div = document.querySelector(`div[data-id='${comment_id}']`);
+  if (div) div.querySelector(".comment-text").textContent = newComment;
+
+});
+
+socket.on("comment-deleted", ({ comment_id }) => {
+  const div = document.querySelector(`div[data-id='${comment_id}']`);
+  if (div) div.remove();
+});
     
     
 
+// ====== LOAD ALL Comment ======
+async function loadComment() {
+  try {
+    const res = await fetch(`${API_URL}/api/communityComment/dipslayAllComments`);
+    if (!res.ok) throw new Error("Failed to fetch messages");
+    const cmts = await res.json();
+    cmts.forEach(displayComment);
+  } catch (err) {
+    console.error("Error loading messages:", err);
+  }
+}
+loadComment();
 
+
+// ====== DISPLAY MESSAGE ======
+function displayComment(cmt) {
+  const div = document.createElement("div");
+  div.className = "comment"; // div of comment
+  div.dataset.id = cmt.comment_id;
+
+  // --- comment header HEADER ---
+  const header = document.createElement("div");
+  header.className = "comment-header"; // div header of comment
+
+  const profileImg = document.createElement("img");
+  profileImg.src = cmt.profile_url || "../../assets/img/pf.jpg"; // placeholder
+  profileImg.alt = "user-profile-cmt";
+  profileImg.className = "userCommentProfile"; // user Pf on cmt div
+
+  // Wrap profile image in link
+  const profileLink = document.createElement("a");
+  profileLink.href = `aboutUser?memberId=${cmt.memberQid}`; // user name on cmt div href to their account
+  profileLink.appendChild(profileImg);
+
+  // Username link
+  
+
+  const headerRight = document.createElement("div");
+  headerRight.className = "comment-header-child-right";
+
+  const headerRightTop = document.createElement("div");
+  headerRightTop.className = "comment-header-child-right-top"; // user to be flex now no need
+
+  const headerRightBottom = document.createElement("div");
+  headerRightBottom.className = "comment-header-child-right-bottom";
+
+  headerRight.appendChild(headerRightTop);
+  headerRight.appendChild(headerRightBottom);
+
+  const usernameLink = document.createElement("a");
+  usernameLink.href = `aboutUser?memberId=${msg.memberQid}`;
+  usernameLink.textContent = msg.username || "Unknown";
+  usernameLink.className = "username";
+  headerRightTop.appendChild(usernameLink);
+
+  
+  const postAt = document.createElement("p");
+  postAt.className = "postAt";
+  postAt.textContent = msg.createFormNow || "just now";
+  headerRightBottom.appendChild(postAt);
+
+  
+
+  // Dropdown menu
+  const dropdownWrapper = document.createElement("div");
+  dropdownWrapper.className = "dropdown absolute-top-right comment-dropdown";
+
+  const ellipsisBtn = document.createElement("i");
+  ellipsisBtn.className = "fa-solid fa-ellipsis";
+  ellipsisBtn.setAttribute("data-bs-toggle", "dropdown");
+  ellipsisBtn.style.cursor = "pointer";
+
+  const dropdownMenu = document.createElement("ul");
+  dropdownMenu.className = "dropdown-menu";
+  if (cmt.memberQid === userMemberQid) {
+    dropdownMenu.innerHTML = `
+      <li><a class="dropdown-item edit-option" href="#">Edit</a></li>
+      <li><a class="dropdown-item delete-option" href="#">Delete</a></li>
+      <li><a class="dropdown-item report-option" href="#">Report</a></li>
+    `;
+  } else {
+    dropdownMenu.innerHTML = `
+      <li><a class="dropdown-item report-option" href="#">Report</a></li>
+    `;
+  }
+  dropdownWrapper.appendChild(ellipsisBtn);
+  dropdownWrapper.appendChild(dropdownMenu);
+
+  header.appendChild(profileLink);
+  header.appendChild(headerRight);
+  header.appendChild(dropdownWrapper);
+
+  // --- Comment BODY ---
+  const body = document.createElement("div");
+  body.className = "comment-body";
+
+  // Post text with truncation
+  if (cmt.comment) {
+    const textP = document.createElement("p");
+    textP.className = "comment-text";
+
+    if (cmt.comment.length > 250) {
+      const shortText = cmt.comment.slice(0, 250);
+      textP.textContent = shortText + "... ";
+
+      const seeMore = document.createElement("a");
+      seeMore.href = "#";
+      seeMore.textContent = "see more";
+      seeMore.addEventListener("click", (e) => {
+        e.preventDefault();
+        textP.textContent = cmt.comment; // show full text
+      });
+
+      textP.appendChild(seeMore);
+    } else {
+      textP.textContent = cmt.comment;
+    }
+
+    body.appendChild(textP);
+  }
+
+ 
+  // Media of comment
+if (cmt.media_url && cmt.media_type) {
+  const mediaWrapper = document.createElement("div");
+  mediaWrapper.className = "comment-thumbnail";
+
+  // Only apply blur background for images
+  if (cmt.media_type === "image" && !cmt.media_url.startsWith("blob:")) {
+    mediaWrapper.style.setProperty("--bg-url", `url(${cmt.media_url})`);
+  }
+
+  const mediaEl = document.createElement(cmt.media_type === "image" ? "img" : "video");
+  mediaEl.className = "comment-thumbnail-img";
+  mediaEl.src = cmt.media_url;
+
+  if (cmt.media_type === "video") mediaEl.controls = true;
+
+  mediaWrapper.appendChild(mediaEl);
+  body.appendChild(mediaWrapper);
+}
+
+
+  // Like / comment / repost counts
+  const counts = document.createElement("div");
+  counts.className = "comment-media-count";
+  counts.innerHTML = `
+    <div>
+      <p><span class="comment-like-count">${msg.like_count || 0}</span> Likes</p>
+    </div>
+    <div class="post-media-count-child-right">
+      <p><span class="comment-reply-count">${cmt.reply_count || 0}</span> comments</p>
+     
+    </div>
+  `;
+  body.appendChild(counts);
+
+  // --- BUTTONS ---
+  const btnRow = document.createElement("div");
+  btnRow.className = "comment-media-button";
+
+  // Like btn
+  const likeBtn = document.createElement("button");
+  likeBtn.className = "likeBtn media-btn";
+  likeBtn.dataset.id = cmt.comment_id;
+  likeBtn.innerHTML = `<i class="fa-solid fa-heart"></i> <span>Like</span>`;
+
+  // ===========reply logic will work at home today=====
+
+
+ 
+
+  btnRow.appendChild(likeBtn);
+  // btnRow.appendChild(commentBtn); maybe this turn to reply then there will be another fect oad and also two more like logic ...
+ 
+
+  body.appendChild(btnRow);
+
+  // Append together
+  div.appendChild(header);
+  div.appendChild(body);
+  document.getElementById("message-container").prepend(div);
+
+  // === Attach like toggle logic ===
+  const likeIcon = likeBtn.querySelector("i");
+  const likeCount = counts.querySelector(".post-like-count");
+  loadLikeInfoForMessage(cmt.comment_id, likeIcon, likeCount);
+  likeBtn.onclick = async () => {
+    await toggleLikeActivityForMessage(cmt.comment_id, likeIcon, likeCount);
+  };
+
+  // === Dropdown click handlers ===
+  dropdownMenu.querySelectorAll("a").forEach((item) => {
+    item.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (item.classList.contains("edit-option")) {
+        editingMessageId = cmt.comment_id;
+        editCommentInput.value = cmt.comment;
+        editCommentToast.show();
+      } else if (item.classList.contains("delete-option")) {
+        deletingCommentId = cmt.comment_id;
+        deleteCommentToast.show();
+      } else if (item.classList.contains("report-option")) {
+        reportingTargetCommentId = cmt.comment_id;
+        reportCommentToast.show();
+      }
+    });
+  });
+}
