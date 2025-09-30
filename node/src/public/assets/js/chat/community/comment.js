@@ -857,7 +857,7 @@ if (cmt.media_url && cmt.media_type) {
   counts.className = "comment-media-count";
   counts.innerHTML = `
     <div>
-      <p><span class="comment-like-count">${msg.like_count || 0}</span> Likes</p>
+      <p><span class="comment-like-count">${cmt.like_count || 0}</span> Likes</p>
     </div>
     <div class="post-media-count-child-right">
       <p><span class="comment-reply-count">${cmt.reply_count || 0}</span> reply</p>
