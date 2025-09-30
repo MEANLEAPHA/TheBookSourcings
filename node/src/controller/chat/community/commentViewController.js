@@ -9,6 +9,7 @@ const displayPostById = async (req, res) => {
     const  {postId} = req.params;
     const [rows] = await db.query(
       `SELECT  
+          c.message_id,
           c.message_text AS message, 
           c.feeling,
           c.media_type,
