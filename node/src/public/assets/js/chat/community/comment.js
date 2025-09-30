@@ -105,7 +105,7 @@ socket.on("message-deleted", ({ message_id }) => {
 
 
 // Fetch to load the post by id
-fetch(`${API_URL}/api/displayCommentById/${postId}`)
+fetch(`${API_URL}/api/communityComment/display/${postId}`)
 .then(res => res.json())
 .then(displayPostById)
 .catch(err => {
