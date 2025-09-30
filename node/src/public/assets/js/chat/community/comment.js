@@ -422,7 +422,7 @@ if (msg.media_url && msg.media_url.length > 0) {
   repostBtn.innerHTML = `<i class="fa-solid fa-share-from-square"></i> <span>Repost</span>`;
 
   btnRow.appendChild(likeBtn);
-  btnRow.appendChild(commentBtn);
+
   btnRow.appendChild(repostBtn);
 
   body.appendChild(btnRow);
@@ -859,7 +859,7 @@ if (cmt.media_url && cmt.media_type) {
       <p><span class="comment-like-count">${msg.like_count || 0}</span> Likes</p>
     </div>
     <div class="post-media-count-child-right">
-      <p><span class="comment-reply-count">${cmt.reply_count || 0}</span> comments</p>
+      <p><span class="comment-reply-count">${cmt.reply_count || 0}</span> reply</p>
      
     </div>
   `;
