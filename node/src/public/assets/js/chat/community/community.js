@@ -382,52 +382,6 @@ else{
   textP.textContent = "";
   body.appendChild(textP);
 }
-// if (msg.message) {
-//   const div = document.querySelector(`div[data-id='${msg.id}']`);
-//   if (!div) return; // safety check
-
-//   let textP = div.querySelector(".post-text");
-//   if (!textP) {
-//     textP = document.createElement("p");
-//     textP.className = "post-text";
-//     div.appendChild(textP); // append inside the post container, not body
-//   }
-
-//   if (msg.message.length > 250) {
-//     const shortText = msg.message.slice(0, 250);
-//     textP.textContent = shortText + "... ";
-
-//     const seeMore = document.createElement("a");
-//     seeMore.href = "#";
-//     seeMore.style.cursor = "pointer";
-//     seeMore.style.textDecoration = "none";
-//     seeMore.textContent = "see more";
-
-//     seeMore.addEventListener("click", (e) => {
-//       e.preventDefault();
-//       textP.textContent = msg.message + " ";
-
-//       const seeLess = document.createElement("a");
-//       seeLess.href = "#";
-//       seeLess.style.cursor = "pointer";
-//       seeLess.style.textDecoration = "none";
-//       seeLess.textContent = "see less";
-
-//       seeLess.addEventListener("click", (e) => {
-//         e.preventDefault();
-//         textP.textContent = shortText + "... ";
-//         textP.appendChild(seeMore);
-//       });
-
-//       textP.appendChild(seeLess);
-//     });
-
-//     textP.appendChild(seeMore);
-//   } else {
-//     textP.textContent = msg.message;
-//   }
-// }
-
 
 
  // --- MEDIA SECTION ---
