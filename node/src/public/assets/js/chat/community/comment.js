@@ -767,7 +767,7 @@ function displayComment(cmt) {
   
   const postAt = document.createElement("p");
   postAt.className = "postAt";
-  postAt.textContent = msg.createFormNow || "just now";
+  postAt.textContent = cmt.createFormNow || "just now";
   headerRightBottom.appendChild(postAt);
 
   
