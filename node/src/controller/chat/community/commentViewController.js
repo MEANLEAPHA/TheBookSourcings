@@ -50,6 +50,7 @@ const displayPostById = async (req, res) => {
 
 const displayAllComment = async (req,res)=>{
   try{
+    const  {postId} = req.params;
     const [rows] = await db.query(
       `SELECT  
           c.comment_id,
@@ -63,8 +64,9 @@ const displayAllComment = async (req,res)=>{
           u.username
        FROM community_post_comment c
        JOIN users u ON c.memberQid = u.memberQid
-       WHERE c.deleted_at IS NULL
+       WHERE c.message_id = ? AND c.deleted_at IS NULL
        ORDER BY c.comment_at ASC`, 
+       [postId]
     );
     const comments = rows.map(row => ({
           ...row,

@@ -712,7 +712,7 @@ socket.on("comment-deleted", ({ comment_id }) => {
 // ====== LOAD ALL Comment ======
 async function loadComment() {
   try {
-    const res = await fetch(`${API_URL}/api/communityComment/dipslayAllComments`);
+    const res = await fetch(`${API_URL}/api/communityComment/dipslayAllComments/${postId}`);
     if (!res.ok) throw new Error("Failed to fetch messages");
     const cmts = await res.json();
     cmts.forEach(displayComment);
@@ -872,7 +872,7 @@ if (cmt.media_url && cmt.media_type) {
 
   // Like btn
   const likeBtn = document.createElement("button");
-  likeBtn.className = "likeBtn media-btn";
+  likeBtn.className = "likeCmtBtn media-btn";
   likeBtn.dataset.id = cmt.comment_id;
   likeBtn.innerHTML = `<i class="fa-solid fa-heart"></i> <span>Like</span>`;
 
@@ -894,7 +894,7 @@ if (cmt.media_url && cmt.media_type) {
 
   // === Attach like toggle logic ===
   const likeIcon = likeBtn.querySelector("i");
-  const likeCount = counts.querySelector(".post-like-count");
+  const likeCount = counts.querySelector(".comment-like-count");
   loadLikeInfoForComment(cmt.comment_id, likeIcon, likeCount);
   likeBtn.onclick = async () => {
     await toggleLikeActivityForComment(cmt.comment_id, likeIcon, likeCount);

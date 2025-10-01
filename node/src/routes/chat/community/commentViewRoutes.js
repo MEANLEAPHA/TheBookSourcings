@@ -13,7 +13,7 @@ const { upload } = require("../../../middleware/AWSuploadMiddleware");
 
 // Get one post by id
 router.get("/display/:postId", displayPostById);
-router.get("/dipslayAllComments", displayAllComment);
+router.get("/dipslayAllComments/:postId", displayAllComment);
 router.post(
     "/comment",
     verifyHttpToken,
