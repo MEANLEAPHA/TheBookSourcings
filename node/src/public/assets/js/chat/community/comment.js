@@ -996,7 +996,7 @@ document.getElementById("confirmDeleteCommentBtn").onclick = async () => {
       },
       body: JSON.stringify({ comment_id: deletingCommentId })
     });
-    socket.emit("delete-message", { comment_id: deletingCommentId });
+    socket.emit("delete-comment", { comment_id: deletingCommentId });
     deleteCommentToast.hide();
     deletingCommentId = null;
   } catch (err) {

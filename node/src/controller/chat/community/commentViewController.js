@@ -159,7 +159,7 @@ const editComment = async (req,res)=>{
           if (rows[0].memberQid !== memberQid) return res.status(403).json({ error: "Not authorized to edit this comment" });
       
           await db.query(
-            "UPDATE community_post_comment SET comment_text = ?, updated_at = NOW() WHERE comment_id = ?",
+            "UPDATE community_post_comment SET comment_text = ?, update_at = NOW() WHERE comment_id = ?",
             [newComment, comment_id]
           );
           res.json({ comment_id, newComment });
