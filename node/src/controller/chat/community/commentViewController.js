@@ -152,7 +152,7 @@ const editComment = async (req,res)=>{
       
           const [rows] = await db.query(
             "SELECT memberQid FROM community_post_comment WHERE comment_id = ? AND deleted_at IS NULL",
-            [message_id]
+            [comment_id]
           );
       
           if (rows.length === 0) return res.status(404).json({ error: "Comment not found" });
@@ -189,7 +189,7 @@ const deleteComment = async (req,res)=>{
           // delete media from S3
           if (rows[0].media_url) await deleteFromS3(rows[0].media_url);
       
-          await db.query("DELETE FROM community_post_comment WHERE message_id = ?", [comment_id]);
+          await db.query("DELETE FROM community_post_comment WHERE comment_id = ?", [comment_id]);
       
           res.json({ comment_id });
     }
