@@ -61,7 +61,7 @@ const toggleCommentLike = async (req, res) => {
     } else {
       liked = 1;
       await db.query(
-        "INSERT INTO community_post_comment_like (memberQid, message_id, liked) VALUES (?, ?, 1)",
+        "INSERT INTO community_post_comment_like (memberQid, comment_id, liked) VALUES (?, ?, 1)",
         [memberQid,commentId]
       );
     }
