@@ -34,7 +34,7 @@ const report =  async (req, res) =>{
 
 const reportComment =  async (req, res) =>{
     try{
-   
+    
          const memeberQid = req.user.memberQid;
          const {reasonCommentTxt,comment_id} = req.body;
         

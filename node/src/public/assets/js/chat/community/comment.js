@@ -829,6 +829,12 @@ function displayComment(cmt) {
 
     body.appendChild(textP);
   }
+  else{
+    const textP = document.createElement("p");
+    textP.className = "comment-text";
+    textP.textContent = "";
+    body.appendChild(textP);
+  }
 
  
   // Media of comment
@@ -980,7 +986,7 @@ document.getElementById("saveEditCommentBtn").onclick = async () => {
 
 // ====== DELETE Fetch ======
 document.getElementById("confirmDeleteBtn").onclick = async () => {
-  if (!deletingMessageId) return;
+  if (!deletingCommentId) return;
   try {
     await fetch(`${API_URL}/api/communityComment/delete/comment`, {
       method: "DELETE",
