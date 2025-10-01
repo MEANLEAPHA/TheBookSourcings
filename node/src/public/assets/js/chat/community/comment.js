@@ -985,7 +985,7 @@ document.getElementById("saveEditCommentBtn").onclick = async () => {
 };
 
 // ====== DELETE Fetch ======
-document.getElementById("confirmDeleteBtn").onclick = async () => {
+document.getElementById("confirmDeleteCommentBtn").onclick = async () => {
   if (!deletingCommentId) return;
   try {
     await fetch(`${API_URL}/api/communityComment/delete/comment`, {
