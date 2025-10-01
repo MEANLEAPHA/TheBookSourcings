@@ -774,7 +774,7 @@ function displayComment(cmt) {
 
   // Dropdown menu
   const dropdownWrapper = document.createElement("div");
-  dropdownWrapper.className = "dropdown absolute-top-right comment-dropdown";
+  dropdownWrapper.className = "dropdown  comment-dropdown";
 
   const ellipsisBtn = document.createElement("i");
   ellipsisBtn.className = "fa-solid fa-ellipsis";
@@ -785,9 +785,9 @@ function displayComment(cmt) {
   dropdownMenu.className = "dropdown-menu";
   if (cmt.memberQid === userMemberQid) {
     dropdownMenu.innerHTML = `
-      <li><a class="dropdown-item edit-option" href="#">Edit</a></li>
-      <li><a class="dropdown-item delete-option" href="#">Delete</a></li>
-      <li><a class="dropdown-item report-option" href="#">Report</a></li>
+      <li><a class="dropdown-item edit-option-comment" href="#">Edit</a></li>
+      <li><a class="dropdown-item delete-option-comment" href="#">Delete</a></li>
+      <li><a class="dropdown-item report-option-comment" href="#">Report</a></li>
     `;
   } else {
     dropdownMenu.innerHTML = `
@@ -904,14 +904,14 @@ if (cmt.media_url && cmt.media_type) {
   dropdownMenu.querySelectorAll("a").forEach((item) => {
     item.addEventListener("click", (e) => {
       e.preventDefault();
-      if (item.classList.contains("edit-option")) {
-        editingMessageId = cmt.comment_id;
+      if (item.classList.contains("edit-option-comment")) {
+        editingCommentId = cmt.comment_id;
         editCommentInput.value = cmt.comment;
         editCommentToast.show();
-      } else if (item.classList.contains("delete-option")) {
+      } else if (item.classList.contains("delete-option-comment")) {
         deletingCommentId = cmt.comment_id;
         deleteCommentToast.show();
-      } else if (item.classList.contains("report-option")) {
+      } else if (item.classList.contains("report-option-comment")) {
         reportingTargetCommentId = cmt.comment_id;
         reportCommentToast.show();
       }
@@ -930,7 +930,7 @@ async function loadLikeInfoForComment(commentId, likeIcon, likeCount) {
     if (!res.ok) throw new Error("Failed to fetch like status");
 
     const data = await res.json();
-    likeCount.textContent = data.post.like_count;
+    likeCount.textContent = data.comment.like_count;
     likeIcon.style.color = data.userStatus.liked ? "red" : "gray";
   } catch (err) {
     console.error(err);
