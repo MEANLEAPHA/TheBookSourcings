@@ -1075,3 +1075,492 @@ document.getElementById("cancelReportCommentBtn").onclick = () => {
     mediaCommentPreview.innerHTML = "";
     selectedFile = null;
   };
+
+  
+  
+// Reply  LOGICAL
+
+
+// get username to display on user comment form
+const usernameFromReply = document.querySelector(".usernameFromReply");
+if (username) {
+  usernameFromComment.textContent = username;
+}
+
+// ====== SEND Comment Declaration ======
+const formReply = document.getElementById("form-Reply");
+const ReplyInput = document.getElementById("Reply-input");
+const mediaReplyInput = document.getElementById("mediaReplyInput");
+const mediaReplyPreview = document.getElementById("media-Reply-preview");
+
+let selectedReplyFile = null;
+
+// Show preview when user selects a file
+mediaReplyInput.addEventListener("change", () => {
+  selectedReplyFile = mediaReplyInput.files[0];
+  mediaReplyPreview.innerHTML = ""; // clear previous preview
+
+  if (!selectedReplyFile) return;
+
+  if (selectedReplyFile.type.startsWith("image/")) {
+    const img = document.createElement("img");
+    img.src = URL.createObjectURL(selectedReplyFile);
+    img.style.maxWidth = "200px";
+    img.style.marginTop = "5px";
+    mediaReplyPreview.appendChild(img);
+  } else if (selectedReplyFile.type.startsWith("video/")) {
+    const video = document.createElement("video");
+    video.src = URL.createObjectURL(selectedReplyFile);
+    video.controls = true;
+    video.style.maxWidth = "200px";
+    video.style.marginTop = "5px";
+    mediaReplyPreview.appendChild(video);
+  }
+});
+
+// Send message (text + optional media)
+formReply.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const text = ReplyInput.value.trim();
+
+  if (!text && !selectedReplyFile ) return; // must have text or media
+
+  try {
+    const formData = new FormData();
+    formData.append("ReplyText", text);
+    formData.append("crId", postId);
+    if (selectedReplyFile) formData.append("media", selectedReplyFile);
+
+    const res = await fetch(`${API_URL}/api/communityReply/Reply`, {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${token}` },
+      body: formData
+    });
+
+    if (!res.ok) throw new Error("Failed to send reply");
+
+    const savedReply = await res.json();
+    savedReply.createFormNow = "just now"; // instant display
+    displayReply(savedReply);
+    socket.emit("send-reply", savedReply);
+
+    // Reset form
+    ReplyInput.value = "";
+    mediaReplyInput.value = "";
+    mediaReplyPreview.innerHTML = "";
+    selectedReplyFile = null;
+    ReplyToast.hide();
+  } catch (err) {
+    console.error(err);
+  }
+});
+
+
+
+ 
+
+
+// ====== DECLARATIONS FOR Reply======
+// Edit
+let editingReplyId = null;
+const editReplyToast = new bootstrap.Toast(document.getElementById("editReplyToast"), { autohide: false });
+const editReplyInput = document.getElementById("editReplyInput");
+
+// Delete
+let deletingReplyId = null;
+const deleteReplyToast = new bootstrap.Toast(document.getElementById("deleteReplyToast"), { autohide: false });
+
+// Report
+let reportingTargetReplyId = null;
+const reportReplyToast = new bootstrap.Toast(document.getElementById("reportReplyToast"), { autohide: false });
+const reportReasonReplyInput = document.getElementById("reportReasonReplyInput");
+
+// ====== SOCKET LISTENERS FOR Reply ======
+
+
+socket.on("receive-reply", (rpy) => {
+  if (!rpy.createFormNow) rpy.createFormNow = "just now";
+  displayReply(rpy);
+});
+
+socket.on("reply-updated", ({ reply_id, newReply }) => {
+  const div = document.querySelector(`div[data-id='${reply_id}']`);
+  if (div) div.querySelector(".reply-text").textContent = newReply;
+
+});
+
+socket.on("reply-deleted", ({ reply_id }) => {
+  const div = document.querySelector(`div[data-id='${reply_id}']`);
+  if (div) div.remove();
+});
+    
+    
+
+// ====== LOAD ALL Reply 
+// 
+async function loadReply() {
+  try {
+    const res = await fetch(`${API_URL}/api/communityReply/dipslayAllReplys/${postId}`);
+    if (!res.ok) throw new Error("Failed to fetch Reply");
+    const cmts = await res.json();
+    cmts.forEach(displayReply);
+  } catch (err) {
+    console.error("Error loading messages:", err);
+  }
+}
+loadReply();
+
+
+// ====== DISPLAY Reply======
+function displayReply(rpy) {
+  const div = document.createElement("div");
+  div.className = "reply"; // div of comment
+  div.dataset.id = rpy.comment_id;
+
+  // --- comment header HEADER ---
+  const header = document.createElement("div");
+  header.className = "reply-header"; // div header of comment
+
+  const profileImg = document.createElement("img");
+  profileImg.src = rpy.profile_url || "../../assets/img/pf.jpg"; // placeholder
+  profileImg.alt = "user-profile-rpy";
+  profileImg.className = "userReplyProfile"; // user Pf on rpy div
+
+  // Wrap profile image in link
+  const profileLink = document.createElement("a");
+  profileLink.href = `aboutUser?memberId=${rpy.memberQid}`; // user name on rpy div href to their account
+  profileLink.appendChild(profileImg);
+
+  // Username link
+  
+
+  const headerRight = document.createElement("div");
+  headerRight.className = "reply-header-child-right";
+
+  const headerRightTop = document.createElement("div");
+  headerRightTop.className = "reply-header-child-right-top"; // user to be flex now no need
+
+  const headerRightBottom = document.createElement("div");
+  headerRightBottom.className = "reply-header-child-right-bottom";
+
+  headerRight.appendChild(headerRightTop);
+  headerRight.appendChild(headerRightBottom);
+
+  const usernameLink = document.createElement("a");
+  usernameLink.href = `aboutUser?memberId=${rpy.memberQid}`;
+  usernameLink.textContent = rpy.username || "Unknown";
+  usernameLink.className = "username";
+  headerRightTop.appendChild(usernameLink);
+
+  
+  const replyAt = document.createElement("p");
+  replyAt.className = "replyAt";
+  replyAt.textContent = rpy.createFormNow || "just now";
+  headerRightBottom.appendChild(replyAt);
+
+  
+
+  // Dropdown menu
+  const dropdownWrapper = document.createElement("div");
+  dropdownWrapper.className = "dropdown reply-dropdown";
+
+  const ellipsisBtn = document.createElement("i");
+  ellipsisBtn.className = "fa-solid fa-ellipsis";
+  ellipsisBtn.setAttribute("data-bs-toggle", "dropdown");
+  ellipsisBtn.style.cursor = "pointer";
+
+  const dropdownMenu = document.createElement("ul");
+  dropdownMenu.className = "dropdown-menu";
+  if (rpy.memberQid === userMemberQid) {
+    dropdownMenu.innerHTML = `
+      <li><a class="dropdown-item edit-option-reply" href="#">Edit</a></li>
+      <li><a class="dropdown-item delete-option-reply" href="#">Delete</a></li>
+      <li><a class="dropdown-item report-option-reply" href="#">Report</a></li>
+    `;
+  } else {
+    dropdownMenu.innerHTML = `
+      <li><a class="dropdown-item report-option-reply" href="#">Report</a></li>
+    `;
+  }
+  dropdownWrapper.appendChild(ellipsisBtn);
+  dropdownWrapper.appendChild(dropdownMenu);
+
+  header.appendChild(profileLink);
+  header.appendChild(headerRight);
+  header.appendChild(dropdownWrapper);
+
+  // ---reply BODY ---
+  const body = document.createElement("div");
+  body.className = "reply-body";
+
+  // reply text with truncation
+  if (rpy.reply) {
+    const textP = document.createElement("p");
+    textP.className = "reply-text";
+
+    if (rpy.reply.length > 250) {
+      const shortText = rpy.reply.slice(0, 250);
+      textP.textContent = shortText + "... ";
+
+      const seeMore = document.createElement("a");
+      seeMore.href = "#";
+      seeMore.textContent = "see more";
+      seeMore.addEventListener("click", (e) => {
+        e.preventDefault();
+        textP.textContent = rpy.reply; // show full text
+      });
+
+      textP.appendChild(seeMore);
+    } else {
+      textP.textContent = rpy.reply;
+    }
+
+    body.appendChild(textP);
+  }
+  else{
+    const textP = document.createElement("p");
+    textP.className = "reply-text";
+    textP.textContent = "";
+    body.appendChild(textP);
+  }
+
+ 
+  // Media of comment
+if (rpy.media_url && rpy.media_type) {
+  const mediaWrapper = document.createElement("div");
+  mediaWrapper.className = "reply-thumbnail";
+
+  // Only apply blur background for images
+  if (rpy.media_type === "image" && !rpy.media_url.startsWith("blob:")) {
+    mediaWrapper.style.setProperty("--bg-url", `url(${rpy.media_url})`);
+  }
+
+  const mediaEl = document.createElement(rpy.media_type === "image" ? "img" : "video");
+  mediaEl.className = "reply-thumbnail-img";
+  mediaEl.src = rpy.media_url;
+
+  if (rpy.media_type === "video") mediaEl.controls = true;
+
+  mediaWrapper.appendChild(mediaEl);
+  body.appendChild(mediaWrapper);
+}
+
+
+  // Like / comment / repost counts
+  const counts = document.createElement("div");
+  counts.className = "reply-media-count";
+  counts.innerHTML = `
+    <div>
+      <p><span class="reply-like-count">${rpy.like_count || 0}</span> Likes</p>
+    </div>
+    <div class="post-media-count-child-right">
+      <p><span class="reply-reply-count">${rpy.reply_count || 0}</span> reply</p>
+     
+    </div>
+  `;
+  body.appendChild(counts);
+
+  // --- BUTTONS ---
+  const btnRow = document.createElement("div");
+  btnRow.className = "reply-media-button";
+
+  // Like btn
+  const likeBtn = document.createElement("button");
+  likeBtn.className = "likerpyBtn media-btn";
+  likeBtn.dataset.id = rpy.reply_id;
+  likeBtn.innerHTML = `<i class="fa-solid fa-heart"></i> <span>Like</span>`;
+
+  // ===========reply logic will work at home today=====
+
+
+ 
+
+  btnRow.appendChild(likeBtn);
+  // btnRow.appendChild(commentBtn); maybe this turn to reply then there will be another fect oad and also two more like logic ...
+ 
+
+  body.appendChild(btnRow);
+
+  // Append together
+  div.appendChild(header);
+  div.appendChild(body);
+  document.getElementById("reply-container").prepend(div);
+
+  // === Attach like toggle logic ===
+  const likeIcon = likeBtn.querySelector("i");
+  const likeCount = counts.querySelector(".reply-like-count");
+  loadLikeInfoForReply(rpy.reply_id, likeIcon, likeCount);
+  likeBtn.onclick = async () => {
+    await toggleLikeActivityForReply(rpy.reply_id, likeIcon, likeCount);
+  };
+
+  // === Dropdown click handlers ===
+  dropdownMenu.querySelectorAll("a").forEach((item) => {
+    item.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (item.classList.contains("edit-option-reply")) {
+        editingReplyId = rpy.reply_id;
+        editReplyInput.value = rpy.reply;
+        editReplyToast.show();
+      } else if (item.classList.contains("delete-option-reply")) {
+        deletingReplyId = rpy.reply_id;
+        deleteReplyToast.show();
+      } else if (item.classList.contains("report-option-reply")) {
+        reportingTargetReplyId = rpy.reply_id;
+        reportReplyToast.show();
+      }
+    });
+  });
+}
+
+
+
+// ====== LIKE FUNCTIONS FOR COMMENT ======
+async function loadLikeInfoForReply(replyId, likeIcon, likeCount) {
+  try {
+    const res = await fetch(`${API_URL}/api/communityReplyLike/status/${replyId}`, {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    if (!res.ok) throw new Error("Failed to fetch like status");
+
+    const data = await res.json();
+    likeCount.textContent = data.reply.like_count;
+    likeIcon.style.color = data.userStatus.liked ? "red" : "gray";
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function toggleLikeActivityForReply(replyId, likeIcon, likeCount) {
+  try {
+    const res = await fetch(`${API_URL}/api/communityReplyLike/like/${replyId}`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
+    });
+    if (!res.ok) throw new Error("Failed to toggle like");
+
+    const data = await res.json();
+    likeIcon.style.color = data.liked ? "red" : "gray";
+    await loadLikeInfoForComment(replyId, likeIcon, likeCount);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+
+// ====== EDIT  Comment Fetch======
+document.getElementById("saveEditReplyBtn").onclick = async () => {
+  const newReply = editCommentInput.value.trim();
+  if (!newReply || !editingReplyId) return;
+  try {
+    await fetch(`${API_URL}/api/communityReply/edit/reply`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ reply_id: editingReplyId, newReply })
+    });
+    socket.emit("edit-comment", { reply_id: editingReplyId, newReply });
+    editReplyToast.hide();
+    editingReplyId = null;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+// ====== DELETE Fetch ======
+document.getElementById("confirmDeleteReplyBtn").onclick = async () => {
+  if (!deletingReplyId) return;
+  try {
+    await fetch(`${API_URL}/api/communityReply/delete/reply`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ reply_id: deletingReplyId })
+    });
+    socket.emit("delete-reply", { reply_id: deletingReplyId });
+    deleteReplyToast.hide();
+    deletingReplyId = null;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+// ====== REPORT CReply Fetch======
+document.getElementById("submitReportReplyBtn").onclick = async () => {
+  const reasonReplyTxt = reportReasonReplyInput.value.trim();
+  if (!reasonReplyTxt || !reportingTargetReplyId) return;
+
+  try {
+    const res = await fetch(`${API_URL}/api/community/reportReply`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        reasonReplyTxt,
+        reply_id: reportingTargetReplyId
+      })
+    });
+
+    if (!res.ok) throw new Error("Failed to submit reply report");
+
+    const data = await res.json();
+    alert(data.message); // the session display messgae back if succucess use for future not alert
+    reportReplyToast.hide();
+    reportingTargetReplyId = null;
+    reportReasonReplyInput.value = "";
+  } catch (err) {
+    console.error("Report error:", err);
+  }
+};
+
+
+ // Reply toast
+  const ReplyToast = new bootstrap.Toast(document.getElementById("ReplyToast"), { autohide: false });
+  const ReplyBtn = document.getElementById("ReplyButton");
+
+  ReplyBtn.addEventListener("click", () => {
+    ReplyToast.show();
+  });
+
+ 
+
+
+// ====== CANCEL BUTTONS Reply ======
+// cancel edit btn
+document.getElementById("cancelEditReplyBtn").onclick = () => {
+  editingReplyId = null;
+  editReplyToast.hide();
+};
+
+
+// cancel delete btn
+document.getElementById("cancelDeleteReplyBtn").onclick = () => {
+  deletingReplyId = null;
+  deleteReplyToast.hide();
+};
+
+// cancel report btn
+document.getElementById("cancelReportReplyBtn").onclick = () => {
+  reportingTargetReplyId = null;
+  reportReasonReplyInput.value = "";
+  reportReplyToast.hide();
+};
+
+// cancel Reply btn 
+ document.getElementById("cancelReplyBtn").onclick = () => {
+    ReplyToast.hide();
+    ReplyInput.value = "";
+    mediaReplyInput.value = "";
+    mediaReplyPreview.innerHTML = "";
+    selectedReplyFile = null;
+  };

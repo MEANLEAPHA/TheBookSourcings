@@ -112,7 +112,7 @@
 </div> -->
 
 
-<!-- Upload comment for comment-->
+<!-- Upload comment -->
 <div id="CommentToastWrapper">
   <div id="commentToast" class="toast align-items-center text-bg-light border-0" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="toast-header">
@@ -138,10 +138,38 @@
   </div>
 </div>
 <br>
+
+<!-- Upload  Reply-->
+<div id="ReplyToastWrapper">
+  <div id="ReplyToast" class="toast align-items-center text-bg-light border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+      <img src="../../assets/img/pf.jpg" class="userPfFrom">
+      <p class="usernameFromReply"></p> 
+    </div>
+    <form id="form-Reply">
+      <div class="toast-body">
+        <textarea id="Reply-input" class="form-control mb-2" placeholder="Reply your thought on this post"></textarea>
+        <div id="media-Reply-preview" class="mt-2"></div>
+        <div>
+          <label for="mediaReplyInput" style="cursor: pointer">
+                <i class="fa-solid fa-photo-film fa-lg" style="color: green;"></i> Photo/Video
+          </label>
+        </div>
+          <input type="file" id="mediaReplyInput" accept="image/*,video/*"  hidden>
+        <div class="d-flex justify-content-end">
+          <button id="cancelReplyBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
+          <button id="submitReplyBtn" type="submit" class="btn btn-sm btn-success">Reply</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
             <!--POST will diplay by id-->
             <div id="message-container"></div>
-            <div id="comment-container"></div>
-            
+            <div id="CommentAndReply-container">
+                <div id="comment-container"></div>
+                <div id="reply-container"></div>
+            </div>
         </div>
         <div id="comRight"> 
           <div id="sticky">
@@ -353,6 +381,48 @@
     </div>
   </div>
 </div>
+
+
+ <!-- Edit Toast of Reply-->
+<div id="editToastWrapper">
+  <div id="editReplyToast" class="toast align-items-center text-bg-light border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-body">
+      <input type="text" id="editReplyInput" class="form-control mb-2">
+      <div class="d-flex justify-content-end">
+        <button id="cancelEditReplyBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
+        <button id="saveEditReplyBtn" type="button" class="btn btn-sm btn-primary">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Delete Toast of Reply -->
+<div id="deleteToastWrapper">
+  <div id="deleteReplyToast" class="toast align-items-center text-bg-light border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-body">
+      <p>Are you sure you want to delete this message?</p>
+      <div class="d-flex justify-content-end">
+        <button id="cancelDeleteReplyBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
+        <button id="confirmDeleteReplyBtn" type="button" class="btn btn-sm btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Report Toast of Reply-->
+<div id="reportToastWrapper">
+  <div id="reportReplyToast" class="toast align-items-center text-bg-light border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-body">
+      <h6>Report Post</h6>
+      <textarea id="reportReasonReplyInput" class="form-control mb-2" placeholder="Reason..."></textarea>
+      <div class="d-flex justify-content-end">
+        <button id="cancelReportReplyBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
+        <button id="submitReportReplyBtn" type="button" class="btn btn-sm btn-danger">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 
 

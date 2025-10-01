@@ -161,6 +161,32 @@ io.on("connection", (socket) => {
     io.emit("comment-deleted", data)
   });
 
+
+   // COMMUNITY reply to comment post socket logical
+  socket.on("send-reply", (data) => {
+    if(!socket.user) return;
+    const broadcastData = {
+      reply_id : data.reply_id,
+      memeberQid:socket.user.memberQid,
+      username:data.username,
+      reply: data.reply || null,
+      media_url: data.media_url || null,
+      media_type: data.media_type || null,
+      createFormNow: data.createFormNow || "just now"
+    };
+    socket.broadcast.emit("receive-reply", broadcastData)
+  })
+
+  socket.on("edit-reply", (data) => {
+    if(!socket.user) return;
+    io.emit("reply-updated", data)
+  });
+
+  socket.on("delete-reply", (data) => {
+    if(!socket.user) return;
+    io.emit("reply-deleted", data)
+  });
+
 });
 
 

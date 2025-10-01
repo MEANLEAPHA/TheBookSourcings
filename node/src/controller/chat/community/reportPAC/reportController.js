@@ -61,8 +61,37 @@ const reportComment =  async (req, res) =>{
     }
 }
 
+const reportReply =  async (req, res) =>{
+    try{
+    
+         const memeberQid = req.user.memberQid;
+         const {reasonReplyTxt,reply_id} = req.body;
+        
+         const [result] = await db.query(
+            "INSERT INTO community_post_reply_report (memberQid, reason_text, reportTypeFrom_id) VALUES(?,?,?)",
+            [memeberQid, reasonReplyTxt, reply_id]
+        )
+        res.json(
+            {
+                message : 'ThankYou for your report, Our team will working on that.',
+                status : true,
+                reportId: result.insertId,
+            }
+        );
+    }
+    catch(err){
+        console.error(err);
+        res.status(500).json(
+            {
+                error: err.message,
+                status: false
+            }
+        )
+    }
+}
+
 module.exports = {
     report,
-    reportComment
-
+    reportComment,
+    reportReply
 }
