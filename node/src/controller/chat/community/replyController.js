@@ -79,6 +79,23 @@ const sendReply = async (req,res)=>{
             "INSERT INTO community_post_comment_reply (replyBackTo_id, memberQid, reply_text, media_type, media_url) VALUES (?, ?, ?, ?, ?)",
             [typeOfId, memberQid, replyText || null, mediaType, mediaUrl]
           );
+
+          // Update parent reply_count if replying to a reply
+if (typeOfId.startsWith("REP")) {
+  const parentReplyId = parseInt(typeOfId.replace("REP", "").replace("LY", ""));
+  await db.query(
+    "UPDATE community_post_comment_reply SET reply_count = reply_count + 1 WHERE reply_id = ?",
+    [parentReplyId]
+  );
+}
+          // If replying to a comment, increment reply_count
+    if (typeOfId.startsWith("COMM")) {
+      const commentId = parseInt(typeOfId.replace("COMM", "").replace("ENT", ""));
+      await db.query(
+        "UPDATE community_post_comment SET reply_count = reply_count + 1 WHERE comment_id = ?",
+        [commentId]
+      );
+    }
       
           const msgObj = {
             reply_id: result.insertId,
@@ -150,6 +167,26 @@ const deleteReply = async (req,res)=>{
           if (rows[0].media_url) await deleteFromS3(rows[0].media_url);
       
           await db.query("DELETE FROM community_post_comment_reply WHERE reply_id = ?", [reply_id]);
+
+          // If reply was to a reply, decrement parent reply's reply_count
+if (replyBackToId.startsWith("REP")) {
+  const parentReplyId = parseInt(replyBackToId.replace("REP", "").replace("LY", ""));
+  await db.query(
+    "UPDATE community_post_comment_reply SET reply_count = GREATEST(reply_count - 1, 0) WHERE reply_id = ?",
+    [parentReplyId]
+  );
+}
+
+
+          // If reply was to a comment, decrement reply_count
+    const replyBackToId = rows[0].replyBackTo_id;
+    if (replyBackToId.startsWith("COMM")) {
+      const commentId = parseInt(replyBackToId.replace("COMM", "").replace("ENT", ""));
+      await db.query(
+        "UPDATE community_post_comment SET reply_count = GREATEST(reply_count - 1, 0) WHERE comment_id = ?",
+        [commentId]
+      );
+    }
       
           res.json({ reply_id });
     }
