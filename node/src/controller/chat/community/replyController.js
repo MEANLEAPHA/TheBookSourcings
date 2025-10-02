@@ -19,6 +19,7 @@ const displayAllReply = async (req,res)=>{
           c.reply_count,
           c.memberQid, 
           c.reply_at,
+          c.replyBackTo_id, 
           u.username
        FROM community_post_comment_reply c
        JOIN users u ON c.memberQid = u.memberQid
@@ -87,7 +88,8 @@ const sendReply = async (req,res)=>{
             media_type: mediaType,
             media_url: mediaUrl,
             createFormNow: "just now",
-            like_count: 0
+            like_count: 0,
+            replyBackTo_id: typeOfId 
           };
       
           console.log("Message saved to DB:", msgObj);
