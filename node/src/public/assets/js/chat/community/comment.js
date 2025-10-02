@@ -1606,11 +1606,11 @@ document.getElementById("submitReportReplyBtn").onclick = async () => {
 
  // Reply toast
   const ReplyToast = new bootstrap.Toast(document.getElementById("ReplyToast"), { autohide: false });
-  const ReplyBtn = document.getElementById("ReplyButton");
+  // const ReplyBtn = document.getElementById("ReplyButton");
 
-  ReplyBtn.addEventListener("click", () => {
-    ReplyToast.show();
-  });
+  // ReplyBtn.addEventListener("click", () => {
+  //   ReplyToast.show();
+  // });
 
  
 
