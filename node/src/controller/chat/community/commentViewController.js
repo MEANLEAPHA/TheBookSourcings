@@ -57,7 +57,7 @@ const displayAllComment = async (req,res)=>{
           c.comment_text AS comment, 
           c.media_type,
           c.media_url,
-          c.commentQid,
+          CONCAT('COMM', comment_id, 'ENT') AS commentQid,
           c.like_count,
           c.reply_count,
           c.memberQid, 

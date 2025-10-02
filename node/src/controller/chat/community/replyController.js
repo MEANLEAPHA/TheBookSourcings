@@ -14,7 +14,7 @@ const displayAllReply = async (req,res)=>{
           c.reply_text AS reply, 
           c.media_type,
           c.media_url,
-          c.replyQid,
+          CONCAT('REP', reply_id, 'LY') AS replyQid,
           c.like_count,
           c.reply_count,
           c.memberQid, 
