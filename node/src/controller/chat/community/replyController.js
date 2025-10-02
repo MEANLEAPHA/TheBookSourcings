@@ -75,7 +75,7 @@ const sendReply = async (req,res)=>{
       }
       
           const [result] = await db.query(
-            "INSERT INTO community_post_comment (replyBackTo_id, memberQid, reply_text, media_type, media_url) VALUES (?, ?, ?, ?, ?)",
+            "INSERT INTO community_post_comment_reply (replyBackTo_id, memberQid, reply_text, media_type, media_url) VALUES (?, ?, ?, ?, ?)",
             [typeOfId, memberQid, replyText || null, mediaType, mediaUrl]
           );
       
@@ -83,7 +83,7 @@ const sendReply = async (req,res)=>{
             reply_id: result.insertId,
             memberQid,
             username,
-            replyText: replyText || "",
+            reply: replyText || "",
             media_type: mediaType,
             media_url: mediaUrl,
             createFormNow: "just now",
