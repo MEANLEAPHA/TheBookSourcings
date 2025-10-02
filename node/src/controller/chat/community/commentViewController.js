@@ -126,7 +126,7 @@ const sendComment = async (req,res)=>{
             comment_id: result.insertId,
             memberQid,
             username,
-            commentText: commentText || "",
+            comment: comment || "",
             media_type: mediaType,
             media_url: mediaUrl,
             createFormNow: "just now",
