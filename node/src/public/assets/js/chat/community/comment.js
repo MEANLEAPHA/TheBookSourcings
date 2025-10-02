@@ -976,6 +976,8 @@ if (cmt.media_url && cmt.media_type) {
       }
     });
   });
+  // Fetch replies for a comment
+loadReply(cmt.commentQid);
 }
 
 // ====== LIKE FUNCTIONS FOR COMMENT ======
@@ -1249,17 +1251,32 @@ socket.on("reply-deleted", ({ reply_id }) => {
 
 // ====== LOAD ALL Reply 
 // 
-async function loadReply() {
+async function loadReply(parentQid) {  // parentQid can be commentQid or replyQid
   try {
-    const res = await fetch(`${API_URL}/api/communityReply/dipslayAllReplys/${postId}`);
+    const res = await fetch(`${API_URL}/api/communityReply/dipslayAllReplys/${parentQid}`);
     if (!res.ok) throw new Error("Failed to fetch Reply");
-    const cmts = await res.json();
-    cmts.forEach(displayReply);
+    const replies = await res.json();
+    replies.forEach(displayReply);
   } catch (err) {
-    console.error("Error loading messages:", err);
+    console.error("Error loading replies:", err);
   }
 }
-loadReply();
+
+
+
+
+
+// async function loadReply() {
+//   try {
+//     const res = await fetch(`${API_URL}/api/communityReply/dipslayAllReplys/${postId}`);
+//     if (!res.ok) throw new Error("Failed to fetch Reply");
+//     const cmts = await res.json();
+//     cmts.forEach(displayReply);
+//   } catch (err) {
+//     console.error("Error loading messages:", err);
+//   }
+// }
+// loadReply();
 
 
 // ====== DISPLAY Reply======
@@ -1492,6 +1509,8 @@ if (rpy.media_url && rpy.media_type) {
       }
     });
   });
+  // Fetch replies for a reply (nested)
+loadReply(rpy.replyQid);
 }
 
 
