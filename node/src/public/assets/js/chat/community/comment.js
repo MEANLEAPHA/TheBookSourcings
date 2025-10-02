@@ -930,7 +930,7 @@ if (cmt.media_url && cmt.media_type) {
     div.appendChild(unShowReply);
 
     // Start hidden
-    footer.style.display = "none";
+    // footer.style.display = "none";
     unShowReply.style.display = "none";
 
     // Show replies
