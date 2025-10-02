@@ -1178,7 +1178,7 @@ formReply.addEventListener("submit", async (e) => {
 
   try {
     const formData = new FormData();
-    formData.append("ReplyText", text);
+    formData.append("replyText", text);
     formData.append("typeOfId", typeOfId);  // this will accept the commentQid or replyQid when ever the click the reply 
     if (selectedReplyFile) formData.append("media", selectedReplyFile);
 

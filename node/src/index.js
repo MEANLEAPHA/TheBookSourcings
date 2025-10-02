@@ -51,6 +51,8 @@ const communityReplyRoutes = require('./routes/chat/community/replyRoutes');
 const communityLikeRoute =  require('./routes/chat/community/communityLike/communityPostLikeRoutes');
 
 const communityCommentLikeRoutes = require('./routes/chat/community/communityLike/communityCommentLikeRoutes');
+
+const communityReplyLikeRoutes = require('./routes/chat/community/communityLike/communityReplyLikeRoutes');
 const verifySocketToken  = require('./middleware/verifySocketToken');
 
 
@@ -87,6 +89,9 @@ app.use('/api/communityPostLike', communityLikeRoute);
 
 //community comment like 
 app.use('/api/communityCommentLike', communityCommentLikeRoutes);
+
+// community reply like 
+app.use('/api/communityReplyLike', communityReplyLikeRoutes);
 
 
 
