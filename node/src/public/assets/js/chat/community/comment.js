@@ -591,8 +591,6 @@ document.getElementById("cancelReportBtn").onclick = () => {
 
 
 // POST COMMENT LOGICAL
-
-
 // get username to display on user comment form
 const usernameFromComment = document.querySelector(".usernameFromComment");
 if (username) {
@@ -805,6 +803,19 @@ function displayComment(cmt) {
   const body = document.createElement("div");
   body.className = "comment-body";
 
+  const footer = document.createElement("div");
+  footer.className = "comment-reply-footer";
+
+  const showReply = document.createElement('p');
+  showReply.className = "showReplyWordBtn";
+  showReply.textContent = "Show Reply";
+
+  const unShowReply = document.createElement('p');
+  unShowReply.className = "unShowReplyWordBtn";
+  unShowReply.textContent = "Show less Reply";
+  
+  
+
   // Post text with truncation
   if (cmt.comment) {
     const textP = document.createElement("p");
@@ -884,6 +895,19 @@ if (cmt.media_url && cmt.media_type) {
 
   // ===========reply logic will work at home today=====
 
+// ===== Reply Btn =====
+  const replyBtn = document.createElement("button");
+  replyBtn.className = "replyBtn media-btn";
+  replyBtn.dataset.id = cmt.commentQid; // pass commentQid
+  replyBtn.innerHTML = `<i class="fa-solid fa-reply"></i> <span>Reply</span>`;
+
+  // Show ReplyToast and set typeOfId
+  replyBtn.addEventListener("click", () => {
+    typeOfId = cmt.commentQid; // set global typeOfId for formReply
+    ReplyToast.show();
+  });
+
+  btnRow.appendChild(replyBtn);
 
  
 
@@ -893,9 +917,38 @@ if (cmt.media_url && cmt.media_type) {
 
   body.appendChild(btnRow);
 
+
+
+
+
   // Append together
   div.appendChild(header);
   div.appendChild(body);
+  if (cmt.reply_count !== 0) {
+    div.appendChild(footer);
+    div.appendChild(showReply);
+    div.appendChild(unShowReply);
+
+    // Start hidden
+    footer.style.display = "none";
+    unShowReply.style.display = "none";
+
+    // Show replies
+    showReply.addEventListener("click", () => {
+      footer.style.display = "block";
+      unShowReply.style.display = "block";
+      showReply.style.display = "none";
+    });
+
+    // Hide replies
+    unShowReply.addEventListener("click", () => {
+      footer.style.display = "none";
+      unShowReply.style.display = "none";
+      showReply.style.display = "block";
+    });
+  }
+
+
   document.getElementById("comment-container").prepend(div);
 
   // === Attach like toggle logic ===
@@ -924,8 +977,6 @@ if (cmt.media_url && cmt.media_type) {
     });
   });
 }
-
-
 
 // ====== LIKE FUNCTIONS FOR COMMENT ======
 async function loadLikeInfoForComment(commentId, likeIcon, likeCount) {
@@ -1035,6 +1086,7 @@ document.getElementById("submitReportCommentBtn").onclick = async () => {
 };
 
 
+
  // comment toast
   const commentToast = new bootstrap.Toast(document.getElementById("commentToast"), { autohide: false });
   const commentBtn = document.getElementById("commentButton");
@@ -1077,14 +1129,12 @@ document.getElementById("cancelReportCommentBtn").onclick = () => {
   };
 
   
-  
+
 // Reply  LOGICAL
-
-
 // get username to display on user comment form
 const usernameFromReply = document.querySelector(".usernameFromReply");
 if (username) {
-  usernameFromComment.textContent = username;
+  usernameFromReply.textContent = username;
 }
 
 // ====== SEND Comment Declaration ======
@@ -1129,7 +1179,7 @@ formReply.addEventListener("submit", async (e) => {
   try {
     const formData = new FormData();
     formData.append("ReplyText", text);
-    formData.append("crId", postId);
+    formData.append("typeOfId", typeOfId);  // this will accept the commentQid or replyQid when ever the click the reply 
     if (selectedReplyFile) formData.append("media", selectedReplyFile);
 
     const res = await fetch(`${API_URL}/api/communityReply/Reply`, {
@@ -1216,7 +1266,7 @@ loadReply();
 function displayReply(rpy) {
   const div = document.createElement("div");
   div.className = "reply"; // div of comment
-  div.dataset.id = rpy.comment_id;
+  div.dataset.id = rpy.reply_id;
 
   // --- comment header HEADER ---
   const header = document.createElement("div");
@@ -1373,6 +1423,19 @@ if (rpy.media_url && rpy.media_type) {
 
   // ===========reply logic will work at home today=====
 
+// ===== Reply Btn =====
+  const replyBtn = document.createElement("button");
+  replyBtn.className = "replyBtn media-btn";
+  replyBtn.dataset.id = rpy.replyQid; // pass replyQid
+  replyBtn.innerHTML = `<i class="fa-solid fa-reply"></i> <span>Reply</span>`;
+
+  // Show ReplyToast and set typeOfId
+  replyBtn.addEventListener("click", () => {
+    typeOfId = rpy.replyQid; // set global typeOfId for formReply
+    ReplyToast.show();
+  });
+
+  btnRow.appendChild(replyBtn);
 
  
 
@@ -1385,7 +1448,24 @@ if (rpy.media_url && rpy.media_type) {
   // Append together
   div.appendChild(header);
   div.appendChild(body);
-  document.getElementById("reply-container").prepend(div);
+  
+
+
+    // Find the correct footer to append this reply
+  let parentFooter;
+  if (rpy.replyBackTo_id.startsWith("COMM")) {
+    // reply to comment
+    parentFooter = document.querySelector(`div[data-id='${rpy.replyBackTo_id}'] .comment-reply-footer`);
+  } else if (rpy.replyBackTo_id.startsWith("REP")) {
+    // reply to reply -> append to parent comment footer
+    const parentReply = document.querySelector(`div[data-id='${rpy.replyBackTo_id}']`);
+    parentFooter = parentReply.closest(".comment").querySelector(".comment-reply-footer");
+  }
+
+  if (parentFooter) {
+    parentFooter.appendChild(div);
+    parentFooter.style.display = "block"; // make sure visible
+  }
 
   // === Attach like toggle logic ===
   const likeIcon = likeBtn.querySelector("i");
@@ -1445,7 +1525,7 @@ async function toggleLikeActivityForReply(replyId, likeIcon, likeCount) {
 
     const data = await res.json();
     likeIcon.style.color = data.liked ? "red" : "gray";
-    await loadLikeInfoForComment(replyId, likeIcon, likeCount);
+    await loadLikeInfoForReply(replyId, likeIcon, likeCount);
   } catch (err) {
     console.error(err);
   }
@@ -1454,7 +1534,7 @@ async function toggleLikeActivityForReply(replyId, likeIcon, likeCount) {
 
 // ====== EDIT  Comment Fetch======
 document.getElementById("saveEditReplyBtn").onclick = async () => {
-  const newReply = editCommentInput.value.trim();
+  const newReply = editReplyInput.value.trim();
   if (!newReply || !editingReplyId) return;
   try {
     await fetch(`${API_URL}/api/communityReply/edit/reply`, {
@@ -1465,7 +1545,7 @@ document.getElementById("saveEditReplyBtn").onclick = async () => {
       },
       body: JSON.stringify({ reply_id: editingReplyId, newReply })
     });
-    socket.emit("edit-comment", { reply_id: editingReplyId, newReply });
+    socket.emit("edit-reply", { reply_id: editingReplyId, newReply });
     editReplyToast.hide();
     editingReplyId = null;
   } catch (err) {

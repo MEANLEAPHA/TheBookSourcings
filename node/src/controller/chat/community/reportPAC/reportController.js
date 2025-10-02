@@ -68,7 +68,7 @@ const reportReply =  async (req, res) =>{
          const {reasonReplyTxt,reply_id} = req.body;
         
          const [result] = await db.query(
-            "INSERT INTO community_post_reply_report (memberQid, reason_text, reportTypeFrom_id) VALUES(?,?,?)",
+            "INSERT INTO community_reply_report (memberQid, reason_text, reply_id) VALUES(?,?,?)",
             [memeberQid, reasonReplyTxt, reply_id]
         )
         res.json(

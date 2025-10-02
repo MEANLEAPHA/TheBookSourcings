@@ -45,6 +45,9 @@ const followRoute = require('./routes/book/userFollowStatus/followRoute');
 const communityRoutes = require('./routes/chat/community/communityRoutes');
 // community comment post
 const communityCommentRoute = require('./routes/chat/community/commentViewRoutes');
+
+// community reply post 
+const communityReplyRoutes = require('./routes/chat/community/replyRoutes');
 const communityLikeRoute =  require('./routes/chat/community/communityLike/communityPostLikeRoutes');
 
 const communityCommentLikeRoutes = require('./routes/chat/community/communityLike/communityCommentLikeRoutes');
@@ -76,6 +79,9 @@ app.use("/api/community", communityRoutes);
 
 // community comment post 
 app.use("/api/communityComment", communityCommentRoute);
+
+// community reply post
+app.use("/api/communityReply", communityReplyRoutes);
 
 app.use('/api/communityPostLike', communityLikeRoute);
 

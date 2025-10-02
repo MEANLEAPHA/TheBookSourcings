@@ -15,7 +15,7 @@ const getReplyDetailsWithStatus = async (req, res) => {
     if (rows.length === 0) {
       return res.status(404).json({ message: "Post not found" });
     }
-    const post= rows[0];
+    const reply= rows[0];
 
     // User status
     const [statusRows] = await db.query(
@@ -26,7 +26,7 @@ const getReplyDetailsWithStatus = async (req, res) => {
     const status = statusRows.length > 0 ? statusRows[0] : { commentReplyLiked: 0 };
 
     res.json({
-      post,
+      reply,
       userStatus: status
     });
   } catch (err) {
@@ -45,7 +45,7 @@ const toggleLike = async (req, res) => {
 
     // Check current status
     const [rows] = await db.query(
-      "SELECT liked FROM community_post_comment_reply_like WHERE memberQid = ? AND reply_id = ?",
+      "SELECT commentReplyliked FROM community_post_comment_reply_like WHERE memberQid = ? AND reply_id = ?",
       [memberQid, replyId]
     );
 
