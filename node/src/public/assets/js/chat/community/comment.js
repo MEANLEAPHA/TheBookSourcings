@@ -1467,22 +1467,25 @@ if (rpy.media_url && rpy.media_type) {
   div.appendChild(body);
   
 
+// Find the correct footer to append this reply
+let parentFooter;
+if (rpy.replyBackTo_id.startsWith("COMM")) {
+  // reply to comment
+  parentFooter = document.querySelector(
+    `div[data-id='${rpy.replyBackTo_id}'] .comment-reply-footer`
+  );
+} else if (rpy.replyBackTo_id.startsWith("REP")) {
+  // reply to reply
+  parentFooter = document.querySelector(
+    `div[data-id='${rpy.replyBackTo_id}'] .comment-reply-footer`
+  );
+}
 
-    // Find the correct footer to append this reply
-  let parentFooter;
-  if (rpy.replyBackTo_id.startsWith("COMM")) {
-    // reply to comment
-    parentFooter = document.querySelector(`div[data-id='${rpy.replyBackTo_id}'] .comment-reply-footer`);
-  } else if (rpy.replyBackTo_id.startsWith("REP")) {
-    // reply to reply -> append to parent comment footer
-    const parentReply = document.querySelector(`div[data-id='${rpy.replyBackTo_id}']`);
-    parentFooter = parentReply.closest(".comment").querySelector(".comment-reply-footer");
-  }
-
-  if (parentFooter) {
-    parentFooter.appendChild(div);
-    parentFooter.style.display = "block"; // make sure visible
-  }
+if (parentFooter) {
+  parentFooter.appendChild(div);
+  parentFooter.style.display = "block"; // make sure visible
+}
+console.log("Appending to:", rpy.replyBackTo_id, parentFooter);
 
   // === Attach like toggle logic ===
   const likeIcon = likeBtn.querySelector("i");
