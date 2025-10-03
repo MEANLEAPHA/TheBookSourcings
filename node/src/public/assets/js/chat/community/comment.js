@@ -806,13 +806,23 @@ function displayComment(cmt) {
   const footer = document.createElement("div");
   footer.className = "comment-reply-footer";
 
-  const showReply = document.createElement('p');
-  showReply.className = "showReplyWordBtn";
+  const showReply = document.createElement("p");
   showReply.textContent = "Show Reply";
+  const unShowReply = document.createElement("p");
+  unShowReply.textContent = "Hide Reply";
+  unShowReply.style.display = "none";
 
-  const unShowReply = document.createElement('p');
-  unShowReply.className = "unShowReplyWordBtn";
-  unShowReply.textContent = "Show less Reply";
+  showReply.addEventListener("click", () => {
+    footer.style.display = "block";
+    showReply.style.display = "none";
+    unShowReply.style.display = "block";
+  });
+
+  unShowReply.addEventListener("click", () => {
+    footer.style.display = "none";
+    showReply.style.display = "block";
+    unShowReply.style.display = "none";
+  });
   
   
 
@@ -924,29 +934,32 @@ if (cmt.media_url && cmt.media_type) {
   // Append together
   div.appendChild(header);
   div.appendChild(body);
-  if (cmt.reply_count !== 0) {
-    div.appendChild(footer);
-    div.appendChild(showReply);
-    div.appendChild(unShowReply);
+  div.appendChild(showReply);
+  div.appendChild(unShowReply);
+  div.appendChild(footer);
+  // if (cmt.reply_count !== 0) {
+  //   div.appendChild(footer);
+  //   div.appendChild(showReply);
+  //   div.appendChild(unShowReply);
 
-    // Start hidden
-    // footer.style.display = "none";
-    unShowReply.style.display = "none";
+  
+  //   footer.style.display = "none";
+  //   unShowReply.style.display = "none";
 
-    // Show replies
-    showReply.addEventListener("click", () => {
-      footer.style.display = "block";
-      unShowReply.style.display = "block";
-      showReply.style.display = "none";
-    });
+ 
+  //   showReply.addEventListener("click", () => {
+  //     footer.style.display = "block";
+  //     unShowReply.style.display = "block";
+  //     showReply.style.display = "none";
+  //   });
 
-    // Hide replies
-    unShowReply.addEventListener("click", () => {
-      footer.style.display = "none";
-      unShowReply.style.display = "none";
-      showReply.style.display = "block";
-    });
-  }
+  
+  //   unShowReply.addEventListener("click", () => {
+  //     footer.style.display = "none";
+  //     unShowReply.style.display = "none";
+  //     showReply.style.display = "block";
+  //   });
+  // }
 
 
   document.getElementById("comment-container").prepend(div);
@@ -977,7 +990,10 @@ if (cmt.media_url && cmt.media_type) {
     });
   });
   // Fetch replies for a comment
-loadReply(cmt.commentQid);
+if (cmt.reply_count > 0) {
+   loadReply(cmt.comment_id, footer);
+}
+ 
 }
 
 // ====== LIKE FUNCTIONS FOR COMMENT ======
@@ -1236,11 +1252,54 @@ socket.on("receive-reply", (rpy) => {
   displayReply(rpy);
 });
 
+// socket.on("receive-reply", (rpy) => {
+//   if (!rpy.createFormNow) rpy.createFormNow = "just now";
+//   displayReply(rpy);
+
+//   // Find parent comment/reply
+//   const parent = document.querySelector(`div[data-id='${rpy.replyBackTo_id}']`);
+//   if (parent) {
+//     const showBtn = parent.querySelector(".show-reply-btn");
+//     const unShowBtn = parent.querySelector(".unshow-reply-btn");
+//     const footer = parent.querySelector(".comment-reply-footer");
+
+//     // Increment reply_count on the button
+//     let current = parseInt(showBtn.dataset.count || "0", 10);
+//     current++;
+//     showBtn.dataset.count = current;
+//     showBtn.textContent = `Show ${current} replies`;
+
+//     // Make sure toggle buttons are visible
+//     if (showBtn.style.display === "none" && footer.style.display === "none") {
+//       showBtn.style.display = "block";
+//     }
+//   }
+// });
+
+
 socket.on("reply-updated", ({ reply_id, newReply }) => {
   const div = document.querySelector(`div[data-id='${reply_id}']`);
   if (div) div.querySelector(".reply-text").textContent = newReply;
 
 });
+
+// socket.on("reply-deleted", ({ reply_id }) => {
+//   const div = document.querySelector(`div[data-id='${reply_id}']`);
+//   if (div) {
+//     // Find parent before removing
+//     const parent = div.closest(".comment, .reply");
+//     if (parent) {
+//       const showBtn = parent.querySelector(".show-reply-btn");
+//       let current = parseInt(showBtn.dataset.count || "0", 10);
+//       current = Math.max(current - 1, 0);
+//       showBtn.dataset.count = current;
+//       showBtn.textContent = current > 0 ? `Show ${current} replies` : "";
+//       if (current === 0) showBtn.style.display = "none";
+//     }
+//     div.remove();
+//   }
+// });
+
 
 socket.on("reply-deleted", ({ reply_id }) => {
   const div = document.querySelector(`div[data-id='${reply_id}']`);
@@ -1251,16 +1310,28 @@ socket.on("reply-deleted", ({ reply_id }) => {
 
 // ====== LOAD ALL Reply 
 // 
-async function loadReply(parentQid) {  // parentQid can be commentQid or replyQid
+// async function loadReply(parentQid) {  //
+//   try {
+//     const res = await fetch(`${API_URL}/api/communityReply/dipslayAllReplys/${parentQid}`);
+//     if (!res.ok) throw new Error("Failed to fetch Reply");
+//     const replies = await res.json();
+//     replies.forEach(displayReply);
+//   } catch (err) {
+//     console.error("Error loading replies:", err);
+//   }
+// }
+async function loadReply(parentId, parentFooter) {
   try {
-    const res = await fetch(`${API_URL}/api/communityReply/dipslayAllReplys/${parentQid}`);
-    if (!res.ok) throw new Error("Failed to fetch Reply");
+    const res = await fetch(`${API_URL}/api/communityReply/dipslayAllReplys/${parentId}`);
+    if (!res.ok) throw new Error("Failed to fetch replies");
     const replies = await res.json();
-    replies.forEach(displayReply);
+
+    replies.forEach(rpy => displayReply(rpy, parentFooter));
   } catch (err) {
-    console.error("Error loading replies:", err);
+    console.error(err);
   }
 }
+
 
 
 
@@ -1280,7 +1351,7 @@ async function loadReply(parentQid) {  // parentQid can be commentQid or replyQi
 
 
 // ====== DISPLAY Reply======
-function displayReply(rpy) {
+function displayReply(rpy, parentFooter) {
   const div = document.createElement("div");
   div.className = "reply"; // div of comment
   div.dataset.id = rpy.reply_id;
@@ -1468,25 +1539,21 @@ if (rpy.media_url && rpy.media_type) {
   
 
 // Find the correct footer to append this reply
-let parentFooter;
-if (rpy.replyBackTo_id.startsWith("COMM")) {
-  // reply to comment
-  parentFooter = document.querySelector(
-    `div[data-id='${rpy.replyBackTo_id}'] .comment-reply-footer`
-  );
-} else if (rpy.replyBackTo_id.startsWith("REP")) {
-  // reply to reply
-  parentFooter = document.querySelector(
-    `div[data-id='${rpy.replyBackTo_id}'] .comment-reply-footer`
-  );
-}
+// let parentFooter;
+// if (rpy.replyBackTo_id.startsWith("COMM")) {
+//   parentFooter = document.querySelector(`div[data-id='${rpy.replyBackTo_id}'] .comment-reply-footer`);
+// } else if (rpy.replyBackTo_id.startsWith("REP")) {
+//   parentFooter = document.querySelector(`div[data-id='${rpy.replyBackTo_id}'] .comment-reply-footer`);
+// }
 
-if (parentFooter) {
-  parentFooter.appendChild(div);
-  parentFooter.style.display = "block"; // make sure visible
-}
-console.log("Appending to:", rpy.replyBackTo_id, parentFooter);
 
+// if (parentFooter) {
+//   parentFooter.appendChild(div);
+//   parentFooter.style.display = "block"; // make sure visible
+// }
+
+
+ parentFooter.appendChild(div);
   // === Attach like toggle logic ===
   const likeIcon = likeBtn.querySelector("i");
   const likeCount = counts.querySelector(".reply-like-count");
