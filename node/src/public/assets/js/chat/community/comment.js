@@ -1435,24 +1435,7 @@ if (rpy.media_url && rpy.media_type) {
   div.appendChild(header);
   div.appendChild(body);
   
-//  let parentFooter;
-//   if (rpy.replyBackTo_id.startsWith("COMM")) {
-//     // Replying to a comment
-//     parentFooter = document.querySelector(
-//       `div[data-id='${rpy.replyBackTo_id}'] .comment-reply-footer`
-//     );
-//   } else if (rpy.replyBackTo_id.startsWith("REP")) {
-//     // Replying to a reply
-//     parentFooter = document.querySelector(
-//       `div[data-id='${rpy.replyBackTo_id}'] .comment-reply-footer`
-//     );
-//   }
 
-//   if (parentFooter) {
-//     parentFooter.appendChild(div);
-//     parentFooter.style.display = "block";
-//   }
-//  parentFooter.appendChild(div);
 
   const parentFooter = findCommentFooterForParent(rpy.replyBackTo_id);
 
@@ -1464,6 +1447,8 @@ if (rpy.media_url && rpy.media_type) {
     const fallback = document.querySelector('.comment-reply-footer');
     if (fallback) fallback.appendChild(div);
   }
+
+
   // === Attach like toggle logic ===
   const likeIcon = likeBtn.querySelector("i");
   const likeCount = counts.querySelector(".reply-like-count");
@@ -1493,35 +1478,58 @@ if (rpy.media_url && rpy.media_type) {
 loadReply(rpy.replyQid);
 }
 
-
 function findCommentFooterForParent(replyBackToId) {
-  // replyBackToId expected like "COMM9ENT" or "REP12LY"
   if (!replyBackToId) return null;
 
-  // 1) Try to find an element with that data-id
-  const parentEl = document.querySelector(`div[data-id='${replyBackToId}']`);
+  // First try to find a comment with that ID
+  let parentEl = document.querySelector(`div[data-id='${replyBackToId}']`);
+
+  // If not found, check if it is a reply
+  if (!parentEl && replyBackToId.startsWith("REP")) {
+    parentEl = document.querySelector(`div[data-id='${replyBackToId}']`);
+  }
+
   if (parentEl) {
-    // If parentEl is a comment it probably contains the footer directly
+    // If parentEl is a comment, return its footer
     const footerIfComment = parentEl.querySelector('.comment-reply-footer');
     if (footerIfComment) return footerIfComment;
 
-    // If parentEl is a reply, it may not have a footer; find the closest comment ancestor
+    // If parentEl is a reply, return the closest comment's footer
     const commentAncestor = parentEl.closest('.comment');
-    if (commentAncestor) {
-      const footerOnComment = commentAncestor.querySelector('.comment-reply-footer');
-      if (footerOnComment) return footerOnComment;
-    }
+    if (commentAncestor) return commentAncestor.querySelector('.comment-reply-footer');
   }
 
-  // 2) Fallback: try to find a comment whose data-id equals replyBackToId (defensive)
-  const commentById = document.querySelector(`.comment[data-id='${replyBackToId}']`);
-  if (commentById) {
-    return commentById.querySelector('.comment-reply-footer');
-  }
-
-  // 3) Final fallback: return the first .comment-reply-footer on the page
-  return document.querySelector('.comment-reply-footer');
+  return null; // fallback will handle it
 }
+
+// function findCommentFooterForParent(replyBackToId) {
+//   // replyBackToId expected like "COMM9ENT" or "REP12LY"
+//   if (!replyBackToId) return null;
+
+//   // 1) Try to find an element with that data-id
+//   const parentEl = document.querySelector(`div[data-id='${replyBackToId}']`);
+//   if (parentEl) {
+//     // If parentEl is a comment it probably contains the footer directly
+//     const footerIfComment = parentEl.querySelector('.comment-reply-footer');
+//     if (footerIfComment) return footerIfComment;
+
+//     // If parentEl is a reply, it may not have a footer; find the closest comment ancestor
+//     const commentAncestor = parentEl.closest('.comment');
+//     if (commentAncestor) {
+//       const footerOnComment = commentAncestor.querySelector('.comment-reply-footer');
+//       if (footerOnComment) return footerOnComment;
+//     }
+//   }
+
+//   // 2) Fallback: try to find a comment whose data-id equals replyBackToId (defensive)
+//   const commentById = document.querySelector(`.comment[data-id='${replyBackToId}']`);
+//   if (commentById) {
+//     return commentById.querySelector('.comment-reply-footer');
+//   }
+
+//   // 3) Final fallback: return the first .comment-reply-footer on the page
+//   return document.querySelector('.comment-reply-footer');
+// }
 
 // ====== LIKE FUNCTIONS FOR COMMENT ======
 async function loadLikeInfoForReply(replyId, likeIcon, likeCount) {
