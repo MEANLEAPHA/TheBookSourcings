@@ -45,7 +45,7 @@ const toggleLike = async (req, res) => {
 
     // Check current status
     const [rows] = await db.query(
-      "SELECT commentReplyliked FROM community_post_comment_reply_like WHERE memberQid = ? AND reply_id = ?",
+      "SELECT commentReplyLiked FROM community_post_comment_reply_like WHERE memberQid = ? AND reply_id = ?",
       [memberQid, replyId]
     );
 
