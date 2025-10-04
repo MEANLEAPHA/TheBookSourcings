@@ -806,23 +806,23 @@ function displayComment(cmt) {
   const footer = document.createElement("div");
   footer.className = "comment-reply-footer";
 
-  const showReply = document.createElement("p");
-  showReply.textContent = "Show Reply";
-  const unShowReply = document.createElement("p");
-  unShowReply.textContent = "Hide Reply";
-  unShowReply.style.display = "none";
+  // const showReply = document.createElement("p");
+  // showReply.textContent = "Show Reply";
+  // const unShowReply = document.createElement("p");
+  // unShowReply.textContent = "Hide Reply";
+  // unShowReply.style.display = "none";
 
-  showReply.addEventListener("click", () => {
-    footer.style.display = "block";
-    showReply.style.display = "none";
-    unShowReply.style.display = "block";
-  });
+  // showReply.addEventListener("click", () => {
+  //   footer.style.display = "block";
+  //   showReply.style.display = "none";
+  //   unShowReply.style.display = "block";
+  // });
 
-  unShowReply.addEventListener("click", () => {
-    footer.style.display = "none";
-    showReply.style.display = "block";
-    unShowReply.style.display = "none";
-  });
+  // unShowReply.addEventListener("click", () => {
+  //   footer.style.display = "none";
+  //   showReply.style.display = "block";
+  //   unShowReply.style.display = "none";
+  // });
   
   
 
@@ -934,8 +934,7 @@ if (cmt.media_url && cmt.media_type) {
   // Append together
   div.appendChild(header);
   div.appendChild(body);
-  div.appendChild(showReply);
-  div.appendChild(unShowReply);
+
   div.appendChild(footer);
   // if (cmt.reply_count !== 0) {
   //   div.appendChild(footer);
@@ -990,9 +989,9 @@ if (cmt.media_url && cmt.media_type) {
     });
   });
   // Fetch replies for a comment
-if (cmt.reply_count > 0) {
-   loadReply(cmt.comment_id, footer);
-}
+
+   loadReply(cmt.commentQid);
+
  
 }
 
@@ -1310,27 +1309,27 @@ socket.on("reply-deleted", ({ reply_id }) => {
 
 // ====== LOAD ALL Reply 
 // 
-// async function loadReply(parentQid) {  //
-//   try {
-//     const res = await fetch(`${API_URL}/api/communityReply/dipslayAllReplys/${parentQid}`);
-//     if (!res.ok) throw new Error("Failed to fetch Reply");
-//     const replies = await res.json();
-//     replies.forEach(displayReply);
-//   } catch (err) {
-//     console.error("Error loading replies:", err);
-//   }
-// }
-async function loadReply(parentId, parentFooter) {
+async function loadReply(parentQid) {  //
   try {
-    const res = await fetch(`${API_URL}/api/communityReply/dipslayAllReplys/${parentId}`);
-    if (!res.ok) throw new Error("Failed to fetch replies");
+    const res = await fetch(`${API_URL}/api/communityReply/dipslayAllReplys/${parentQid}`);
+    if (!res.ok) throw new Error("Failed to fetch Reply");
     const replies = await res.json();
-
-    replies.forEach(rpy => displayReply(rpy, parentFooter));
+    replies.forEach(displayReply);
   } catch (err) {
-    console.error(err);
+    console.error("Error loading replies:", err);
   }
 }
+// async function loadReply(parentId) {
+//   try {
+//     const res = await fetch(`${API_URL}/api/communityReply/dipslayAllReplys/${parentId}`);
+//     if (!res.ok) throw new Error("Failed to fetch replies");
+//     const replies = await res.json();
+
+//     replies.forEach(rpy => displayReply(rpy));
+//   } catch (err) {
+//     console.error(err);
+//   }
+// }
 
 
 
@@ -1351,7 +1350,7 @@ async function loadReply(parentId, parentFooter) {
 
 
 // ====== DISPLAY Reply======
-function displayReply(rpy, parentFooter) {
+function displayReply(rpy) {
   const div = document.createElement("div");
   div.className = "reply"; // div of comment
   div.dataset.id = rpy.reply_id;
@@ -1551,9 +1550,8 @@ if (rpy.media_url && rpy.media_type) {
 //   parentFooter.appendChild(div);
 //   parentFooter.style.display = "block"; // make sure visible
 // }
-
-
- parentFooter.appendChild(div);
+document.querySelector('.comment-reply-footer').appendChild(div);
+//  parentFooter.appendChild(div);
   // === Attach like toggle logic ===
   const likeIcon = likeBtn.querySelector("i");
   const likeCount = counts.querySelector(".reply-like-count");

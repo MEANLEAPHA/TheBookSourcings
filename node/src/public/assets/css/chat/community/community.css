@@ -783,13 +783,14 @@ padding-left: 10px;
             position: relative;
             
         }
-        .userProfile{
+        .userProfile, .userCommentProfile{
             width: 55px;
             height: 55px;
             border-radius: 50%;
             object-fit: cover;
             margin: 0;
         }
+
         .post-header-child-right{
           display: grid;
           gap: 0px;
