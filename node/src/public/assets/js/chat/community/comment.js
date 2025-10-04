@@ -1192,6 +1192,7 @@ formReply.addEventListener("submit", async (e) => {
     mediaReplyInput.value = "";
     mediaReplyPreview.innerHTML = "";
     selectedReplyFile = null;
+    showReplyTo(null); // remove mention label
     typeOfId = null;// Reset the typeOfId so next reply doesn’t accidentally target the old comment/reply
     ReplyToast.hide();
   } catch (err) {
@@ -1450,11 +1451,8 @@ if (rpy.media_url && rpy.media_type) {
   replyBtn.addEventListener("click", () => {
      typeOfId = rpy.replyBackTo_id || rpy.replyQid;
       const username = rpy.username;
-      // Insert @mention in the input
-      ReplyInput.value = `@${username} `;
+      showReplyTo(username); // show the @username label visually
       ReplyInput.focus();
-      // Move cursor to the end
-      ReplyInput.setSelectionRange(ReplyInput.value.length, ReplyInput.value.length);
       ReplyToast.show();
   });
 
@@ -1508,6 +1506,17 @@ if (rpy.media_url && rpy.media_type) {
   });
   // Fetch replies for a reply (nested)
 loadReply(rpy.replyQid);
+}
+
+
+function showReplyTo(username) {
+  const replyLabel = document.getElementById("replyingToLabel");
+  if (username) {
+    replyLabel.textContent = `Replying to @${username}`;
+    replyLabel.style.display = "block";
+  } else {
+    replyLabel.style.display = "none";
+  }
 }
 
 function findCommentFooterForParent(replyBackToId) {
