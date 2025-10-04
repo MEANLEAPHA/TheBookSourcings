@@ -1422,7 +1422,7 @@ if (rpy.media_url && rpy.media_type) {
 
   // Show ReplyToast and set typeOfId
   replyBtn.addEventListener("click", () => {
-    typeOfId = rpy.replyQid; // set global typeOfId for formReply
+     typeOfId = rpy.replyBackTo_id || rpy.replyQid;
     ReplyToast.show();
   });
 
