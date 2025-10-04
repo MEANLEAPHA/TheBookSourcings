@@ -724,8 +724,8 @@ loadComment();
 // ====== DISPLAY Comment ======
 function displayComment(cmt) {
   const div = document.createElement("div");
-  div.className = "comment"; // div of comment
-  div.dataset.id = cmt.comment_id;
+  div.className = "comment"; 
+  div.dataset.id = cmt.commentQid;
 
   // --- comment header HEADER ---
   const header = document.createElement("div");
@@ -1566,7 +1566,7 @@ if (rpy.media_url && rpy.media_type) {
 
   if (parentFooter) {
     parentFooter.appendChild(div);
-    parentFooter.style.display = "block";
+    // parentFooter.style.display = "block";
   }
 //  parentFooter.appendChild(div);
   // === Attach like toggle logic ===
