@@ -1333,4 +1333,15 @@ top:0px;
        a{
         margin: 0;
        }
-   
+   #Reply-input {
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+#Reply-input::selection {
+  background: #cce0ff;
+}
+
+#Reply-input::placeholder {
+  color: #aaa;
+}

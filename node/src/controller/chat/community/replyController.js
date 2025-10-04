@@ -20,7 +20,14 @@ const displayAllReply = async (req,res)=>{
           c.memberQid, 
           c.reply_at,
           c.replyBackTo_id, 
-          u.username
+          u.username,
+          (
+          SELECT u2.username
+          FROM community_post_comment_reply cr
+          JOIN users u2 ON cr.memberQid = u2.memberQid
+          WHERE CONCAT('REP', cr.reply_id, 'LY') = c.replyBackTo_id
+          LIMIT 1
+          ) AS replyToUsername
        FROM community_post_comment_reply c
        JOIN users u ON c.memberQid = u.memberQid
        WHERE c.replyBackTo_id = ? AND c.deleted_at IS NULL
@@ -79,6 +86,28 @@ const sendReply = async (req,res)=>{
             "INSERT INTO community_post_comment_reply (replyBackTo_id, memberQid, reply_text, media_type, media_url) VALUES (?, ?, ?, ?, ?)",
             [typeOfId, memberQid, replyText || null, mediaType, mediaUrl]
           );
+          // Find username of the person being replied to
+          let [targetRows] = [];
+          if (typeOfId.startsWith("COMM")) {
+            [targetRows] = await db.query(
+              `SELECT u.username 
+              FROM community_post_comment c 
+              JOIN users u ON c.memberQid = u.memberQid 
+              WHERE c.comment_id = ?`,
+              [parseInt(typeOfId.replace("COMM", "").replace("ENT", ""))]
+            );
+          } else if (typeOfId.startsWith("REP")) {
+            [targetRows] = await db.query(
+              `SELECT u.username 
+              FROM community_post_comment_reply r 
+              JOIN users u ON r.memberQid = u.memberQid 
+              WHERE r.reply_id = ?`,
+              [parseInt(typeOfId.replace("REP", "").replace("LY", ""))]
+            );
+          }
+
+const replyToUsername = targetRows[0]?.username || null;
+
 
           // Update parent reply_count if replying to a reply
 if (typeOfId.startsWith("REP")) {
@@ -101,6 +130,7 @@ if (typeOfId.startsWith("REP")) {
             reply_id: result.insertId,
             memberQid,
             username,
+            replyToUsername,
             reply: replyText || "",
             media_type: mediaType,
             media_url: mediaUrl,

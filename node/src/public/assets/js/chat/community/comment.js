@@ -1192,6 +1192,7 @@ formReply.addEventListener("submit", async (e) => {
     mediaReplyInput.value = "";
     mediaReplyPreview.innerHTML = "";
     selectedReplyFile = null;
+    typeOfId = null;// Reset the typeOfId so next reply doesn’t accidentally target the old comment/reply
     ReplyToast.hide();
   } catch (err) {
     console.error(err);
@@ -1337,34 +1338,59 @@ function displayReply(rpy) {
 
   // reply text with truncation
   if (rpy.reply) {
-    const textP = document.createElement("p");
-    textP.className = "reply-text";
+  const textP = document.createElement("p");
+  textP.className = "reply-text";
 
-    if (rpy.reply.length > 250) {
-      const shortText = rpy.reply.slice(0, 250);
-      textP.textContent = shortText + "... ";
-
-      const seeMore = document.createElement("a");
-      seeMore.href = "#";
-      seeMore.textContent = "see more";
-      seeMore.addEventListener("click", (e) => {
-        e.preventDefault();
-        textP.textContent = rpy.reply; // show full text
-      });
-
-      textP.appendChild(seeMore);
-    } else {
-      textP.textContent = rpy.reply;
-    }
-
-    body.appendChild(textP);
+  // If this reply is directed to someone (mention)
+  if (rpy.replyToUsername) {
+    const mention = document.createElement("span");
+    mention.className = "mention";
+    mention.textContent = `@${rpy.replyToUsername} `;
+    mention.style.color = "#648dff"; // optional: match your theme
+    mention.style.fontWeight = "500";
+    textP.appendChild(mention);
   }
-  else{
-    const textP = document.createElement("p");
-    textP.className = "reply-text";
-    textP.textContent = "";
-    body.appendChild(textP);
+
+  // Handle long text
+  if (rpy.reply.length > 250) {
+    const shortText = rpy.reply.slice(0, 250);
+    const textNode = document.createTextNode(shortText + "... ");
+    textP.appendChild(textNode);
+
+    const seeMore = document.createElement("a");
+    seeMore.href = "#";
+    seeMore.textContent = "see more";
+    seeMore.style.color = "#007bff";
+    seeMore.addEventListener("click", (e) => {
+      e.preventDefault();
+      textP.innerHTML = ""; // clear and re-render with mention + full text
+
+      if (rpy.replyToUsername) {
+        const mention = document.createElement("span");
+        mention.className = "mention";
+        mention.textContent = `@${rpy.replyToUsername} `;
+        mention.style.color = "#648dff";
+        mention.style.fontWeight = "500";
+        textP.appendChild(mention);
+      }
+
+      const fullTextNode = document.createTextNode(rpy.reply);
+      textP.appendChild(fullTextNode);
+    });
+
+    textP.appendChild(seeMore);
+  } else {
+    const textNode = document.createTextNode(rpy.reply);
+    textP.appendChild(textNode);
   }
+
+  body.appendChild(textP);
+} else {
+  const textP = document.createElement("p");
+  textP.className = "reply-text";
+  textP.textContent = "";
+  body.appendChild(textP);
+}
 
  
   // Media of comment
@@ -1423,7 +1449,13 @@ if (rpy.media_url && rpy.media_type) {
   // Show ReplyToast and set typeOfId
   replyBtn.addEventListener("click", () => {
      typeOfId = rpy.replyBackTo_id || rpy.replyQid;
-    ReplyToast.show();
+      const username = rpy.username;
+      // Insert @mention in the input
+      ReplyInput.value = `@${username} `;
+      ReplyInput.focus();
+      // Move cursor to the end
+      ReplyInput.setSelectionRange(ReplyInput.value.length, ReplyInput.value.length);
+      ReplyToast.show();
   });
 
   btnRow.appendChild(replyBtn);
