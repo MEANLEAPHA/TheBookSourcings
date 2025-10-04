@@ -1550,7 +1550,24 @@ if (rpy.media_url && rpy.media_type) {
 //   parentFooter.appendChild(div);
 //   parentFooter.style.display = "block"; // make sure visible
 // }
-document.querySelector('.comment-reply-footer').appendChild(div);
+// document.querySelector('.comment-reply-footer').appendChild(div);
+ let parentFooter;
+  if (rpy.replyBackTo_id.startsWith("COMM")) {
+    // Replying to a comment
+    parentFooter = document.querySelector(
+      `div[data-id='${rpy.replyBackTo_id}'] .comment-reply-footer`
+    );
+  } else if (rpy.replyBackTo_id.startsWith("REP")) {
+    // Replying to a reply
+    parentFooter = document.querySelector(
+      `div[data-id='${rpy.replyBackTo_id}'] .comment-reply-footer`
+    );
+  }
+
+  if (parentFooter) {
+    parentFooter.appendChild(div);
+    parentFooter.style.display = "block";
+  }
 //  parentFooter.appendChild(div);
   // === Attach like toggle logic ===
   const likeIcon = likeBtn.querySelector("i");
