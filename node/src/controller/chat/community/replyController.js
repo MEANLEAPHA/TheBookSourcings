@@ -20,13 +20,12 @@ const displayAllReply = async (req,res)=>{
           c.memberQid, 
           c.reply_at,
           c.replyBackTo_id, 
-          u.username,
-
+          u.username
        FROM community_post_comment_reply c
        JOIN users u ON c.memberQid = u.memberQid
        WHERE c.replyBackTo_id = ? AND c.deleted_at IS NULL
        ORDER BY c.reply_at ASC`, 
-       [typeOfQid] 
+       [typeOfQid]
     );
     const replys = rows.map(row => ({
           ...row,
