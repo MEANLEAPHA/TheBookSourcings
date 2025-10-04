@@ -1311,7 +1311,7 @@ socket.on("reply-deleted", ({ reply_id }) => {
 // 
 async function loadReply(parentQid) {  //
   try {
-    const res = await fetch(`${API_URL}/api/communityReply/dipslayAllReplys/${parentQid}`);
+    const res = await fetch(`${API_URL}/api/communityReply/dipslayAllReplys/${parentQid}}`);
     if (!res.ok) throw new Error("Failed to fetch Reply");
     const replies = await res.json();
     replies.forEach(displayReply);

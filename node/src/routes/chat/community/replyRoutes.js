@@ -13,7 +13,7 @@ const { upload } = require("../../../middleware/AWSuploadMiddleware");
 
 // Get one post by id
 
-router.get("/dipslayAllReplys/:typeOfId", displayAllReply);
+router.get("/dipslayAllReplys/:typeOfQid", displayAllReply);
 router.post(
     "/reply",
     verifyHttpToken,

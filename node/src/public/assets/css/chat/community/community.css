@@ -791,12 +791,12 @@ padding-left: 10px;
             margin: 0;
         }
 
-        .post-header-child-right{
+        .post-header-child-right,.comment-header-child-right{
           display: grid;
           gap: 0px;
             margin: 0;
         }
-        .post-header-child-right-top{
+        .post-header-child-right-top,.comment-header-child-right-top{
          
       
           padding: 0;
@@ -807,7 +807,7 @@ padding-left: 10px;
           gap: 0px;
            position: relative;
         }
-        .post-header-child-right-bottom{
+        .post-header-child-right-bottom,.comment-header-child-right-bottom{
           /* background-color: blueviolet; */
           margin: 0;
           padding: 0;
@@ -850,11 +850,16 @@ padding-left: 10px;
             width: 100%;
             padding: 5px;
          }
-         .post-text{
+         .post-text,.comment-body{
             font-family: sans-serif;
             margin: 0;
          }
-        
+        .comment-reply-footer{
+            background: #275791;
+            width: 100%;
+            height: 450px;
+            overflow: scroll;
+        }
           
 
             /* Outer wrapper still applies general blur for single media */
