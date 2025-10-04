@@ -183,7 +183,8 @@ io.on("connection", (socket) => {
       reply: data.reply || null,
       media_url: data.media_url || null,
       media_type: data.media_type || null,
-      createFormNow: data.createFormNow || "just now"
+      createFormNow: data.createFormNow || "just now",
+      replyBackTo_id: data.replyBackTo_id 
     };
     socket.broadcast.emit("receive-reply", broadcastData)
   })
