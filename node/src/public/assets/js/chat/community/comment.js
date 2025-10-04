@@ -1417,7 +1417,7 @@ if (rpy.media_url && rpy.media_type) {
 // ===== Reply Btn =====
   const replyBtn = document.createElement("button");
   replyBtn.className = "replyBtn media-btn";
-  replyBtn.dataset.id = rpy.replyQid; // pass replyQid
+  typeOfId = rpy.replyBackTo_id ? rpy.replyBackTo_id : rpy.replyQid;
   replyBtn.innerHTML = `<i class="fa-solid fa-reply"></i> <span>Reply</span>`;
 
   // Show ReplyToast and set typeOfId
