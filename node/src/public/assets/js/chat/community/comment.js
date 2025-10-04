@@ -1541,7 +1541,7 @@ async function loadLikeInfoForReply(replyId, likeIcon, likeCount) {
 
     const data = await res.json();
     likeCount.textContent = data.reply.like_count;
-    likeIcon.style.color = data.userStatus.liked ? "red" : "gray";
+    likeIcon.style.color = data.userStatus.commentReplyLiked ? "red" : "gray";
   } catch (err) {
     console.error(err);
   }
@@ -1559,7 +1559,7 @@ async function toggleLikeActivityForReply(replyId, likeIcon, likeCount) {
     if (!res.ok) throw new Error("Failed to toggle like");
 
     const data = await res.json();
-    likeIcon.style.color = data.liked ? "red" : "gray";
+    likeIcon.style.color = data.liked  ? "red" : "gray";
     await loadLikeInfoForReply(replyId, likeIcon, likeCount);
   } catch (err) {
     console.error(err);
