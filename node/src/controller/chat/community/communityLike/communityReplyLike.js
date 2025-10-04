@@ -67,7 +67,7 @@ const toggleLike = async (req, res) => {
 
     // Update community_post_comment_reply like_count
     await db.query(
-      "UPDATE community SET like_count = (SELECT COUNT(*) FROM community_post_comment_reply_like WHERE reply_id = ? AND commentReplyLiked = 1) WHERE reply_id = ?",
+      "UPDATE community_post_comment_reply SET like_count = (SELECT COUNT(*) FROM community_post_comment_reply_like WHERE reply_id = ? AND commentReplyLiked = 1) WHERE reply_id = ?",
       [replyId, replyId]
     );
 
