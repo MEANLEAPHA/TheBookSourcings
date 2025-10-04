@@ -1353,7 +1353,7 @@ async function loadReply(parentQid) {  //
 function displayReply(rpy) {
   const div = document.createElement("div");
   div.className = "reply"; // div of comment
-  div.dataset.id = rpy.reply_id;
+  div.dataset.id = rpy.replyQid;
 
   // --- comment header HEADER ---
   const header = document.createElement("div");
