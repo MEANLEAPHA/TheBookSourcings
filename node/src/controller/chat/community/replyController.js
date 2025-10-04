@@ -22,11 +22,21 @@ const displayAllReply = async (req,res)=>{
           c.replyBackTo_id, 
           u.username,
           (
-          SELECT u2.username
-          FROM community_post_comment_reply cr
-          JOIN users u2 ON cr.memberQid = u2.memberQid
-          WHERE CONCAT('REP', cr.reply_id, 'LY') = c.replyBackTo_id
-          LIMIT 1
+            CASE 
+              WHEN c.replyBackTo_id LIKE 'REP%LY' THEN 
+                (SELECT u2.username
+                FROM community_post_comment_reply cr
+                JOIN users u2 ON cr.memberQid = u2.memberQid
+                WHERE CONCAT('REP', cr.reply_id, 'LY') = c.replyBackTo_id
+                LIMIT 1)
+              WHEN c.replyBackTo_id LIKE 'COMM%ENT' THEN
+                (SELECT u3.username
+                FROM community_post_comment cc
+                JOIN users u3 ON cc.memberQid = u3.memberQid
+                WHERE CONCAT('COMM', cc.comment_id, 'ENT') = c.replyBackTo_id
+                LIMIT 1)
+              ELSE NULL
+            END
           ) AS replyToUsername
        FROM community_post_comment_reply c
        JOIN users u ON c.memberQid = u.memberQid
