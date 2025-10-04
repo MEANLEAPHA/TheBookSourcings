@@ -695,13 +695,13 @@ socket.on("receive-comment", (cmt) => {
 });
 
 socket.on("comment-updated", ({ comment_id, newComment }) => {
-  const div = document.querySelector(`div[data-id='${comment_id}']`);
+  const div = document.querySelector(`div[data-comment-id='${comment_id}']`);
   if (div) div.querySelector(".comment-text").textContent = newComment;
 
 });
 
 socket.on("comment-deleted", ({ comment_id }) => {
-  const div = document.querySelector(`div[data-id='${comment_id}']`);
+  const div = document.querySelector(`div[data-comment-id='${comment_id}']`);
   if (div) div.remove();
 });
     
@@ -726,6 +726,7 @@ function displayComment(cmt) {
   const div = document.createElement("div");
   div.className = "comment"; 
   div.dataset.id = cmt.commentQid;
+  div.dataset.commentId = cmt.comment_id;
 
   // --- comment header HEADER ---
   const header = document.createElement("div");
@@ -936,30 +937,6 @@ if (cmt.media_url && cmt.media_type) {
   div.appendChild(body);
 
   div.appendChild(footer);
-  // if (cmt.reply_count !== 0) {
-  //   div.appendChild(footer);
-  //   div.appendChild(showReply);
-  //   div.appendChild(unShowReply);
-
-  
-  //   footer.style.display = "none";
-  //   unShowReply.style.display = "none";
-
- 
-  //   showReply.addEventListener("click", () => {
-  //     footer.style.display = "block";
-  //     unShowReply.style.display = "block";
-  //     showReply.style.display = "none";
-  //   });
-
-  
-  //   unShowReply.addEventListener("click", () => {
-  //     footer.style.display = "none";
-  //     unShowReply.style.display = "none";
-  //     showReply.style.display = "block";
-  //   });
-  // }
-
 
   document.getElementById("comment-container").prepend(div);
 
@@ -1112,8 +1089,6 @@ document.getElementById("submitReportCommentBtn").onclick = async () => {
     commentToast.show();
   });
 
- 
-
 
 // ====== CANCEL BUTTONS COMMENT ======
 // cancel edit btn
@@ -1223,11 +1198,6 @@ formReply.addEventListener("submit", async (e) => {
   }
 });
 
-
-
- 
-
-
 // ====== DECLARATIONS FOR Reply======
 // Edit
 let editingReplyId = null;
@@ -1245,73 +1215,35 @@ const reportReasonReplyInput = document.getElementById("reportReasonReplyInput")
 
 // ====== SOCKET LISTENERS FOR Reply ======
 
-
 socket.on("receive-reply", (rpy) => {
   if (!rpy.createFormNow) rpy.createFormNow = "just now";
   displayReply(rpy);
 });
 
-// socket.on("receive-reply", (rpy) => {
-//   if (!rpy.createFormNow) rpy.createFormNow = "just now";
-//   displayReply(rpy);
-
-//   // Find parent comment/reply
-//   const parent = document.querySelector(`div[data-id='${rpy.replyBackTo_id}']`);
-//   if (parent) {
-//     const showBtn = parent.querySelector(".show-reply-btn");
-//     const unShowBtn = parent.querySelector(".unshow-reply-btn");
-//     const footer = parent.querySelector(".comment-reply-footer");
-
-//     // Increment reply_count on the button
-//     let current = parseInt(showBtn.dataset.count || "0", 10);
-//     current++;
-//     showBtn.dataset.count = current;
-//     showBtn.textContent = `Show ${current} replies`;
-
-//     // Make sure toggle buttons are visible
-//     if (showBtn.style.display === "none" && footer.style.display === "none") {
-//       showBtn.style.display = "block";
-//     }
-//   }
-// });
-
-
 socket.on("reply-updated", ({ reply_id, newReply }) => {
-  const div = document.querySelector(`div[data-id='${reply_id}']`);
+  const div = document.querySelector(`div[data-reply-id='${reply_id}']`);
   if (div) div.querySelector(".reply-text").textContent = newReply;
-
 });
-
-// socket.on("reply-deleted", ({ reply_id }) => {
-//   const div = document.querySelector(`div[data-id='${reply_id}']`);
-//   if (div) {
-//     // Find parent before removing
-//     const parent = div.closest(".comment, .reply");
-//     if (parent) {
-//       const showBtn = parent.querySelector(".show-reply-btn");
-//       let current = parseInt(showBtn.dataset.count || "0", 10);
-//       current = Math.max(current - 1, 0);
-//       showBtn.dataset.count = current;
-//       showBtn.textContent = current > 0 ? `Show ${current} replies` : "";
-//       if (current === 0) showBtn.style.display = "none";
-//     }
-//     div.remove();
-//   }
-// });
-
-
 socket.on("reply-deleted", ({ reply_id }) => {
-  const div = document.querySelector(`div[data-id='${reply_id}']`);
+  const div = document.querySelector(`div[data-reply-id='${reply_id}']`);
   if (div) div.remove();
 });
-    
-    
-
+  
 // ====== LOAD ALL Reply 
-// 
-async function loadReply(parentQid) {  //
+// async function loadReply(parentQid) {  //
+//   try {
+//     const res = await fetch(`${API_URL}/api/communityReply/dipslayAllReplys/${parentQid}}`);
+//     if (!res.ok) throw new Error("Failed to fetch Reply");
+//     const replies = await res.json();
+//     replies.forEach(displayReply);
+//   } catch (err) {
+//     console.error("Error loading replies:", err);
+//   }
+// }
+async function loadReply(parentQid) {  // parentQid can be commentQid or replyQid
+  if (!parentQid) return;
   try {
-    const res = await fetch(`${API_URL}/api/communityReply/dipslayAllReplys/${parentQid}}`);
+    const res = await fetch(`${API_URL}/api/communityReply/dipslayAllReplys/${encodeURIComponent(parentQid)}`);
     if (!res.ok) throw new Error("Failed to fetch Reply");
     const replies = await res.json();
     replies.forEach(displayReply);
@@ -1319,41 +1251,13 @@ async function loadReply(parentQid) {  //
     console.error("Error loading replies:", err);
   }
 }
-// async function loadReply(parentId) {
-//   try {
-//     const res = await fetch(`${API_URL}/api/communityReply/dipslayAllReplys/${parentId}`);
-//     if (!res.ok) throw new Error("Failed to fetch replies");
-//     const replies = await res.json();
-
-//     replies.forEach(rpy => displayReply(rpy));
-//   } catch (err) {
-//     console.error(err);
-//   }
-// }
-
-
-
-
-
-
-// async function loadReply() {
-//   try {
-//     const res = await fetch(`${API_URL}/api/communityReply/dipslayAllReplys/${postId}`);
-//     if (!res.ok) throw new Error("Failed to fetch Reply");
-//     const cmts = await res.json();
-//     cmts.forEach(displayReply);
-//   } catch (err) {
-//     console.error("Error loading messages:", err);
-//   }
-// }
-// loadReply();
-
 
 // ====== DISPLAY Reply======
 function displayReply(rpy) {
   const div = document.createElement("div");
   div.className = "reply"; // div of comment
   div.dataset.id = rpy.replyQid;
+  div.dataset.replyId = rpy.reply_id;
 
   // --- comment header HEADER ---
   const header = document.createElement("div");
@@ -1523,52 +1427,43 @@ if (rpy.media_url && rpy.media_type) {
   });
 
   btnRow.appendChild(replyBtn);
-
- 
-
   btnRow.appendChild(likeBtn);
-  // btnRow.appendChild(commentBtn); maybe this turn to reply then there will be another fect oad and also two more like logic ...
  
-
   body.appendChild(btnRow);
 
   // Append together
   div.appendChild(header);
   div.appendChild(body);
   
+//  let parentFooter;
+//   if (rpy.replyBackTo_id.startsWith("COMM")) {
+//     // Replying to a comment
+//     parentFooter = document.querySelector(
+//       `div[data-id='${rpy.replyBackTo_id}'] .comment-reply-footer`
+//     );
+//   } else if (rpy.replyBackTo_id.startsWith("REP")) {
+//     // Replying to a reply
+//     parentFooter = document.querySelector(
+//       `div[data-id='${rpy.replyBackTo_id}'] .comment-reply-footer`
+//     );
+//   }
 
-// Find the correct footer to append this reply
-// let parentFooter;
-// if (rpy.replyBackTo_id.startsWith("COMM")) {
-//   parentFooter = document.querySelector(`div[data-id='${rpy.replyBackTo_id}'] .comment-reply-footer`);
-// } else if (rpy.replyBackTo_id.startsWith("REP")) {
-//   parentFooter = document.querySelector(`div[data-id='${rpy.replyBackTo_id}'] .comment-reply-footer`);
-// }
+//   if (parentFooter) {
+//     parentFooter.appendChild(div);
+//     parentFooter.style.display = "block";
+//   }
+//  parentFooter.appendChild(div);
 
-
-// if (parentFooter) {
-//   parentFooter.appendChild(div);
-//   parentFooter.style.display = "block"; // make sure visible
-// }
-// document.querySelector('.comment-reply-footer').appendChild(div);
- let parentFooter;
-  if (rpy.replyBackTo_id.startsWith("COMM")) {
-    // Replying to a comment
-    parentFooter = document.querySelector(
-      `div[data-id='${rpy.replyBackTo_id}'] .comment-reply-footer`
-    );
-  } else if (rpy.replyBackTo_id.startsWith("REP")) {
-    // Replying to a reply
-    parentFooter = document.querySelector(
-      `div[data-id='${rpy.replyBackTo_id}'] .comment-reply-footer`
-    );
-  }
+  const parentFooter = findCommentFooterForParent(rpy.replyBackTo_id);
 
   if (parentFooter) {
     parentFooter.appendChild(div);
-    // parentFooter.style.display = "block";
+    parentFooter.style.display = "block"; // ensure visible
+  } else {
+    console.warn("No parent footer found for", rpy.replyBackTo_id, " — appending to first footer as fallback");
+    const fallback = document.querySelector('.comment-reply-footer');
+    if (fallback) fallback.appendChild(div);
   }
-//  parentFooter.appendChild(div);
   // === Attach like toggle logic ===
   const likeIcon = likeBtn.querySelector("i");
   const likeCount = counts.querySelector(".reply-like-count");
@@ -1599,6 +1494,34 @@ loadReply(rpy.replyQid);
 }
 
 
+function findCommentFooterForParent(replyBackToId) {
+  // replyBackToId expected like "COMM9ENT" or "REP12LY"
+  if (!replyBackToId) return null;
+
+  // 1) Try to find an element with that data-id
+  const parentEl = document.querySelector(`div[data-id='${replyBackToId}']`);
+  if (parentEl) {
+    // If parentEl is a comment it probably contains the footer directly
+    const footerIfComment = parentEl.querySelector('.comment-reply-footer');
+    if (footerIfComment) return footerIfComment;
+
+    // If parentEl is a reply, it may not have a footer; find the closest comment ancestor
+    const commentAncestor = parentEl.closest('.comment');
+    if (commentAncestor) {
+      const footerOnComment = commentAncestor.querySelector('.comment-reply-footer');
+      if (footerOnComment) return footerOnComment;
+    }
+  }
+
+  // 2) Fallback: try to find a comment whose data-id equals replyBackToId (defensive)
+  const commentById = document.querySelector(`.comment[data-id='${replyBackToId}']`);
+  if (commentById) {
+    return commentById.querySelector('.comment-reply-footer');
+  }
+
+  // 3) Final fallback: return the first .comment-reply-footer on the page
+  return document.querySelector('.comment-reply-footer');
+}
 
 // ====== LIKE FUNCTIONS FOR COMMENT ======
 async function loadLikeInfoForReply(replyId, likeIcon, likeCount) {
