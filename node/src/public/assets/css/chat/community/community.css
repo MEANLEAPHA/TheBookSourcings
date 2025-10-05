@@ -797,15 +797,16 @@ padding-left: 10px;
             margin: 0;
         }
         .post-header-child-right-top,.comment-header-child-right-top{
-         
-      
           padding: 0;
           margin: 0;
           display: flex;
           justify-content: start;
           align-items: center;
           gap: 0px;
-           position: relative;
+        position: relative;
+        }
+        .post-header-child-right-top a{
+            margin: 0;
         }
         .post-header-child-right-bottom,.comment-header-child-right-bottom{
           /* background-color: blueviolet; */
@@ -1330,9 +1331,7 @@ top:0px;
         display: block;
        }
 
-       a{
-        margin: 0;
-       }
+       
    #Reply-input {
   font-size: 15px;
   line-height: 1.5;

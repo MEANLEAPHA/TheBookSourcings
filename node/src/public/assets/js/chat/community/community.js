@@ -315,13 +315,13 @@ function displayMessage(msg) {
   dropdownMenu.className = "dropdown-menu";
   if (msg.memberQid === userMemberQid) {
     dropdownMenu.innerHTML = `
-      <li><a class="dropdown-item edit-option" href="#">Edit</a></li>
-      <li><a class="dropdown-item delete-option" href="#">Delete</a></li>
-      <li><a class="dropdown-item report-option" href="#">Report</a></li>
+      <li><a class="dropdown-item edit-option" ><span class="material-symbols-outlined">Edit</span></a></li>
+      <li><a class="dropdown-item delete-option"><span class="material-symbols-outlined">Delete</span></a></li>
+      <li><a class="dropdown-item report-option"><span class="material-symbols-outlined">flag_2</span></a></li>
     `;
   } else {
     dropdownMenu.innerHTML = `
-      <li><a class="dropdown-item report-option" href="#">Report</a></li>
+      <li><a class="dropdown-item report-option"><span class="material-symbols-outlined">flag_2</span></a></li>
     `;
   }
   dropdownWrapper.appendChild(ellipsisBtn);
