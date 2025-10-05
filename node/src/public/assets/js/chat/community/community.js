@@ -281,7 +281,7 @@ function displayMessage(msg) {
   headerRight.appendChild(headerRightTop);
   headerRight.appendChild(headerRightBottom);
 
-  const usernameLink = document.createElement("a");
+  const usernameLink = document.createElement("p");
   usernameLink.href = `aboutUser?memberId=${msg.memberQid}`;
   usernameLink.textContent = msg.username || "Unknown";
   usernameLink.className = "username";
@@ -290,7 +290,7 @@ function displayMessage(msg) {
   headerRightTop.appendChild(usernameLink);
 
   if (msg.feeling) {
-    const feeling = document.createElement("a");
+    const feeling = document.createElement("p");
     feeling.className = "feelingDisplay";
     feeling.textContent = "is feeling " + feelingMap[msg.feeling] || msg.feeling || "";
     headerRightTop.appendChild(feeling);
