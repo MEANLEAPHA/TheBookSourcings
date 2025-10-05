@@ -703,7 +703,7 @@ padding-left: 10px;
     }
     #comLeft #message-container{
       display: grid;
-      gap: 10px;
+      gap: 15px;
       width: 100%;
       margin: 0;
      }
@@ -748,7 +748,6 @@ padding-left: 10px;
         width: 70%;
         height: auto;
         margin: auto;
-        
         border-radius: 10px
     }
     /* #searchButton{
@@ -769,9 +768,9 @@ padding-left: 10px;
             padding: 10px 20px 10px 20px;
             margin: 0px auto;
             padding-left: 10px;
-            border-radius: 15px;
+            border-radius: 8px;
             /* border: 1px solid var(--secondary-color); */
-            background-color: #6262627c;
+            background-color: #f9f9f9d8;
         }
        
         

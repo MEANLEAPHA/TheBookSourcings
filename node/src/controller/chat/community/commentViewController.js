@@ -183,7 +183,7 @@ const deleteComment = async (req,res)=>{
           const { comment_id } = req.body;
       
           const [rows] = await db.query(
-            "SELECT memberQid, media_url FROM community_post_comment WHERE comment_id = ? AND deleted_at IS NULL",
+            "SELECT memberQid, media_url, message_id FROM community_post_comment WHERE comment_id = ? AND deleted_at IS NULL",
             [comment_id]
           );
       
