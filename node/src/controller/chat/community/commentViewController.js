@@ -121,7 +121,10 @@ const sendComment = async (req,res)=>{
             "INSERT INTO community_post_comment (message_id, memberQid, comment_text, media_type, media_url) VALUES (?, ?, ?, ?, ?)",
             [postId, memberQid, commentText || null, mediaType, mediaUrl]
           );
-      
+           await db.query(
+            "UPDATE community SET comment_count = comment_count + 1 WHERE message_id = ?",
+            [postId]
+          );
           const msgObj = {
             comment_id: result.insertId,
             memberQid,
@@ -191,6 +194,11 @@ const deleteComment = async (req,res)=>{
           if (rows[0].media_url) await deleteFromS3(rows[0].media_url);
       
           await db.query("DELETE FROM community_post_comment WHERE comment_id = ?", [comment_id]);
+          // FIXED: use message_id from the fetched row
+          await db.query(
+            "UPDATE community SET comment_count = GREATEST(comment_count - 1, 0) WHERE message_id = ?",
+            [rows[0].message_id]
+          );
       
           res.json({ comment_id });
     }

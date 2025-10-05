@@ -691,7 +691,7 @@ padding-left: 10px;
 #comLeft{
     width: 60%;
     height: auto;
-    padding: 10px 30px 10px 30px;
+    padding: 5px 30px 10px 30px;
   
 
 }
@@ -770,7 +770,8 @@ padding-left: 10px;
             margin: 0px auto;
             padding-left: 10px;
             border-radius: 15px;
-            border: 1px solid var(--secondary-color);
+            /* border: 1px solid var(--secondary-color); */
+            background-color: #6262627c;
         }
        
         
@@ -1084,7 +1085,7 @@ padding-left: 10px;
 }
 #sticky{
      position: sticky;
-     top: 75px;
+     top: 80px;
 
 }
 #followView{
