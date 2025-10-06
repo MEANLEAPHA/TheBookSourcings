@@ -683,15 +683,15 @@ padding-left: 10px;
       left: 50%;
       transform: translate(-50%, -50%);
       z-index: 1080;
-      width: 80%;
+      width: 50%;
       height: auto;
       border-radius: 10px;
-      background-color: aqua;
+     
     }
    
     #PostToastWrapper #PostToast {
         position: fixed;
-        background-color: brown;
+        
         margin: auto;
         z-index: 1100;
         width: 100%;
@@ -708,6 +708,7 @@ padding-left: 10px;
         align-items: center;
         gap: 5px;
         text-align: start;
+        background: none;
     }
     #PostToast .toast-header .userPfFrom{
       width: 50px;
@@ -715,7 +716,7 @@ padding-left: 10px;
       border-radius: 50%;
       object-fit: cover;
     }
-    #PostToast .toast-header .usernameForm{
+    #PostToast .toast-header .usernameFrom{
         color: var(--font-color);
         font-size: larger;
         font-weight: bold;
@@ -729,6 +730,8 @@ padding-left: 10px;
     #PostToast .toast-body{
         width: 100%;
         height: auto;
+        display: grid;
+        background-color: none;
     }
     #PostToast .toast-body #message-input{
         width: 100%;
