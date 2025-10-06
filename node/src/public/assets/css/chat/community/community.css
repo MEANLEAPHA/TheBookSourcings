@@ -803,7 +803,7 @@ padding-left: 10px;
     }
     /* content */
     .content{
-        width: 85%;
+        /* width: 85%; */
         position: relative;
         height: auto;
         display: flex;
