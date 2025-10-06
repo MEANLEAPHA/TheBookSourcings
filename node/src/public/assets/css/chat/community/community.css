@@ -676,6 +676,75 @@ padding-left: 10px;
   text-decoration: none;
   
 }
+
+    #PostToastWrapper {
+      position: fixed;
+      top: 55%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1080;
+      width: 80%;
+      height: auto;
+      border-radius: 10px;
+      background-color: aqua;
+    }
+   
+    #PostToastWrapper #PostToast {
+        position: fixed;
+        background-color: brown;
+        margin: auto;
+        z-index: 1100;
+        width: 100%;
+        height: auto;
+        padding: 20px;
+        background-color: var(--background-color);
+        box-shadow: 0px 0px 2px var(--secondary-color);
+    }
+    #PostToast .toast-header{
+        width: 100%;
+        display: flex;
+        height: auto;
+        justify-content: start;
+        align-items: center;
+        gap: 5px;
+        text-align: start;
+    }
+    #PostToast .toast-header .userPfFrom{
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    #PostToast .toast-header .usernameForm{
+        color: var(--font-color);
+        font-size: larger;
+        font-weight: bold;
+        font-family: monospace;
+    }
+    #PostToast .toast-header #displayFeeling{
+        color:gray;
+        font-size: large;
+        font-family: monospace; 
+    }
+    #PostToast .toast-body{
+        width: 100%;
+        height: auto;
+    }
+    #PostToast .toast-body #message-input{
+        width: 100%;
+        height: 35px;
+        border-radius: 5px;
+        border: 1px solid var(--secondary-color);
+    }
+    #PostToast .toast-body #uploadWithPost{
+        width: 100%;
+        height: auto;
+        display: flex;
+        justify-content: start;
+        gap: 7px;
+        text-align: start;
+    }
+
 /* content */
 .content{
     width: 85%;
@@ -695,12 +764,7 @@ padding-left: 10px;
   
 
 }
-    .userPfFrom{
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
+    
     #comLeft #message-container{
       display: grid;
       gap: 15px;
@@ -734,22 +798,13 @@ padding-left: 10px;
       width: 300px;
     }
 
-     #PostToastWrapper {
-      position: fixed;
-      top: 55%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 1080;
-      width: 80%;
-      height: auto;
-      border-radius: 10px;
-    }
-    #toastOfPost{
+     
+    /* #toastOfPost{
         width: 70%;
         height: auto;
         margin: auto;
         border-radius: 10px
-    }
+    } */
     /* #searchButton{
         width: 70%;
         background: none;
@@ -821,7 +876,7 @@ padding-left: 10px;
           font-size: medium;
           text-decoration: none;
           text-align: start;
-          margin: 3px 0px 0px 3px;
+          margin: 2px 0px 0px 3px;
         
         }
 
@@ -1069,10 +1124,7 @@ padding-left: 10px;
       background-color: #e2e6ea;
     }
 
-    #displayFeeling {
-      font-family: monospace;
-      color:gray;
-    }
+   
 
     #feelingValue {
       display: none;
