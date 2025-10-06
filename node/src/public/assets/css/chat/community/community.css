@@ -723,9 +723,7 @@ padding-left: 10px;
     #PostToast .toast-header #displayFeeling {
         color:gray;
         font-size: large;
-        
         padding-top:3px;
-       
         font-family: monospace;
     }
     /* #PostToast .toast-header #feeling #displayFeeling{
@@ -777,34 +775,27 @@ padding-left: 10px;
         text-align: center;
         gap: 4px;
     }
-
-/* content */
-.content{
-    width: 85%;
-    position: relative;
-    height: auto;
-    display: flex;
-    flex-wrap: wrap;
-    padding: 0;
-    margin: 0;
-   
-}
-
-#comLeft{
-    width: 60%;
-    height: auto;
-    padding: 5px 30px 10px 30px;
-  
-
-}
-    
+    /* content */
+    .content{
+        width: 85%;
+        position: relative;
+        height: auto;
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0;
+        margin: 0;
+    }
+    #comLeft{
+        width: 60%;
+        height: auto;
+        padding: 5px 30px 10px 30px;
+    }  
     #comLeft #message-container{
       display: grid;
       gap: 15px;
       width: 100%;
       margin: 0;
      }
-  
     #editToastWrapper {
         position: fixed;
         top: 50%;
@@ -830,255 +821,208 @@ padding-left: 10px;
       z-index: 1080;
       width: 300px;
     }
-
-     
-    /* #toastOfPost{
-        width: 70%;
-        height: auto;
-        margin: auto;
-        border-radius: 10px
-    } */
-    /* #searchButton{
-        width: 70%;
-        background: none;
-        border: 1px solid gainsboro;
-        border-radius: 10px;
-        display: flex;
-        height: 50px;
-        justify-content: start;
-        padding: 10px;
-        color: gray;
-    } */
-
      .post{
-            width: 100%;
-            height: auto;
-            padding: 10px 20px 10px 20px;
-            margin: 0px auto;
-            padding-left: 10px;
-            border-radius: 8px;
-            /* border: 1px solid var(--secondary-color); */
-            background-color: #f9f9f9d8;
-        }
-       
+        width: 100%;
+        height: auto;
+        padding: 10px 20px 10px 20px;
         
-         .post .post-header{
-            width: 100%;
-            display: flex;
-            justify-content: start;
-            gap: 15px;
-            margin: 0;
-            position: relative;
-            
-        }
-        .userProfile, .userCommentProfile{
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin: 0;
-        }
-
-        .post-header-child-right,.comment-header-child-right{
-          display: grid;
-          gap: 0px;
-            margin: 0;
-        }
-        .post-header-child-right-top,.comment-header-child-right-top{
-          padding: 0;
-          margin: 0;
-          display: flex;
-          justify-content: start;
-          align-items: center;
-          gap: 0px;
+        padding-left: 10px;
+        border-radius: 8px;
+        /* border: 1px solid var(--secondary-color); */
+        background-color: #f9f9f9d8;
+    }
+    .post .post-header{
+        width: 100%;
+        display: flex;
+        justify-content: start;
+        gap: 15px;
+        margin: 0;
         position: relative;
-          text-align: start;
-        }
-        .post-header-child-right-top a{
-            margin: 0;
-        }
-        .post-header-child-right-bottom,.comment-header-child-right-bottom{
-          /* background-color: blueviolet; */
-          margin: 0;
-          padding: 0;
-          position: relative;
-        }
-        .feelingDisplay{
-          color: gray;
-          font-family: sans-serif;
-          font-size: medium;
-          text-decoration: none;
-          text-align: start;
-          margin: 2px 0px 0px 3px;
-        
-        }
-
-         .username{
-            font-family: monospace;
-            margin: 0;
-            font-size: larger;
-            text-decoration: none;
-            color: black;
-              text-align: start;
-         }
-         .postAt{
-            color: gray;
-            opacity: 0.8;
-            font-size: small;
-            font-family: monospace;
-            margin: 0;
-           
-         }
-         .absolute-top-right{
-            font-size: large;
-            color: rgb(0, 0, 0);
-            
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            
-         }
-         .post .post-body{
-            width: 100%;
-            padding: 5px;
-         }
-         .post-text,.comment-body{
-            font-family: sans-serif;
-            margin: 0;
-         }
-        .comment-reply-footer{
-        
-            width: 100%;
-            height: 450px;
-            overflow: scroll;
-        }
-          
-
-            /* Outer wrapper still applies general blur for single media */
-.post-thumbnail {
-  position: relative;
-  width: 100%;
-  height: 350px;
-  margin: 10px auto 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
-.carousel,
-.carousel-inner,
-.carousel-item {
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-
-.carousel-item {
-  width: 100%;
-  height: 100%;
-  /* display: flex;
-  justify-content: center;
-  align-items: center; */
-  position: relative;
-}
-
-
-
- .blur-wrapper {
+    }
+    .userProfile, .userCommentProfile{
+        width: 55px;
+        height: 55px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0;
+    }
+    .post-header-child-right,.comment-header-child-right{
+        display: grid;
+        gap: 0px;
+        margin: 0;
+    }
+    .post-header-child-right-top,.comment-header-child-right-top{
+        padding: 0;
+        margin: 0;
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        gap: 0px;
+        position: relative;
+        text-align: start;
+    }
+    .post-header-child-right-top a{
+        margin: 0;
+    }
+    .post-header-child-right-bottom,.comment-header-child-right-bottom{
+        /* background-color: blueviolet; */
+        margin: 0;
+        padding: 0;
+        position: relative;
+    }
+    .feelingDisplay{
+        color: gray;
+        font-family: sans-serif;
+        font-size: medium;
+        text-decoration: none;
+        text-align: start;
+        margin: 2px 0px 0px 3px;
+    }
+    .username{
+        font-family: monospace;
+        margin: 0;
+        font-size: larger;
+        text-decoration: none;
+        color: black;
+        text-align: start;
+    }
+    .postAt{
+        color: gray;
+        opacity: 0.8;
+        font-size: small;
+        font-family: monospace;
+        margin: 0;
+    }
+    .absolute-top-right{
+        font-size: large;
+        color: rgb(0, 0, 0);
+        position: absolute;
+        top: 5px;
+        right: 5px;
+    }
+    .post .post-body{
+        width: 100%;
+        padding: 5px;
+    }
+    .post-text,.comment-body{
+        font-family: sans-serif;
+        margin: 0;
+    }
+    .comment-reply-footer{
+        width: 100%;
+        height: 450px;
+        overflow: scroll;
+    } 
+    .post-thumbnail {
+    position: relative;
     width: 100%;
-  height: 100%;
-  position: relative; /* absolutely cover the carousel-item */
-  inset: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
-
-
-.blur-wrapper::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--bg-url) center/cover no-repeat;
-  filter: blur(30px);
-  transform: scale(1.1);
-  z-index: 0;
-}
-
-.media-container {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-}
-.carousel {
-  width: 100%;
-  height: 350px;
-  position: relative;  /* same as .post-thumbnail */
-}
-
-/* Image centered, original size */
-.post-thumbnail-img {
-  max-height: 100%;
-  position: relative;
-  width: auto;
-  object-fit: contain; 
-    z-index: 1;/* disable fitting */
-}
-
-/* Video same treatment */
-.post-thumbnail-video {
-  max-height: 100%;
-  width: auto;
-  position: relative;
-  object-fit: contain;
+    height: 350px;
+    margin: 10px auto 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    }
+    .carousel,
+    .carousel-inner,
+    .carousel-item {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    }
+    .carousel-item {
+    width: 100%;
+    height: 100%;
+    /* display: flex;
+    justify-content: center;
+    align-items: center; */
+    position: relative;
+    }
+    .blur-wrapper {
+        width: 100%;
+        height: 100%;
+        position: relative; /* absolutely cover the carousel-item */
+        inset: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+    .blur-wrapper::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--bg-url) center/cover no-repeat;
+    filter: blur(30px);
+    transform: scale(1.1);
+    z-index: 0;
+    }
+    .media-container {
+    position: relative;
     z-index: 1;
-}
-
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    }
+    .carousel {
+    width: 100%;
+    height: 350px;
+    position: relative;  /* same as .post-thumbnail */
+    }
+/* Image centered, original size */
+    .post-thumbnail-img {
+        max-height: 100%;
+        position: relative;
+        width: auto;
+        object-fit: contain; 
+        z-index: 1;/* disable fitting */
+    }
+/* Video same treatment */
+    .post-thumbnail-video {
+    max-height: 100%;
+    width: auto;
+    position: relative;
+    object-fit: contain;
+    z-index: 1;
+    }
 /* Counter top-right */
-.carousel-counter {
-  top: 10px;
-  right: 15px;
-  color: white;
-  font-size: 14px;
-  background: rgba(0,0,0,0.6);
-  padding: 2px 8px;
-  border-radius: 12px;
-  z-index: 2;
-}
-
-        .post .post-body .post-media-count{
-            
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            margin-top: 10px;
-            font-family: sans-serif;
-            align-items: end;
-            font-size: 14px;
-            opacity: 0.9;
-            padding: 0;
-         }
-         .post-media-count div{
-            margin: 0;
-            height: auto;
-           
-            display: flex;
-            justify-content: start;
-            align-items: end;
-            
-         }
-         .post-media-count div p{
-            padding: 0;
-          margin-bottom: 0;
-         }
-         .post-media-count-child-right{
-            display: flex;
-            gap: 25px;
-         }
+    .carousel-counter {
+        top: 10px;
+        right: 15px;
+        color: white;
+        font-size: 14px;
+        background: rgba(0,0,0,0.6);
+        padding: 2px 8px;
+        border-radius: 12px;
+        z-index: 2;
+    }
+    .post .post-body .post-media-count{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-top: 10px;
+        font-family: sans-serif;
+        align-items: end;
+        font-size: 14px;
+        opacity: 0.9;
+        padding: 0;
+    }
+    .post-media-count div{
+        margin: 0;
+        height: auto;
+        display: flex;
+        justify-content: start;
+        align-items: end;
+    }
+    .post-media-count div p{
+        padding: 0;
+        margin-bottom: 0;
+    }
+    .post-media-count-child-right{
+        display: flex;
+        gap: 25px;
+    }
          
          .post-hr{
             color: gainsboro;
@@ -1119,11 +1063,8 @@ padding-left: 10px;
             font-size: large;
             color:gray;
          }
-          @media screen and (max-width: 768px) {
-             #message-container{
-              width: 97%;
-             }
-        }
+          
+        
     
 /* feeling toast */
          #FeelingToastWrapper {
@@ -1450,11 +1391,16 @@ top:0px;
     #comRight{
         width: 100%;
     }
-    
+    #message-container{
+              width: 97%;
+             }
 }
 @media screen and (max-width:768px){
     #PostToastWrapper{
         width: 95%;
        
     }
+    #message-container{
+              width: 97%;
+             }
 }
