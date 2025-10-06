@@ -114,19 +114,22 @@
   <div id="PostToast" class="toast align-items-center text-bg-light border-0 toastOfPost" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="toast-header">
       <img src="../../assets/img/pf.jpg" class="userPfFrom">
-      <p class="usernameFrom"></p> <span id="displayFeeling"></span>
+      <div class="usernameFrom">Ha Meanleap</div> <div id="displayFeeling"> 😇 blissful</div>
     </div>
     <form id="form">
       <div class="toast-body">
-        <textarea id="message-input" class="form-control mb-2" placeholder="Share your thought"></textarea>
-        <div id="media-preview" class="mt-2"></div>
+        <textarea id="message-input" class="form-control mb-2" placeholder="Share your thought here" ></textarea>
+        <div id="media-preview" class="mt-1 mb-1"></div>
         <div id="uploadWithPost">
-          <label for="mediaInput" style="cursor: pointer">
-                <i class="fa-solid fa-photo-film fa-lg" style="color: green;"></i> Photo/Video
-          </label>
-          <label for="feelingGrid" id="feelingLabel" style="cursor:pointer;">
-                <i class="fa-solid fa-face-smile" style="color:gold; font-size: 1.5rem;"></i> Feeling
-          </label>
+          <div id="uploadWithPost-start">Add to your post</div>
+          <div id="uploadWithPost-end"> 
+            <label for="mediaInput" style="cursor: pointer">
+                  <i class="fa-solid fa-photo-film fa-lg" style="color: green;"></i><div>Photo/Video</div> 
+            </label>
+            <label for="feelingGrid" id="feelingLabel" style="cursor:pointer;">
+                  <i class="fa-solid fa-face-smile" style="color:gold; font-size: 1.5rem;"></i><div>Feeling</div> 
+            </label>
+          </div>
         </div>
            <select id="feelingValue" hidden>
             <option value="" disabled selected>Select a feeling</option>
@@ -170,7 +173,7 @@
             <option value="grateful">😇 grateful</option>
           </select>
           <input type="file" id="mediaInput" accept="image/*,video/*" multiple hidden>
-        <div class="d-flex justify-content-end">
+        <div class="d-flex justify-content-end mt-3 w-100">
           <button id="cancelPostBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
           <button id="submitPostBtn" type="submit" class="btn btn-sm btn-success">Post</button>
         </div>

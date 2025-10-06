@@ -160,7 +160,7 @@ mediaInput.addEventListener("change", (e) => {
     feelingOptions.forEach(option => {
       option.addEventListener("click", () => {
         const text = option.textContent;
-        displayFeeling.textContent = text;
+        displayFeeling.textContent = 'Is feeling ' + text;
 
         // Save selected feeling (strip emoji if needed)
         feelingInput.value = text.replace(/^[^\w]+/, "").trim().toLowerCase();
