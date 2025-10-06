@@ -775,29 +775,7 @@ padding-left: 10px;
         text-align: center;
         gap: 4px;
     }
-    /* content */
-    .content{
-        width: 85%;
-        position: relative;
-        height: auto;
-        display: flex;
-        flex-wrap: wrap;
-        padding: 0;
-        margin: 0;
-    }
-    #comLeft{
-        width: 60%;
-        height: auto;
-        padding: 5px 30px 10px 30px;
-        background-color: yellow;
-    }  
-    #comLeft #message-container{
-      display: grid;
-      gap: 15px;
-      width: 100%;
-      background-color: violet;
-      margin: 0;
-     }
+    
     #editToastWrapper {
         position: fixed;
         top: 50%;
@@ -823,6 +801,29 @@ padding-left: 10px;
       z-index: 1080;
       width: 300px;
     }
+    /* content */
+    .content{
+        width: 85%;
+        position: relative;
+        height: auto;
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0;
+        margin: 0;
+    }
+    #comLeft{
+        width: 60%;
+        height: auto;
+        padding: 5px 30px 10px 30px;
+  
+    }  
+    #comLeft #message-container{
+      display: grid;
+      gap: 15px;
+      width: 100%;
+     
+      margin: 0;
+     }
      .post{
         width: 100%;
         height: auto;
@@ -934,9 +935,7 @@ padding-left: 10px;
     .carousel-item {
     width: 100%;
     height: 100%;
-    /* display: flex;
-    justify-content: center;
-    align-items: center; */
+   
     position: relative;
     }
     .blur-wrapper {
@@ -955,7 +954,7 @@ padding-left: 10px;
     inset: 0;
     background: var(--bg-url) center/cover no-repeat;
     filter: blur(30px);
-    transform: scale(1.1);
+    /* transform: scale(1.1); */
     z-index: 0;
     }
     .media-container {
