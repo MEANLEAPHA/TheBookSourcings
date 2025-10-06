@@ -734,7 +734,7 @@ padding-left: 10px;
         width: 100%;
         height: auto;
         display: grid;
-        background-color: none;
+        background-color: red;
     }
     #PostToast .toast-body #message-input{
         width: 100%;
