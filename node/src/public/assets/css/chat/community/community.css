@@ -789,11 +789,13 @@ padding-left: 10px;
         width: 60%;
         height: auto;
         padding: 5px 30px 10px 30px;
+        background-color: yellow;
     }  
     #comLeft #message-container{
       display: grid;
       gap: 15px;
       width: 100%;
+      background-color: violet;
       margin: 0;
      }
     #editToastWrapper {
@@ -825,7 +827,6 @@ padding-left: 10px;
         width: 100%;
         height: auto;
         padding: 10px 20px 10px 20px;
-        
         padding-left: 10px;
         border-radius: 8px;
         /* border: 1px solid var(--secondary-color); */
@@ -974,14 +975,14 @@ padding-left: 10px;
     .post-thumbnail-img {
         max-height: 100%;
         position: relative;
-        width: auto;
+        /* width: auto; */
         object-fit: contain; 
         z-index: 1;/* disable fitting */
     }
 /* Video same treatment */
     .post-thumbnail-video {
     max-height: 100%;
-    width: auto;
+    /* width: auto; */
     position: relative;
     object-fit: contain;
     z-index: 1;
