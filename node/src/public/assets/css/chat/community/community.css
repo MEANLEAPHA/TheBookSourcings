@@ -690,9 +690,9 @@ padding-left: 10px;
     }
    
     #PostToastWrapper #PostToast {
-        position: fixed;
+       
         
-        margin: auto;
+        
         z-index: 1100;
         width: 100%;
         height: auto;
@@ -727,7 +727,10 @@ padding-left: 10px;
         font-size: large;
         font-family: monospace; 
     }
-    #PostToast .toast-body{
+    #PostToast #form{
+        width: 100%;
+    }
+    #PostToast #form .toast-body{
         width: 100%;
         height: auto;
         display: grid;
