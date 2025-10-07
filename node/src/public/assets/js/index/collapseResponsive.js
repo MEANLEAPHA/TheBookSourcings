@@ -173,6 +173,7 @@ document.addEventListener("DOMContentLoaded", function () {
         content.style.width = "100%";
       } else {
         collapse.style.display = "none";
+        smallcollapse.style.display = "none";
         content.style.width = "100%";
       }
     } else if (window.innerWidth <= 1024) {

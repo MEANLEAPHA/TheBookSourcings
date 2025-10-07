@@ -775,6 +775,10 @@ padding-left: 10px;
         text-align: center;
         gap: 4px;
     }
+
+    .li-opt:hover{
+        background: none;
+    }
     
     #editToastWrapper {
         position: fixed;
@@ -783,14 +787,29 @@ padding-left: 10px;
         transform: translate(-50%, -50%);
         z-index: 1080;
     }
+    #editToastWrapper #editToast .toast-body{
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        height: auto;
+        width: 100%;
+    }
+
 
     /* Center delete toast in the page */
     #deleteToastWrapper {
         position: fixed;
-        top: 60%;
+        top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
         z-index: 1080;
+    }
+    #deleteToastWrapper #deleteToast .toast-body{
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        height: auto;
+        width: 100%;
     }
 
     #reportToastWrapper {
@@ -801,6 +820,21 @@ padding-left: 10px;
       z-index: 1080;
       width: 300px;
     }
+    #reportToastWrapper #reportToast {
+        z-index: 1100;
+        width: 100%;
+        height: auto;
+        padding: 10px;
+        background-color: var(--background-color);
+        box-shadow: 0px 0px 2px var(--secondary-color);
+    }
+     #reportToastWrapper #reportToast .toast-body{
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        height: auto;
+        width: 100%;
+     }
     /* content */
     .content{
         /* width: 85%; */
@@ -811,25 +845,25 @@ padding-left: 10px;
         padding: 0;
         margin: 0;
     }
-    #comLeft{
+    .content #comLeft{
         width: 60%;
         height: auto;
         padding: 5px 30px 10px 30px;
   
     }  
     #comLeft #message-container{
-      display: grid;
-      gap: 15px;
+      /* display: grid;
+      gap: 15px; */
       width: 100%;
-     
       margin: 0;
      }
-     .post{
+    #message-container .post{
         width: 100%;
         height: auto;
         padding: 10px 20px 10px 20px;
         padding-left: 10px;
         border-radius: 8px;
+        margin-bottom: 15px;
         /* border: 1px solid var(--secondary-color); */
         background-color: #f9f9f9d8;
     }
@@ -1104,7 +1138,7 @@ padding-left: 10px;
       display: none;
     }
 
-#comRight{
+.content #comRight{
     width: 40%;
     height: auto;
     padding: 20px 30px 10px 30px;
