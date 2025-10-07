@@ -102,7 +102,6 @@
 //       bool = !bool;
 //     });
 // });
-
 document.addEventListener("DOMContentLoaded", function () {
   const btnToggle = document.querySelector(".fa-bars");
   const collapse = document.querySelector(".collapse");
@@ -111,7 +110,6 @@ document.addEventListener("DOMContentLoaded", function () {
   let bool = false;
   let userToggled = false; // prevent layout reset after toggle
 
-  // Initial layout setup
   function setupLayout() {
     if (window.innerWidth <= 768) {
       collapse.style.display = "none";
@@ -144,24 +142,29 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  setupLayout(); // Run on load
+  setupLayout();
 
-  // Update layout on resize but keep user choice
+  // Update layout on resize
   window.addEventListener("resize", () => {
-    if (!userToggled) {
+    // Always hide smallcollapse when resizing to mobile
+    if (window.innerWidth <= 768) {
+      smallcollapse.style.display = "none";
+      collapse.style.display = "none";
+      content.style.width = "100%";
+      userToggled = false;
+      bool = false;
+    } else if (!userToggled) {
       setupLayout();
       bool = false;
     }
   });
 
   // Prevent scroll from resetting layout
-  window.addEventListener("scroll", () => {
-    // do nothing — remove auto behavior (bug fix)
-  });
+  window.addEventListener("scroll", () => {});
 
   // Toggle logic
   btnToggle.addEventListener("click", function () {
-    userToggled = true; // user manually toggled
+    userToggled = true;
     if (window.innerWidth <= 768) {
       if (!bool) {
         collapse.style.display = "block";
