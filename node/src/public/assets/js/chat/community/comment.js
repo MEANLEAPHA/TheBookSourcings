@@ -892,7 +892,7 @@ if (cmt.media_url && cmt.media_type) {
     </div>
   `;
   const actionRow = document.createElement('div');
-  actionRow = className = "comment-action-row";
+  actionRow.className = "comment-action-row";
 
   // --- BUTTONS ---
   const btnRow = document.createElement("div");
