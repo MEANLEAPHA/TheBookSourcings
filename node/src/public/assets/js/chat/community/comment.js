@@ -884,15 +884,15 @@ if (cmt.media_url && cmt.media_type) {
   const counts = document.createElement("div");
   counts.className = "comment-media-count";
   counts.innerHTML = `
+    <div class="post-media-count-child-right" style='display:none'>
+      <p><span class="comment-reply-count">${cmt.reply_count || 0}</span> reply</p>
+    </div>
     <div>
       <p><span class="comment-like-count">${cmt.like_count || 0}</span> Likes</p>
     </div>
-    <div class="post-media-count-child-right">
-      <p><span class="comment-reply-count">${cmt.reply_count || 0}</span> reply</p>
-     
-    </div>
   `;
-  body.appendChild(counts);
+  const actionRow = document.createElement('div');
+  actionRow = className = "comment-action-row";
 
   // --- BUTTONS ---
   const btnRow = document.createElement("div");
@@ -900,7 +900,7 @@ if (cmt.media_url && cmt.media_type) {
 
   // Like btn
   const likeBtn = document.createElement("button");
-  likeBtn.className = "likeCmtBtn media-btn";
+  likeBtn.className = "likeCmtBtn media-btn-comment";
   likeBtn.dataset.id = cmt.comment_id;
   likeBtn.innerHTML = `<i class="fa-solid fa-heart"></i> <span>Like</span>`;
 
@@ -908,7 +908,7 @@ if (cmt.media_url && cmt.media_type) {
 
 // ===== Reply Btn =====
   const replyBtn = document.createElement("button");
-  replyBtn.className = "replyBtn media-btn";
+  replyBtn.className = "replyBtn media-btn-comment";
   replyBtn.dataset.id = cmt.commentQid; // pass commentQid
   replyBtn.innerHTML = `<i class="fa-solid fa-reply"></i> <span>Reply</span>`;
 
@@ -926,10 +926,12 @@ if (cmt.media_url && cmt.media_type) {
   // btnRow.appendChild(commentBtn); maybe this turn to reply then there will be another fect oad and also two more like logic ...
  
 
-  body.appendChild(btnRow);
+  
 
 
-
+  actionRow.appendChild(btnRow);
+  actionRow.appendChild(counts);
+  body.appendChild(actionRow);
 
 
   // Append together
@@ -1419,15 +1421,18 @@ if (rpy.media_url && rpy.media_type) {
   const counts = document.createElement("div");
   counts.className = "reply-media-count";
   counts.innerHTML = `
+    <div class="post-media-count-child-right" style='diplay:none'>
+      <p><span class="reply-reply-count">${rpy.reply_count || 0}</span> reply</p>
+    </div>
     <div>
       <p><span class="reply-like-count">${rpy.like_count || 0}</span> Likes</p>
     </div>
-    <div class="post-media-count-child-right">
-      <p><span class="reply-reply-count">${rpy.reply_count || 0}</span> reply</p>
-     
-    </div>
   `;
-  body.appendChild(counts);
+
+  const actionRow = document.createElement("div");
+  actionRow.className = "reply-action-row";
+
+  
 
   // --- BUTTONS ---
   const btnRow = document.createElement("div");
@@ -1435,7 +1440,7 @@ if (rpy.media_url && rpy.media_type) {
 
   // Like btn
   const likeBtn = document.createElement("button");
-  likeBtn.className = "likerpyBtn media-btn";
+  likeBtn.className = "likerpyBtn media-btn-reply";
   likeBtn.dataset.id = rpy.reply_id;
   likeBtn.innerHTML = `<i class="fa-solid fa-heart"></i> <span>Like</span>`;
 
@@ -1443,7 +1448,7 @@ if (rpy.media_url && rpy.media_type) {
 
 // ===== Reply Btn =====
   const replyBtn = document.createElement("button");
-  replyBtn.className = "replyBtn media-btn";
+  replyBtn.className = "replyBtn media-btn-reply";
   typeOfId = rpy.replyBackTo_id ? rpy.replyBackTo_id : rpy.replyQid;
   replyBtn.innerHTML = `<i class="fa-solid fa-reply"></i> <span>Reply</span>`;
 
@@ -1458,8 +1463,13 @@ if (rpy.media_url && rpy.media_type) {
 
   btnRow.appendChild(replyBtn);
   btnRow.appendChild(likeBtn);
+
+
  
-  body.appendChild(btnRow);
+
+  actionRow.appendChild(btnRow);
+  actionRow.appendChild(counts);
+  body.appendChild(actionRow);
 
   // Append together
   div.appendChild(header);

@@ -149,7 +149,7 @@
 <div id="ReplyToastWrapper">
   <div id="ReplyToast" class="toast align-items-center text-bg-light border-0" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="toast-header">
-      <img src="../../assets/img/pf.jpg" class="userPfFrom">
+      <img src="../../assets/img/pf.jpg" class="userPfFromReply">
       <p class="usernameFromReply"></p> 
     </div>
     <form id="form-Reply">
@@ -157,13 +157,16 @@
         <p id="replyingToLabel" style="display:none; color:blue;"></p>
         <textarea id="Reply-input" class="form-control mb-2" placeholder="Reply your thought on this post"></textarea>
         <div id="media-Reply-preview" class="mt-2"></div>
-        <div>
+        <div id="uploadWithReply">
+          <div id="uploadWithReply-start">Add to your reply</div>
+          <div id="uploadWithReply-end">
           <label for="mediaReplyInput" style="cursor: pointer">
                 <i class="fa-solid fa-photo-film fa-lg" style="color: green;"></i> Photo/Video
           </label>
         </div>
+        </div>
           <input type="file" id="mediaReplyInput" accept="image/*,video/*"  hidden>
-        <div class="d-flex justify-content-end">
+        <div class="d-flex justify-content-end w-100 mt-3">
           <button id="cancelReplyBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
           <button id="submitReplyBtn" type="submit" class="btn btn-sm btn-success">Reply</button>
         </div>
