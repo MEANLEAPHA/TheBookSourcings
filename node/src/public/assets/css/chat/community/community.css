@@ -677,6 +677,7 @@ padding-left: 10px;
   
 }
 
+    /*Upload Post toast */
     #PostToastWrapper {
       position: fixed;
       top: 55%;
@@ -687,9 +688,20 @@ padding-left: 10px;
       height: auto;
       border-radius: 10px;
       background: none;
-     
     }
-   
+    /*Upload Comment toast */
+    #CommentToastWrapper {
+      position: fixed;
+      top: 55%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1080;
+      width: 50%;
+      height: auto;
+      border-radius: 10px;
+      background: none;
+    }
+    /*Posttoast */
     #PostToastWrapper #PostToast {
         z-index: 1100;
         width: 100%;
@@ -698,6 +710,16 @@ padding-left: 10px;
         background-color: var(--background-color);
         box-shadow: 0px 0px 2px var(--secondary-color);
     }
+    /*Commenttoast */
+    #CommentToastWrapper #commentToast {
+        z-index: 1100;
+        width: 100%;
+        height: auto;
+        padding: 10px;
+        background-color: var(--background-color);
+        box-shadow: 0px 0px 2px var(--secondary-color);
+    }
+    /*Post toast header */
     #PostToast .toast-header{
         width: 100%;
         display: flex;
@@ -708,13 +730,40 @@ padding-left: 10px;
         text-align: start;
         background: none;
     }
+    /*Comment toast header */
+    #commentToast .toast-header{
+        width: 100%;
+        display: flex;
+        height: auto;
+        justify-content: start;
+        align-items: center;
+        gap: 5px;
+        text-align: start;
+        background: none;
+    }
+    /*Post userPf */
     #PostToast .toast-header .userPfFrom{
       width: 50px;
       height: 50px;
       border-radius: 50%;
       object-fit: cover;
     }
+    /*Comment userPf */
+    #commentToast .toast-header .userPfFromComment{
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    /*Post username */
     #PostToast .toast-header .usernameFrom{
+        color: var(--font-color);
+        font-size: x-large;
+        font-weight: bold;
+        font-family: monospace;
+    }
+    /*comment username */
+    #commentToast .toast-header .usernameFromComment{
         color: var(--font-color);
         font-size: x-large;
         font-weight: bold;
@@ -726,15 +775,17 @@ padding-left: 10px;
         padding-top:3px;
         font-family: monospace;
     }
-    /* #PostToast .toast-header #feeling #displayFeeling{
-        color:gray;
-        font-size: x-large;
-        font-family: monospace; 
-    } */
+    /* Post form */
     #PostToast #form{
         width: 100%;
         background: none;
     }
+    /* comment form */
+    #commentToast #form-comment{
+        width: 100%;
+        background: none;
+    }
+    /* post body */
     #PostToast #form .toast-body{
         width: 100%;
         height: auto;
@@ -742,14 +793,31 @@ padding-left: 10px;
         flex-direction: column;
         gap: 0px;
         background: none;
-    
     }
+    /* comment body */
+    #commentToast #form-comment .toast-body{
+        width: 100%;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 0px;
+        background: none;
+    }
+    /* post input */
     #PostToast #form .toast-body #message-input{
         width: 100%;
         height: 45px;
         border-radius: 5px;
         border:none;
     }
+    /* comment input */
+    #commentToast #form-comment .toast-body #comment-input{
+        width: 100%;
+        height: 45px;
+        border-radius: 5px;
+        border:none;
+    }
+    /* post (upload with post) */
     #PostToast .toast-body #uploadWithPost{
         width: 100%;
         height: auto;
@@ -762,13 +830,44 @@ padding-left: 10px;
         align-items: center;
         margin: 0;
     }
+    /* Comment (upload with comment) */
+    #commentToast .toast-body #uploadWithComment{
+        width: 100%;
+        height: auto;
+        display: flex;
+        justify-content: space-between;
+        padding: 15px;
+        border-radius: 5px;
+        border: 1px solid var(--secondary-color);
+        text-align: start;
+        align-items: center;
+        margin: 0;
+    }
+
+    /* post (upload with post end) */
     #PostToast .toast-body #uploadWithPost #uploadWithPost-end{
         display: flex;
         justify-content: start;
         align-items: center;
         gap: 10px;
     }
+     /* post (upload with post end) */
+    #commentToast .toast-body #uploadWithComment #uploadWithComment-end{
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        gap: 10px;
+    }
+    /* post (upload with post end label) */
     #PostToast .toast-body #uploadWithPost #uploadWithPost-end label{
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        text-align: center;
+        gap: 4px;
+    }
+    /* comment (upload with comment end label) */
+    #commentToast .toast-body #uploadWithComment #uploadWithComment-end label{
         display: flex;
         justify-content: start;
         align-items: center;
@@ -1466,7 +1565,8 @@ top:0px;
     font-size: large;
     font-weight: 460;
     color: rgb(121, 121, 121);
-    box-shadow: 0px 1px 2px rgb(176, 176, 176)
+    box-shadow: 0px 1px 2px rgb(176, 176, 176);
+    cursor: pointer;
   
 
 }
