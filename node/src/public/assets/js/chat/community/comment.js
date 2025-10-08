@@ -738,7 +738,7 @@ function displayComment(cmt) {
   profileImg.className = "userCommentProfile"; // user Pf on cmt div
 
   // Wrap profile image in link
-  const profileLink = document.createElement("p");
+  const profileLink = document.createElement("a");
   profileLink.href = `aboutUser?memberId=${cmt.memberQid}`; // user name on cmt div href to their account
   profileLink.appendChild(profileImg);
 
@@ -757,7 +757,7 @@ function displayComment(cmt) {
   headerRight.appendChild(headerRightTop);
   headerRight.appendChild(headerRightBottom);
 
-  const usernameLink = document.createElement("a");
+  const usernameLink = document.createElement("p");
   usernameLink.href = `aboutUser?memberId=${cmt.memberQid}`;
   usernameLink.textContent = cmt.username || "Unknown";
   usernameLink.className = "username";
@@ -937,17 +937,22 @@ if (cmt.media_url && cmt.media_type) {
  
 
   
+  
 
 
   actionRow.appendChild(btnRow);
   actionRow.appendChild(counts);
   footerDiv.appendChild(actionRow);
 
+  headerRightBottom.appendChild(body);
+  headerRightBottom.appendChild(footerDiv);
+
 
   // Append together
   div.appendChild(header);
-  div.appendChild(body);
-  div.appendChild(footerDiv);
+  div.appendChild(headerRightBottom);
+  // div.appendChild(body);
+  // div.appendChild(footerDiv);
   div.appendChild(footer);
 
   document.getElementById("comment-container").prepend(div);
@@ -1283,7 +1288,7 @@ function displayReply(rpy) {
   profileImg.className = "userReplyProfile"; // user Pf on rpy div
 
   // Wrap profile image in link
-  const profileLink = document.createElement("p");
+  const profileLink = document.createElement("a");
   profileLink.href = `aboutUser?memberId=${rpy.memberQid}`; // user name on rpy div href to their account
   profileLink.appendChild(profileImg);
 
@@ -1302,7 +1307,7 @@ function displayReply(rpy) {
   headerRight.appendChild(headerRightTop);
   headerRight.appendChild(headerRightBottom);
 
-  const usernameLink = document.createElement("a");
+  const usernameLink = document.createElement("p");
   usernameLink.href = `aboutUser?memberId=${rpy.memberQid}`;
   usernameLink.textContent = rpy.username || "Unknown";
   usernameLink.className = "username";
@@ -1439,7 +1444,7 @@ if (rpy.media_url && rpy.media_type) {
   const counts = document.createElement("div");
   counts.className = "reply-media-count";
   counts.innerHTML = `
-    <div class="reply-media-count-child-right" style='diplay:none'>
+    <div class="reply-media-count-child-right" style='display:none'>
       <p><span class="reply-reply-count">${rpy.reply_count || 0}</span> reply</p>
     </div>
     <div>
@@ -1491,11 +1496,14 @@ if (rpy.media_url && rpy.media_type) {
   actionRow.appendChild(btnRow);
   actionRow.appendChild(counts);
   footerDiv.appendChild(actionRow);
+  headerRightBottom.appendChild(body);
+  headerRightBottom.appendChild(footerDiv)
 
   // Append together
   div.appendChild(header);
-  div.appendChild(body);
-  div.appendChild(footerDiv);
+  div.appendChild(headerRightBottom);
+  // div.appendChild(body);
+  // div.appendChild(footerDiv);
   
 
 
