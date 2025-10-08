@@ -1140,8 +1140,9 @@ padding-left: 10px;
     }
     .comment-reply-footer{
         width: 100%;
-        height: 450px;
-        overflow: scroll;
+        height: auto;
+        display: none !important;
+        
     } 
     .post-thumbnail {
     position: relative;
@@ -1703,7 +1704,9 @@ top:0px;
             gap: 5px;
         }
         
+.comment-reply-footer{
 
+}
         /* show/unshow reply toggle */
         .comment-reply-toggle-wrapper p {
         color: #007bff;

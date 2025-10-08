@@ -852,7 +852,7 @@ function displayComment(cmt) {
   // --- Footer section (hidden by default) ---
   const footer = document.createElement("div");
   footer.className = "comment-reply-footer";
-  footer.style.display = "none"; // hide on DOM load
+  footer.style.display = "none"; 
 
   // Toggle reply buttons
   const showReply = document.createElement("p");
@@ -965,7 +965,9 @@ if (cmt.media_url && cmt.media_type) {
   footerDiv.appendChild(actionRow);
 
   headerRightBottom.appendChild(body);
-  footerDiv.appendChild(toggleWrapper);
+  if(cmt.reply_count !== 0){
+ footerDiv.appendChild(toggleWrapper);
+  }
   headerRightBottom.appendChild(footerDiv);
 
 
