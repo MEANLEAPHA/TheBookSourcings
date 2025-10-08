@@ -1596,9 +1596,10 @@ top:0px;
        .reply-header,.comment-header{
         display:flex;
         justify-content: start;
+        gap:10px;
         align-items: center;
        }
-       .userCommentProfile.userReplyProfile{
+       .userCommentProfile,.userReplyProfile{
         width: 45px;
         height: 45px;
         border-radius: 50%;
@@ -1609,6 +1610,8 @@ top:0px;
             display: grid;
             gap: 0px;
             margin: 0;
+            background-color: white;
+            border-radius: 10px;
        }
        .reply-header-child-right-top,.comment-header-child-right-top{
              padding: 0;
@@ -1635,11 +1638,11 @@ top:0px;
             right: 5px;
        }
        .reply-body,.comment-body{
-            padding: 10px;
+            padding: 5px 10px 5px 10px;
             /* background-color: white; */
             color: var(--font-color);
-            border-radius: 5px;
-            box-shadow: 0px 1px 1px gray;
+            /* border-radius: 5px;
+            box-shadow: 0px 1px 1px gray; */
        }
        .reply-text,.comment-text{
             font-family: sans-serif;
@@ -1663,7 +1666,7 @@ top:0px;
             object-fit: contain; 
             z-index: 1;/* disable fitting */
         }
-        .comment-media-count-child-right, .reply-media-count-child-right{
+        .reply-media-count, .comment-media-count{
             background-color: burlywood;
             display: flex;
             align-items: center;

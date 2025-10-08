@@ -738,7 +738,7 @@ function displayComment(cmt) {
   profileImg.className = "userCommentProfile"; // user Pf on cmt div
 
   // Wrap profile image in link
-  const profileLink = document.createElement("a");
+  const profileLink = document.createElement("p");
   profileLink.href = `aboutUser?memberId=${cmt.memberQid}`; // user name on cmt div href to their account
   profileLink.appendChild(profileImg);
 
@@ -837,6 +837,9 @@ function displayComment(cmt) {
   const body = document.createElement("div");
   body.className = "comment-body";
 
+  const footerDiv = document.createElement("div");
+  footerDiv.className = "comment-reply-footer-div";
+
   const footer = document.createElement("div");
   footer.className = "comment-reply-footer";
 
@@ -909,7 +912,7 @@ if (cmt.media_url && cmt.media_type) {
   const likeBtn = document.createElement("button");
   likeBtn.className = "likeCmtBtn media-btn-comment";
   likeBtn.dataset.id = cmt.comment_id;
-  likeBtn.innerHTML = `<i class="fa-solid fa-heart"></i> <span>Like</span>`;
+  likeBtn.innerHTML = `<i class="fa-solid fa-heart"></i>`;
 
   // ===========reply logic will work at home today=====
 
@@ -917,7 +920,7 @@ if (cmt.media_url && cmt.media_type) {
   const replyBtn = document.createElement("button");
   replyBtn.className = "replyBtn media-btn-comment";
   replyBtn.dataset.id = cmt.commentQid; // pass commentQid
-  replyBtn.innerHTML = `<i class="fa-solid fa-reply"></i> <span>Reply</span>`;
+  replyBtn.innerHTML = `<i class="fa-solid fa-reply"></i>`;
 
   // Show ReplyToast and set typeOfId
   replyBtn.addEventListener("click", () => {
@@ -938,13 +941,13 @@ if (cmt.media_url && cmt.media_type) {
 
   actionRow.appendChild(btnRow);
   actionRow.appendChild(counts);
-  footer.appendChild(actionRow);
+  footerDiv.appendChild(actionRow);
 
 
   // Append together
   div.appendChild(header);
   div.appendChild(body);
-
+  div.appendChild(footerDiv);
   div.appendChild(footer);
 
   document.getElementById("comment-container").prepend(div);
@@ -1280,7 +1283,7 @@ function displayReply(rpy) {
   profileImg.className = "userReplyProfile"; // user Pf on rpy div
 
   // Wrap profile image in link
-  const profileLink = document.createElement("a");
+  const profileLink = document.createElement("p");
   profileLink.href = `aboutUser?memberId=${rpy.memberQid}`; // user name on rpy div href to their account
   profileLink.appendChild(profileImg);
 
@@ -1405,9 +1408,9 @@ function displayReply(rpy) {
   // ---reply BODY ---
   const body = document.createElement("div");
   body.className = "reply-body";
-  const footer = document.createElement("div");
-  footer.className = "reply-reply-footer";
 
+   const footerDiv = document.createElement("div");
+  footerDiv.className = "reply-reply-footer-div";
   
 
  
@@ -1460,7 +1463,7 @@ if (rpy.media_url && rpy.media_type) {
   const likeBtn = document.createElement("button");
   likeBtn.className = "likerpyBtn media-btn-reply";
   likeBtn.dataset.id = rpy.reply_id;
-  likeBtn.innerHTML = `<i class="fa-solid fa-heart"></i> <span>Like</span>`;
+  likeBtn.innerHTML = `<i class="fa-solid fa-heart"></i> `;
 
   // ===========reply logic will work at home today=====
 
@@ -1468,7 +1471,7 @@ if (rpy.media_url && rpy.media_type) {
   const replyBtn = document.createElement("button");
   replyBtn.className = "replyBtn media-btn-reply";
   typeOfId = rpy.replyBackTo_id ? rpy.replyBackTo_id : rpy.replyQid;
-  replyBtn.innerHTML = `<i class="fa-solid fa-reply"></i> <span>Reply</span>`;
+  replyBtn.innerHTML = `<i class="fa-solid fa-reply"></i>`;
 
   // Show ReplyToast and set typeOfId
   replyBtn.addEventListener("click", () => {
@@ -1487,12 +1490,12 @@ if (rpy.media_url && rpy.media_type) {
 
   actionRow.appendChild(btnRow);
   actionRow.appendChild(counts);
-  footer.appendChild(actionRow);
+  footerDiv.appendChild(actionRow);
 
   // Append together
   div.appendChild(header);
   div.appendChild(body);
-  div.appendChild(footer);
+  div.appendChild(footerDiv);
   
 
 
