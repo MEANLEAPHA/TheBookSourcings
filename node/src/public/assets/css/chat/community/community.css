@@ -1142,6 +1142,7 @@ padding-left: 10px;
         width: 100%;
         height: auto;
         display: none ;
+        visibility: hidden;
         
     } 
     .post-thumbnail {
