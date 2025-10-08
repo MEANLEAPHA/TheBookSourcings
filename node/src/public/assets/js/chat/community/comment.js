@@ -968,6 +968,7 @@ if (cmt.media_url && cmt.media_type) {
   if(cmt.reply_count !== 0){
  footerDiv.appendChild(toggleWrapper);
   }
+  footerDiv.appendChild(footer);
   headerRightBottom.appendChild(footerDiv);
 
 
@@ -975,7 +976,7 @@ if (cmt.media_url && cmt.media_type) {
   div.appendChild(header);
   div.appendChild(headerRightBottom);
   
-  div.appendChild(footer);
+  // div.appendChild(footer);
 
   document.getElementById("comment-container").prepend(div);
 
