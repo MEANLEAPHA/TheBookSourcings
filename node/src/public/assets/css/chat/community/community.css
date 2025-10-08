@@ -1202,14 +1202,14 @@ padding-left: 10px;
     .post-thumbnail-img {
         max-height: 100%;
         position: relative;
-        /* width: auto; */
+        width: auto;
         object-fit: contain; 
         z-index: 1;/* disable fitting */
     }
 /* Video same treatment */
     .post-thumbnail-video {
     max-height: 100%;
-    /* width: auto; */
+    width: auto;
     position: relative;
     object-fit: contain;
     z-index: 1;
@@ -1619,11 +1619,13 @@ top:0px;
             gap: 0px;
             position: relative;
             text-align: start;
+            background-color: aqua;
        }
        .reply-header-child-right-bottom,.comment-header-child-right-bottom{
              margin: 0;
              padding: 0;
              position: relative;
+             background-color: #275791;
        }
        .comment-dropdown,.reply-dropdown{
             font-size: large;
@@ -1634,7 +1636,7 @@ top:0px;
        }
        .reply-body,.comment-body{
             padding: 10px;
-            background-color: white;
+            /* background-color: white; */
             color: var(--font-color);
             border-radius: 5px;
             box-shadow: 0px 1px 1px gray;
@@ -1646,12 +1648,26 @@ top:0px;
        }
        .comment-thumbnail,.reply-thumbnail {
             position: relative;
+            width: 100%;
             height: 200px;
             margin: 10px auto 0;
             display: flex;
-            justify-content: center;
+            justify-content: start;
             align-items: center;
             overflow: hidden;
+        }
+        .reply-thumbnail-img,.comment-thumbnail-img{
+             max-height: 100%;
+            position: relative;
+            width: auto;
+            object-fit: contain; 
+            z-index: 1;/* disable fitting */
+        }
+        .comment-media-count-child-right, .reply-media-count-child-right{
+            background-color: burlywood;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
         .comment-action-row,.reply-action-row{
             display: flex;
@@ -1660,7 +1676,6 @@ top:0px;
         }
         .reply-media-button,.comment-media-button{
             display: flex;
-            border-top: 1px gainsboro solid;
             justify-content: start;
             padding: 0;
             align-items: end;

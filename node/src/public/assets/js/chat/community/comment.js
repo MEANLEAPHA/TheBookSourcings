@@ -764,10 +764,43 @@ function displayComment(cmt) {
   headerRightTop.appendChild(usernameLink);
 
   
-  const postAt = document.createElement("p");
-  postAt.className = "postAt";
-  postAt.textContent = cmt.createFormNow || "just now";
-  headerRightBottom.appendChild(postAt);
+  // const postAt = document.createElement("p");
+  // postAt.className = "commentAt";
+  // postAt.textContent = cmt.createFormNow || "just now";
+  // Post text with truncation
+  if (cmt.comment) {
+    const textP = document.createElement("p");
+    textP.className = "comment-text";
+
+    if (cmt.comment.length > 250) {
+      const shortText = cmt.comment.slice(0, 250);
+      textP.textContent = shortText + "... ";
+
+      const seeMore = document.createElement("a");
+      seeMore.href = "#";
+      seeMore.textContent = "see more";
+      seeMore.addEventListener("click", (e) => {
+        e.preventDefault();
+        textP.textContent = cmt.comment; // show full text
+      });
+
+      textP.appendChild(seeMore);
+    } else {
+      textP.textContent = cmt.comment;
+    }
+
+    headerRightBottom.appendChild(textP);
+  }
+  else{
+    const textP = document.createElement("p");
+    textP.className = "comment-text";
+    textP.textContent = "";
+    headerRightBottom.appendChild(textP);
+  }
+
+
+
+  
 
   
 
@@ -827,36 +860,7 @@ function displayComment(cmt) {
   
   
 
-  // Post text with truncation
-  if (cmt.comment) {
-    const textP = document.createElement("p");
-    textP.className = "comment-text";
-
-    if (cmt.comment.length > 250) {
-      const shortText = cmt.comment.slice(0, 250);
-      textP.textContent = shortText + "... ";
-
-      const seeMore = document.createElement("a");
-      seeMore.href = "#";
-      seeMore.textContent = "see more";
-      seeMore.addEventListener("click", (e) => {
-        e.preventDefault();
-        textP.textContent = cmt.comment; // show full text
-      });
-
-      textP.appendChild(seeMore);
-    } else {
-      textP.textContent = cmt.comment;
-    }
-
-    body.appendChild(textP);
-  }
-  else{
-    const textP = document.createElement("p");
-    textP.className = "comment-text";
-    textP.textContent = "";
-    body.appendChild(textP);
-  }
+  
 
  
   // Media of comment
@@ -884,11 +888,14 @@ if (cmt.media_url && cmt.media_type) {
   const counts = document.createElement("div");
   counts.className = "comment-media-count";
   counts.innerHTML = `
-    <div class="post-media-count-child-right" style='display:none'>
+    <div class="comment-media-count-child-right" style='display:none'>
       <p><span class="comment-reply-count">${cmt.reply_count || 0}</span> reply</p>
     </div>
     <div>
       <p><span class="comment-like-count">${cmt.like_count || 0}</span> Likes</p>
+    </div>
+    <div>
+      <p><span class="commentAt">${cmt.createFormNow  || "Just now"}</span></p>
     </div>
   `;
   const actionRow = document.createElement('div');
@@ -931,7 +938,7 @@ if (cmt.media_url && cmt.media_type) {
 
   actionRow.appendChild(btnRow);
   actionRow.appendChild(counts);
-  body.appendChild(actionRow);
+  footer.appendChild(actionRow);
 
 
   // Append together
@@ -1299,46 +1306,9 @@ function displayReply(rpy) {
   headerRightTop.appendChild(usernameLink);
 
   
-  const replyAt = document.createElement("p");
-  replyAt.className = "replyAt";
-  replyAt.textContent = rpy.createFormNow || "just now";
-  headerRightBottom.appendChild(replyAt);
-
-  
-
-  // Dropdown menu
-  const dropdownWrapper = document.createElement("div");
-  dropdownWrapper.className = "dropdown reply-dropdown";
-
-  const ellipsisBtn = document.createElement("i");
-  ellipsisBtn.className = "fa-solid fa-ellipsis";
-  ellipsisBtn.setAttribute("data-bs-toggle", "dropdown");
-  ellipsisBtn.style.cursor = "pointer";
-
-  const dropdownMenu = document.createElement("ul");
-  dropdownMenu.className = "dropdown-menu";
-  if (rpy.memberQid === userMemberQid) {
-    dropdownMenu.innerHTML = `
-      <li><a class="dropdown-item edit-option-reply" href="#">Edit</a></li>
-      <li><a class="dropdown-item delete-option-reply" href="#">Delete</a></li>
-      <li><a class="dropdown-item report-option-reply" href="#">Report</a></li>
-    `;
-  } else {
-    dropdownMenu.innerHTML = `
-      <li><a class="dropdown-item report-option-reply" href="#">Report</a></li>
-    `;
-  }
-  dropdownWrapper.appendChild(ellipsisBtn);
-  dropdownWrapper.appendChild(dropdownMenu);
-
-  header.appendChild(profileLink);
-  header.appendChild(headerRight);
-  header.appendChild(dropdownWrapper);
-
-  // ---reply BODY ---
-  const body = document.createElement("div");
-  body.className = "reply-body";
-
+  // const replyAt = document.createElement("p");
+  // replyAt.className = "replyAt";
+  // replyAt.textContent = rpy.createFormNow || "just now";
   // reply text with truncation
   if (rpy.reply) {
   const textP = document.createElement("p");
@@ -1387,13 +1357,58 @@ function displayReply(rpy) {
     textP.appendChild(textNode);
   }
 
-  body.appendChild(textP);
+  headerRightBottom.appendChild(textP);
 } else {
   const textP = document.createElement("p");
   textP.className = "reply-text";
   textP.textContent = "";
-  body.appendChild(textP);
+  
+  headerRightBottom.appendChild(textP);
 }
+
+
+
+
+  
+
+  
+
+  // Dropdown menu
+  const dropdownWrapper = document.createElement("div");
+  dropdownWrapper.className = "dropdown reply-dropdown";
+
+  const ellipsisBtn = document.createElement("i");
+  ellipsisBtn.className = "fa-solid fa-ellipsis";
+  ellipsisBtn.setAttribute("data-bs-toggle", "dropdown");
+  ellipsisBtn.style.cursor = "pointer";
+
+  const dropdownMenu = document.createElement("ul");
+  dropdownMenu.className = "dropdown-menu";
+  if (rpy.memberQid === userMemberQid) {
+    dropdownMenu.innerHTML = `
+      <li><a class="dropdown-item edit-option-reply" href="#">Edit</a></li>
+      <li><a class="dropdown-item delete-option-reply" href="#">Delete</a></li>
+      <li><a class="dropdown-item report-option-reply" href="#">Report</a></li>
+    `;
+  } else {
+    dropdownMenu.innerHTML = `
+      <li><a class="dropdown-item report-option-reply" href="#">Report</a></li>
+    `;
+  }
+  dropdownWrapper.appendChild(ellipsisBtn);
+  dropdownWrapper.appendChild(dropdownMenu);
+
+  header.appendChild(profileLink);
+  header.appendChild(headerRight);
+  header.appendChild(dropdownWrapper);
+
+  // ---reply BODY ---
+  const body = document.createElement("div");
+  body.className = "reply-body";
+  const footer = document.createElement("div");
+  footer.className = "reply-reply-footer";
+
+  
 
  
   // Media of comment
@@ -1421,11 +1436,14 @@ if (rpy.media_url && rpy.media_type) {
   const counts = document.createElement("div");
   counts.className = "reply-media-count";
   counts.innerHTML = `
-    <div class="post-media-count-child-right" style='diplay:none'>
+    <div class="reply-media-count-child-right" style='diplay:none'>
       <p><span class="reply-reply-count">${rpy.reply_count || 0}</span> reply</p>
     </div>
     <div>
       <p><span class="reply-like-count">${rpy.like_count || 0}</span> Likes</p>
+    </div>
+    <div>
+      <p><span class="replyAt">${rpy.createFormNow || "Just now"}</span></p>
     </div>
   `;
 
@@ -1469,11 +1487,12 @@ if (rpy.media_url && rpy.media_type) {
 
   actionRow.appendChild(btnRow);
   actionRow.appendChild(counts);
-  body.appendChild(actionRow);
+  footer.appendChild(actionRow);
 
   // Append together
   div.appendChild(header);
   div.appendChild(body);
+  div.appendChild(footer);
   
 
 
