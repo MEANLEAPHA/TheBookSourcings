@@ -1141,7 +1141,7 @@ padding-left: 10px;
     .comment-reply-footer{
         width: 100%;
         height: auto;
-        display: none !important;
+        display: none ;
         
     } 
     .post-thumbnail {
