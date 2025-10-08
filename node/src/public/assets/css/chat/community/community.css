@@ -1630,7 +1630,7 @@ top:0px;
              margin: 0;
              padding: 0;
              position: relative;
-             /* background-color: #275791; */
+             background-color: #275791;
        }
        .comment-dropdown,.reply-dropdown{
             font-size: large;
@@ -1688,7 +1688,8 @@ top:0px;
             gap: 8px;
             margin: 0;
         }
-        .media-btn-comment,.reply-btn-comment{
+        
+        .media-btn-comment,.media-btn-reply{
             padding: 0px;
             margin: 0;
             background:none;

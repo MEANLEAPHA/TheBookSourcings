@@ -457,6 +457,15 @@ if (msg.media_url && msg.media_url.length > 0) {
       }
     });
   });
+
+  const noComment = document.getElementById('no-comment');
+  if(msg.comment_count !==0){
+    noComment.style.display = "none";
+
+  }
+  else{
+    noComment.style.diplay = "flex";
+  }
 }
 
 // ====== LIKE FUNCTIONS ======
