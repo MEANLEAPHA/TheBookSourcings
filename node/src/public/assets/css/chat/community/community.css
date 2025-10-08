@@ -1705,10 +1705,7 @@ top:0px;
             gap: 5px;
         }
         
-.comment-reply-footer{
-
-}
-        /* show/unshow reply toggle */
+     /* show/unshow reply toggle */
         .comment-reply-toggle-wrapper p {
         color: #007bff;
         cursor: pointer;
