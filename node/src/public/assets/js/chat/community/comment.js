@@ -849,28 +849,39 @@ function displayComment(cmt) {
   const footerDiv = document.createElement("div");
   footerDiv.className = "comment-reply-footer-div";
 
+  // --- Footer section (hidden by default) ---
   const footer = document.createElement("div");
   footer.className = "comment-reply-footer";
+  footer.style.display = "none"; // hide on DOM load
 
-  // const showReply = document.createElement("p");
-  // showReply.textContent = "Show Reply";
-  // const unShowReply = document.createElement("p");
-  // unShowReply.textContent = "Hide Reply";
-  // unShowReply.style.display = "none";
+  // Toggle reply buttons
+  const showReply = document.createElement("p");
+  showReply.className = "show-reply-toggle";
+  showReply.textContent = `--- Show ${cmt.reply_count}Reply`;
 
-  // showReply.addEventListener("click", () => {
-  //   footer.style.display = "block";
-  //   showReply.style.display = "none";
-  //   unShowReply.style.display = "block";
-  // });
+  const unShowReply = document.createElement("p");
+  unShowReply.className = "hide-reply-toggle";
+  unShowReply.textContent = "--- Hide Reply";
+  unShowReply.style.display = "none";
 
-  // unShowReply.addEventListener("click", () => {
-  //   footer.style.display = "none";
-  //   showReply.style.display = "block";
-  //   unShowReply.style.display = "none";
-  // });
-  
-  
+  // Attach toggle listeners
+  showReply.addEventListener("click", () => {
+    footer.style.display = "block";
+    showReply.style.display = "none";
+    unShowReply.style.display = "inline";
+  });
+
+  unShowReply.addEventListener("click", () => {
+    footer.style.display = "none";
+    showReply.style.display = "inline";
+    unShowReply.style.display = "none";
+  });
+    
+  // --- Append the toggle controls before the footer ---
+const toggleWrapper = document.createElement("div");
+toggleWrapper.className = "comment-reply-toggle-wrapper";
+toggleWrapper.appendChild(showReply);
+toggleWrapper.appendChild(unShowReply);
 
   
 
@@ -954,14 +965,14 @@ if (cmt.media_url && cmt.media_type) {
   footerDiv.appendChild(actionRow);
 
   headerRightBottom.appendChild(body);
+  footerDiv.appendChild(toggleWrapper);
   headerRightBottom.appendChild(footerDiv);
 
 
   // Append together
   div.appendChild(header);
   div.appendChild(headerRightBottom);
-  // div.appendChild(body);
-  // div.appendChild(footerDiv);
+  
   div.appendChild(footer);
 
   document.getElementById("comment-container").prepend(div);
