@@ -1535,16 +1535,43 @@ if (rpy.media_url && rpy.media_type) {
   
 
 
+  // const parentFooter = findCommentFooterForParent(rpy.replyBackTo_id);
+
+  // if (parentFooter) {
+  //   parentFooter.appendChild(div);
+  //   parentFooter.style.display = "block";
+  // } else {
+  //   console.warn("No parent footer found for", rpy.replyBackTo_id, " — appending to first footer as fallback");
+  //   const fallback = document.querySelector('.comment-reply-footer');
+  //   if (fallback) fallback.appendChild(div);
+  // }
+
   const parentFooter = findCommentFooterForParent(rpy.replyBackTo_id);
 
-  if (parentFooter) {
-    parentFooter.appendChild(div);
-    parentFooter.style.display = "block"; // ensure visible
-  } else {
-    console.warn("No parent footer found for", rpy.replyBackTo_id, " — appending to first footer as fallback");
-    const fallback = document.querySelector('.comment-reply-footer');
-    if (fallback) fallback.appendChild(div);
+if (parentFooter) {
+  // Append the reply into the parent's footer
+  parentFooter.appendChild(div);
+
+  // Only show the footer if the user already toggled "Show Reply"
+  // Otherwise, keep it hidden by default
+  if (parentFooter.style.display !== "block") {
+    parentFooter.style.display = "none";
   }
+
+} else {
+  console.warn(
+    `[loadReply] No parent footer found for replyBackTo_id: ${rpy.replyBackTo_id}. Using fallback.`
+  );
+
+  const fallback = document.querySelector(".comment-reply-footer");
+  if (fallback) {
+    fallback.appendChild(div);
+    if (fallback.style.display !== "block") {
+      fallback.style.display = "none";
+    }
+  }
+}
+
 
 
   // === Attach like toggle logic ===
