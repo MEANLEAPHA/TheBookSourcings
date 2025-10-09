@@ -509,11 +509,11 @@ async function loadFavInfoForMessage(messageId, favIcon, favCount){
 
     const data = await res.json();
     favCount.textContent = data.post.fav_count;
-    favIcon.style.color = data.userStatus.favorited ? "yellow" : "gray";
+    favIcon.style.color = data.userStatus.favorited ? "gold" : "gray";
 
   }
   catch(err){
-    consolr.error(err)
+    console.error(err)
   }
 }
 

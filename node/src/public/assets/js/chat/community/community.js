@@ -831,7 +831,7 @@ async function toggleFavActivityForMessage(messageId, favIcon, favCount){
     });
     if(!res.ok) throw new Error("Failed to toggle like");
     const data = await res.json();
-    favIcon.style.color = data.favorited ? "yellow" : "gray";
+    favIcon.style.color = data.favorited ? "gold" : "gray";
     await loadFavInfoForMessage(messageId, favIcon, favCount);
   }
   catch(err){

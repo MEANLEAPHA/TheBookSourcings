@@ -1027,7 +1027,9 @@ padding-left: 10px;
         gap: 5px;
         height: auto;
         width: 100%;
+
      }
+     
     /* content */
     .content{
         /* width: 85%; */
@@ -1245,7 +1247,7 @@ padding-left: 10px;
     }
     .post-media-count-child-right{
         display: flex;
-        gap: 25px;
+        gap: 15px;
     }
          
          .post-hr{
