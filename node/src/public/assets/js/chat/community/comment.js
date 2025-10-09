@@ -508,8 +508,8 @@ async function loadFavInfoForMessage(messageId, favIcon, favCount){
     });
 
     const data = await res.json();
-    favCount.textContent = data.post.fav_count;
-    favIcon.style.color = data.userStatus.favorited ? "gold" : "gray";
+    favCount.textContent = data.post.favorite_count;
+    favIcon.style.color = data.userStatus.favorited ? "orange" : "gray";
 
   }
   catch(err){
@@ -550,7 +550,7 @@ async function toggleFavActivityForMessage(messageId, favIcon, favCount){
     });
     if(!res.ok) throw new Error("Failed to toggle like");
     const data = await res.json();
-    favIcon.style.color = data.favorited ? "yellow" : "gray";
+    favIcon.style.color = data.favorited ? "orange" : "gray";
     await loadFavInfoForMessage(messageId, favIcon, favCount);
   }
   catch(err){
