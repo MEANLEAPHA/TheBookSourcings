@@ -786,7 +786,7 @@ async function loadLikeInfoForMessage(messageId, likeIcon, likeCount) {
 async function loadFavInfoForMessage(messageId, favIcon, favCount){
   try{
     const res = await fetch(`${API_URL}/api/communityPostFav/status/${messageId}`,{
-      header: { "Authorization": `Bearer ${token}`}
+      headers: { "Authorization": `Bearer ${token}`}
     });
 
     const data = await res.json();
