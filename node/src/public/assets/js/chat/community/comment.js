@@ -971,7 +971,7 @@ if (cmt.media_url && cmt.media_type) {
   if(cmt.reply_count !== 0){
  footerDiv.appendChild(toggleWrapper);
  footerDiv.appendChild(footer);
-footer.style.display = "none"; 
+
   }
   
   headerRightBottom.appendChild(footerDiv);
