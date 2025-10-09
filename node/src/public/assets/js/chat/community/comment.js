@@ -464,6 +464,7 @@ if (msg.media_url && msg.media_url.length > 0) {
   }
   else{
     noComment.style.diplay = "flex";
+    noComment.style.flexDirection = "column";
   }
 }
 
