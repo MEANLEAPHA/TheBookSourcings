@@ -857,7 +857,7 @@ function displayComment(cmt) {
   // Toggle reply buttons
   const showReply = document.createElement("p");
   showReply.className = "show-reply-toggle";
-  showReply.textContent = `--- Show ${cmt.reply_count}Reply`;
+  showReply.textContent = `--- Show ${cmt.reply_count} Reply`;
 
   const unShowReply = document.createElement("p");
   unShowReply.className = "hide-reply-toggle";
@@ -988,7 +988,7 @@ if (cmt.media_url && cmt.media_type) {
 
    const likeCounts = document.createElement("div");
    likeCounts.className = "comment-like-count";
-   likeCounts.textContent = cmt.like_count || 0;
+   likeCounts.textContent = cmt.like_count + "Likes" || 0 + "Likes";
 
   btnRow.appendChild(postAt);
   btnRow.appendChild(replyBtn);
@@ -1015,9 +1015,10 @@ if (cmt.media_url && cmt.media_type) {
   headerRightBottom.appendChild(footerDiv);
   headerRight.appendChild(headerRightTop);
   headerRight.appendChild(headerRightBottom);
+  headerRight.appendChild(dropdownWrapper);
   header.appendChild(profileLink);
   header.appendChild(headerRight);
-  header.appendChild(dropdownWrapper);
+  // header.appendChild(dropdownWrapper);
  
   // header.appendChild(headerRightBottom);
 
@@ -1378,8 +1379,7 @@ function displayReply(rpy) {
   const headerRightBottom = document.createElement("div");
   headerRightBottom.className = "reply-header-child-right-bottom";
 
-  headerRight.appendChild(headerRightTop);
-  headerRight.appendChild(headerRightBottom);
+  
 
   const usernameLink = document.createElement("p");
   usernameLink.href = `aboutUser?memberId=${rpy.memberQid}`;
@@ -1480,9 +1480,7 @@ function displayReply(rpy) {
   dropdownWrapper.appendChild(ellipsisBtn);
   dropdownWrapper.appendChild(dropdownMenu);
 
-  header.appendChild(profileLink);
-  header.appendChild(headerRight);
-  header.appendChild(dropdownWrapper);
+ 
 
   // ---reply BODY ---
   const body = document.createElement("div");
@@ -1585,10 +1583,12 @@ if (rpy.media_url && rpy.media_type) {
 
    const likeCounts = document.createElement("div");
    likeCounts.className = "reply-like-count";
-   likeCounts.textContent = rpy.like_count || 0;
+   likeCounts.textContent = rpy.like_count + " Likes" || 0 + " Likes";
 
+  btnRow.appendChild(postAt);
   btnRow.appendChild(replyBtn);
   btnRow.appendChild(likeBtn);
+  btnRow.appendChild(likeCounts);
 
 
  
@@ -1598,7 +1598,13 @@ if (rpy.media_url && rpy.media_type) {
   footerDiv.appendChild(actionRow);
   headerRightBottom.appendChild(body);
   headerRightBottom.appendChild(footerDiv);
-  header.appendChild(headerRightBottom);
+  headerRight.appendChild(headerRightTop);
+  headerRight.appendChild(headerRightBottom);
+  headerRight.appendChild(dropdownWrapper);
+ 
+  header.appendChild(profileLink);
+  header.appendChild(headerRight);
+  
 
   // Append together
   div.appendChild(header);
