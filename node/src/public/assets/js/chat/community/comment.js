@@ -988,7 +988,7 @@ if (cmt.media_url && cmt.media_type) {
 
    const likeCounts = document.createElement("div");
    likeCounts.className = "comment-like-count";
-   likeCounts.textContent = `${rpy.like_count} Likes` || `0 Likes`;
+   likeCounts.textContent = `${cmt.like_count} Likes` || `0 Likes`;
 
   btnRow.appendChild(postAt);
   btnRow.appendChild(replyBtn);
