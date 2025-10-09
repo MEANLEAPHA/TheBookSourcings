@@ -852,7 +852,9 @@ function displayComment(cmt) {
   // --- Footer section (hidden by default) ---
   const footer = document.createElement("div");
   footer.className = "comment-reply-footer";
+
   footer.style.display = "none"; 
+  
 
 
   // Toggle reply buttons

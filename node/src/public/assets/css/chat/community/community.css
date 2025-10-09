@@ -1138,13 +1138,7 @@ padding-left: 10px;
         font-family: sans-serif;
         margin: 0;
     }
-    .comment-reply-footer{
-        width: 100%;
-        height: auto;
-        display: none ;
-        visibility: hidden;
-        
-    } 
+    
     .post-thumbnail {
     position: relative;
     width: 100%;
@@ -1704,7 +1698,11 @@ top:0px;
             justify-content: center;
             gap: 5px;
         }
-        
+        .comment-reply-footer{
+        width: 100%;
+        height: auto;
+        display: none;
+    } 
      /* show/unshow reply toggle */
         .comment-reply-toggle-wrapper p {
         color: #007bff;
