@@ -1608,7 +1608,8 @@ top:0px;
         margin-top: 5px;
        }
        .reply-header-child-right,.comment-header-child-right{
-            display: grid;
+            display: flex;
+            flex-direction: column;
             gap: 0px;
             margin: 0;
              width: auto;
@@ -1617,7 +1618,7 @@ top:0px;
             /* background-color: white; */
             border-radius: 10px;
        }
-       .usernameCooment{
+       .usernameComment{
          font-family: monospace;
          font-size:20px;
          color: var(--font-color);

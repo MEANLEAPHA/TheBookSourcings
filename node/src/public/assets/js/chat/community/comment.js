@@ -763,13 +763,12 @@ function displayComment(cmt) {
   const headerRightBottom = document.createElement("div");
   headerRightBottom.className = "comment-header-child-right-bottom";
 
-  headerRight.appendChild(headerRightTop);
-  headerRight.appendChild(headerRightBottom);
+ 
 
   const usernameLink = document.createElement("p");
   usernameLink.href = `aboutUser?memberId=${cmt.memberQid}`;
   usernameLink.textContent = cmt.username || "Unknown";
-  usernameLink.className = "username";
+  usernameLink.className = "usernameComment";
   headerRightTop.appendChild(usernameLink);
 
   
@@ -838,9 +837,7 @@ function displayComment(cmt) {
   dropdownWrapper.appendChild(ellipsisBtn);
   dropdownWrapper.appendChild(dropdownMenu);
 
-  header.appendChild(profileLink);
-  header.appendChild(headerRight);
-  header.appendChild(dropdownWrapper);
+ 
 
   // --- Comment BODY ---
   const body = document.createElement("div");
@@ -1016,7 +1013,13 @@ if (cmt.media_url && cmt.media_type) {
   }
   
   headerRightBottom.appendChild(footerDiv);
-  header.appendChild(headerRightBottom);
+  headerRight.appendChild(headerRightTop);
+  headerRight.appendChild(headerRightBottom);
+  header.appendChild(profileLink);
+  header.appendChild(headerRight);
+  header.appendChild(dropdownWrapper);
+ 
+  // header.appendChild(headerRightBottom);
 
 
   // Append together
@@ -1381,7 +1384,7 @@ function displayReply(rpy) {
   const usernameLink = document.createElement("p");
   usernameLink.href = `aboutUser?memberId=${rpy.memberQid}`;
   usernameLink.textContent = rpy.username || "Unknown";
-  usernameLink.className = "usernameComment";
+  usernameLink.className = "usernameReply";
   headerRightTop.appendChild(usernameLink);
 
   
