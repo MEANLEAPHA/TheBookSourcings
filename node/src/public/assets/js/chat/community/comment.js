@@ -853,7 +853,7 @@ function displayComment(cmt) {
   const footer = document.createElement("div");
   footer.className = "comment-reply-footer";
 
-  footer.style.display = "none"; 
+  
   
 
 
@@ -970,8 +970,10 @@ if (cmt.media_url && cmt.media_type) {
   headerRightBottom.appendChild(body);
   if(cmt.reply_count !== 0){
  footerDiv.appendChild(toggleWrapper);
+ footerDiv.appendChild(footer);
+footer.style.display = "none"; 
   }
-  footerDiv.appendChild(footer);
+  
   headerRightBottom.appendChild(footerDiv);
 
 
