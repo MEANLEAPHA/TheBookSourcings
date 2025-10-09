@@ -895,35 +895,69 @@ if (cmt.media_url && cmt.media_type) {
   mediaWrapper.className = "comment-thumbnail";
 
   // Only apply blur background for images
-  if (cmt.media_type === "image" && !cmt.media_url.startsWith("blob:")) {
-    mediaWrapper.style.setProperty("--bg-url", `url(${cmt.media_url})`);
-  }
+  // if (cmt.media_type === "image" && !cmt.media_url.startsWith("blob:")) {
+  //   mediaWrapper.style.setProperty("--bg-url", `url(${cmt.media_url})`);
+  // }
 
-  const mediaEl = document.createElement(cmt.media_type === "image" ? "img" : "video");
-  mediaEl.className = "comment-thumbnail-img";
-  mediaEl.src = cmt.media_url;
+  // const mediaEl = document.createElement(cmt.media_type === "image" ? "img" : "video");
+  // mediaEl.className = "comment-thumbnail-img";
+  // mediaEl.src = cmt.media_url;
 
-  if (cmt.media_type === "video") mediaEl.controls = true;
+  // if (cmt.media_type === "video") mediaEl.controls = true;
 
-  mediaWrapper.appendChild(mediaEl);
-  body.appendChild(mediaWrapper);
+  // mediaWrapper.appendChild(mediaEl);
+  // body.appendChild(mediaWrapper);
+
+
+  const itemWrapper = document.createElement("div"); 
+  itemWrapper.className = "blur-wrapper";
+
+
+  // Only apply blur background for images
+  // if (rpy.media_type === "image" && !rpy.media_url.startsWith("blob:")) {
+  //   mediaWrapper.style.setProperty("--bg-url", `url(${rpy.media_url})`);
+  // }
+
+  // const mediaEl = document.createElement(rpy.media_type === "image" ? "img" : "video");
+  // mediaEl.className = "reply-thumbnail-img";
+  // mediaEl.src = rpy.media_url;
+
+  // if (rpy.media_type === "video") mediaEl.controls = true;
+
+ if (cmt.media_type === "image" && !cmt.media_url.startsWith("blob:")) {
+      const img = document.createElement("img");
+      img.src = cmt.media_url;
+      img.className = "comment-thumbnail-img";
+      mediaWrapper.appendChild(img);
+      mediaWrapper.style.setProperty("--bg-url", `url(${cmt.media_url})`);
+    } else if (type === "video") {
+      const video = document.createElement("video");
+      video.src = cmt.media_url;
+      video.controls = true;
+      video.muted = true;
+      video.loop = true;
+      video.className = "comment-thumbnail-video";
+      
+      itemWrapper.style.background = "rgba(0,0,0,0.8)";
+      itemWrapper.appendChild(video);
+      mediaWrapper.appendChild(itemWrapper);
+    }
+    body.appendChild(mediaWrapper);
+
 }
 
 
   // Like / comment / repost counts
-  const counts = document.createElement("div");
-  counts.className = "comment-media-count";
-  counts.innerHTML = `
-    <div class="comment-media-count-child-right" style='display:none'>
-      <p><span class="comment-reply-count">${cmt.reply_count || 0}</span> reply</p>
-    </div>
-    <div>
-      <p><span class="comment-like-count">${cmt.like_count || 0}</span> Likes</p>
-    </div>
-    <div>
-      <p><span class="commentAt">${cmt.createFormNow  || "Just now"}</span></p>
-    </div>
-  `;
+  // const counts = document.createElement("div");
+  // counts.className = "comment-media-count";
+  // counts.innerHTML = `
+  //   <div>
+  //     <p><span class="comment-like-count">${cmt.like_count || 0}</span> Likes</p>
+  //   </div>
+  //   <div>
+  //     <p><span class="commentAt">${cmt.createFormNow  || "Just now"}</span></p>
+  //   </div>
+  // `;
   const actionRow = document.createElement('div');
   actionRow.className = "comment-action-row";
 
@@ -951,11 +985,18 @@ if (cmt.media_url && cmt.media_type) {
     ReplyToast.show();
   });
 
+   const postAt = document.createElement("div");
+   postAt.className = "commentAt";
+   postAt.textContent = cmt.createFormNow || "Just now";
+
+   const likeCounts = document.createElement("div");
+   likeCounts.className = "comment-like-count";
+   likeCounts.textContent = cmt.like_count || 0;
+
+  btnRow.appendChild(postAt);
   btnRow.appendChild(replyBtn);
-
- 
-
   btnRow.appendChild(likeBtn);
+  btnRow.appendChild(likeCounts)
   // btnRow.appendChild(commentBtn); maybe this turn to reply then there will be another fect oad and also two more like logic ...
  
 
@@ -964,7 +1005,7 @@ if (cmt.media_url && cmt.media_type) {
 
 
   actionRow.appendChild(btnRow);
-  actionRow.appendChild(counts);
+  // actionRow.appendChild(counts);
   footerDiv.appendChild(actionRow);
 
   headerRightBottom.appendChild(body);
@@ -975,11 +1016,12 @@ if (cmt.media_url && cmt.media_type) {
   }
   
   headerRightBottom.appendChild(footerDiv);
+  header.appendChild(headerRightBottom);
 
 
   // Append together
   div.appendChild(header);
-  div.appendChild(headerRightBottom);
+  // div.appendChild(headerRightBottom);
   
   // div.appendChild(footer);
 
@@ -987,7 +1029,8 @@ if (cmt.media_url && cmt.media_type) {
 
   // === Attach like toggle logic ===
   const likeIcon = likeBtn.querySelector("i");
-  const likeCount = counts.querySelector(".comment-like-count");
+  // const likeCount = counts.querySelector(".comment-like-count");
+  const likeCount = likeCounts;
   loadLikeInfoForComment(cmt.comment_id, likeIcon, likeCount);
   likeBtn.onclick = async () => {
     await toggleLikeActivityForComment(cmt.comment_id, likeIcon, likeCount);
@@ -1338,7 +1381,7 @@ function displayReply(rpy) {
   const usernameLink = document.createElement("p");
   usernameLink.href = `aboutUser?memberId=${rpy.memberQid}`;
   usernameLink.textContent = rpy.username || "Unknown";
-  usernameLink.className = "username";
+  usernameLink.className = "usernameComment";
   headerRightTop.appendChild(usernameLink);
 
   
@@ -1452,36 +1495,54 @@ if (rpy.media_url && rpy.media_type) {
   const mediaWrapper = document.createElement("div");
   mediaWrapper.className = "reply-thumbnail";
 
+  const itemWrapper = document.createElement("div"); 
+  itemWrapper.className = "blur-wrapper";
+
+
   // Only apply blur background for images
-  if (rpy.media_type === "image" && !rpy.media_url.startsWith("blob:")) {
-    mediaWrapper.style.setProperty("--bg-url", `url(${rpy.media_url})`);
-  }
+  // if (rpy.media_type === "image" && !rpy.media_url.startsWith("blob:")) {
+  //   mediaWrapper.style.setProperty("--bg-url", `url(${rpy.media_url})`);
+  // }
 
-  const mediaEl = document.createElement(rpy.media_type === "image" ? "img" : "video");
-  mediaEl.className = "reply-thumbnail-img";
-  mediaEl.src = rpy.media_url;
+  // const mediaEl = document.createElement(rpy.media_type === "image" ? "img" : "video");
+  // mediaEl.className = "reply-thumbnail-img";
+  // mediaEl.src = rpy.media_url;
 
-  if (rpy.media_type === "video") mediaEl.controls = true;
+  // if (rpy.media_type === "video") mediaEl.controls = true;
 
-  mediaWrapper.appendChild(mediaEl);
+ if (rpy.media_type === "image" && !rpy.media_url.startsWith("blob:")) {
+      const img = document.createElement("img");
+      img.src = msg.media_url;
+      img.className = "reply-thumbnail-img";
+      mediaWrapper.appendChild(img);
+      mediaWrapper.style.setProperty("--bg-url", `url(${rpy.media_url})`);
+    } else if (type === "video") {
+      const video = document.createElement("video");
+      video.src = rpy.media_url;
+      video.controls = true;
+      video.muted = true;
+      video.loop = true;
+      video.className = "reply-thumbnail-video";
+      
+      itemWrapper.style.background = "rgba(0,0,0,0.8)";
+      itemWrapper.appendChild(video);
+      mediaWrapper.appendChild(itemWrapper);
+    }
   body.appendChild(mediaWrapper);
 }
 
 
   // Like / comment / repost counts
-  const counts = document.createElement("div");
-  counts.className = "reply-media-count";
-  counts.innerHTML = `
-    <div class="reply-media-count-child-right" style='display:none'>
-      <p><span class="reply-reply-count">${rpy.reply_count || 0}</span> reply</p>
-    </div>
-    <div>
-      <p><span class="reply-like-count">${rpy.like_count || 0}</span> Likes</p>
-    </div>
-    <div>
-      <p><span class="replyAt">${rpy.createFormNow || "Just now"}</span></p>
-    </div>
-  `;
+  // const counts = document.createElement("div");
+  // counts.className = "reply-media-count";
+  // counts.innerHTML = `
+  //   <div>
+  //     <p><span class="reply-like-count">${rpy.like_count || 0}</span> Likes</p>
+  //   </div>
+  //   <div>
+  //     <p><span class="replyAt">${rpy.createFormNow || "Just now"}</span></p>
+  //   </div>
+  // `;
 
   const actionRow = document.createElement("div");
   actionRow.className = "reply-action-row";
@@ -1515,6 +1576,14 @@ if (rpy.media_url && rpy.media_type) {
       ReplyToast.show();
   });
 
+    const postAt = document.createElement("div");
+   postAt.className = "replyAt";
+   postAt.textContent = rpy.createFormNow || "Just now";
+
+   const likeCounts = document.createElement("div");
+   likeCounts.className = "reply-like-count";
+   likeCounts.textContent = rpy.like_count || 0;
+
   btnRow.appendChild(replyBtn);
   btnRow.appendChild(likeBtn);
 
@@ -1522,14 +1591,15 @@ if (rpy.media_url && rpy.media_type) {
  
 
   actionRow.appendChild(btnRow);
-  actionRow.appendChild(counts);
+  // actionRow.appendChild(counts);
   footerDiv.appendChild(actionRow);
   headerRightBottom.appendChild(body);
-  headerRightBottom.appendChild(footerDiv)
+  headerRightBottom.appendChild(footerDiv);
+  header.appendChild(headerRightBottom);
 
   // Append together
   div.appendChild(header);
-  div.appendChild(headerRightBottom);
+  // div.appendChild(headerRightBottom);
   // div.appendChild(body);
   // div.appendChild(footerDiv);
   
@@ -1576,7 +1646,8 @@ if (parentFooter) {
 
   // === Attach like toggle logic ===
   const likeIcon = likeBtn.querySelector("i");
-  const likeCount = counts.querySelector(".reply-like-count");
+  // const likeCount = counts.querySelector(".reply-like-count");
+   const likeCount = likeCounts;
   loadLikeInfoForReply(rpy.reply_id, likeIcon, likeCount);
   likeBtn.onclick = async () => {
     await toggleLikeActivityForReply(rpy.reply_id, likeIcon, likeCount);
