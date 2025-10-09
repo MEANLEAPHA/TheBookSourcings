@@ -146,7 +146,7 @@ function displayPostById(msg) {
   headerRight.appendChild(headerRightTop);
   headerRight.appendChild(headerRightBottom);
 
-  const usernameLink = document.createElement("a");
+  const usernameLink = document.createElement("p");
   usernameLink.href = `aboutUser?memberId=${msg.memberQid}`;
   usernameLink.textContent = msg.username || "Unknown";
   usernameLink.className = "username";
@@ -155,7 +155,7 @@ function displayPostById(msg) {
   headerRightTop.appendChild(usernameLink);
 
   if (msg.feeling) {
-    const feeling = document.createElement("a");
+    const feeling = document.createElement("p");
     feeling.className = "feelingDisplay";
     feeling.textContent = "is feeling " + feelingMap[msg.feeling] || msg.feeling || "";
     headerRightTop.appendChild(feeling);
@@ -395,9 +395,10 @@ if (msg.media_url && msg.media_url.length > 0) {
   counts.className = "post-media-count";
   counts.innerHTML = `
     <div>
-      <p><span class="post-like-count">${msg.like_count || 0}</span> Likes</p>
+      <p><span class="post-like-count">${msg.like_count || 0}</span> likes</p>
     </div>
     <div class="post-media-count-child-right">
+      <p><span class="post-favorite-count">${msg.favorite_count || 0}</span> favorites</p>
       <p><span class="post-repost-count">${msg.repost_count || 0}</span> reposts</p>
     </div>
   `;
@@ -413,6 +414,12 @@ if (msg.media_url && msg.media_url.length > 0) {
   likeBtn.dataset.id = msg.message_id;
   likeBtn.innerHTML = `<i class="fa-solid fa-heart"></i> <span>Like</span>`;
 
+  // Favorite btn
+  const favBtn = document.createElement("button");
+  favBtn.className = "favBtn media-btn";
+  favBtn.dataset.id = msg.message_id;
+  favBtn.innerHTML = `<i class="fa-solid fa-bookmark"></i> <span>Favorites<span>`;
+
  
 
   // Repost btn
@@ -422,9 +429,8 @@ if (msg.media_url && msg.media_url.length > 0) {
   repostBtn.innerHTML = `<i class="fa-solid fa-share-from-square"></i> <span>Repost</span>`;
 
   btnRow.appendChild(likeBtn);
-
+  btnRow.appendChild(favBtn);
   btnRow.appendChild(repostBtn);
-
   body.appendChild(btnRow);
 
   // Append together
@@ -439,6 +445,15 @@ if (msg.media_url && msg.media_url.length > 0) {
   likeBtn.onclick = async () => {
     await toggleLikeActivityForMessage(msg.message_id, likeIcon, likeCount);
   };
+
+
+  // == Attach fav toggle logic
+  const favIcon = favBtn.querySelector("i");
+  const favCount = counts.querySelector(".post-favorite-count");
+  loadFavInfoForMessage(msg.message_id, favIcon, favCount);
+  favBtn.onclick = async () => {
+     await toggleFavActivityForMessage(msg.message_id, favIcon, favCount);
+  }
 
   // === Dropdown click handlers ===
   dropdownMenu.querySelectorAll("a").forEach((item) => {
@@ -484,6 +499,24 @@ async function loadLikeInfoForMessage(messageId, likeIcon, likeCount) {
   }
 }
 
+// ===== ADD tO FAVOURITES =====
+
+async function loadFavInfoForMessage(messageId, favIcon, favCount){
+  try{
+    const res = await fetch(`${API_URL}/api/communityPostFav/status/${messageId}`,{
+      header: { "Authorization": `Bearer ${token}`}
+    });
+
+    const data = await res.json();
+    favCount.textContent = data.post.fav_count;
+    favIcon.style.color = data.userStatus.favorited ? "yellow" : "gray";
+
+  }
+  catch(err){
+    consolr.error(err)
+  }
+}
+
 async function toggleLikeActivityForMessage(messageId, likeIcon, likeCount) {
   try {
     const res = await fetch(`${API_URL}/api/communityPostLike/like/${messageId}`, {
@@ -501,6 +534,29 @@ async function toggleLikeActivityForMessage(messageId, likeIcon, likeCount) {
   } catch (err) {
     console.error(err);
   }
+}
+
+
+// toggleFav
+async function toggleFavActivityForMessage(messageId, favIcon, favCount){
+  try{
+
+    const res = await fetch(`${API_URL}/api/communityPostFav/save/${messageId}`,{
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
+    });
+    if(!res.ok) throw new Error("Failed to toggle like");
+    const data = await res.json();
+    favIcon.style.color = data.favorited ? "yellow" : "gray";
+    await loadFavInfoForMessage(messageId, favIcon, favCount);
+  }
+  catch(err){
+    console.error(err)
+  }
+
 }
 
 // ====== EDIT  Fetch======
@@ -988,7 +1044,9 @@ if (cmt.media_url && cmt.media_type) {
 
    const likeCounts = document.createElement("div");
    likeCounts.className = "comment-like-count";
-   likeCounts.textContent = `${cmt.like_count} Likes` || `0 Likes`;
+   likeCounts.textContent = `${cmt.like_count || 0} Likes`;
+
+   
 
   btnRow.appendChild(postAt);
   btnRow.appendChild(replyBtn);
@@ -1583,7 +1641,8 @@ if (rpy.media_url && rpy.media_type) {
 
    const likeCounts = document.createElement("div");
    likeCounts.className = "reply-like-count";
-   likeCounts.textContent = `${rpy.like_count} Likes` || `0 Likes`;
+   likeCounts.textContent = `${rpy.like_count || 0} Likes`;
+
 
   btnRow.appendChild(postAt);
   btnRow.appendChild(replyBtn);
