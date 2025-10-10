@@ -113,6 +113,77 @@
   <img src="../../assets/img/pf.jpg" style="width: 50px;height: 50px;border-radius: 50%;object-fit: cover;">
 <button id="searchButton">Share your thought, Meanleap Ha? </button>
 </div> -->
+<div id="rePostToastWrapper">
+  <div id="rePostToast" class="toast align-items-center text-bg-light border-0 toastOfPost" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+      <img src="../../assets/img/pf.jpg" class="userPfFrom">
+      <div class="usernameFrom"></div> <div id="displayFeeling"> </div>
+    </div>
+    <form id="form">
+      <div class="toast-body">
+        <textarea id="message-input" class="form-control mb-2" placeholder="Share your thought here" ></textarea>
+        <div id="media-preview" class="mt-1 mb-1"></div>
+        <div id="uploadWithPost">
+          <div id="uploadWithPost-start">Add to your post</div>
+          <div id="uploadWithPost-end"> 
+            <label for="mediaInput" style="cursor: pointer">
+                  <i class="fa-solid fa-photo-film fa-lg" style="color: green;"></i><div>Photo/Video</div> 
+            </label>
+            <label for="feelingGrid" id="feelingLabel" style="cursor:pointer;">
+                  <i class="fa-solid fa-face-smile" style="color:gold; font-size: 1.5rem;"></i><div>Feeling</div> 
+            </label>
+          </div>
+        </div>
+           <select id="feelingValue" hidden>
+            <option value="" disabled selected>Select a feeling</option>
+            <option value="happy">😊 happy</option>
+            <option value="sad">😢 sad</option>
+            <option value="angry">😡 angry</option>
+            <option value="blissful">😇 blissful</option>
+            <option value="in love">😍 in love</option>
+            <option value="silly">😜 silly</option>
+            <option value="cool">😎 cool</option>
+            <option value="relaxed">😌 relaxed</option>
+            <option value="sleepy">😴 sleepy</option>
+            <option value="sick">🤒 sick</option>
+            <option value="loved">🤗 loved</option>
+            <option value="shocked">😱 shocked</option>
+            <option value="disappointed">😞 disappointed</option>
+            <option value="frustrated">😤 frustrated</option>
+            <option value="excited">🤩 excited</option>
+            <option value="festive">🥳 festive</option>
+            <option value="down">😔 down</option>
+            <option value="confused">😕 confused</option>
+            <option value="nervous">😬 nervous</option>
+            <option value="blessed">😇 blessed</option>
+            <option value="thankful">🙏 thankful</option>
+            <option value="amused">😅 amused</option>
+            <option value="curious">🤓 curious</option>
+            <option value="overwhelmed">😩 overwhelmed</option>
+            <option value="fantastic">😆 fantastic</option>
+            <option value="meh">😶 meh</option>
+            <option value="heartbroken">😢 heartbroken</option>
+            <option value="determined">😤 determined</option>
+            <option value="inspired">😇 inspired</option>
+            <option value="crazy">😵‍💫 crazy</option>
+            <option value="ok">😐 OK</option>
+            <option value="proud">😃 proud</option>
+            <option value="satisfied">😋 satisfied</option>
+            <option value="embarrassed">😳 embarrassed</option>
+            <option value="thoughtful">🤔 thoughtful</option>
+            <option value="lovely">😍 lovely</option>
+            <option value="miserable">😖 miserable</option>
+            <option value="grateful">😇 grateful</option>
+          </select>
+          <input type="file" id="mediaInput" accept="image/*,video/*" multiple hidden>
+        <div class="d-flex justify-content-end mt-3 w-100">
+          <button id="cancelPostBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
+          <button id="submitPostBtn" type="submit" class="btn btn-sm btn-success">Post</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
 
 
 <!-- Upload comment -->

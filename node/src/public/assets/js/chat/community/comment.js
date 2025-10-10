@@ -18,6 +18,9 @@ let reportingTargetId = null;
 const reportToast = new bootstrap.Toast(document.getElementById("reportToast"), { autohide: false });
 const reportReasonInput = document.getElementById("reportReasonInput");
 
+// repost 
+let repost_id = null;
+
 
 // Global URL of TheBooksourcing
 const API_URL = "https://thebooksourcings.onrender.com";
@@ -103,6 +106,134 @@ socket.on("message-deleted", ({ message_id }) => {
   if (div) div.remove();
 });
 
+
+
+// ====== SEND MESSAGE ======
+const formRepost = document.getElementById("form");
+const messageInput = document.getElementById("message-input");
+const mediaInput = document.getElementById("mediaInput");
+const mediaPreview = document.getElementById("media-preview");
+
+let selectedFileRepost = null;
+
+// limit of 5 multi file upload 
+
+
+mediaInput.addEventListener("change", (e) => {
+  const files = Array.from(e.target.files);
+
+  if (files.length > 5) {
+    alert("You can only upload up to 5 files.");
+    mediaInput.value = ""; // clear selection
+    return;
+  }
+
+  // ✅ safe to proceed
+  console.log("Selected files:", files);
+});
+
+    // feeling toast logic
+    const feelingLabel = document.getElementById('feelingLabel');
+    const displayFeeling = document.getElementById("displayFeeling");
+    const feelingInput = document.getElementById("feelingValue");
+ 
+    const FeelingToast = new bootstrap.Toast(document.getElementById("FeelingToast"), { autohide: false });
+    const feelingOptions = document.querySelectorAll('.feeling-option');
+
+    // Show toast on label click
+    feelingLabel.addEventListener('click', () => {
+      FeelingToast.show();
+    });
+
+    // Handle click on each feeling option
+    feelingOptions.forEach(option => {
+      option.addEventListener("click", () => {
+        const text = option.textContent;
+        displayFeeling.textContent = 'Is feeling ' + text;
+
+        // Save selected feeling (strip emoji if needed)
+        feelingInput.value = text.replace(/^[^\w]+/, "").trim().toLowerCase();
+
+        FeelingToast.hide();
+      });
+    });
+    
+
+
+// Show preview when user selects files
+mediaInput.addEventListener("change", () => {
+  const files = mediaInput.files; // can be multiple
+  mediaPreview.innerHTML = ""; // clear previous preview
+
+  if (!files || files.length === 0) return;
+
+  // Loop through all selected files
+  Array.from(files).forEach(file => {
+    if (file.type.startsWith("image/")) {
+      const img = document.createElement("img");
+      img.src = URL.createObjectURL(file);
+      img.style.maxWidth = "150px";
+      img.style.margin = "5px";
+      img.style.borderRadius = "5px";
+      mediaPreview.appendChild(img);
+    } else if (file.type.startsWith("video/")) {
+      const video = document.createElement("video");
+      video.src = URL.createObjectURL(file);
+      video.controls = true;
+      video.style.maxWidth = "150px";
+      video.style.margin = "5px";
+      video.style.borderRadius = "5px";
+      mediaPreview.appendChild(video);
+    }
+  });
+});
+
+// Send message (text + optional multiple media)
+formRepost.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const text = messageInput.value.trim();
+  const feeling = feelingInput.value; // hidden input
+  const files = mediaInput.files; // multiple files
+
+  if (!text && files.length === 0 && !feeling) return; // must have text, media, or feeling
+
+  try {
+    const formData = new FormData();
+    formData.append("message", text);
+    formData.append("feeling", feeling);
+    formData.append("repost", repost_id);
+    // Append all selected files
+    Array.from(files).forEach(file => {
+      formData.append("media", file); // "media" field matches backend
+    });
+
+    const res = await fetch(`${API_URL}/api/community/send`, {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${token}` },
+      body: formData
+    });
+
+    if (!res.ok) throw new Error("Failed to send message");
+
+    const savedMsg = await res.json();
+    savedMsg.createFormNow = "just now"; // instant display
+    displayMessage(savedMsg);
+    socket.emit("send-message", savedMsg);
+
+    // Reset form
+    messageInput.value = "";
+    messageInput.textContent = "";
+    mediaInput.value = "";
+    mediaPreview.innerHTML = "";
+    feelingInput.value = "";
+    selectedFile = null;
+    displayFeeling.textContent = "";
+    postToast.hide();
+  } catch (err) {
+    console.error(err);
+  }
+});
 
 // Fetch to load the post by id
 fetch(`${API_URL}/api/communityComment/display/${postId}`)
@@ -392,6 +523,184 @@ if (msg.media_url && msg.media_url.length > 0) {
   body.appendChild(mediaWrapper);
 }
 
+// --- REPOST SECTION ---
+if (msg.repostData) {
+  const repost = msg.repostData;
+
+  const repostWrapper = document.createElement("div");
+  repostWrapper.className = "repost-wrapper"; // <-- outer container
+
+  // --- Repost Header ---
+  const repostHeader = document.createElement("div");
+  repostHeader.className = "repost-header";
+
+  const repostProfile = document.createElement("img");
+  repostProfile.src = repost.profile_url || "../../assets/img/pf.jpg";
+  repostProfile.alt = "repost-user";
+  repostProfile.className = "repost-userProfile";
+
+  const repostLink = document.createElement("a");
+  repostLink.href = `aboutUser?memberId=${repost.memberQid}`;
+  repostLink.appendChild(repostProfile);
+
+  const repostHeaderRight = document.createElement("div");
+  repostHeaderRight.className = "repost-header-right";
+
+  const repostUsername = document.createElement("p");
+  repostUsername.className = "repost-username";
+  repostUsername.textContent = repost.username || "Unknown";
+
+  const repostFeeling = document.createElement("p");
+  repostFeeling.className = "repost-feeling";
+  if (repost.feeling)
+    repostFeeling.textContent = "is feeling " + (feelingMap[repost.feeling] || repost.feeling);
+
+  const repostTime = document.createElement("p");
+  repostTime.className = "repost-time";
+  repostTime.textContent = dayjs(repost.created_at).fromNow() || "some time ago";
+
+  repostHeaderRight.appendChild(repostUsername);
+  if (repost.feeling) repostHeaderRight.appendChild(repostFeeling);
+  repostHeaderRight.appendChild(repostTime);
+
+  repostHeader.appendChild(repostLink);
+  repostHeader.appendChild(repostHeaderRight);
+  repostWrapper.appendChild(repostHeader);
+
+  // --- Repost Body ---
+  const repostBody = document.createElement("div");
+  repostBody.className = "repost-body";
+
+  if (repost.repostText) {
+    const repostText = document.createElement("p");
+    repostText.className = "repost-text";
+    repostText.textContent = repost.repostText;
+    repostBody.appendChild(repostText);
+  }
+
+  // --- Repost Media Section (same logic as your original post) ---
+  if (repost.media_url && repost.media_url.length > 0) {
+    const repostMediaWrapper = document.createElement("div");
+    repostMediaWrapper.className = "repost-media-wrapper position-relative";
+
+    const repostCarouselId = `repost-carousel-${repost.message_id}`;
+
+    if (repost.media_url.length === 1) {
+      const type = repost.media_type[0];
+      const itemWrapper = document.createElement("div");
+      itemWrapper.className = "repost-blur-wrapper";
+
+      const mediaContainer = document.createElement("div");
+      mediaContainer.className = "repost-media-container";
+
+      if (type === "image") {
+        const img = document.createElement("img");
+        img.src = repost.media_url[0];
+        img.className = "repost-img";
+        mediaContainer.appendChild(img);
+        itemWrapper.style.setProperty("--bg-url", `url(${repost.media_url[0]})`);
+      } else if (type === "video") {
+        const video = document.createElement("video");
+        video.src = repost.media_url[0];
+        video.controls = true;
+        video.muted = true;
+        video.loop = true;
+        video.className = "repost-video";
+        mediaContainer.appendChild(video);
+        observeVideo(video);
+        itemWrapper.style.background = "rgba(0,0,0,0.8)";
+      }
+
+      itemWrapper.appendChild(mediaContainer);
+      repostMediaWrapper.appendChild(itemWrapper);
+    } else {
+      // Multiple media (carousel)
+      const carousel = document.createElement("div");
+      carousel.className = "carousel slide";
+      carousel.id = repostCarouselId;
+      carousel.setAttribute("data-bs-ride", "carousel");
+      carousel.setAttribute("data-bs-interval", "8000");
+
+      const inner = document.createElement("div");
+      inner.className = "carousel-inner";
+
+      repost.media_url.forEach((url, index) => {
+        const item = document.createElement("div");
+        item.className = index === 0 ? "carousel-item active" : "carousel-item";
+
+        const blurWrapper = document.createElement("div");
+        blurWrapper.className = "repost-blur-wrapper";
+
+        const mediaContainer = document.createElement("div");
+        mediaContainer.className = "repost-media-container";
+
+        if (repost.media_type[index] === "image") {
+          const img = document.createElement("img");
+          img.src = url;
+          img.className = "repost-img";
+          mediaContainer.appendChild(img);
+          blurWrapper.style.setProperty("--bg-url", `url(${url})`);
+        } else if (repost.media_type[index] === "video") {
+          const video = document.createElement("video");
+          video.src = url;
+          video.controls = true;
+          video.muted = true;
+          video.loop = true;
+          video.className = "repost-video";
+          mediaContainer.appendChild(video);
+          observeVideo(video);
+          blurWrapper.style.setProperty(
+            "--bg-url",
+            `linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8))`
+          );
+        }
+
+        blurWrapper.appendChild(mediaContainer);
+        item.appendChild(blurWrapper);
+        inner.appendChild(item);
+      });
+
+      carousel.appendChild(inner);
+      repostMediaWrapper.appendChild(carousel);
+
+      const counter = document.createElement("div");
+      counter.className = "repost-carousel-counter position-absolute";
+      counter.textContent = `1/${repost.media_url.length}`;
+      repostMediaWrapper.appendChild(counter);
+
+      const prevBtn = document.createElement("button");
+      prevBtn.className = "carousel-control-prev";
+      prevBtn.type = "button";
+      prevBtn.setAttribute("data-bs-target", `#${repostCarouselId}`);
+      prevBtn.setAttribute("data-bs-slide", "prev");
+      prevBtn.innerHTML = `<span class="carousel-control-prev-icon"></span>`;
+
+      const nextBtn = document.createElement("button");
+      nextBtn.className = "carousel-control-next";
+      nextBtn.type = "button";
+      nextBtn.setAttribute("data-bs-target", `#${repostCarouselId}`);
+      nextBtn.setAttribute("data-bs-slide", "next");
+      nextBtn.innerHTML = `<span class="carousel-control-next-icon"></span>`;
+
+      repostMediaWrapper.appendChild(prevBtn);
+      repostMediaWrapper.appendChild(nextBtn);
+
+      carousel.addEventListener("slid.bs.carousel", () => {
+        const activeIndex = Array.from(inner.children).findIndex((c) =>
+          c.classList.contains("active")
+        );
+        counter.textContent = `${activeIndex + 1}/${repost.media_url.length}`;
+      });
+    }
+
+    repostBody.appendChild(repostMediaWrapper);
+  }
+
+  repostWrapper.appendChild(repostBody);
+  body.appendChild(repostWrapper);
+}
+
+
   // Like / comment / repost counts
   const counts = document.createElement("div");
   counts.className = "post-media-count";
@@ -429,6 +738,16 @@ if (msg.media_url && msg.media_url.length > 0) {
   repostBtn.className = "repostBtn media-btn";
   repostBtn.dataset.id = msg.message_id;
   repostBtn.innerHTML = `<i class="fa-solid fa-share-from-square"></i> <span>Repost</span>`;
+
+   repostBtn.onclick = () => {
+     repost_id = msg.message_id;
+     postToast.show();
+
+     messageInput.textContent = "Say something about this post";
+     // Hide media input and preview during repost
+    mediaInput.style.display = "none";
+    mediaPreview.style.display = "none";
+  }
 
   btnRow.appendChild(likeBtn);
   btnRow.appendChild(favBtn);
@@ -477,7 +796,7 @@ if (msg.media_url && msg.media_url.length > 0) {
         // Copy to clipboard
         navigator.clipboard.writeText(copyUrl).then(() => {
           // Change text to "✅ Copied link"
-          const originalText = '<li class="li-opt"><a class="dropdown-item copy-option" href="#"><i class="fa-solid fa-link" style="color:blue"></i> Copy link</a></li>';
+          const originalText = '<i class="fa-solid fa-link" style="color:blue"></i> Copy link';
           item.textContent = "✅ Copied link";
 
           // Optional: revert back after 2 seconds
@@ -1940,7 +2259,9 @@ document.getElementById("submitReportReplyBtn").onclick = async () => {
   // });
 
  
-
+// repostPost toast
+  const postToast = new bootstrap.Toast(document.getElementById("rePostToast"), { autohide: false });
+  const searchBtn = document.getElementById("searchButton");
 
 // ====== CANCEL BUTTONS Reply ======
 // cancel edit btn

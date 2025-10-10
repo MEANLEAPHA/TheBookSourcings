@@ -1,3 +1,6 @@
+const relativeTime = require("dayjs/plugin/relativeTime");
+const dayjs = require("dayjs");
+dayjs.extend(relativeTime);
 // --- Feeling Dictionary (global) ---
 const feelingMap = {
   happy: "😊 happy",
@@ -85,6 +88,11 @@ const deleteToast = new bootstrap.Toast(document.getElementById("deleteToast"), 
 let reportingTargetId = null;
 const reportToast = new bootstrap.Toast(document.getElementById("reportToast"), { autohide: false });
 const reportReasonInput = document.getElementById("reportReasonInput");
+
+
+// repost 
+let repost_id = null;
+
 
 // ====== SOCKET LISTENERS ======
 socket.on("connect", () => console.log("Connected:", socket.id));
@@ -213,7 +221,7 @@ form.addEventListener("submit", async (e) => {
     const formData = new FormData();
     formData.append("message", text);
     formData.append("feeling", feeling);
-
+    formData.append("repost", repost_id);
     // Append all selected files
     Array.from(files).forEach(file => {
       formData.append("media", file); // "media" field matches backend
@@ -404,7 +412,7 @@ function observeVideo(video) {
   observer.observe(video);
 }
 
-// --- DISPLAY MESSAGE ---
+
 if (msg.media_url && msg.media_url.length > 0) {
   const mediaWrapper = document.createElement("div");
   mediaWrapper.className = "post-thumbnail position-relative"; // allow overlay
@@ -525,152 +533,182 @@ if (msg.media_url && msg.media_url.length > 0) {
 
   body.appendChild(mediaWrapper);
 }
+// --- REPOST SECTION ---
+if (msg.repostData) {
+  const repost = msg.repostData;
 
-// if (msg.media_url && msg.media_url.length > 0) {
-//   const mediaWrapper = document.createElement("div");
-//   mediaWrapper.className = "post-thumbnail position-relative"; // allow overlay
+  const repostWrapper = document.createElement("div");
+  repostWrapper.className = "repost-wrapper"; // <-- outer container
 
-//   const carouselId = `carousel-${msg.message_id}`;
+  // --- Repost Header ---
+  const repostHeader = document.createElement("div");
+  repostHeader.className = "repost-header";
 
-//  if (msg.media_url.length === 1) {
-//   const type = msg.media_type[0];
-//   const itemWrapper = document.createElement("div");
-//   itemWrapper.className = "blur-wrapper";
+  const repostProfile = document.createElement("img");
+  repostProfile.src = repost.profile_url || "../../assets/img/pf.jpg";
+  repostProfile.alt = "repost-user";
+  repostProfile.className = "repost-userProfile";
 
-//   const mediaContainer = document.createElement("div");
-//   mediaContainer.className = "media-container";
+  const repostLink = document.createElement("a");
+  repostLink.href = `aboutUser?memberId=${repost.memberQid}`;
+  repostLink.appendChild(repostProfile);
 
-//   if (type === "image") {
-//     const img = document.createElement("img");
-//     img.src = msg.media_url[0];
-//     img.className = "post-thumbnail-img";
-//     mediaContainer.appendChild(img);
+  const repostHeaderRight = document.createElement("div");
+  repostHeaderRight.className = "repost-header-right";
 
-//     itemWrapper.style.setProperty("--bg-url", `url(${msg.media_url[0]})`);
-//   } else if (type === "video") {
-//     const video = document.createElement("video");
-//     video.src = msg.media_url[0];
-//     video.controls = true;
-//     video.muted = true;
-//     video.loop = true;
-//     video.className = "post-thumbnail-video";
-//     mediaContainer.appendChild(video);
-//     observeVideo(video);
+  const repostUsername = document.createElement("p");
+  repostUsername.className = "repost-username";
+  repostUsername.textContent = repost.username || "Unknown";
 
-//     itemWrapper.style.background = "rgba(0,0,0,0.8)";
-//   }
+  const repostFeeling = document.createElement("p");
+  repostFeeling.className = "repost-feeling";
+  if (repost.feeling)
+    repostFeeling.textContent = "is feeling " + (feelingMap[repost.feeling] || repost.feeling);
 
-//   itemWrapper.appendChild(mediaContainer);
-//   mediaWrapper.appendChild(itemWrapper);
-// }
-// else {
-//     // --- Multiple files -> Bootstrap carousel ---
-//     const carousel = document.createElement("div");
-//     carousel.className = "carousel slide";
-//     carousel.id = carouselId;
-//     carousel.setAttribute("data-bs-ride", "carousel");
-//     carousel.setAttribute("data-bs-interval", "8000");
+  const repostTime = document.createElement("p");
+  repostTime.className = "repost-time";
+  repostTime.textContent = dayjs(repost.created_at).fromNow() || "some time ago";
 
-//     const inner = document.createElement("div");
-//     inner.className = "carousel-inner";
+  repostHeaderRight.appendChild(repostUsername);
+  if (repost.feeling) repostHeaderRight.appendChild(repostFeeling);
+  repostHeaderRight.appendChild(repostTime);
 
-//     msg.media_url.forEach((url, index) => {
-//   const item = document.createElement("div");
-//   item.className = index === 0 ? "carousel-item active" : "carousel-item";
+  repostHeader.appendChild(repostLink);
+  repostHeader.appendChild(repostHeaderRight);
+  repostWrapper.appendChild(repostHeader);
 
-//   // Blur wrapper inside each item
-//   const blurWrapper = document.createElement("div");
-//   blurWrapper.className = "blur-wrapper";
+  // --- Repost Body ---
+  const repostBody = document.createElement("div");
+  repostBody.className = "repost-body";
 
-//   // Media container
-//   const mediaContainer = document.createElement("div");
-//   mediaContainer.className = "media-container";
+  if (repost.repostText) {
+    const repostText = document.createElement("p");
+    repostText.className = "repost-text";
+    repostText.textContent = repost.repostText;
+    repostBody.appendChild(repostText);
+  }
 
-//   if (msg.media_type[index] === "image") {
-//     const img = document.createElement("img");
-//     img.src = url;
-//     img.className = "post-thumbnail-img";
-//     mediaContainer.appendChild(img);
+  // --- Repost Media Section (same logic as your original post) ---
+  if (repost.media_url && repost.media_url.length > 0) {
+    const repostMediaWrapper = document.createElement("div");
+    repostMediaWrapper.className = "repost-media-wrapper position-relative";
 
-//     // background for blur
-//     blurWrapper.style.setProperty("--bg-url", `url(${url})`);
-//   } else if (msg.media_type[index] === "video") {
-//     const video = document.createElement("video");
-//     video.src = url;
-//     video.controls = true;
-//     video.muted = true;
-//     video.loop = true;
-//     video.className = "post-thumbnail-video";
-//     mediaContainer.appendChild(video);
-//     observeVideo(video);
+    const repostCarouselId = `repost-carousel-${repost.message_id}`;
 
-//     // fallback blur (black bg)
-//     blurWrapper.style.background = "rgba(0,0,0,0.8)";
-//   }
+    if (repost.media_url.length === 1) {
+      const type = repost.media_type[0];
+      const itemWrapper = document.createElement("div");
+      itemWrapper.className = "repost-blur-wrapper";
 
-//   blurWrapper.appendChild(mediaContainer);
-//   item.appendChild(blurWrapper);
-//   inner.appendChild(item);
-// });
+      const mediaContainer = document.createElement("div");
+      mediaContainer.className = "repost-media-container";
 
+      if (type === "image") {
+        const img = document.createElement("img");
+        img.src = repost.media_url[0];
+        img.className = "repost-img";
+        mediaContainer.appendChild(img);
+        itemWrapper.style.setProperty("--bg-url", `url(${repost.media_url[0]})`);
+      } else if (type === "video") {
+        const video = document.createElement("video");
+        video.src = repost.media_url[0];
+        video.controls = true;
+        video.muted = true;
+        video.loop = true;
+        video.className = "repost-video";
+        mediaContainer.appendChild(video);
+        observeVideo(video);
+        itemWrapper.style.background = "rgba(0,0,0,0.8)";
+      }
 
-//     carousel.appendChild(inner);
-//     mediaWrapper.appendChild(carousel);
+      itemWrapper.appendChild(mediaContainer);
+      repostMediaWrapper.appendChild(itemWrapper);
+    } else {
+      // Multiple media (carousel)
+      const carousel = document.createElement("div");
+      carousel.className = "carousel slide";
+      carousel.id = repostCarouselId;
+      carousel.setAttribute("data-bs-ride", "carousel");
+      carousel.setAttribute("data-bs-interval", "8000");
 
-//     // --- Modern counter ---
-//     const counter = document.createElement("div");
-//     counter.className = "carousel-counter position-absolute";
-//     counter.textContent = `1/${msg.media_url.length}`;
-//     mediaWrapper.appendChild(counter);
+      const inner = document.createElement("div");
+      inner.className = "carousel-inner";
 
-//     // Prev/Next buttons
-//     const prevBtn = document.createElement("button");
-//     prevBtn.className = "carousel-control-prev";
-//     prevBtn.type = "button";
-//     prevBtn.setAttribute("data-bs-target", `#${carouselId}`);
-//     prevBtn.setAttribute("data-bs-slide", "prev");
-//     prevBtn.innerHTML = `<span class="carousel-control-prev-icon"></span>`;
+      repost.media_url.forEach((url, index) => {
+        const item = document.createElement("div");
+        item.className = index === 0 ? "carousel-item active" : "carousel-item";
 
-//     const nextBtn = document.createElement("button");
-//     nextBtn.className = "carousel-control-next";
-//     nextBtn.type = "button";
-//     nextBtn.setAttribute("data-bs-target", `#${carouselId}`);
-//     nextBtn.setAttribute("data-bs-slide", "next");
-//     nextBtn.innerHTML = `<span class="carousel-control-next-icon"></span>`;
+        const blurWrapper = document.createElement("div");
+        blurWrapper.className = "repost-blur-wrapper";
 
-//     mediaWrapper.appendChild(prevBtn);
-//     mediaWrapper.appendChild(nextBtn);
+        const mediaContainer = document.createElement("div");
+        mediaContainer.className = "repost-media-container";
 
-//     // Update counter on slide change
-//     carousel.addEventListener("slid.bs.carousel", () => {
-//       const activeIndex = Array.from(inner.children).findIndex(c => c.classList.contains("active"));
-//       counter.textContent = `${activeIndex + 1}/${msg.media_url.length}`;
-//     });
-//   }
+        if (repost.media_type[index] === "image") {
+          const img = document.createElement("img");
+          img.src = url;
+          img.className = "repost-img";
+          mediaContainer.appendChild(img);
+          blurWrapper.style.setProperty("--bg-url", `url(${url})`);
+        } else if (repost.media_type[index] === "video") {
+          const video = document.createElement("video");
+          video.src = url;
+          video.controls = true;
+          video.muted = true;
+          video.loop = true;
+          video.className = "repost-video";
+          mediaContainer.appendChild(video);
+          observeVideo(video);
+          blurWrapper.style.setProperty(
+            "--bg-url",
+            `linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8))`
+          );
+        }
 
-//   body.appendChild(mediaWrapper);
-// }
+        blurWrapper.appendChild(mediaContainer);
+        item.appendChild(blurWrapper);
+        inner.appendChild(item);
+      });
 
-// --- VIDEO OBSERVER ---
-// Autoplay when visible, pause when out of view
+      carousel.appendChild(inner);
+      repostMediaWrapper.appendChild(carousel);
 
-// const observer = new IntersectionObserver((entries) => {
-//   entries.forEach(entry => {
-//     const video = entry.target;
-//     if (entry.isIntersecting) {
-//       video.play().catch(() => {});
-//     } else {
-//       video.pause();
-//     }
-//   });
-// }, { threshold: 0.5 });
+      const counter = document.createElement("div");
+      counter.className = "repost-carousel-counter position-absolute";
+      counter.textContent = `1/${repost.media_url.length}`;
+      repostMediaWrapper.appendChild(counter);
 
-// function observeVideo(video) {
-//   observer.observe(video);
-// }
+      const prevBtn = document.createElement("button");
+      prevBtn.className = "carousel-control-prev";
+      prevBtn.type = "button";
+      prevBtn.setAttribute("data-bs-target", `#${repostCarouselId}`);
+      prevBtn.setAttribute("data-bs-slide", "prev");
+      prevBtn.innerHTML = `<span class="carousel-control-prev-icon"></span>`;
 
+      const nextBtn = document.createElement("button");
+      nextBtn.className = "carousel-control-next";
+      nextBtn.type = "button";
+      nextBtn.setAttribute("data-bs-target", `#${repostCarouselId}`);
+      nextBtn.setAttribute("data-bs-slide", "next");
+      nextBtn.innerHTML = `<span class="carousel-control-next-icon"></span>`;
 
+      repostMediaWrapper.appendChild(prevBtn);
+      repostMediaWrapper.appendChild(nextBtn);
 
+      carousel.addEventListener("slid.bs.carousel", () => {
+        const activeIndex = Array.from(inner.children).findIndex((c) =>
+          c.classList.contains("active")
+        );
+        counter.textContent = `${activeIndex + 1}/${repost.media_url.length}`;
+      });
+    }
+
+    repostBody.appendChild(repostMediaWrapper);
+  }
+
+  repostWrapper.appendChild(repostBody);
+  body.appendChild(repostWrapper);
+}
 
 
   // Like / comment / repost counts
@@ -718,6 +756,14 @@ if (msg.media_url && msg.media_url.length > 0) {
   repostBtn.className = "repostBtn media-btn";
   repostBtn.dataset.id = msg.message_id;
   repostBtn.innerHTML = `<i class="fa-solid fa-share-from-square"></i> <span>Repost</span>`;
+
+  repostBtn.onclick = () => {
+     repost_id = msg.message_id;
+     postToast.show();
+     // Hide media input and preview during repost
+    mediaInput.style.display = "none";
+    mediaPreview.style.display = "none";
+  }
 
   btnRow.appendChild(likeBtn);
   btnRow.appendChild(favBtn);
@@ -767,7 +813,7 @@ if (msg.media_url && msg.media_url.length > 0) {
         // Copy to clipboard
         navigator.clipboard.writeText(copyUrl).then(() => {
           // Change text to "✅ Copied link"
-          const originalText = '<li class="li-opt"><a class="dropdown-item copy-option" href="#"><i class="fa-solid fa-link" style="color:blue"></i> Copy link</a></li>';
+          const originalText = '<i class="fa-solid fa-link" style="color:blue"></i> Copy link';
           item.textContent = "✅ Copied link";
 
           // Optional: revert back after 2 seconds
@@ -946,6 +992,11 @@ document.getElementById("submitReportBtn").onclick = async () => {
     feelingInput.value = "";
     selectedFile = null;
     displayFeeling.textContent = "";
+
+    // Restore media inputs visibility
+    mediaInput.style.display = "";
+    mediaPreview.style.display = "";
+    repost_id = null; // clear repost mode
   };
 
   

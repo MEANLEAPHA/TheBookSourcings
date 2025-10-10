@@ -7,10 +7,43 @@ const { uploadToS3, deleteFromS3 } = require("../../../middleware/AWSuploadMiddl
 dayjs.extend(relativeTime);
 
 // 📌 Display all messages
+// const getAllMessages = async (req, res) => {
+//   try {
+//     const [rows] = await db.query(
+//       `SELECT 
+//           c.message_id, 
+//           c.message_text AS message, 
+//           c.feeling,
+//           c.media_type,
+//           c.media_url,
+//           c.like_count,
+//           c.comment_count,
+//           c.repost_count,
+//           c.memberQid, 
+//           c.created_at,
+//           u.username
+//        FROM community c
+//        JOIN users u ON c.memberQid = u.memberQid
+//        WHERE c.deleted_at IS NULL
+//        ORDER BY c.created_at ASC`
+//     );
+ 
+//     const messages = rows.map(row => ({
+//       ...row,
+//       createFormNow: dayjs(row.created_at).fromNow(),
+//       media_url: row.media_url ? JSON.parse(row.media_url) : [],
+//       media_type: row.media_type ? JSON.parse(row.media_type) : []
+//     }));
+
+//     res.json(messages);
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// };
 const getAllMessages = async (req, res) => {
   try {
-    const [rows] = await db.query(
-      `SELECT 
+    const [rows] = await db.query(`
+      SELECT 
           c.message_id, 
           c.message_text AS message, 
           c.feeling,
@@ -19,27 +52,67 @@ const getAllMessages = async (req, res) => {
           c.like_count,
           c.comment_count,
           c.repost_count,
+          c.repost_id,
           c.memberQid, 
           c.created_at,
           u.username
        FROM community c
        JOIN users u ON c.memberQid = u.memberQid
        WHERE c.deleted_at IS NULL
-       ORDER BY c.created_at ASC`
-    );
- 
-    const messages = rows.map(row => ({
-      ...row,
-      createFormNow: dayjs(row.created_at).fromNow(),
-      media_url: row.media_url ? JSON.parse(row.media_url) : [],
-      media_type: row.media_type ? JSON.parse(row.media_type) : []
+       ORDER BY c.created_at DESC
+    `);
+
+    const messages = await Promise.all(rows.map(async row => {
+      let repostData = null;
+
+      // If this message is a repost, get the original post info
+      if (row.repost_id) {
+        const [repostRows] = await db.query(`
+          SELECT 
+              c.message_id,
+              c.message_text AS repostText, 
+              c.feeling,
+              c.media_type,
+              c.media_url,
+              c.memberQid,
+              c.created_at,
+              u.username
+           FROM community c
+           JOIN users u ON c.memberQid = u.memberQid
+           WHERE c.message_id = ?
+        `, [row.repost_id]);
+
+        if (repostRows.length > 0) {
+          repostData = repostRows[0];
+          repostData.media_url = repostData.media_url ? JSON.parse(repostData.media_url) : [];
+          repostData.media_type = repostData.media_type ? JSON.parse(repostData.media_type) : [];
+        }
+      }
+
+      return {
+        message_id: row.message_id,
+        message: row.message,
+        feeling: row.feeling,
+        media_type: row.media_type ? JSON.parse(row.media_type) : [],
+        media_url: row.media_url ? JSON.parse(row.media_url) : [],
+        like_count: row.like_count,
+        comment_count: row.comment_count,
+        repost_count: row.repost_count,
+        repost_id: row.repost_id,
+        repostData, // ✅ embed repost info (if any)
+        username: row.username,
+        memberQid: row.memberQid,
+        createFormNow: dayjs(row.created_at).fromNow()
+      };
     }));
 
     res.json(messages);
   } catch (err) {
+    console.error("getAllMessages error:", err);
     res.status(500).json({ error: err.message });
   }
 };
+
 
 
 // 📌 Send message with multiple media
@@ -47,7 +120,7 @@ const sendMessage = async (req, res) => {
   try {
     const memberQid = req.user.memberQid;
     const username = req.user.username;
-    const { message, feeling } = req.body;
+    const { message, feeling, repost_id } = req.body;
 
     let mediaUrls = [];
     let mediaTypes = [];
@@ -65,14 +138,46 @@ const sendMessage = async (req, res) => {
       }
     }
 
-    if (!message && mediaUrls.length === 0 && !feeling) {
-      return res.status(400).json({ error: "Message, media, or feeling required" });
+    if (!message && mediaUrls.length === 0 && !feeling && !repost_id) {
+      return res.status(400).json({ error: "Message, media, repost content,or feeling required" });
     }
 
     const [result] = await db.query(
-      "INSERT INTO community (memberQid, message_text, feeling, media_type, media_url) VALUES (?, ?, ?, ?, ?)",
-      [memberQid, message || null, feeling || null, JSON.stringify(mediaTypes), JSON.stringify(mediaUrls)]
+      "INSERT INTO community (memberQid, message_text, feeling, repost_id, media_type, media_url) VALUES (?, ?, ?, ?, ?, ?)",
+      [memberQid, message || null, feeling || null, repost_id, JSON.stringify(mediaTypes), JSON.stringify(mediaUrls)]
     );
+
+     
+    // Fetch repost info if repost_id exists
+    let repostData = null;
+    if (repost_id) {
+      const [rows] = await db.query(
+        `SELECT 
+            c.message_id,
+            c.message_text AS repostText, 
+            c.feeling,
+            c.memberQid, 
+            c.media_type,
+            c.media_url,
+            c.created_at,
+            u.username
+         FROM community c
+         JOIN users u ON c.memberQid = u.memberQid
+         WHERE c.message_id = ?`,
+        [repost_id]
+      );
+
+      if (rows.length > 0) {
+        repostData = rows[0];
+        // ✅ Parse JSON fields
+        repostData.media_url = repostData.media_url
+          ? JSON.parse(repostData.media_url)
+          : [];
+        repostData.media_type = repostData.media_type
+          ? JSON.parse(repostData.media_type)
+          : [];
+      }
+    }
 
     const msgObj = {
       message_id: result.insertId,
@@ -83,7 +188,8 @@ const sendMessage = async (req, res) => {
       media_type: mediaTypes,
       media_url: mediaUrls,
       createFormNow: "just now",
-      like_count: 0
+      like_count: 0,
+      repostData 
     };
 
     res.json(msgObj);
