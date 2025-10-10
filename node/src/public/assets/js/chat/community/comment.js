@@ -216,10 +216,10 @@ formRepost.addEventListener("submit", async (e) => {
 
     if (!res.ok) throw new Error("Failed to send message");
 
-    const savedMsg = await res.json();
-    savedMsg.createFormNow = "just now"; // instant display
-    displayMessage(savedMsg);
-    socket.emit("send-message", savedMsg);
+    // const savedMsg = await res.json();
+    // savedMsg.createFormNow = "just now"; 
+    // displayMessage(savedMsg);
+    // socket.emit("send-message", savedMsg);
 
     // Reset form
     messageInput.value = "";
@@ -557,7 +557,7 @@ if (msg.repostData) {
 
   const repostTime = document.createElement("p");
   repostTime.className = "repost-time";
-  repostTime.textContent = dayjs(repost.created_at).fromNow() || "some time ago";
+  repostTime.textContent = repost.createFormNow;
 
   repostHeaderRight.appendChild(repostUsername);
   if (repost.feeling) repostHeaderRight.appendChild(repostFeeling);
@@ -2261,7 +2261,7 @@ document.getElementById("submitReportReplyBtn").onclick = async () => {
  
 // repostPost toast
   const postToast = new bootstrap.Toast(document.getElementById("rePostToast"), { autohide: false });
-  const searchBtn = document.getElementById("searchButton");
+
 
 // ====== CANCEL BUTTONS Reply ======
 // cancel edit btn
@@ -2291,4 +2291,19 @@ document.getElementById("cancelReportReplyBtn").onclick = () => {
     mediaReplyInput.value = "";
     mediaReplyPreview.innerHTML = "";
     selectedReplyFile = null;
+  };
+
+  document.getElementById("cancelPostBtn").onclick = () => {
+    postToast.hide();
+    messageInput.value = "";
+    mediaInput.value = "";
+    mediaPreview.innerHTML = "";
+    feelingInput.value = "";
+    selectedFile = null;
+    displayFeeling.textContent = "";
+
+    // Restore media inputs visibility
+    mediaInput.style.display = "";
+    mediaPreview.style.display = "";
+    repost_id = null; // clear repost mode
   };

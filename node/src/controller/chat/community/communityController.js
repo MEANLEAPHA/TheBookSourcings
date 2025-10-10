@@ -82,10 +82,18 @@ const getAllMessages = async (req, res) => {
            WHERE c.message_id = ?
         `, [row.repost_id]);
 
-        if (repostRows.length > 0) {
-          repostData = repostRows[0];
-          repostData.media_url = repostData.media_url ? JSON.parse(repostData.media_url) : [];
-          repostData.media_type = repostData.media_type ? JSON.parse(repostData.media_type) : [];
+         if (repostRows.length > 0) {
+          const repost = repostRows[0];
+          repostData = {
+            message_id: repost.message_id,
+            message: repost.repostText,
+            feeling: repost.feeling,
+            media_type: repost.media_type ? JSON.parse(repost.media_type) : [],
+            media_url: repost.media_url ? JSON.parse(repost.media_url) : [],
+            memberQid: repost.memberQid,
+            username: repost.username,
+            createFormNow: dayjs(repost.created_at).fromNow(), // 👈 Add this
+          };
         }
       }
 
@@ -99,7 +107,7 @@ const getAllMessages = async (req, res) => {
         comment_count: row.comment_count,
         repost_count: row.repost_count,
         repost_id: row.repost_id,
-        repostData, // ✅ embed repost info (if any)
+        repostData, 
         username: row.username,
         memberQid: row.memberQid,
         createFormNow: dayjs(row.created_at).fromNow()

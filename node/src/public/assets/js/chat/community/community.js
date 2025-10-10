@@ -1,6 +1,4 @@
-const relativeTime = require("dayjs/plugin/relativeTime");
-const dayjs = require("dayjs");
-dayjs.extend(relativeTime);
+
 // --- Feeling Dictionary (global) ---
 const feelingMap = {
   happy: "😊 happy",
@@ -567,7 +565,7 @@ if (msg.repostData) {
 
   const repostTime = document.createElement("p");
   repostTime.className = "repost-time";
-  repostTime.textContent = dayjs(repost.created_at).fromNow() || "some time ago";
+  repostTime.textContent = repost.createFormNow;
 
   repostHeaderRight.appendChild(repostUsername);
   if (repost.feeling) repostHeaderRight.appendChild(repostFeeling);
