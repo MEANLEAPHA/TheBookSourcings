@@ -1619,7 +1619,7 @@ top:0px;
             /* background-color: white; */
             border-radius: 10px;
        }
-       .usernameComment{
+       .usernameComment,.usernameReply{
          font-family: monospace;
          font-size:20px;
          color: var(--font-color);

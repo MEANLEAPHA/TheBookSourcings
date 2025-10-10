@@ -180,15 +180,15 @@ function displayPostById(msg) {
   dropdownMenu.className = "dropdown-menu";
   if (msg.memberQid === userMemberQid) {
     dropdownMenu.innerHTML = `
-      <li><a class="dropdown-item edit-option" href="#">Edit</a></li>
-      <li><a class="dropdown-item delete-option" href="#">Delete</a></li>
-      <li><a class="dropdown-item report-option" href="#">Report</a></li>
-      <li><a class="dropdown-item copy-option" href="#">Copy link</a></li>
+      <li class='li-opt'><a class="dropdown-item edit-option" href="#"><i class="fa-solid fa-pen" style="color:green"></i> Edit</a></li>
+      <li class='li-opt'><a class="dropdown-item delete-option" href="#"><i class="fa-solid fa-trash" style="color:red" ></i> Delete</a></li>
+      <li class='li-opt'><a class="dropdown-item report-option" href="#"><i class="fa-solid fa-flag" style="color:orange"></i> Report</a></li>
+      <li class='li-opt'><a class="dropdown-item copy-option" href="#"><i class="fa-solid fa-link" style="color:blue"></i> Copy link</a></li>
     `;
   } else {
     dropdownMenu.innerHTML = `
-      <li><a class="dropdown-item report-option" href="#">Report</a></li>
-      <li><a class="dropdown-item copy-option" href="#">Copy link</a></li>
+      <li class='li-opt'><a class="dropdown-item report-option" href="#"><i class="fa-solid fa-flag" style="color:orange"></i> Report</a></li>
+      <li class='li-opt'><a class="dropdown-item copy-option" href="#"><i class="fa-solid fa-link" style="color:blue"></i> Copy link</a></li>
     `;
   }
   dropdownWrapper.appendChild(ellipsisBtn);
@@ -483,7 +483,7 @@ if (msg.media_url && msg.media_url.length > 0) {
           // Optional: revert back after 2 seconds
           setTimeout(() => {
             item.textContent = originalText;
-          }, 2000);
+          }, 10000);
         }).catch((err) => {
           console.error("Failed to copy link:", err);
         });
