@@ -772,7 +772,7 @@ if (msg.media_url && msg.media_url.length > 0) {
 
           // Optional: revert back after 2 seconds
           setTimeout(() => {
-            item.textContent = originalText;
+            item.innerHTML = originalText;
           }, 10000);
         }).catch((err) => {
           console.error("Failed to copy link:", err);
