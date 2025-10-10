@@ -183,10 +183,12 @@ function displayPostById(msg) {
       <li><a class="dropdown-item edit-option" href="#">Edit</a></li>
       <li><a class="dropdown-item delete-option" href="#">Delete</a></li>
       <li><a class="dropdown-item report-option" href="#">Report</a></li>
+      <li><a class="dropdown-item copy-option" href="#">Copy link</a></li>
     `;
   } else {
     dropdownMenu.innerHTML = `
       <li><a class="dropdown-item report-option" href="#">Report</a></li>
+      <li><a class="dropdown-item copy-option" href="#">Copy link</a></li>
     `;
   }
   dropdownWrapper.appendChild(ellipsisBtn);
@@ -469,6 +471,22 @@ if (msg.media_url && msg.media_url.length > 0) {
       } else if (item.classList.contains("report-option")) {
         reportingTargetId = msg.message_id;
         reportToast.show();
+     } else if (item.classList.contains("copy-option")) {
+        const copyUrl = `https://thebooksourcings.onrender.com/chat/community/commentView.html?postId=${msg.message_id}`;
+
+        // Copy to clipboard
+        navigator.clipboard.writeText(copyUrl).then(() => {
+          // Change text to "✅ Copied link"
+          const originalText = item.textContent;
+          item.textContent = "✅ Copied link";
+
+          // Optional: revert back after 2 seconds
+          setTimeout(() => {
+            item.textContent = originalText;
+          }, 2000);
+        }).catch((err) => {
+          console.error("Failed to copy link:", err);
+        });
       }
     });
   });
