@@ -767,7 +767,7 @@ if (msg.media_url && msg.media_url.length > 0) {
         // Copy to clipboard
         navigator.clipboard.writeText(copyUrl).then(() => {
           // Change text to "✅ Copied link"
-          const originalText = item.textContent;
+          const originalText = '<li class="li-opt"><a class="dropdown-item copy-option" href="#"><i class="fa-solid fa-link" style="color:blue"></i> Copy link</a></li>';
           item.textContent = "✅ Copied link";
 
           // Optional: revert back after 2 seconds
