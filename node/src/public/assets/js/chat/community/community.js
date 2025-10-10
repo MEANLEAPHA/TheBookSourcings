@@ -129,6 +129,7 @@ loadMessages();
 const form = document.getElementById("form");
 const messageInput = document.getElementById("message-input");
 const mediaInput = document.getElementById("mediaInput");
+const mediaInputLabel = document.getElementById("mediaInputLabel");
 const mediaPreview = document.getElementById("media-preview");
 
 let selectedFile = null;
@@ -219,7 +220,7 @@ form.addEventListener("submit", async (e) => {
     const formData = new FormData();
     formData.append("message", text);
     formData.append("feeling", feeling);
-    formData.append("repost", repost_id);
+    formData.append("repost_id", repost_id);
     // Append all selected files
     Array.from(files).forEach(file => {
       formData.append("media", file); // "media" field matches backend
@@ -760,6 +761,7 @@ if (msg.repostData) {
      postToast.show();
      // Hide media input and preview during repost
     mediaInput.style.display = "none";
+    mediaInputLabel.style.display = "none";
     mediaPreview.style.display = "none";
   }
 
