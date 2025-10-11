@@ -254,6 +254,7 @@ form.addEventListener("submit", async (e) => {
     feelingInput.value = "";
     selectedFile = null;
     displayFeeling.textContent = "";
+    repost_id = null;
     postToast.hide();
   } catch (err) {
     console.error(err);
@@ -1064,9 +1065,9 @@ document.getElementById("submitReportBtn").onclick = async () => {
     displayFeeling.textContent = "";
 
     // Restore media inputs visibility
-    mediaInput.style.display = "block";
-    mediaPreview.style.display = "block";
-    mediaInputLabel.style.display = "block";
+    mediaInput.style.display = "";
+    mediaPreview.style.display = "";
+    mediaInputLabel.style.display = "";
     repost_id = null; // clear repost mode
   };
 

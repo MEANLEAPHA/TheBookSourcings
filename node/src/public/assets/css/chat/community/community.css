@@ -1071,7 +1071,7 @@ padding-left: 10px;
         justify-content: start;
         gap: 15px;
         margin: 0;
-        background-color: violet;
+        
         position: relative;
     }
      .repost-header{
@@ -1081,7 +1081,13 @@ padding-left: 10px;
         gap: 10px;
         margin: 0;
         position: relative;
-        background-color: violet;
+     
+    }
+    a .userProfile{
+        margin: 0;
+    }
+    a .repost-userProfile{
+        margin: 0;
     }
     .userProfile{
         width: 55px;
