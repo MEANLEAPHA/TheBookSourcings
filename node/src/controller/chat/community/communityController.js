@@ -150,10 +150,26 @@ const sendMessage = async (req, res) => {
       return res.status(400).json({ error: "Message, media, repost content,or feeling required" });
     }
 
-    const [result] = await db.query(
-      "INSERT INTO community (memberQid, message_text, feeling, repost_id, media_type, media_url) VALUES (?, ?, ?, ?, ?, ?)",
-      [memberQid, message || null, feeling || null, repost_id || null, JSON.stringify(mediaTypes), JSON.stringify(mediaUrls)]
-    );
+    // const [result] = await db.query(
+    //   "INSERT INTO community (memberQid, message_text, feeling, repost_id, media_type, media_url) VALUES (?, ?, ?, ?, ?, ?)",
+    //   [memberQid, message || null, feeling || null, repost_id || null, JSON.stringify(mediaTypes), JSON.stringify(mediaUrls)]
+    // );
+    const cleanRepostId =
+  repost_id && repost_id !== "null" && repost_id !== "" ? repost_id : null;
+
+const [result] = await db.query(
+  `INSERT INTO community (memberQid, message_text, feeling, repost_id, media_type, media_url)
+   VALUES (?, ?, ?, ?, ?, ?)`,
+  [
+    memberQid,
+    message || null,
+    feeling || null,
+    cleanRepostId,
+    JSON.stringify(mediaTypes),
+    JSON.stringify(mediaUrls)
+  ]
+);
+
 
      
     // Fetch repost info if repost_id exists
