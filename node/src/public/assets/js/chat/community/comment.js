@@ -197,7 +197,7 @@ formRepost.addEventListener("submit", async (e) => {
   const feeling = feelingInput.value; // hidden input
   const files = mediaInput.files; // multiple files
 
-  if (!text && files.length === 0 && !feeling) return; // must have text, media, or feeling
+  if (!text && files.length === 0 && !feeling && !repost_id) return; // must have text, media, or feeling
 
   try {
     const formData = new FormData();
