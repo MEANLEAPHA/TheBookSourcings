@@ -162,7 +162,7 @@ const sendMessage = async (req, res) => {
       const [rows] = await db.query(
         `SELECT 
             c.message_id,
-            c.message_text AS repostText, 
+            c.message_text AS message,  
             c.feeling,
             c.memberQid, 
             c.media_type,
