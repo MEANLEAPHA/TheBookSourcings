@@ -609,42 +609,38 @@ if (msg.repostData) {
   const textP = document.createElement("p");
   textP.className = "repost-text";
 
-  if (repost.repostText.length > 250) {
-    const shortText = repost.repostText.slice(0, 250);
-    textP.textContent = shortText + "... ";
+  const fullText = repost.repostText;
+  if (fullText.length > 250) {
+    const shortText = fullText.slice(0, 250);
 
-    const seeMore = document.createElement("a");
-    seeMore.href = "#";
-    seeMore.style.cursor = "pointer";
-    seeMore.style.textDecoration = "none";
-    seeMore.textContent = "see more";
+    const span = document.createElement("span");
+    span.textContent = shortText + "... ";
+    textP.appendChild(span);
 
-    seeMore.addEventListener("click", (e) => {
+    const toggleLink = document.createElement("a");
+    toggleLink.href = "#";
+    toggleLink.textContent = "see more";
+    toggleLink.style.cursor = "pointer";
+    toggleLink.style.textDecoration = "none";
+
+    toggleLink.addEventListener("click", (e) => {
       e.preventDefault();
-      textP.textContent = repost.repostText + " ";
-
-      const seeLess = document.createElement("a");
-      seeLess.href = "#";
-      seeLess.style.cursor = "pointer";
-      seeLess.style.textDecoration = "none";
-      seeLess.textContent = "see less";
-
-      seeLess.addEventListener("click", (e) => {
-        e.preventDefault();
-        textP.textContent = shortText + "... ";
-        textP.appendChild(seeMore);
-      });
-
-      textP.appendChild(seeLess);
+      if (toggleLink.textContent === "see more") {
+        span.textContent = fullText + " ";
+        toggleLink.textContent = "see less";
+      } else {
+        span.textContent = shortText + "... ";
+        toggleLink.textContent = "see more";
+      }
     });
 
-    textP.appendChild(seeMore);
+    textP.appendChild(toggleLink);
   } else {
-    textP.textContent = repost.repostText; // just show short text, no links
+    textP.textContent = fullText;
   }
 
   repostBody.appendChild(textP);
-  }
+}
   else{
     const textP = document.createElement("p");
     textP.className = "repost-text";
@@ -841,7 +837,7 @@ if (msg.repostData) {
   div.appendChild(header);
   div.appendChild(body);
   // document.getElementById("message-container").prepend(div);
-  document.getElementById("message-container").appendChild(div);
+  document.getElementById("message-container").prepend(div);
 
 
   // === Attach like toggle logic ===
