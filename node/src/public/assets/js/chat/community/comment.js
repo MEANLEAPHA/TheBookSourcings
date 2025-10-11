@@ -547,6 +547,15 @@ if (msg.repostData) {
   const repostHeaderRight = document.createElement("div");
   repostHeaderRight.className = "repost-header-right";
 
+  const repostheaderRightTop = document.createElement("div");
+  repostheaderRightTop.className = "repost-header-child-right-top";
+
+  const repostheaderRightBottom = document.createElement("div");
+  repostheaderRightBottom.className = "repost-header-child-right-bottom";
+
+  repostHeaderRight.appendChild(repostheaderRightTop);
+  repostHeaderRight.appendChild(repostheaderRightBottom);
+
   const repostUsername = document.createElement("p");
   repostUsername.className = "repost-username";
   repostUsername.textContent = repost.username || "Unknown";
@@ -560,9 +569,10 @@ if (msg.repostData) {
   repostTime.className = "repost-time";
   repostTime.textContent = repost.createFormNow;
 
-  repostHeaderRight.appendChild(repostUsername);
-  if (repost.feeling) repostHeaderRight.appendChild(repostFeeling);
-  repostHeaderRight.appendChild(repostTime);
+  repostheaderRightTop.appendChild(repostUsername);
+  if (repost.feeling) repostheaderRightTop.appendChild(repostFeeling);
+ 
+  repostheaderRightBottom.appendChild(repostTime);
 
   repostHeader.appendChild(repostLink);
   repostHeader.appendChild(repostHeaderRight);
@@ -572,17 +582,64 @@ if (msg.repostData) {
   const repostBody = document.createElement("div");
   repostBody.className = "repost-body";
 
-  if (repost.repostText) {
-    const repostText = document.createElement("p");
-    repostText.className = "repost-text";
-    repostText.textContent = repost.repostText;
-    repostBody.appendChild(repostText);
+  // if (repost.repostText) {
+  //   const repostText = document.createElement("p");
+  //   repostText.className = "repost-text";
+  //   repostText.textContent = repost.repostText;
+  //   repostBody.appendChild(repostText);
+  // }
+
+   if (repost.repostText) {
+  const textP = document.createElement("p");
+  textP.className = "repostpost-text";
+
+  if (repost.repostText.length > 250) {
+    const shortText = repost.repostText.slice(0, 250);
+    textP.textContent = shortText + "... ";
+
+    const seeMore = document.createElement("a");
+    seeMore.href = "#";
+    seeMore.style.cursor = "pointer";
+    seeMore.style.textDecoration = "none";
+    seeMore.textContent = "see more";
+
+    seeMore.addEventListener("click", (e) => {
+      e.preventDefault();
+      textP.textContent = repost.repostText + " ";
+
+      const seeLess = document.createElement("a");
+      seeLess.href = "#";
+      seeLess.style.cursor = "pointer";
+      seeLess.style.textDecoration = "none";
+      seeLess.textContent = "see less";
+
+      seeLess.addEventListener("click", (e) => {
+        e.preventDefault();
+        textP.textContent = shortText + "... ";
+        textP.appendChild(seeMore);
+      });
+
+      textP.appendChild(seeLess);
+    });
+
+    textP.appendChild(seeMore);
+  } else {
+    textP.textContent = repost.repostText; // just show short text, no links
+  }
+
+  body.appendChild(textP);
+  }
+  else{
+    const textP = document.createElement("p");
+    textP.className = "repost-text";
+    textP.textContent = "";
+    body.appendChild(textP);
   }
 
   // --- Repost Media Section (same logic as your original post) ---
   if (repost.media_url && repost.media_url.length > 0) {
     const repostMediaWrapper = document.createElement("div");
-    repostMediaWrapper.className = "repost-media-wrapper position-relative";
+    repostMediaWrapper.className = "repost-thumbnail position-relative";
 
     const repostCarouselId = `repost-carousel-${repost.message_id}`;
 
@@ -700,7 +757,6 @@ if (msg.repostData) {
   repostWrapper.appendChild(repostBody);
   body.appendChild(repostWrapper);
 }
-
 
   // Like / comment / repost counts
   const counts = document.createElement("div");
