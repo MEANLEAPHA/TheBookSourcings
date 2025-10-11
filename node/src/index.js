@@ -132,7 +132,8 @@ io.on("connection", (socket) => {
     message: data.message || null,
     media_url: data.media_url || [],
     media_type: data.media_type || [],
-    createFormNow: data.createFormNow || "just now"
+    createFormNow: data.createFormNow || "just now",
+    repostData: data.repostData || null // ✅ include if repost
   };
 
   socket.broadcast.emit("receive-message", broadcastData);

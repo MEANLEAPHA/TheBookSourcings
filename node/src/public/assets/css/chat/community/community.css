@@ -1072,9 +1072,16 @@ padding-left: 10px;
         margin: 0;
         position: relative;
     }
-    .userProfile, .repost-userProfile{
+    .userProfile{
         width: 55px;
         height: 55px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0;
+    }
+     .repost-userProfile{
+        width: 45px;
+        height: 45px;
         border-radius: 50%;
         object-fit: cover;
         margin: 0;
@@ -1102,7 +1109,7 @@ padding-left: 10px;
         padding: 0;
         position: relative;
     }
-    .feelingDisplay,.repost-feeling{
+    .feelingDisplay{
         color: gray;
         font-family: sans-serif;
         font-size: medium;
@@ -1110,7 +1117,15 @@ padding-left: 10px;
         text-align: start;
         margin: 2px 0px 0px 3px;
     }
-    .username,.repost-username{
+    .repost-feeling{
+        color: gray;
+        font-family: sans-serif;
+        font-size: small;
+        text-decoration: none;
+        text-align: start;
+        margin: 4px 0px 0px 3px;
+    }
+    .username{
         font-family: monospace;
         margin: 0;
         font-size: larger;
@@ -1118,10 +1133,25 @@ padding-left: 10px;
         color: black;
         text-align: start;
     }
-    .postAt,.repost-time{
+    .repost-username{
+        font-family: monospace;
+        margin: 0;
+        font-size: large;
+        text-decoration: none;
+        color: black;
+        text-align: start;
+    }
+    .postAt{
         color: gray;
         opacity: 0.8;
         font-size: small;
+        font-family: monospace;
+        margin: 0;
+    }
+     .repost-time{
+        color: gray;
+        opacity: 0.8;
+        font-size: smaller;
         font-family: monospace;
         margin: 0;
     }
@@ -1848,7 +1878,8 @@ top:0px;
  /* repost */
  .repost-wrapper{
     width: 100%;
-    border-radius: 25px;
+    border-radius: 8px;
     border: 1px solid gray;
-    padding: 10px;
+    padding: 15px;
+    margin-top: 5px;
  }

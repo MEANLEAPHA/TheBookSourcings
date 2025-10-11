@@ -4,9 +4,52 @@ const relativeTime = require("dayjs/plugin/relativeTime");
 dayjs.extend(relativeTime);
 const { uploadToS3, deleteFromS3 } = require("../../../middleware/AWSuploadMiddleware");
 
+// const displayPostById = async (req, res) => {
+//   try {
+//     const  {postId} = req.params;
+//     const [rows] = await db.query(
+//       `SELECT  
+//           c.message_id,
+//           c.message_text AS message, 
+//           c.feeling,
+//           c.media_type,
+//           c.media_url,
+//           c.like_count,
+//           c.comment_count,
+//           c.repost_count,
+//           c.memberQid, 
+//           c.created_at,
+//           u.username
+//        FROM community c
+//        JOIN users u ON c.memberQid = u.memberQid
+//        WHERE c.message_id = ?`,
+//       [postId]
+//     );
+
+//     if (rows.length === 0) {
+//       return res.status(404).json({ status: false, error: "Post not found" });
+//     }
+
+//     const row = rows[0];
+//     const post = {
+//       ...row,
+//       createFormNow: dayjs(row.created_at).fromNow(),
+//       media_url: row.media_url ? JSON.parse(row.media_url) : null,
+//       media_type: row.media_type ? JSON.parse(row.media_type) : null
+//     };
+//     res.json(post);
+//   } catch (err) {
+//     console.error("displayPostById error:", err.message);
+//     res.status(500).json({
+//       status: false,
+//       error: err.message
+//     });
+//   }
+// };
 const displayPostById = async (req, res) => {
   try {
-    const  {postId} = req.params;
+    const { postId } = req.params;
+
     const [rows] = await db.query(
       `SELECT  
           c.message_id,
@@ -17,6 +60,7 @@ const displayPostById = async (req, res) => {
           c.like_count,
           c.comment_count,
           c.repost_count,
+          c.repost_id,
           c.memberQid, 
           c.created_at,
           u.username
@@ -31,12 +75,57 @@ const displayPostById = async (req, res) => {
     }
 
     const row = rows[0];
+    let repostData = null;
+
+    // ✅ If the post is a repost, fetch the original post data
+    if (row.repost_id) {
+      const [repostRows] = await db.query(
+        `SELECT 
+            c.message_id,
+            c.message_text AS message,
+            c.feeling,
+            c.media_type,
+            c.media_url,
+            c.memberQid,
+            c.created_at,
+            u.username
+         FROM community c
+         JOIN users u ON c.memberQid = u.memberQid
+         WHERE c.message_id = ?`,
+        [row.repost_id]
+      );
+
+      if (repostRows.length > 0) {
+        const repostRow = repostRows[0];
+        repostData = {
+          message_id: repostRow.message_id,
+          message: repostRow.message,
+          feeling: repostRow.feeling,
+          media_type: repostRow.media_type ? JSON.parse(repostRow.media_type) : [],
+          media_url: repostRow.media_url ? JSON.parse(repostRow.media_url) : [],
+          username: repostRow.username,
+          memberQid: repostRow.memberQid,
+          createFormNow: dayjs(repostRow.created_at).fromNow()
+        };
+      }
+    }
+
     const post = {
-      ...row,
-      createFormNow: dayjs(row.created_at).fromNow(),
-      media_url: row.media_url ? JSON.parse(row.media_url) : null,
-      media_type: row.media_type ? JSON.parse(row.media_type) : null
+      message_id: row.message_id,
+      message: row.message,
+      feeling: row.feeling,
+      media_type: row.media_type ? JSON.parse(row.media_type) : [],
+      media_url: row.media_url ? JSON.parse(row.media_url) : [],
+      like_count: row.like_count,
+      comment_count: row.comment_count,
+      repost_count: row.repost_count,
+      repost_id: row.repost_id,
+      repostData, // ✅ now included!
+      username: row.username,
+      memberQid: row.memberQid,
+      createFormNow: dayjs(row.created_at).fromNow()
     };
+
     res.json(post);
   } catch (err) {
     console.error("displayPostById error:", err.message);

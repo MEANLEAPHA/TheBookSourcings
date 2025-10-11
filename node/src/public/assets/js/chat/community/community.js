@@ -599,7 +599,7 @@ if (msg.repostData) {
 
    if (repost.repostText) {
   const textP = document.createElement("p");
-  textP.className = "repostpost-text";
+  textP.className = "repost-text";
 
   if (repost.repostText.length > 250) {
     const shortText = repost.repostText.slice(0, 250);
