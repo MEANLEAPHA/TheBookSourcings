@@ -95,11 +95,19 @@ let repost_id = null;
 // ====== SOCKET LISTENERS ======
 socket.on("connect", () => console.log("Connected:", socket.id));
 
+// socket.on("receive-message", (msg) => {
+//   if (!msg.createFormNow) msg.createFormNow = "just now";
+//   msg.feeling = feelingMap[msg.feeling] || msg.feeling;
+//   displayMessage(msg);
+// });
 socket.on("receive-message", (msg) => {
   if (!msg.createFormNow) msg.createFormNow = "just now";
   msg.feeling = feelingMap[msg.feeling] || msg.feeling;
-  displayMessage(msg);
+
+  const div = displayMessage(msg); // return the div inside displayMessage
+  document.getElementById("message-container").prepend(div); // new message on top
 });
+
 
 socket.on("message-updated", ({ message_id, newText }) => {
   const div = document.querySelector(`div[data-id='${message_id}']`);
@@ -832,7 +840,9 @@ if (msg.repostData) {
   // Append together
   div.appendChild(header);
   div.appendChild(body);
-  document.getElementById("message-container").prepend(div);
+  // document.getElementById("message-container").prepend(div);
+  document.getElementById("message-container").appendChild(div);
+
 
   // === Attach like toggle logic ===
   const likeIcon = likeBtn.querySelector("i");
