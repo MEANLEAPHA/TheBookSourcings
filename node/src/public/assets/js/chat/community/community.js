@@ -841,7 +841,7 @@ if (msg.repostData) {
   div.appendChild(body);
 
   // document.getElementById("message-container").prepend(div);
-  // document.getElementById("message-container").prepend(div);
+  documment.getElementById("message-container").appendChild(div);
 
 
   // === Attach like toggle logic ===
@@ -893,8 +893,8 @@ if (msg.repostData) {
       }
     });
   });
-  
-  return div; 
+
+  // return div; 
 }
 
 
