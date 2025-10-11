@@ -589,16 +589,17 @@ if (msg.repostData) {
   //   repostBody.appendChild(repostText);
   // }
 
-   if (repost.repostText) {
+  if (repost.repostText) {
   const textP = document.createElement("p");
   textP.className = "repost-text";
 
   const fullText = repost.repostText;
+
   if (fullText.length > 250) {
     const shortText = fullText.slice(0, 250);
 
     const span = document.createElement("span");
-    span.textContent = shortText + "... ";
+    span.textContent = shortText + "... "; // initial short text
     textP.appendChild(span);
 
     const toggleLink = document.createElement("a");
@@ -606,31 +607,32 @@ if (msg.repostData) {
     toggleLink.textContent = "see more";
     toggleLink.style.cursor = "pointer";
     toggleLink.style.textDecoration = "none";
+    textP.appendChild(toggleLink); // append link AFTER span
 
     toggleLink.addEventListener("click", (e) => {
       e.preventDefault();
+
       if (toggleLink.textContent === "see more") {
-        span.textContent = fullText + " ";
-        toggleLink.textContent = "see less";
+        span.textContent = fullText + " "; // show full text
+        toggleLink.textContent = "see less"; // toggle link text
       } else {
-        span.textContent = shortText + "... ";
-        toggleLink.textContent = "see more";
+        span.textContent = shortText + "... "; // show short text
+        toggleLink.textContent = "see more"; // toggle link text
       }
     });
 
-    textP.appendChild(toggleLink);
   } else {
-    textP.textContent = fullText;
+    textP.textContent = fullText; // text shorter than 250, no link
   }
 
   repostBody.appendChild(textP);
+
+} else {
+  const textP = document.createElement("p");
+  textP.className = "repost-text";
+  textP.textContent = "";
+  repostBody.appendChild(textP);
 }
-  else{
-    const textP = document.createElement("p");
-    textP.className = "repost-text";
-    textP.textContent = "";
-    repostBody.appendChild(textP);
-  }
 
   // --- Repost Media Section (same logic as your original post) ---
   if (repost.media_url && repost.media_url.length > 0) {
