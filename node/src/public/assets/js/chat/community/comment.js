@@ -2361,5 +2361,6 @@ document.getElementById("cancelReportReplyBtn").onclick = () => {
     // Restore media inputs visibility
     mediaInput.style.display = "";
     mediaPreview.style.display = "";
+    mediaInputLabel.style.display = "block";
     repost_id = null; // clear repost mode
   };

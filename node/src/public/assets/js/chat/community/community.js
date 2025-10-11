@@ -1064,8 +1064,9 @@ document.getElementById("submitReportBtn").onclick = async () => {
     displayFeeling.textContent = "";
 
     // Restore media inputs visibility
-    mediaInput.style.display = "";
-    mediaPreview.style.display = "";
+    mediaInput.style.display = "block";
+    mediaPreview.style.display = "block";
+    mediaInputLabel.style.display = "block";
     repost_id = null; // clear repost mode
   };
 
