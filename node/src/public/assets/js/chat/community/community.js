@@ -95,18 +95,18 @@ let repost_id = null;
 // ====== SOCKET LISTENERS ======
 socket.on("connect", () => console.log("Connected:", socket.id));
 
-// socket.on("receive-message", (msg) => {
-//   if (!msg.createFormNow) msg.createFormNow = "just now";
-//   msg.feeling = feelingMap[msg.feeling] || msg.feeling;
-//   displayMessage(msg);
-// });
 socket.on("receive-message", (msg) => {
   if (!msg.createFormNow) msg.createFormNow = "just now";
   msg.feeling = feelingMap[msg.feeling] || msg.feeling;
-
-  const div = displayMessage(msg); // return the div inside displayMessage
-  document.getElementById("message-container").prepend(div); // new message on top
+  displayMessage(msg);
 });
+// socket.on("receive-message", (msg) => {
+//   if (!msg.createFormNow) msg.createFormNow = "just now";
+//   msg.feeling = feelingMap[msg.feeling] || msg.feeling;
+
+//   const div = displayMessage(msg); // return the div inside displayMessage
+//   document.getElementById("message-container").prepend(div); // new message on top
+// });
 
 
 socket.on("message-updated", ({ message_id, newText }) => {
@@ -605,11 +605,11 @@ if (msg.repostData) {
   //   repostBody.appendChild(repostText);
   // }
 
-   if (repost.repostText) {
+   if (repost.message) {
   const textP = document.createElement("p");
   textP.className = "repost-text";
 
-  const fullText = repost.repostText;
+  const fullText = repost.message;
 
   if (fullText.length > 250) {
     const shortText = fullText.slice(0, 250);

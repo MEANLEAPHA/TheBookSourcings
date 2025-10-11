@@ -589,11 +589,11 @@ if (msg.repostData) {
   //   repostBody.appendChild(repostText);
   // }
 
-  if (repost.repostText) {
+  if (repost.message) {
   const textP = document.createElement("p");
   textP.className = "repost-text";
 
-  const fullText = repost.repostText;
+  const fullText = repost.message;
 
   if (fullText.length > 250) {
     const shortText = fullText.slice(0, 250);
