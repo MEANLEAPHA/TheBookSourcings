@@ -1887,7 +1887,7 @@ top:0px;
  .repost-wrapper{
     width: 100%;
     border-radius: 8px;
-    border: 1px solid gray;
+    border: 1px solid var(--secondary-color);
     padding: 15px;
     margin-top: 5px;
  }

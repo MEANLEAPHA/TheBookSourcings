@@ -627,13 +627,13 @@ if (msg.repostData) {
     textP.textContent = repost.repostText; // just show short text, no links
   }
 
-  body.appendChild(textP);
+  repostBody.appendChild(textP);
   }
   else{
     const textP = document.createElement("p");
     textP.className = "repost-text";
     textP.textContent = "";
-    body.appendChild(textP);
+    repostBody.appendChild(textP);
   }
 
   // --- Repost Media Section (same logic as your original post) ---
