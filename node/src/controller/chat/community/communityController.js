@@ -152,7 +152,7 @@ const sendMessage = async (req, res) => {
 
     const [result] = await db.query(
       "INSERT INTO community (memberQid, message_text, feeling, repost_id, media_type, media_url) VALUES (?, ?, ?, ?, ?, ?)",
-      [memberQid, message || null, feeling || null, repost_id, JSON.stringify(mediaTypes), JSON.stringify(mediaUrls)]
+      [memberQid, message || null, feeling || null, repost_id || null, JSON.stringify(mediaTypes), JSON.stringify(mediaUrls)]
     );
 
      
