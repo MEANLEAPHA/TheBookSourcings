@@ -1254,24 +1254,33 @@ function hideReportToast() {
 
 
 // ===== Image Toast Control =====
-function showImageToast(imgSrc) {
-  if (!imgSrc) return; // prevent showing null or empty images
-  const wrapper = document.getElementById("imageToastWrapper");
-  const image = document.getElementById("toastImage");
-  image.src = imgSrc;
-  wrapper.classList.remove("d-none");
+// === Image Toast Logic ===
+const imageToastWrapper = document.getElementById("imageToastWrapper");
+const toastImage = document.getElementById("toastImage");
+const toastCloseBtn = document.getElementById("toastCloseBtn");
+
+// Show image viewer (like repost modal)
+function showImageToast(src) {
+  if (!src) return;
+  toastImage.src = src;
+  imageToastWrapper.style.display = "block";
+  document.body.style.overflow = "hidden"; // prevent background scroll
 }
 
+// Hide viewer
 function hideImageToast() {
-  const wrapper = document.getElementById("imageToastWrapper");
-  const image = document.getElementById("toastImage");
-  image.src = ""; // clear to avoid showing null image
-  wrapper.classList.add("d-none");
+  imageToastWrapper.style.display = "none";
+  document.body.style.overflow = ""; // restore scroll
+  toastImage.src = ""; // clear image
 }
 
-document.getElementById("toastCloseBtn").onclick = hideImageToast;
-document.getElementById("imageToastWrapper").onclick = (e) => {
-  if (e.target === e.currentTarget || e.target.classList.contains("image-toast-backdrop")) {
+// === Event Listeners ===
+toastCloseBtn.addEventListener("click", hideImageToast);
+
+// Close when clicking backdrop
+imageToastWrapper.addEventListener("click", (e) => {
+  if (e.target.classList.contains("image-toast-backdrop")) {
     hideImageToast();
   }
-};
+});
+

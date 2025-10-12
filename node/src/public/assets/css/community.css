@@ -1326,43 +1326,51 @@ top:0px;
 
     
     /* === Image Toast === */
-    #imgToastWrapper {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 1080;
-    }
-/* .image-toast {
+  /* === Full Image Toast === */
+#imageToastWrapper {
   position: fixed;
-  inset: 0;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   z-index: 1080;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-} */
+  display: none; /* Hidden by default */
+}
 
 .image-toast-backdrop {
-  position: absolute;
+  position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(2px);
+  z-index: 1070;
 }
 
 .image-toast-content {
   position: relative;
-  z-index: 1090;
-  max-width: 95vw;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  width: 300px;
   max-height: 90vh;
+  overflow: hidden;
+  z-index: 1080;
+  animation: fadeIn 0.2s ease-in-out;
 }
 
 .toast-image {
   width: 100%;
   height: auto;
   object-fit: contain;
+  display: block;
 }
 
-/* === Animations === */
+.btn-close {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 1090;
+}
+
+/* Simple fade-in animation */
 @keyframes fadeIn {
   from { opacity: 0; transform: scale(0.95); }
   to { opacity: 1; transform: scale(1); }

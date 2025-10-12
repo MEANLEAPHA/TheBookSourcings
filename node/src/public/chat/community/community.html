@@ -354,11 +354,13 @@
 </div>
 
 <!-- Full Image Viewer -->
-<div id="imageToastWrapper" class="image-toast d-none">
-  <div class="image-toast-backdrop"></div>
-  <div class="image-toast-content">
-    <button id="toastCloseBtn" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" aria-label="Close"></button>
-    <img id="toastImage" class="toast-image img-fluid rounded shadow-lg" alt="Full view">
+<div id="imageToastWrapper" class="image-toast">
+  <div id="imgToast" class="toast align-items-center text-bg-light border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="image-toast-backdrop"></div>
+    <div class="image-toast-content">
+      <button id="toastCloseBtn" class="btn-close btn-close-white" aria-label="Close"></button>
+      <img id="toastImage" class="toast-image" alt="Full view">
+    </div>
   </div>
 </div>
 
