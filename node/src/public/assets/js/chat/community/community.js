@@ -1256,31 +1256,31 @@ document.getElementById("cancelReportBtn").onclick = () => {
 // ===== Image Toast Control =====
 // === Image Toast Logic ===
 const imageToastWrapper = document.getElementById("imageToastWrapper");
+const imgToast = document.getElementById("imgToast"); // the actual toast
 const toastImage = document.getElementById("toastImage");
 const toastCloseBtn = document.getElementById("toastCloseBtn");
 
-// Show image viewer (like repost modal)
+// Show image viewer
 function showImageToast(src) {
   if (!src) return;
   toastImage.src = src;
-  imageToastWrapper.style.display = "block";
-
+  imgToast.style.display = "block"; // show the toast
+  document.body.style.overflow = "hidden"; // prevent background scroll
 }
 
 // Hide viewer
 function hideImageToast() {
-  imageToastWrapper.style.display = "none";
- 
+  imgToast.style.display = "none"; // hide the toast
+  document.body.style.overflow = ""; // restore scroll
   toastImage.src = ""; // clear image
 }
 
-// === Event Listeners ===
+// Close when clicking the ✖️ button
 toastCloseBtn.addEventListener("click", hideImageToast);
 
-// Close when clicking backdrop
+// Close when clicking the backdrop
 imageToastWrapper.addEventListener("click", (e) => {
   if (e.target.classList.contains("image-toast-backdrop")) {
     hideImageToast();
   }
 });
-
