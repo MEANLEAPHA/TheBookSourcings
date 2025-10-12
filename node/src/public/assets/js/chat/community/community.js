@@ -1265,13 +1265,12 @@ function showImageToast(src) {
   if (!src) return;
   toastImage.src = src;
   imgToast.style.display = "block"; // show the toast
-  document.body.style.overflow = "hidden"; // prevent background scroll
 }
 
 // Hide viewer
 function hideImageToast() {
   imgToast.style.display = "none"; // hide the toast
-  document.body.style.overflow = ""; // restore scroll
+
   toastImage.src = ""; // clear image
 }
 
