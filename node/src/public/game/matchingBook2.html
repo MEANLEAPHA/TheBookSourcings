@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Memory Match Game</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+
+    body {
+      font-family: 'Fredoka One', cursive;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: linear-gradient(120deg, #b6dcfe, #e2efff);
+      margin: 0;
+    }
+
+    .board {
+      display: grid;
+      grid-gap: 10px;
+      perspective: 800px;
+    }
+
+    .card {
+      position: relative;
+      width: 80px;
+      height: 100px;
+      transform-style: preserve-3d;
+      transition: transform 0.6s;
+      cursor: pointer;
+      border-radius: 8px;
+      
+    }
+
+    .card.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card.matched {
+      transform: rotateY(180deg);
+      opacity: 1;
+      cursor: default;
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.4);
+    }
+
+    .card .front,
+    .card .back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 8px;
+      backface-visibility: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .card .front {
+      background: #f0c674;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3em;
+      color: #fff;
+      border: 2px solid #e0b450;
+    }
+
+    .card .back {
+      background-size: cover;
+      background-position: center;
+      transform: rotateY(180deg);
+      border: 2px solid #fff;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255,255,255,0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.4s ease;
+    }
+
+    .overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .gameover {
+      background: white;
+      padding: 30px 60px;
+      border-radius: 20px;
+      border: 4px solid #4fa3ff;
+      text-align: center;
+    }
+
+    .reset {
+      background: #4fa3ff;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      font-size: 24px;
+      width: 60px;
+      height: 60px;
+      margin-top: 15px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="board"></div>
+
+  <template id="card-template">
+    <div class="card">
+      <div class="front">?</div>
+      <div class="back"></div>
+    </div>
+  </template>
+
+  <div class="overlay hidden">
+    <div class="gameover">
+      <p>YOU WON!</p>
+      <button class="reset">↻</button>
+    </div>
+  </div>
+
+  <script>
+    const board = document.querySelector('.board');
+    const template = document.querySelector('#card-template');
+    const overlay = document.querySelector('.overlay');
+    const reset = document.querySelector('.reset');
+
+    // 🧩 Choose your board size here
+    const gridSize = 6; // 4, 5, 6, etc.
+
+    const bookImages = [
+      "https://covers.openlibrary.org/b/id/10523361-L.jpg",
+      "https://covers.openlibrary.org/b/id/11153224-L.jpg",
+      "https://covers.openlibrary.org/b/id/12785545-L.jpg",
+      "https://covers.openlibrary.org/b/id/10498683-L.jpg",
+      "https://covers.openlibrary.org/b/id/10849156-L.jpg",
+      "https://covers.openlibrary.org/b/id/11362120-L.jpg",
+      "https://covers.openlibrary.org/b/id/12689626-L.jpg",
+      "https://covers.openlibrary.org/b/id/12855977-L.jpg",
+      "https://covers.openlibrary.org/b/id/10728506-L.jpg",
+      "https://covers.openlibrary.org/b/id/13503467-L.jpg",
+      "https://covers.openlibrary.org/b/id/10909726-L.jpg",
+      "https://covers.openlibrary.org/b/id/12232289-L.jpg",
+      "https://covers.openlibrary.org/b/id/12548340-L.jpg",
+      "https://covers.openlibrary.org/b/id/10147006-L.jpg",
+      "https://covers.openlibrary.org/b/id/13401258-L.jpg",
+      "https://covers.openlibrary.org/b/id/10594846-L.jpg",
+      "https://covers.openlibrary.org/b/id/10290876-L.jpg",
+      "https://covers.openlibrary.org/b/id/10838323-L.jpg"
+    ];
+
+    const state = {
+      selections: [],
+      locked: false,
+      matches: 0
+    };
+
+    reset.addEventListener('click', resetGame);
+
+    function resetGame() {
+      state.locked = true;
+      state.selections = [];
+      state.matches = 0;
+      board.innerHTML = "";
+      overlay.classList.add("hidden");
+      createBoard();
+    }
+
+    function createBoard() {
+      board.style.gridTemplateColumns = `repeat(${gridSize}, 80px)`;
+
+      const pairsCount = (gridSize * gridSize) / 2;
+      const selectedImages = bookImages.slice(0, pairsCount);
+      const tiles = shuffle([...selectedImages, ...selectedImages]);
+
+      tiles.forEach(img => {
+        const card = template.content.firstElementChild.cloneNode(true);
+        card.querySelector('.back').style.backgroundImage = `url(${img})`;
+        card.dataset.book = img;
+        card.addEventListener('click', () => selectCard(card));
+        board.appendChild(card);
+      });
+
+      state.locked = false;
+    }
+
+    function selectCard(card) {
+      if (state.locked || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+
+      card.classList.add('flipped');
+      state.selections.push(card);
+
+      if (state.selections.length === 2) {
+        state.locked = true;
+        const [first, second] = state.selections;
+
+        if (first.dataset.book === second.dataset.book) {
+          first.classList.add('matched');
+          second.classList.add('matched');
+          state.matches++;
+          state.selections = [];
+          state.locked = false;
+
+          if (state.matches === (gridSize * gridSize) / 2) {
+            setTimeout(() => overlay.classList.remove('hidden'), 600);
+          }
+        } else {
+          setTimeout(() => {
+            first.classList.remove('flipped');
+            second.classList.remove('flipped');
+            state.selections = [];
+            state.locked = false;
+          }, 900);
+        }
+      }
+    }
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    createBoard();
+  </script>
+</body>
+</html>

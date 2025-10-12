@@ -26,7 +26,7 @@ header{
     background-color:var(--background-color);
     backdrop-filter: blur(8px);
    z-index: 1000;
-  position: sticky;
+   position: sticky;
     top: 0;
     z-index: 1;
     display: flex;
@@ -40,10 +40,10 @@ header{
     align-items: center;
     flex-direction: row;
     width: 25%;
-   
     justify-content: start;
-    padding-left: 25px;
-    gap:15px
+    padding-left: 26px;
+    gap:11px;
+
 }
 .fa-bellx{
  
@@ -55,7 +55,7 @@ header{
     cursor: pointer;
 }
 .fa-bars{
-      opacity: 0.8;
+     
     font-size: larger;
     color: var(--font-color);
     cursor: pointer;
@@ -318,14 +318,14 @@ main{
     background-color:var(--background-color);
     height: calc(100vh - 60px);
     border-right:  var(--secondary-color) 1px solid;
-      transition: opacity 0.5s ease-out;
+      
     display: grid;
      position: sticky;
   padding: 0;
     top: 0;
      opacity: 1;
     visibility: visible;
-    transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+    transition: opacity 1s ease-out, visibility 1s ease-out;
 
 }
 
@@ -344,16 +344,17 @@ main{
     text-align: center;
     font-size: 11px;
     gap: 0px;
-   margin: 5px;
+   margin: 4px;
     border: none;
   border-radius: 10px;
-      padding: 25px 0px 25px 0px;
-     /* margin: 5px; */
+      padding: 18px 0px 18px 0px;
+   
     align-items: center;
 }
 .smallCollape li i{
-    font-size: 20px;
+    font-size: 17px;
         margin: auto;
+        color: var(--font-color);
 }
 .smallCollape li:hover{
       background-color: var(--secondary-color);
@@ -364,57 +365,50 @@ main{
     width: 15%;
     height: calc(100vh - 60px);
     display: grid;
-     border-right:  var(--secondary-color) 1px solid;
+    border-right:  var(--secondary-color) 1px solid;
     background-color:var(--background-color);
     padding: 10px;
-   
     overflow: scroll;
-    
-  
     overflow-x: hidden;
     position: sticky;
-   top: 70px;
+    top: 70px;
     scrollbar-width: none;
-     transition: opacity 0.5s ease;
+   
 }
 
 /* Show scrollbar on hover */
 .collapse:hover {
     scrollbar-width: thin; /* Firefox */
 }
-
 /* Chrome, Edge, Safari */
 .collapse::-webkit-scrollbar {
     width: 0px; /* Hide by default */
 }
-
 .collapse:hover::-webkit-scrollbar {
     width: 5px; /* Show on hover */
 }
-
 .collapse::-webkit-scrollbar-thumb {
     background-color:var(--primary-color);
     border-radius: 4px;
 }
-
 .collapse.show {
     display: block;
     opacity: 1;
+   
+
 }
-/* .content {
+.content {
     transition: width 0.5s ease;
-} */
-
-
-
+}
 
 ul{
     list-style: none;
    padding: 0;
     margin: 0;
+    
   
 }
-li{
+/* li{
     color: var(--font-color);
     font-family: monospace;
     font-weight: 400;
@@ -422,20 +416,35 @@ li{
     align-items: center;
     gap: 10px;
     font-size: 15px;
-    
-    padding: 9px ;
    
     cursor: pointer;
+} */
+li a{
+     color: var(--font-color);
+    font-family: monospace;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    font-size: 15px;
+    margin: 0;
+    padding: 9px 14px 9px 14px;
+    border-radius: 15px;
+    
+    align-items: center;
+    cursor: pointer;
 }
-
 li img{
     width: 25px;
     height: 25px;
   
     border-radius: 50%;
 }
-li i{
+li a i{
     width: 20px;
+    margin: 0;
+    
+    
 }
 li:hover{
     background-color:var(--secondary-color);
@@ -448,7 +457,7 @@ li:hover{
 }
 #uLast{
      list-style: none;
- 
+    color: var(--font-color);
    display: flex;
    flex-wrap: wrap;
    gap: 5px;
@@ -516,11 +525,11 @@ font-size: 13px;
     color:var(--primary-color);  
     
 }
-#uLast2 li{
+#uLast2 li a{
   font-size: 13px;
-
+    color: var(--font-color);
 }
-#uLast2 li:hover{
+#uLast2 li a:hover{
     background-color:transparent;
     border-radius: 0px;
 /* padding: 20px 0px 5px 0px; */
@@ -542,6 +551,7 @@ font-size: 13px;
 
 #showMoreFollow ,#showLessFollow{
     border-bottom:  var(--secondary-color) 0.3px solid;
+    color: var(--font-color);
 }
 #showMoreFollow:hover{
    background-color:var(--secondary-color);
@@ -570,14 +580,15 @@ font-size: 13px;
     /* padding: 0; */
     display: grid;
     gap: 5px;
+  
     
    
    
 }
 .collapse .following .followingChild{
   display: flex;
-  gap: 10px;
-  padding: 15px 0px 15px 7px;
+  gap: 26px;
+  padding: 15px 0px 15px 12px;
   width: 98%; /* Fixed width to force overflow */
   height: 40px;
   align-items: center;
@@ -608,7 +619,9 @@ font-size: 13px;
 
 
 .liTop{
-    padding-left: 2px;
+    padding:7px 0px 5px 12px;
+    
+    font-family: monospace;
     font-weight: bold;
     color: var(--primary-color);
 }
@@ -804,6 +817,7 @@ top:0px;
   background-color: rgba(88, 88, 88, 0.307);
   backdrop-filter: blur(10px);
   z-index: 1;
+   transition: width 0.5s ease;
   
 }
 
@@ -827,7 +841,7 @@ top:0px;
     
       
       opacity: 1;
-      transition: opacity 0.3s ease;
+       transition: width 0.5s ease;
     }
 
     .scroll-btn.hidden {
@@ -843,6 +857,7 @@ top:0px;
       border-radius: 25px;
       scroll-behavior: smooth;
       flex: 1;
+       transition: width 0.5s ease;
     }
 
     .genre-bar::-webkit-scrollbar {

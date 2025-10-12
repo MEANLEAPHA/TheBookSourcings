@@ -126,7 +126,7 @@ document.addEventListener("DOMContentLoaded", function () {
       collapse.style.width = "28%";
       collapse.style.zIndex = "auto";
       smallcollapse.style.display = "none";
-      smallcollapse.style.width = "10%";
+      smallcollapse.style.width = "7%"; //10%
       content.style.width = "72%";
     } else {
       collapse.style.display = "grid";
@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", function () {
       collapse.style.width = "18%";
       collapse.style.zIndex = "auto";
       smallcollapse.style.display = "none";
-      smallcollapse.style.width = "10%";
+      smallcollapse.style.width = "7%"; // 10%
       smallcollapse.style.position = "sticky";
       smallcollapse.style.top = "60px";
       content.style.width = "82%";
@@ -183,7 +183,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (!bool) {
         collapse.style.display = "none";
         smallcollapse.style.display = "grid";
-        smallcollapse.style.width = "10%";
+        smallcollapse.style.width = "7%"; //10%
         smallcollapse.style.position = "sticky";
         smallcollapse.style.top = "60px";
         content.style.width = "90%";
@@ -202,8 +202,8 @@ document.addEventListener("DOMContentLoaded", function () {
         smallcollapse.style.display = "grid";
         smallcollapse.style.position = "sticky";
         smallcollapse.style.top = "60px";
-        smallcollapse.style.width = "6%";
-        content.style.width = "94%";
+        smallcollapse.style.width = "4.5%"; // 6%
+        content.style.width = "95.5%"; // 94%
       } else {
         collapse.style.display = "grid";
         collapse.style.position = "sticky";
