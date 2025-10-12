@@ -1242,14 +1242,14 @@ document.getElementById("cancelReportBtn").onclick = () => {
     };
 
     // ===== Report Toast Control =====
-function showReportToast() {
-  document.getElementById("reportToastWrapper").classList.remove("d-none");
-}
+// function showReportToast() {
+//   document.getElementById("reportToastWrapper").classList.remove("d-none");
+// }
 
-function hideReportToast() {
-  document.getElementById("reportToastWrapper").classList.add("d-none");
-  document.getElementById("reportReasonInput").value = "";
-}
+// function hideReportToast() {
+//   document.getElementById("reportToastWrapper").classList.add("d-none");
+//   document.getElementById("reportReasonInput").value = "";
+// }
 
 
 
@@ -1264,13 +1264,13 @@ function showImageToast(src) {
   if (!src) return;
   toastImage.src = src;
   imageToastWrapper.style.display = "block";
-  document.body.style.overflow = "hidden"; // prevent background scroll
+
 }
 
 // Hide viewer
 function hideImageToast() {
   imageToastWrapper.style.display = "none";
-  document.body.style.overflow = ""; // restore scroll
+ 
   toastImage.src = ""; // clear image
 }
 
