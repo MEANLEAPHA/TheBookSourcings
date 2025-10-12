@@ -1264,13 +1264,12 @@ const toastCloseBtn = document.getElementById("toastCloseBtn");
 function showImageToast(src) {
   if (!src) return;
   toastImage.src = src;
-  imgToast.style.display = "block"; // show the toast
+  imgToast.show(); // show the toast
 }
 
 // Hide viewer
 function hideImageToast() {
-  imgToast.style.display = "none"; // hide the toast
-
+  imgToast.hide(); // hide the toast
   toastImage.src = ""; // clear image
 }
 
@@ -1278,8 +1277,8 @@ function hideImageToast() {
 toastCloseBtn.addEventListener("click", hideImageToast);
 
 // Close when clicking the backdrop
-imageToastWrapper.addEventListener("click", (e) => {
-  if (e.target.classList.contains("image-toast-backdrop")) {
-    hideImageToast();
-  }
-});
+// imageToastWrapper.addEventListener("click", (e) => {
+//   if (e.target.classList.contains("image-toast-backdrop")) {
+//     hideImageToast();
+//   }
+// });
