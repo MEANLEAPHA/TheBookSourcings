@@ -1325,56 +1325,38 @@ top:0px;
        }
 
     
-       /* Full image toast overlay */
+    /* === Image Toast === */
 .image-toast {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.85);
+  inset: 0;
+  z-index: 1080;
   display: flex;
   align-items: center;
   justify-content: center;
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-  z-index: 9999;
 }
 
-.image-toast.show {
-  visibility: visible;
-  opacity: 1;
-}
-
-/* Image in toast */
-.toast-image {
-  max-width: 90%;
-  max-height: 85%;
-  border-radius: 10px;
-  box-shadow: 0 0 15px rgba(255,255,255,0.2);
-  animation: zoomIn 0.3s ease;
-}
-
-@keyframes zoomIn {
-  from { transform: scale(0.9); opacity: 0.6; }
-  to { transform: scale(1); opacity: 1; }
-}
-
-/* Close button */
-.toast-close {
+.image-toast-backdrop {
   position: absolute;
-  top: 15px;
-  right: 25px;
-  font-size: 35px;
-  color: white;
-  cursor: pointer;
-  font-weight: bold;
-  text-shadow: 0 0 5px rgba(0,0,0,0.5);
-  transition: transform 0.2s;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(2px);
 }
 
-.toast-close:hover {
-  transform: scale(1.2);
-  color: #ff4444;
+.image-toast-content {
+  position: relative;
+  z-index: 1090;
+  max-width: 95vw;
+  max-height: 90vh;
+}
+
+.toast-image {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* === Animations === */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }

@@ -353,10 +353,13 @@
   </div>
 </div>
 
-<!-- Full Image Toast -->
-<div id="image-toast" class="image-toast">
-  <span id="toast-close" class="toast-close">&times;</span>
-  <img id="toast-image" class="toast-image" src="" alt="Full view">
+<!-- Full Image Viewer -->
+<div id="imageToastWrapper" class="image-toast d-none">
+  <div class="image-toast-backdrop"></div>
+  <div class="image-toast-content">
+    <button id="toastCloseBtn" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" aria-label="Close"></button>
+    <img id="toastImage" class="toast-image img-fluid rounded shadow-lg" alt="Full view">
+  </div>
 </div>
 
 

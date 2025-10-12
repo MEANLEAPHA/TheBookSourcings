@@ -420,29 +420,6 @@ function observeVideo(video) {
   observer.observe(video);
 }
 
-// === Toast helper ===
-function showImageToast(imageUrl) {
-  const toast = document.getElementById("image-toast");
-  const toastImg = document.getElementById("toast-image");
-  const toastClose = document.getElementById("toast-close");
-
-  toastImg.src = imageUrl;
-  toast.classList.add("show");
-
-  // Close handler
-  toastClose.onclick = () => {
-    toast.classList.remove("show");
-    toastImg.src = "";
-  };
-
-  // Close when clicking outside
-  toast.onclick = (e) => {
-    if (e.target === toast) {
-      toast.classList.remove("show");
-      toastImg.src = "";
-    }
-  };
-}
 
 // ================== MAIN MEDIA DISPLAY ==================
 if (msg.media_url && msg.media_url.length > 0) {
@@ -832,6 +809,8 @@ if (msg.repostData) {
         const video = document.createElement("video");
         video.src = repost.media_url[0];
         video.controls = true;
+        video.playsInline = true; // ← very important for mobile
+        video.setAttribute("webkit-playsinline", "true"); // iOS Safari
         video.muted = true;
         video.loop = true;
         video.className = "repost-video";
@@ -873,6 +852,8 @@ if (msg.repostData) {
           const video = document.createElement("video");
           video.src = url;
           video.controls = true;
+          video.playsInline = true; // ← very important for mobile
+          video.setAttribute("webkit-playsinline", "true"); // iOS Safari
           video.muted = true;
           video.loop = true;
           video.className = "repost-video";
@@ -1259,3 +1240,38 @@ document.getElementById("cancelReportBtn").onclick = () => {
       displayFeeling.textContent = "";
       feelingInput.value = "";
     };
+
+    // ===== Report Toast Control =====
+function showReportToast() {
+  document.getElementById("reportToastWrapper").classList.remove("d-none");
+}
+
+function hideReportToast() {
+  document.getElementById("reportToastWrapper").classList.add("d-none");
+  document.getElementById("reportReasonInput").value = "";
+}
+
+
+
+// ===== Image Toast Control =====
+function showImageToast(imgSrc) {
+  if (!imgSrc) return; // prevent showing null or empty images
+  const wrapper = document.getElementById("imageToastWrapper");
+  const image = document.getElementById("toastImage");
+  image.src = imgSrc;
+  wrapper.classList.remove("d-none");
+}
+
+function hideImageToast() {
+  const wrapper = document.getElementById("imageToastWrapper");
+  const image = document.getElementById("toastImage");
+  image.src = ""; // clear to avoid showing null image
+  wrapper.classList.add("d-none");
+}
+
+document.getElementById("toastCloseBtn").onclick = hideImageToast;
+document.getElementById("imageToastWrapper").onclick = (e) => {
+  if (e.target === e.currentTarget || e.target.classList.contains("image-toast-backdrop")) {
+    hideImageToast();
+  }
+};
