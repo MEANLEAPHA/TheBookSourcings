@@ -1279,14 +1279,14 @@ function showImageToast(src) {
   if (!src) return;
   toastImage.src = src;
   bsToast.show();
-  document.body.style.overflow = "hidden";
+ 
 }
 
 // Hide viewer
 function hideImageToast() {
   bsToast.hide();
   toastImage.src = ""; 
-   document.body.style.overflow = ""; 
+
 }
 
 // Close when clicking the ✖️ button
