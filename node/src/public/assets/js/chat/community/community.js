@@ -420,11 +420,34 @@ function observeVideo(video) {
   observer.observe(video);
 }
 
+// === Toast helper ===
+function showImageToast(imageUrl) {
+  const toast = document.getElementById("image-toast");
+  const toastImg = document.getElementById("toast-image");
+  const toastClose = document.getElementById("toast-close");
 
+  toastImg.src = imageUrl;
+  toast.classList.add("show");
+
+  // Close handler
+  toastClose.onclick = () => {
+    toast.classList.remove("show");
+    toastImg.src = "";
+  };
+
+  // Close when clicking outside
+  toast.onclick = (e) => {
+    if (e.target === toast) {
+      toast.classList.remove("show");
+      toastImg.src = "";
+    }
+  };
+}
+
+// ================== MAIN MEDIA DISPLAY ==================
 if (msg.media_url && msg.media_url.length > 0) {
   const mediaWrapper = document.createElement("div");
-  mediaWrapper.className = "post-thumbnail position-relative"; // allow overlay
-
+  mediaWrapper.className = "post-thumbnail position-relative";
   const carouselId = `carousel-${msg.message_id}`;
 
   if (msg.media_url.length === 1) {
@@ -439,26 +462,33 @@ if (msg.media_url && msg.media_url.length > 0) {
       const img = document.createElement("img");
       img.src = msg.media_url[0];
       img.className = "post-thumbnail-img";
-      mediaContainer.appendChild(img);
+      img.style.cursor = "pointer";
 
+      // 👇 Click to open full image in toast
+      img.addEventListener("click", () => {
+        showImageToast(msg.media_url[0]);
+      });
+
+      mediaContainer.appendChild(img);
       itemWrapper.style.setProperty("--bg-url", `url(${msg.media_url[0]})`);
     } else if (type === "video") {
       const video = document.createElement("video");
       video.src = msg.media_url[0];
       video.controls = true;
+      video.playsInline = true; // ← very important for mobile
+      video.setAttribute("webkit-playsinline", "true"); // iOS Safari
       video.muted = true;
       video.loop = true;
       video.className = "post-thumbnail-video";
       mediaContainer.appendChild(video);
       observeVideo(video);
-
       itemWrapper.style.background = "rgba(0,0,0,0.8)";
     }
 
     itemWrapper.appendChild(mediaContainer);
     mediaWrapper.appendChild(itemWrapper);
   } else {
-    // --- Multiple files -> Bootstrap carousel ---
+    // --- Multiple files -> Carousel ---
     const carousel = document.createElement("div");
     carousel.className = "carousel slide";
     carousel.id = carouselId;
@@ -468,53 +498,58 @@ if (msg.media_url && msg.media_url.length > 0) {
     const inner = document.createElement("div");
     inner.className = "carousel-inner";
 
-   msg.media_url.forEach((url, index) => {
-  const item = document.createElement("div");
-  item.className = index === 0 ? "carousel-item active" : "carousel-item";
+    msg.media_url.forEach((url, index) => {
+      const item = document.createElement("div");
+      item.className = index === 0 ? "carousel-item active" : "carousel-item";
 
-  const blurWrapper = document.createElement("div");
-  blurWrapper.className = "blur-wrapper";
+      const blurWrapper = document.createElement("div");
+      blurWrapper.className = "blur-wrapper";
 
-  const mediaContainer = document.createElement("div");
-  mediaContainer.className = "media-container";
+      const mediaContainer = document.createElement("div");
+      mediaContainer.className = "media-container";
 
-  if (msg.media_type[index] === "image") {
-    const img = document.createElement("img");
-    img.src = url;
-    img.className = "post-thumbnail-img";
-    mediaContainer.appendChild(img);
+      if (msg.media_type[index] === "image") {
+        const img = document.createElement("img");
+        img.src = url;
+        img.className = "post-thumbnail-img";
+        img.style.cursor = "pointer";
 
-    // ✅ set --bg-url for blur
-    blurWrapper.style.setProperty("--bg-url", `url(${url})`);
-  } else if (msg.media_type[index] === "video") {
-    const video = document.createElement("video");
-    video.src = url;
-    video.controls = true;
-    video.muted = true;
-    video.loop = true;
-    video.className = "post-thumbnail-video";
-    mediaContainer.appendChild(video);
-    observeVideo(video);
+        // 👇 Click to open full image in toast
+        img.addEventListener("click", () => {
+          showImageToast(url);
+        });
 
-    // ✅ fallback for blur: set --bg-url to a dark transparent color
-    blurWrapper.style.setProperty("--bg-url", `linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8))`);
-  }
+        mediaContainer.appendChild(img);
+        blurWrapper.style.setProperty("--bg-url", `url(${url})`);
+      } else if (msg.media_type[index] === "video") {
+        const video = document.createElement("video");
+        video.src = url;
+        video.controls = true;
+        video.playsInline = true; // ← very important for mobile
+        video.setAttribute("webkit-playsinline", "true"); // iOS Safari
+        video.muted = true;
+        video.loop = true;
+        video.className = "post-thumbnail-video";
+        mediaContainer.appendChild(video);
+        observeVideo(video);
+        blurWrapper.style.setProperty("--bg-url", `linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8))`);
+      }
 
-  blurWrapper.appendChild(mediaContainer);
-  item.appendChild(blurWrapper);
-  inner.appendChild(item);
-});
+      blurWrapper.appendChild(mediaContainer);
+      item.appendChild(blurWrapper);
+      inner.appendChild(item);
+    });
 
     carousel.appendChild(inner);
     mediaWrapper.appendChild(carousel);
 
-    // --- Modern counter ---
+    // --- Counter ---
     const counter = document.createElement("div");
     counter.className = "carousel-counter position-absolute";
     counter.textContent = `1/${msg.media_url.length}`;
     mediaWrapper.appendChild(counter);
 
-    // Prev/Next buttons
+    // Buttons
     const prevBtn = document.createElement("button");
     prevBtn.className = "carousel-control-prev";
     prevBtn.type = "button";
@@ -532,7 +567,6 @@ if (msg.media_url && msg.media_url.length > 0) {
     mediaWrapper.appendChild(prevBtn);
     mediaWrapper.appendChild(nextBtn);
 
-    // Update counter on slide change
     carousel.addEventListener("slid.bs.carousel", () => {
       const activeIndex = Array.from(inner.children).findIndex(c => c.classList.contains("active"));
       counter.textContent = `${activeIndex + 1}/${msg.media_url.length}`;
@@ -541,6 +575,127 @@ if (msg.media_url && msg.media_url.length > 0) {
 
   body.appendChild(mediaWrapper);
 }
+
+// if (msg.media_url && msg.media_url.length > 0) {
+//   const mediaWrapper = document.createElement("div");
+//   mediaWrapper.className = "post-thumbnail position-relative"; // allow overlay
+
+//   const carouselId = `carousel-${msg.message_id}`;
+
+//   if (msg.media_url.length === 1) {
+//     const type = msg.media_type[0];
+//     const itemWrapper = document.createElement("div");
+//     itemWrapper.className = "blur-wrapper";
+
+//     const mediaContainer = document.createElement("div");
+//     mediaContainer.className = "media-container";
+
+//     if (type === "image") {
+//       const img = document.createElement("img");
+//       img.src = msg.media_url[0];
+//       img.className = "post-thumbnail-img";
+//       mediaContainer.appendChild(img);
+
+//       itemWrapper.style.setProperty("--bg-url", `url(${msg.media_url[0]})`);
+//     } else if (type === "video") {
+//       const video = document.createElement("video");
+//       video.src = msg.media_url[0];
+//       video.controls = true;
+//       video.muted = true;
+//       video.loop = true;
+//       video.className = "post-thumbnail-video";
+//       mediaContainer.appendChild(video);
+//       observeVideo(video);
+
+//       itemWrapper.style.background = "rgba(0,0,0,0.8)";
+//     }
+
+//     itemWrapper.appendChild(mediaContainer);
+//     mediaWrapper.appendChild(itemWrapper);
+//   } else {
+//     // --- Multiple files -> Bootstrap carousel ---
+//     const carousel = document.createElement("div");
+//     carousel.className = "carousel slide";
+//     carousel.id = carouselId;
+//     carousel.setAttribute("data-bs-ride", "carousel");
+//     carousel.setAttribute("data-bs-interval", "8000");
+
+//     const inner = document.createElement("div");
+//     inner.className = "carousel-inner";
+
+//    msg.media_url.forEach((url, index) => {
+//   const item = document.createElement("div");
+//   item.className = index === 0 ? "carousel-item active" : "carousel-item";
+
+//   const blurWrapper = document.createElement("div");
+//   blurWrapper.className = "blur-wrapper";
+
+//   const mediaContainer = document.createElement("div");
+//   mediaContainer.className = "media-container";
+
+//   if (msg.media_type[index] === "image") {
+//     const img = document.createElement("img");
+//     img.src = url;
+//     img.className = "post-thumbnail-img";
+//     mediaContainer.appendChild(img);
+
+//     // ✅ set --bg-url for blur
+//     blurWrapper.style.setProperty("--bg-url", `url(${url})`);
+//   } else if (msg.media_type[index] === "video") {
+//     const video = document.createElement("video");
+//     video.src = url;
+//     video.controls = true;
+//     video.muted = true;
+//     video.loop = true;
+//     video.className = "post-thumbnail-video";
+//     mediaContainer.appendChild(video);
+//     observeVideo(video);
+
+//     // ✅ fallback for blur: set --bg-url to a dark transparent color
+//     blurWrapper.style.setProperty("--bg-url", `linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8))`);
+//   }
+
+//   blurWrapper.appendChild(mediaContainer);
+//   item.appendChild(blurWrapper);
+//   inner.appendChild(item);
+// });
+
+//     carousel.appendChild(inner);
+//     mediaWrapper.appendChild(carousel);
+
+//     // --- Modern counter ---
+//     const counter = document.createElement("div");
+//     counter.className = "carousel-counter position-absolute";
+//     counter.textContent = `1/${msg.media_url.length}`;
+//     mediaWrapper.appendChild(counter);
+
+//     // Prev/Next buttons
+//     const prevBtn = document.createElement("button");
+//     prevBtn.className = "carousel-control-prev";
+//     prevBtn.type = "button";
+//     prevBtn.setAttribute("data-bs-target", `#${carouselId}`);
+//     prevBtn.setAttribute("data-bs-slide", "prev");
+//     prevBtn.innerHTML = `<span class="carousel-control-prev-icon"></span>`;
+
+//     const nextBtn = document.createElement("button");
+//     nextBtn.className = "carousel-control-next";
+//     nextBtn.type = "button";
+//     nextBtn.setAttribute("data-bs-target", `#${carouselId}`);
+//     nextBtn.setAttribute("data-bs-slide", "next");
+//     nextBtn.innerHTML = `<span class="carousel-control-next-icon"></span>`;
+
+//     mediaWrapper.appendChild(prevBtn);
+//     mediaWrapper.appendChild(nextBtn);
+
+//     // Update counter on slide change
+//     carousel.addEventListener("slid.bs.carousel", () => {
+//       const activeIndex = Array.from(inner.children).findIndex(c => c.classList.contains("active"));
+//       counter.textContent = `${activeIndex + 1}/${msg.media_url.length}`;
+//     });
+//   }
+
+//   body.appendChild(mediaWrapper);
+// }
 // --- REPOST SECTION ---
 if (msg.repostData) {
   const repost = msg.repostData;
