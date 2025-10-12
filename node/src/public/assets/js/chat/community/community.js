@@ -1268,12 +1268,14 @@ function showImageToast(src) {
   if (!src) return;
   toastImage.src = src;
   bsToast.show();
+  body.style.overflow = "hidden";
 }
 
 // Hide viewer
 function hideImageToast() {
   bsToast.hide();
-  toastImage.src = ""; // clear image
+  toastImage.src = ""; 
+  body.style.overflow = ""; 
 }
 
 // Close when clicking the ✖️ button
