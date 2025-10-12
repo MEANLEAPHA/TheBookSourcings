@@ -803,6 +803,11 @@ if (msg.repostData) {
         const img = document.createElement("img");
         img.src = repost.media_url[0];
         img.className = "repost-img";
+        img.style.cursor = "pointer";
+        // 👇 Click to open full image in toast
+        img.addEventListener("click", () => {
+          showImageToast(msg.media_url[0]);
+        });
         mediaContainer.appendChild(img);
         itemWrapper.style.setProperty("--bg-url", `url(${repost.media_url[0]})`);
       } else if (type === "video") {
@@ -846,7 +851,13 @@ if (msg.repostData) {
           const img = document.createElement("img");
           img.src = url;
           img.className = "repost-img";
+          img.style.cursor = "pointer";
           mediaContainer.appendChild(img);
+            // 👇 Click to open full image in toast
+          img.addEventListener("click", () => {
+            showImageToast(url);
+          });
+
           blurWrapper.style.setProperty("--bg-url", `url(${url})`);
         } else if (repost.media_type[index] === "video") {
           const video = document.createElement("video");
@@ -1268,14 +1279,14 @@ function showImageToast(src) {
   if (!src) return;
   toastImage.src = src;
   bsToast.show();
-  body.style.overflow = "hidden";
+  document.body.style.overflow = "hidden";
 }
 
 // Hide viewer
 function hideImageToast() {
   bsToast.hide();
   toastImage.src = ""; 
-  body.style.overflow = ""; 
+   document.body.style.overflow = ""; 
 }
 
 // Close when clicking the ✖️ button
