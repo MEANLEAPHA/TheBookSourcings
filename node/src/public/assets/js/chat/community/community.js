@@ -806,7 +806,7 @@ if (msg.repostData) {
         img.style.cursor = "pointer";
         // 👇 Click to open full image in toast
         img.addEventListener("click", () => {
-          showImageToast(msg.media_url[0]);
+          showImageToast(repost.media_url[0]);
         });
         mediaContainer.appendChild(img);
         itemWrapper.style.setProperty("--bg-url", `url(${repost.media_url[0]})`);
