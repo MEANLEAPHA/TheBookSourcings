@@ -1327,18 +1327,18 @@ top:0px;
     
     /* === Image Toast === */
   /* === Full Image Toast === */
-#imageToastWrapper {
+#imageToastWrapper{
   position: fixed;
   top: 55%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1080;
-  width: 80%;
+  width: 100%;
   height: auto;
   background-color: blue;
  
 }
-#reportToast{
+#imgToast{
     width: 90%;
     margin: auto;
     height: auto;
