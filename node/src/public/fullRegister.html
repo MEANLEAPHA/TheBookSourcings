@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Author Registration</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icons/6.7.0/css/flag-icons.min.css">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css">
+
+  <style>
+/* === Base Form Styling === */
+.bootstrap-select .dropdown-toggle, .form-control, .form-select {
+  background-color: #ffffff;
+  border: 1px solid gainsboro;
+  border-radius: 8px;
+  color: #333;
+}
+.bootstrap-select .dropdown-menu {
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    max-height: 250px !important;
+  overflow-y: auto !important;
+
+}
+.bootstrap-select .dropdown-item:hover {
+  background-color: #648dff;
+  color: #fff;
+}
+
+/* === Layout for form + profile === */
+.form-profile-wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+
+}
+.form-section-left {
+  flex: 1 1 60%;
+}
+.profile-section-right {
+  min-width: 200px;
+}
+
+/* === Profile Upload Styling === */
+.profile-upload {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  border: 3px solid gainsboro;
+  transition: transform 0.3s ease;
+}
+.profile-upload:hover {
+  transform: scale(1.03);
+}
+.profile-upload img {
+  width: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #ddd;
+}
+.profile-upload input[type="file"] {
+  display: none;
+}
+
+/* Hover overlay */
+.profile-upload::before {
+  content: "Update Photo";
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  text-align: center;
+  padding: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  font-size: 14px;
+}
+.profile-upload:hover::before {
+  opacity: 1;
+}
+.input-group-text {
+  background-color: #f8f9fa;
+  border: 1px solid gainsboro;
+  color: #555;
+  font-weight: bold;
+}
+
+
+/* Responsive: move profile image above form */
+@media (max-width: 768px) {
+  .form-profile-wrapper {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  .profile-section-right {
+    order: 1;
+    margin-bottom: 1.5rem;
+  }
+  .form-section-left {
+    order: 2;
+  }
+}
+  </style>
+</head>
+<body>
+<div class="container py-4">
+
+
+  <form id="authorForm" enctype="multipart/form-data">
+    <div class="form-profile-wrapper d-flex flex-wrap gap-4">
+      
+      <!-- Left Side Form -->
+      <div class="form-section-left flex-grow-1" style="min-width: 300px;">
+        <div class="row mb-3 gap-2">
+          <div class="col-md-5">
+            <label for="fullname" class="form-label">Full Name</label>
+            <input type="text" class="form-control" id="fullname" name="fullname" required>
+          </div>
+          <div class="col-md-5">
+  <label for="nickname" class="form-label">Nickname</label>
+  <div class="input-group">
+    <span class="input-group-text" id="nickname-addon">@</span>
+    <input type="text" class="form-control" id="nickname" name="nickname" aria-describedby="nickname-addon">
+  </div>
+</div>
+
+        </div>
+
+        <div class="row mb-3 gap-2">
+          <div class="col-md-5">
+            <label for="dob" class="form-label">Date of Birth</label>
+            <input type="date" class="form-control" id="dob" name="dob">
+          </div>
+          <div class="col-md-5">
+            <label for="gender" class="form-label">Gender</label>
+            <select class="form-select" id="gender" name="gender">
+              <option value="" disabled selected></option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row mb-3 gap-2">
+          <div class="col-md-5">
+            <label for="work" class="form-label">Work</label>
+            <select class="form-select" id="work" name="work">
+              <option value="" disabled selected></option>
+              <option value="Worker">Worker</option>
+              <option value="Student">Student</option>
+            </select>
+          </div>
+          <div class="col-md-5">
+            <label for="nationality" class="form-label">Nationality</label>
+            <select class="selectpicker form-control bg-white border-1 form-select"
+        data-live-search="true" id="nationality" name="nationality"
+        title="Choose your nationality">
+
+  <option data-content="<span class='fi fi-af me-2'></span>Afghanistan" value="Afghanistan">Afghanistan</option>
+  <option data-content="<span class='fi fi-al me-2'></span>Albania" value="Albania">Albania</option>
+  <option data-content="<span class='fi fi-dz me-2'></span>Algeria" value="Algeria">Algeria</option>
+  <option data-content="<span class='fi fi-ad me-2'></span>Andorra" value="Andorra">Andorra</option>
+  <option data-content="<span class='fi fi-ao me-2'></span>Angola" value="Angola">Angola</option>
+  <option data-content="<span class='fi fi-ag me-2'></span>Antigua and Barbuda" value="Antigua and Barbuda">Antigua and Barbuda</option>
+  <option data-content="<span class='fi fi-ar me-2'></span>Argentina" value="Argentina">Argentina</option>
+  <option data-content="<span class='fi fi-am me-2'></span>Armenia" value="Armenia">Armenia</option>
+  <option data-content="<span class='fi fi-au me-2'></span>Australia" value="Australia">Australia</option>
+  <option data-content="<span class='fi fi-at me-2'></span>Austria" value="Austria">Austria</option>
+  <option data-content="<span class='fi fi-az me-2'></span>Azerbaijan" value="Azerbaijan">Azerbaijan</option>
+  <option data-content="<span class='fi fi-bs me-2'></span>Bahamas" value="Bahamas">Bahamas</option>
+  <option data-content="<span class='fi fi-bh me-2'></span>Bahrain" value="Bahrain">Bahrain</option>
+  <option data-content="<span class='fi fi-bd me-2'></span>Bangladesh" value="Bangladesh">Bangladesh</option>
+  <option data-content="<span class='fi fi-bb me-2'></span>Barbados" value="Barbados">Barbados</option>
+  <option data-content="<span class='fi fi-by me-2'></span>Belarus" value="Belarus">Belarus</option>
+  <option data-content="<span class='fi fi-be me-2'></span>Belgium" value="Belgium">Belgium</option>
+  <option data-content="<span class='fi fi-bz me-2'></span>Belize" value="Belize">Belize</option>
+  <option data-content="<span class='fi fi-bj me-2'></span>Benin" value="Benin">Benin</option>
+  <option data-content="<span class='fi fi-bt me-2'></span>Bhutan" value="Bhutan">Bhutan</option>
+  <option data-content="<span class='fi fi-bo me-2'></span>Bolivia" value="Bolivia">Bolivia</option>
+  <option data-content="<span class='fi fi-ba me-2'></span>Bosnia and Herzegovina" value="Bosnia and Herzegovina">Bosnia and Herzegovina</option>
+  <option data-content="<span class='fi fi-bw me-2'></span>Botswana" value="Botswana">Botswana</option>
+  <option data-content="<span class='fi fi-br me-2'></span>Brazil" value="Brazil">Brazil</option>
+  <option data-content="<span class='fi fi-bn me-2'></span>Brunei" value="Brunei">Brunei</option>
+  <option data-content="<span class='fi fi-bg me-2'></span>Bulgaria" value="Bulgaria">Bulgaria</option>
+  <option data-content="<span class='fi fi-bf me-2'></span>Burkina Faso" value="Burkina Faso">Burkina Faso</option>
+  <option data-content="<span class='fi fi-bi me-2'></span>Burundi" value="Burundi">Burundi</option>
+  <option data-content="<span class='fi fi-kh me-2'></span>Cambodia" value="Cambodia">Cambodia</option>
+  <option data-content="<span class='fi fi-cm me-2'></span>Cameroon" value="Cameroon">Cameroon</option>
+  <option data-content="<span class='fi fi-ca me-2'></span>Canada" value="Canada">Canada</option>
+  <option data-content="<span class='fi fi-cf me-2'></span>Central African Republic" value="Central African Republic">Central African Republic</option>
+  <option data-content="<span class='fi fi-cl me-2'></span>Chile" value="Chile">Chile</option>
+  <option data-content="<span class='fi fi-cn me-2'></span>China" value="China">China</option>
+  <option data-content="<span class='fi fi-co me-2'></span>Colombia" value="Colombia">Colombia</option>
+  <option data-content="<span class='fi fi-cr me-2'></span>Costa Rica" value="Costa Rica">Costa Rica</option>
+  <option data-content="<span class='fi fi-hr me-2'></span>Croatia" value="Croatia">Croatia</option>
+  <option data-content="<span class='fi fi-cu me-2'></span>Cuba" value="Cuba">Cuba</option>
+  <option data-content="<span class='fi fi-cy me-2'></span>Cyprus" value="Cyprus">Cyprus</option>
+  <option data-content="<span class='fi fi-cz me-2'></span>Czech Republic" value="Czech Republic">Czech Republic</option>
+  <option data-content="<span class='fi fi-dk me-2'></span>Denmark" value="Denmark">Denmark</option>
+  <option data-content="<span class='fi fi-dj me-2'></span>Djibouti" value="Djibouti">Djibouti</option>
+  <option data-content="<span class='fi fi-do me-2'></span>Dominican Republic" value="Dominican Republic">Dominican Republic</option>
+  <option data-content="<span class='fi fi-ec me-2'></span>Ecuador" value="Ecuador">Ecuador</option>
+  <option data-content="<span class='fi fi-eg me-2'></span>Egypt" value="Egypt">Egypt</option>
+  <option data-content="<span class='fi fi-sv me-2'></span>El Salvador" value="El Salvador">El Salvador</option>
+  <option data-content="<span class='fi fi-gq me-2'></span>Equatorial Guinea" value="Equatorial Guinea">Equatorial Guinea</option>
+  <option data-content="<span class='fi fi-er me-2'></span>Eritrea" value="Eritrea">Eritrea</option>
+  <option data-content="<span class='fi fi-ee me-2'></span>Estonia" value="Estonia">Estonia</option>
+  <option data-content="<span class='fi fi-et me-2'></span>Ethiopia" value="Ethiopia">Ethiopia</option>
+  <option data-content="<span class='fi fi-fi me-2'></span>Finland" value="Finland">Finland</option>
+  <option data-content="<span class='fi fi-fr me-2'></span>France" value="France">France</option>
+  <option data-content="<span class='fi fi-de me-2'></span>Germany" value="Germany">Germany</option>
+  <option data-content="<span class='fi fi-gr me-2'></span>Greece" value="Greece">Greece</option>
+  <option data-content="<span class='fi fi-hk me-2'></span>Hong Kong" value="Hong Kong">Hong Kong</option>
+  <option data-content="<span class='fi fi-in me-2'></span>India" value="India">India</option>
+  <option data-content="<span class='fi fi-id me-2'></span>Indonesia" value="Indonesia">Indonesia</option>
+  <option data-content="<span class='fi fi-ir me-2'></span>Iran" value="Iran">Iran</option>
+  <option data-content="<span class='fi fi-iq me-2'></span>Iraq" value="Iraq">Iraq</option>
+  <option data-content="<span class='fi fi-ie me-2'></span>Ireland" value="Ireland">Ireland</option>
+  <option data-content="<span class='fi fi-il me-2'></span>Israel" value="Israel">Israel</option>
+  <option data-content="<span class='fi fi-it me-2'></span>Italy" value="Italy">Italy</option>
+  <option data-content="<span class='fi fi-jp me-2'></span>Japan" value="Japan">Japan</option>
+  <option data-content="<span class='fi fi-kp me-2'></span>North Korea" value="North Korea">North Korea</option>
+  <option data-content="<span class='fi fi-kr me-2'></span>South Korea" value="South Korea">South Korea</option>
+  <option data-content="<span class='fi fi-la me-2'></span>Laos" value="Laos">Laos</option>
+  <option data-content="<span class='fi fi-lv me-2'></span>Latvia" value="Latvia">Latvia</option>
+  <option data-content="<span class='fi fi-lb me-2'></span>Lebanon" value="Lebanon">Lebanon</option>
+  <option data-content="<span class='fi fi-lr me-2'></span>Liberia" value="Liberia">Liberia</option>
+  <option data-content="<span class='fi fi-lt me-2'></span>Lithuania" value="Lithuania">Lithuania</option>
+  <option data-content="<span class='fi fi-lu me-2'></span>Luxembourg" value="Luxembourg">Luxembourg</option>
+  <option data-content="<span class='fi fi-my me-2'></span>Malaysia" value="Malaysia">Malaysia</option>
+  <option data-content="<span class='fi fi-mm me-2'></span>Myanmar" value="Myanmar">Myanmar</option>
+  <option data-content="<span class='fi fi-np me-2'></span>Nepal" value="Nepal">Nepal</option>
+  <option data-content="<span class='fi fi-nl me-2'></span>Netherlands" value="Netherlands">Netherlands</option>
+  <option data-content="<span class='fi fi-nz me-2'></span>New Zealand" value="New Zealand">New Zealand</option>
+  <option data-content="<span class='fi fi-ng me-2'></span>Nigeria" value="Nigeria">Nigeria</option>
+  <option data-content="<span class='fi fi-no me-2'></span>Norway" value="Norway">Norway</option>
+  <option data-content="<span class='fi fi-ph me-2'></span>Philippines" value="Philippines">Philippines</option>
+  <option data-content="<span class='fi fi-pl me-2'></span>Poland" value="Poland">Poland</option>
+  <option data-content="<span class='fi fi-pt me-2'></span>Portugal" value="Portugal">Portugal</option>
+  <option data-content="<span class='fi fi-qa me-2'></span>Qatar" value="Qatar">Qatar</option>
+  <option data-content="<span class='fi fi-ru me-2'></span>Russia" value="Russia">Russia</option>
+  <option data-content="<span class='fi fi-sa me-2'></span>Saudi Arabia" value="Saudi Arabia">Saudi Arabia</option>
+  <option data-content="<span class='fi fi-sg me-2'></span>Singapore" value="Singapore">Singapore</option>
+  <option data-content="<span class='fi fi-za me-2'></span>South Africa" value="South Africa">South Africa</option>
+  <option data-content="<span class='fi fi-es me-2'></span>Spain" value="Spain">Spain</option>
+  <option data-content="<span class='fi fi-lk me-2'></span>Sri Lanka" value="Sri Lanka">Sri Lanka</option>
+  <option data-content="<span class='fi fi-se me-2'></span>Sweden" value="Sweden">Sweden</option>
+  <option data-content="<span class='fi fi-ch me-2'></span>Switzerland" value="Switzerland">Switzerland</option>
+  <option data-content="<span class='fi fi-th me-2'></span>Thailand" value="Thailand">Thailand</option>
+  <option data-content="<span class='fi fi-tr me-2'></span>Turkey" value="Turkey">Turkey</option>
+  <option data-content="<span class='fi fi-gb me-2'></span>United Kingdom" value="United Kingdom">United Kingdom</option>
+  <option data-content="<span class='fi fi-us me-2'></span>United States" value="United States">United States</option>
+  <option data-content="<span class='fi fi-vn me-2'></span>Vietnam" value="Vietnam">Vietnam</option>
+
+</select>
+
+          </div>
+        </div>
+
+        <div id="dynamicFields" class="form-section"></div>
+
+        <div class="row mb-3 gap-2">
+          <div class="col-md-5">
+            <label for="website" class="form-label">Website Link</label>
+            <input type="url" class="form-control" id="website" name="website">
+          </div>
+          <div class="col-md-5">
+            <label for="bio" class="form-label">Bio</label>
+            <textarea class="form-control" id="bio" name="bio" rows="1"></textarea>
+          </div>
+        </div>
+
+        <input type="text" id="author_id" name="author_id" value="" hidden>
+      </div>
+
+      <!-- Right Side Profile Upload -->
+      <div class="profile-section-right text-center">
+        <div class="profile-upload" id="profilePreview">
+          <img id="profileImage" src=""  class="rounded mb-2" >
+          <input type="file" id="profileInput" name="profileImage" accept="image/*" class="form-control">
+        </div>
+      </div>
+    </div>
+
+    <div class=" mt-2">
+      <button type="submit" class="btn btn-primary">Register as Author</button>
+    </div>
+  </form>
+</div>
+
+<!-- JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  $('.selectpicker').selectpicker();
+});
+
+const workSelect = document.getElementById('work');
+const dynamicFields = document.getElementById('dynamicFields');
+
+workSelect.addEventListener('change', function () {
+  dynamicFields.innerHTML = '';
+  if (this.value === 'Worker') {
+    dynamicFields.innerHTML = `
+      <div class="row mb-3 gap-2">
+        <div class="col-md-5">
+          <label for="company" class="form-label">Company Name</label>
+          <input type="text" class="form-control" id="company" name="company">
+        </div>
+        <div class="col-md-5">
+          <label for="role" class="form-label">Role</label>
+          <input type="text" class="form-control" id="role" name="role">
+        </div>
+      </div>`;
+  } else if (this.value === 'Student') {
+    dynamicFields.innerHTML = `
+      <div class="row mb-3 gap-2">
+        <div class="col-md-5">
+          <label for="school" class="form-label">School Name</label>
+          <input type="text" class="form-control" id="school" name="school">
+        </div>
+        <div class="col-md-5">
+          <label for="major" class="form-label">Major</label>
+          <input type="text" class="form-control" id="major" name="major">
+        </div>
+      </div>`;
+  }
+});
+
+/* === Profile Upload Preview === */
+const profileInput = document.getElementById('profileInput');
+const profilePreview = document.getElementById('profilePreview');
+const profileImage = document.getElementById('profileImage');
+
+profilePreview.addEventListener('click', () => {
+  profileInput.click();
+});
+
+profileInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      profileImage.src = event.target.result || 'assets/img/aUser.png';
+    };
+    reader.readAsDataURL(file);
+  }
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // Initialize selectpicker
+  $('.selectpicker').selectpicker();
+
+  // Reference to author_id input
+  const authorIdInput = document.getElementById("author_id");
+
+  // Generate ID only if it's empty
+  if (!authorIdInput.value || authorIdInput.value.trim() === "") {
+    authorIdInput.value = generateAuthorID();
+  }
+
+  // ID generator function (example: TB19265S)
+  function generateAuthorID() {
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const randomNum = Math.floor(10000 + Math.random() * 90000); // 5-digit number
+    const randomLetter = letters.charAt(Math.floor(Math.random() * letters.length));
+    return `TBS${randomNum}${randomLetter}`;
+  }
+});
+</script>
+
+</body>
+</html>

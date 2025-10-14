@@ -34,18 +34,18 @@ const updateBook = async (req, res) => {
     }
 
     const {
-      title, subTitle, summary, author, mainCategory, genre, language,
+      title, subTitle, summary, author, authorId, mainCategory, genre, language,
       pageCount, ISBN10, ISBN13, publisher, publishDate, comment,
       download, share
     } = req.body;
 
     await db.query(
       `UPDATE uploadBook 
-       SET title=?, subTitle=?, summary=?, author=?, mainCategory=?, genre=?, language=?, 
+       SET title=?, subTitle=?, summary=?, author=?, authorId, mainCategory=?, genre=?, language=?, 
            pageCount=?, ISBN10=?, ISBN13=?, publisher=?, publishDate=?, comment=?, download=?, share=?, 
            bookCover=?, bookFile=? 
        WHERE bookQid=? AND member_id=?`,
-      [title, subTitle, summary, author, mainCategory, genre, language, pageCount, ISBN10, ISBN13,
+      [title, subTitle, summary, author, authorId, mainCategory, genre, language, pageCount, ISBN10, ISBN13,
        publisher, publishDate, comment, download, share, bookCoverUrl, bookFileUrl, bookQid, member_id]
     );
 

@@ -6,9 +6,9 @@ const uploadBook = async (req, res) => {
     const userId = req.user.user_id;
     const userEmail = req.user.email;
 
-    const { title, subtitle, summary, author, category, genre, language, pageCount, isbn10, isbn13, publisher, publishedDate, comment, download, share } = req.body;
+    const { title, subtitle, summary, author, authorId ,category, genre, language, pageCount, isbn10, isbn13, publisher, publishedDate, comment, download, share } = req.body;
 
-    if (!title || !subtitle || !summary || !author || !category || !language || !comment || !share || !download || !req.files.bookCover || !req.files.bookFile) {
+    if (!title || !subtitle || !summary || !author || !authorId ||!category || !language || !comment || !share || !download || !req.files.bookCover || !req.files.bookFile) {
       return res.status(400).json({ message: "Please fill all required fields" });
     }
 
@@ -19,8 +19,8 @@ const uploadBook = async (req, res) => {
     try {
       // Save in DB
       const [result] = await db.query(
-        "INSERT INTO uploadBook (member_id, member_email, title, subTitle, author, summary, mainCategory, genre, language, pageCount, ISBN10, ISBN13, publisher, publishDate, comment, download, share, bookCover, bookFile) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        [userId, userEmail, title, subtitle, author, summary, category, genre, language, pageCount, isbn10, isbn13, publisher, publishedDate, comment, download, share, bookCoverUrl, bookFileUrl]
+        "INSERT INTO uploadBook (member_id, member_email, title, subTitle, author, authorId, summary, mainCategory, genre, language, pageCount, ISBN10, ISBN13, publisher, publishDate, comment, download, share, bookCover, bookFile) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        [userId, userEmail, title, subtitle, author, authorId, summary, category, genre, language, pageCount, isbn10, isbn13, publisher, publishedDate, comment, download, share, bookCoverUrl, bookFileUrl]
       );
 
       res.json({ message: "Upload Book successfully" });

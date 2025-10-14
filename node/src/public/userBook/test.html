@@ -1,30 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Upload Wizard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../assets/css/uploadBook/upload.css">
 </head>
-<body>
-    <div class="step-section active fileInput" id="step-1">
-        <h5 class="mb-3">Upload Book file and Cover</h5>
-        <div class="rows ">
-            <div class="form-section">
+<body class="bg-light">
+  <div class="containerx "> 
+    <div class="card shadow ">
+      <div class="card-body">
+      
+        <!-- Progress bar -->
+        <div class="progress mb-4">
+          <div class="progress-bar " role="progressbar" style="width: 25%;" id="progressBar"></div>
+        </div>
+
+        <form id="bookForm">
+          <!-- Step 1: File Upload -->
+          <div class="step-section active fileInput" id="step-1">
+            <h5 class="mb-3">Upload Book file and Cover</h5>
+            <div class="rows ">
+              <div class="form-section">
                 <label class="form-label">Book File</label>
                 <div class="text-center">
-                        <div class="squares" id="BookFileBox">
-                        <span id="filePlaceholder"><i class="fa-solid fa-file"></i></span>
-                        <iframe id="filePreview" style="display:none;" frameborder="0"></iframe>
-                        </div>
-                        <div class="rowb">
-                            <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt,.epub" hidden required>
-                            <label class="btn btn-success-soft" for="fileInput"><i class="fa-solid fa-file-import"></i></label>
-                        </div>
+                    <div class="squares" id="BookFileBox">
+                    <span id="filePlaceholder"><i class="fa-solid fa-file"></i></span>
+                    <iframe id="filePreview" style="display:none;" frameborder="0"></iframe>
+                    </div>
+                    <div class="rowb">
+                        <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt,.epub" hidden required>
+                        <label class="btn btn-success-soft" for="fileInput"><i class="fa-solid fa-file-import"></i></label>
+                        <button type="button" id="fileRemoveBtn" class="btn btn-danger-soft"><i class="fa-solid fa-trash"></i></button>
+                    </div>
                 </div>
-            </div>
-            <div class="form-section">
-            <label class="form-label">Book Cover</label>
-                <div class="text-center">
+              </div>
+              <div class="form-section">
+                  <label class="form-label">Book Cover</label>
+                  <div class="text-center">
                       <div class="square" id="coverBox">
                       <span id="coverPlaceholder"><i class="fa-solid fa-file-image"></i></span>
                       <img id="coverPreview" alt="Cover Preview" style="display:none;">
@@ -32,44 +47,293 @@
                       <div class="rowb">
                           <input type="file" id="coverInput" accept="image/*" hidden required>
                           <label class="btn btn-success-soft" for="coverInput"><i class="fa-solid fa-file-import"></i></label>
+                          <button type="button" id="coverRemoveBtn" class="btn btn-danger-soft"><i class="fa-solid fa-trash"></i></button>
                       </div>
-                </div>
+                  </div>
+              </div>
             </div>
-        </div>
+          </div>
+
+          <!-- Step 2: Basic Info -->
+          <!-- Step 2: Basic Info -->
+<div class="step-section" id="step-2">
+  <h5 class="mb-3">Fill the Book main information</h5>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <label class="form-label">Title</label>
+      <input type="text" class="form-control" required placeholder="Enter book title" id="title">
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Subtitle (Optional)</label>
+      <input type="text" class="form-control" placeholder="Enter subtitle" id="subtitle">
+    </div>
+    <div class="col-12">
+      <label class="form-label">Summary</label>
+      <textarea class="form-control" rows="3" required id="summary" placeholder="Enter book summary"></textarea>
     </div>
 
+    <!-- 👇 New Author Section -->
+    <div class="col-12">
+      <label class="form-label">Authors</label>
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <input type="number" class="form-control w-auto" id="authorCount" min="1" max="5" placeholder="Number (1–5)">
+        <button type="button" class="btn btn-success" id="generateAuthors">Generate</button>
+      </div>
+      <div id="authorInputs" class="d-flex flex-column gap-2"></div>
+      <!-- Hidden real data for DB -->
+      <textarea id="authorName" class="form-control"></textarea>
+      <textarea id="authorId"  class="form-control "></textarea>
+    </div>
+  </div>
+</div>
 
 
-
-
-      
-
-
-
-
-
-<!-- File Uploads -->
-        <div class="form-section">
-          <label class="form-label">Book File</label>
-          <div class="file-preview" id="filePreviewBox">
-            <iframe id="filePreview" style="display:none;" frameborder="0"></iframe>
-            <span id="filePlaceholder"><i class="fa-solid fa-file"></i></span>
+          <!-- Step 3: More Details -->
+          <div class="step-section" id="step-3">
+            <h5 class="mb-3">Fill the Book Details</h5>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Category</label>
+                <br>
+                <select class="form-select" id="category" required>
+                    <option value="" disabled selected>Select Book Category</option>
+                    <!-- Fiction -->
+                    <option value="Fiction">Fiction</option>
+                    <option value="Fantasy">Fantasy</option>
+                    <option value="ScienceFiction">Science Fiction</option>
+                    <option value="Mystery">Mystery / Thriller</option>
+                    <option value="Romance">Romance</option>
+                    <option value="HistoricalFiction">Historical Fiction</option>
+                    <option value="Horror">Horror</option>
+                    <option value="Adventure">Adventure</option>
+                    <!-- Non-Fiction -->
+                    <option value="Biography">Biography / Autobiography</option>
+                    <option value="Memoir">Memoir</option>
+                    <option value="SelfHelp">Self-Help / Personal Development</option>
+                    <option value="Business">Business / Management</option>
+                    <option value="Finance">Finance / Economics</option>
+                    <option value="History">History</option>
+                    <option value="Science">Science & Technology</option>
+                    <option value="Health">Health & Wellness</option>
+                    <option value="Travel">Travel</option>
+                    <option value="Cookbook">Cookbook / Food</option>
+                    <!-- Academic & Educational -->
+                    <option value="Textbook">Textbook</option>
+                    <option value="Lecture">Lecture</option>
+                    <option value="CaseStudy">Case Study</option>
+                    <option value="Research">Research / Academic Paper</option>
+                    <option value="Reference">Reference / Encyclopedia</option>
+                    <option value="Essay">Essay Collection</option>
+                    <!-- Other -->
+                    <option value="Poetry">Poetry</option>
+                    <option value="Art">Art / Photography</option>
+                    <option value="Comics">Comics / Graphic Novel</option>
+                    <option value="Children">Children's Books</option>
+                    <option value="YoungAdult">Young Adult</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Genre (Optional)</label>
+                <input type="text" class="form-control" id="genre" placeholder="Horror, Romance, etc.">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Language</label>
+                <br>
+                <select class="form-select" id="language" required>
+                  <option value="" disabled selected>Select Language</option>
+                  <option value="English">🇬🇧 English</option>
+                  <option value="French">🇫🇷 French</option>
+                  <option value="Spanish">🇪🇸 Spanish</option>
+                  <option value="German">🇩🇪 German</option>
+                  <option value="Japanese">🇯🇵 Japanese</option>
+                  <option value="Chinese">🇨🇳 Chinese</option>
+                  <option value="Khmer">🇰🇭 Khmer</option>
+                  <option value="Thai">🇹🇭 Thai</option>
+                  <option value="Korean">🇰🇷 Korean</option>
+                  <option value="Indonesian">🇮🇩 Indonesian</option>
+                  <option value="Portuguese">🇧🇷 Portuguese</option>
+                  <option value="Russian">🇷🇺 Russian</option>
+                  <option value="Turkish">🇹🇷 Turkish</option>
+                  <option value="Vietnamese">🇻🇳 Vietnamese</option>
+                  <option value="Arabic">🇦🇪 Arabic</option>
+                  <option value="Hindi">🇮🇳 Hindi</option>
+                  <option value="Italian">🇮🇹 Italy</option>
+              </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Page Count (Optional)</label>
+                <input type="number" class="form-control" id="pageCount" placeholder="Enter page count">
+              </div>
+            </div>
           </div>
-          <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt,.epub">
-        </div>
 
-        <div class="form-section">
-          <label class="form-label">Book Cover</label>
-          <div class="file-preview" id="coverPreviewBox">
-            <img id="coverPreview" style="display:none;" alt="Cover Preview">
-            <span id="coverPlaceholder"><i class="fa-solid fa-file-image"></i></span>
+          <!-- Step 4: Final Details -->
+          <div class="step-section" id="step-4">
+            <h5 class="mb-3">Fill the book basic information</h5>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">ISBN-10 (Optional)</label>
+                <input type="number" class="form-control" id="isbn10">
+              </div>
+               <div class="col-md-6">
+                <label class="form-label">ISBN-13 (Optional)</label>
+                <input type="number" class="form-control" id="isbn13">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Published Date (Optional)</label>
+                <input type="date" class="form-control" id="publishedDate">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Publisher (Optional)</label>
+                <input type="text" class="form-control" id="publisher">
+              </div>
+            </div>
           </div>
-          <input type="file" id="coverInput" accept="image/*">
+           <!-- Step 5: Final Details -->
+          <div class="step-section" id="step-5">
+            <h5 class="mb-3">Setup the book privacy</h5>
+            <div class="row g-3">
+              <div class="toggleForThree">
+                  <label class="form-label">Comment : </label>
+                  <div class="toggle-switch">
+                      <input type="checkbox" id="comment" checked>
+                      <label for="comment"></label>
+                  </div>
+              </div>
+              <div class="toggleForThree">
+                  <label class="form-label">Download : </label>
+                  <div class="toggle-switch">
+                      <input type="checkbox" id="download" checked>
+                      <label for="download"></label>
+                  </div>
+              </div>
+              <div class="toggleForThree">
+                  <label class="form-label">Share : </label>
+                  <div class="toggle-switch">
+                      <input type="checkbox" id="share" checked>
+                      <label for="share"></label>
+                  </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Navigation Buttons -->
+          <div class="d-flex justify-content-between mt-4">
+            <button type="button" class="btn btn-secondary" id="prevBtn">Previous</button>
+            <button type="button" class="btn btn-primary" id="nextBtn">Next</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const authorCountInput = document.getElementById("authorCount");
+  const generateBtn = document.getElementById("generateAuthors");
+  const authorInputsContainer = document.getElementById("authorInputs");
+  const authorNameTextarea = document.getElementById("authorName");
+  const authorIdTextarea = document.getElementById("authorId");
+
+  // 🎯 Generate author inputs dynamically
+  generateBtn.addEventListener("click", () => {
+    const count = parseInt(authorCountInput.value);
+    if (isNaN(count) || count < 1 || count > 5) {
+      alert("Please enter a number between 1 and 5.");
+      return;
+    }
+
+    // Clear old inputs and textarea values when regenerating
+    authorInputsContainer.innerHTML = "";
+    authorNameTextarea.value = "";
+    authorIdTextarea.value = "";
+
+    for (let i = 1; i <= count; i++) {
+      const row = document.createElement("div");
+      row.className = "row g-2 align-items-center";
+
+      row.innerHTML = `
+        <div class="col-md-6">
+          <input type="text" class="form-control author-name" placeholder="Author ${i} Name">
         </div>
+        <div class="col-md-6">
+          <input type="text" class="form-control author-id" placeholder="Author ${i} ID (optional)">
+        </div>
+      `;
+
+      authorInputsContainer.appendChild(row);
+    }
+
+    // Attach live sync again for new inputs
+    attachLiveSync();
+  });
+
+  // 💡 Function: Sync textarea live as user types
+  function attachLiveSync() {
+    const authorNameInputs = document.querySelectorAll(".author-name");
+    const authorIdInputs = document.querySelectorAll(".author-id");
+
+    const updateTextareas = () => {
+      const names = [...authorNameInputs].map(a => a.value.trim()).filter(Boolean);
+      const ids = [...authorIdInputs].map(a => a.value.trim()).filter(Boolean);
+      authorNameTextarea.value = names.join(", ");
+      authorIdTextarea.value = ids.join(", ");
+    };
+
+    authorNameInputs.forEach(input => input.addEventListener("input", updateTextareas));
+    authorIdInputs.forEach(input => input.addEventListener("input", updateTextareas));
+  }
+});
+</script>
 
 
+<!-- <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const authorCountInput = document.getElementById("authorCount");
+  const generateBtn = document.getElementById("generateAuthors");
+  const authorInputsContainer = document.getElementById("authorInputs");
+  const authorNameTextarea = document.getElementById("authorName");
+  const authorIdTextarea = document.getElementById("authorId");
 
+  generateBtn.addEventListener("click", () => {
+    const count = parseInt(authorCountInput.value);
+    if (isNaN(count) || count < 1 || count > 5) {
+      alert("Please enter a number between 1 and 5.");
+      return;
+    }
 
+    authorInputsContainer.innerHTML = ""; // clear old
 
+    for (let i = 1; i <= count; i++) {
+      const row = document.createElement("div");
+      row.className = "row g-2 align-items-center";
+
+      row.innerHTML = `
+        <div class="col-md-6">
+          <input type="text" class="form-control author-name" placeholder="Author ${i} Name">
+        </div>
+        <div class="col-md-6">
+          <input type="text" class="form-control author-id" placeholder="Author ${i} ID (e.g. TB19265S)">
+        </div>
+      `;
+
+      authorInputsContainer.appendChild(row);
+    }
+  });
+
+  // 🧩 Sync hidden textareas before submitting form
+  const bookForm = document.getElementById("bookForm");
+  bookForm.addEventListener("submit", () => {
+    const authorNames = [...document.querySelectorAll(".author-name")].map(input => input.value.trim()).filter(Boolean);
+    const authorIds = [...document.querySelectorAll(".author-id")].map(input => input.value.trim()).filter(Boolean);
+
+    authorNameTextarea.value = authorNames.join(", ");
+    authorIdTextarea.value = authorIds.join(", ");
+  });
+});
+</script> -->
+
+<script src="../assets/js/jquery.js"></script>
+<script src="../assets/js/uploadBook/upload.js"></script>
+<script src="../assets/js/uploadBook/uploadData.js"></script>
 </body>
 </html>

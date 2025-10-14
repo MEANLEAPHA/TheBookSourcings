@@ -1,856 +1,346 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Delivery Car Game</title>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-	<script src="https://unpkg.com/three-csg-ts@0.2.4/lib/csg.js"></script>
-	<style>
-		* { border: 0; box-sizing: border-box; margin: 0; padding: 0; }
-		:root { font-size: calc(16px + (20 - 16) * (100vw - 320px)/(1024 - 320)); }
-		body, button { color: #fff; font: 1em Arial, "Helvetica Neue", Helvetica, sans-serif; line-height: 1.5; }
-		body { overflow: hidden; }
-		button, canvas { -webkit-tap-highlight-color: transparent; }
-		button, .difficulty-select, .tutorial { opacity: 0; }
-		button { background: #2762f3; border-radius: 0.375em; box-shadow: 0 0 0 0.25em inset, 0 -0.5em 0 #0003 inset; cursor: pointer; display: block; font-weight: 700; margin: 0 auto 0.75em auto; padding: 0.75em 1.5em; transition: background 0.15s linear; transform: translateY(50%); width: 100%; max-width: 16em; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
-		button:hover { background: #5785f6; }
-		button:active { background: #0c48db; }
-		button:disabled { cursor: default; }
-		header, .difficulty-select, .tutorial, .replay { position: absolute; z-index: 1; }
-		header, .difficulty-select { left: 0; width: 100%; }
-		header, h1 { line-height: 1; }
-		header { font-size: 4em; font-weight: 900; top: 0; padding: 0.75rem; -webkit-text-stroke: 4px #171717; text-shadow: 0 4px 0 #171717; transform: translateY(-100%); transition: all 0.25s linear; }
-		h1 { font-size: 2em; margin-bottom: 1em; text-align: center; transform: translateX(100%); }
-		kbd { background: #242424; border-radius: 0.25em; display: inline-block; font-family: Helvetica, sans-serif; height: 1.5em; min-width: 1.5em; padding: 0 0.25em; text-align: center; vertical-align: middle; }
-		p { margin-bottom: 1.5em; }
-		.difficulty-select, .tutorial, .replay { top: 50%; }
-		.difficulty-select, .tutorial { background: #0000007f; }
-		.difficulty-select { padding: 1.5em 0; transform: translateY(-50%); }
-		.menu-active, .tutorial-active, .replay-active { z-index: 9; }
-		.menu-active { animation: fadeIn 0.5s linear forwards; }
-		.menu-active h1 { animation: slideIn 0.5s 0.5s linear forwards; }
-		.menu-active button:nth-of-type(1) { animation: fadeSlide 0.15s 1s linear forwards; }
-		.menu-active button:nth-of-type(2) { animation: fadeSlide 0.15s 1.15s linear forwards; }
-		.menu-active button:nth-of-type(3) { animation: fadeSlide 0.15s 1.3s linear forwards; }
-		.menu-active button:nth-of-type(4) { animation: fadeSlide 0.15s 1.45s linear forwards; }
-		.menu-inactive { animation: fadeIn 0.5s 1.1s linear reverse forwards; opacity: 1; }
-		.menu-inactive h1 { animation: slideOut 0.5s 0.6s linear forwards; transform: translateX(0); }
-		.menu-inactive button { opacity: 1; transform: translateY(0); }
-		.menu-inactive button:nth-of-type(1) { animation: fadeSlide 0.15s linear reverse forwards; }
-		.menu-inactive button:nth-of-type(2) { animation: fadeSlide 0.15s 0.15s linear reverse forwards; }
-		.menu-inactive button:nth-of-type(3) { animation: fadeSlide 0.15s 0.3s linear reverse forwards; }
-		.menu-inactive button:nth-of-type(4) { animation: fadeSlide 0.15s 0.45s linear reverse forwards; }
-		.tutorial { border-radius: 0.75em; padding: 1.5em 1.5em 0 1.5em; left: 50%; text-align: center; width: 12em; transform: translate(-50%,-50%); transition: opacity 0.25s linear; }
-		.replay { margin: 0; padding: 1.5em; left: 50%; transform: translate(-50%,0); transition: all 0.15s linear; width: 6em; height: 6em; }
-		.btn-icon { fill: #fff; width: 3em; height: 3em; }
-		.score-active { transform: translateY(0); }
-		.tutorial-active, .replay-active { opacity: 1; }
-		.replay-active { transform: translate(-50%,-50%); }
-		@keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
-		@keyframes slideIn { from { transform: translateX(100%) } to { transform: translateX(0) } }
-		@keyframes slideOut { from { transform: translateX(0) } to { transform: translateX(-100%) } }
-		@keyframes fadeSlide { from { opacity: 0; transform: translateY(50%); } to { opacity: 1; transform: translateY(0); } }
-	</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hanoi Books</title>
+  <link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      position: relative;
+      font-family: 'Comfortaa', cursive;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      overflow: auto;
+    }
+
+    #container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    #title {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 24px;
+      color: #333344;
+      font-weight: bold;
+      z-index: 10;
+    }
+
+    #game {
+      display: flex;
+      justify-content: space-around;
+      width: 90%;
+      max-width: 800px;
+      height: 400px;
+      position: relative;
+      margin-top: 20px;
+    }
+
+    .tower {
+      width: 30%;
+      height: 100%;
+      background: #fff;
+      border: 2px solid #333344;
+      border-radius: 10px;
+      position: relative;
+      display: flex;
+      flex-direction: column-reverse;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .tower::before {
+      content: '';
+      position: absolute;
+      width: 10px;
+      height: 80%;
+      background: #333344;
+      top: 10%;
+      z-index: 0;
+    }
+
+    .tower-label {
+      position: absolute;
+      bottom: -30px;
+      width: 100%;
+      text-align: center;
+      color: #333344;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .disk {
+      height: 50px;
+      background-size: cover;
+      background-position: center;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease;
+      z-index: 1;
+      margin: 2px 0;
+    }
+
+    .disk:hover {
+      transform: scale(1.05);
+    }
+
+    #controls {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    #mode-select {
+      padding: 10px;
+      font-size: 16px;
+      border: 2px solid #333344;
+      border-radius: 5px;
+      background: transparent;
+      color: #333344;
+      cursor: pointer;
+      font-family: 'Comfortaa', cursive;
+    }
+
+    #moves {
+      margin-top: 10px;
+      font-size: 18px;
+      color: #333344;
+    }
+
+    #game-over {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.9);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+    }
+
+    #game-over h2 {
+      color: #333344;
+      font-size: 40px;
+      margin: 0;
+    }
+
+    #game-over p {
+      color: #333344;
+      font-size: 20px;
+      margin: 10px 0;
+    }
+
+    #game-over button {
+      padding: 10px 20px;
+      font-size: 18px;
+      border: 3px solid #333344;
+      background: transparent;
+      color: #333344;
+      cursor: pointer;
+      border-radius: 5px;
+      font-family: 'Comfortaa', cursive;
+    }
+
+    #game-ready {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.9);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+    }
+
+    #game-ready button {
+      padding: 10px 20px;
+      font-size: 18px;
+      border: 3px solid #333344;
+      background: transparent;
+      color: #333344;
+      cursor: pointer;
+      border-radius: 5px;
+      font-family: 'Comfortaa', cursive;
+    }
+  </style>
 </head>
 <body>
-	<header>0</header>
-	<div class="difficulty-select">
-		<h1>Select Difficulty</h1>
-		<button type="button" data-difficulty="0" disabled>Easy</button>
-		<button type="button" data-difficulty="1" disabled>Medium</button>
-		<button type="button" data-difficulty="2" disabled>Hard</button>
-		<button type="button" data-difficulty="3" disabled>Brutal</button>
-	</div>
-	<div class="tutorial">
-		<p><strong>Steer:</strong></p>
-		<p><kbd>A</kbd> <kbd>D</kbd><br>or<br><kbd>&#8592;</kbd> <kbd>&#8594;</kbd><br>or<br>Drag left/right</p>
-	</div>
-	<button type="button" class="replay" disabled>
-		<svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="96px" height="96px" viewBox="0 0 96 96" enable-background="new 0 0 96 96">
-			<path d="M96,88V60c0-1.083-0.396-2.021-1.188-2.812C94.02,56.396,93.083,56,92,56H64c-1.75,0-2.979,0.833-3.688,2.5 c-0.709,1.625-0.418,3.062,0.875,4.312l8.625,8.625C63.645,77.145,56.374,79.999,48,79.999c-4.333,0-8.469-0.844-12.406-2.531 c-3.937-1.687-7.344-3.969-10.219-6.844s-5.156-6.281-6.844-10.219C16.843,56.467,16,52.332,16,47.999 c0-4.334,0.844-8.469,2.531-12.406c1.687-3.937,3.969-7.344,6.844-10.219s6.281-5.156,10.219-6.844 c3.938-1.688,8.073-2.531,12.406-2.531c7.042,0,13.375,2.072,19,6.219c5.625,4.147,9.479,9.595,11.562,16.345 C78.854,39.521,79.479,40,80.438,40h12.438c0.667,0,1.188-0.25,1.562-0.75c0.416-0.541,0.562-1.104,0.438-1.688 c-1.625-7.291-4.698-13.791-9.219-19.5C81.135,12.354,75.594,7.916,69.031,4.75C62.468,1.584,55.458,0,48,0 c-6.5,0-12.708,1.271-18.625,3.812s-11.021,5.959-15.312,10.25s-7.708,9.396-10.25,15.312S0,41.5,0,48s1.271,12.708,3.812,18.625 s5.958,11.021,10.25,15.312s9.396,7.707,15.312,10.25C35.29,94.729,41.5,96,48,96c6.125,0,12.052-1.156,17.781-3.469 c5.729-2.313,10.822-5.573,15.281-9.781l8.125,8.062c1.207,1.291,2.666,1.582,4.375,0.875C95.188,90.979,96,89.75,96,88z"/>
-		</svg>
-	</button>
-	<script>
-		window.addEventListener("DOMContentLoaded", app);
-		function app() {
-			var header = document.querySelector("header"),
-				difSelect = document.querySelector(".difficulty-select"),
-				difButtons = difSelect.querySelectorAll("button"),
-				tutorialBox = document.querySelector(".tutorial"),
-				replayButton = document.querySelector(".replay"),
-				scene, camera, renderer, hemiLight, pointLight,
-				touch = { hold: false, x: 0 },
-				difSelectActive = false,
-				scoreCounterActive = false,
-				replayBtnActive = false,
-				game = null,
-				randomInt = (min, max) => Math.round(Math.random() * (max - min)) + min,
-				skyColor = 0x69c6d0,
-				pointLightZ = -60,
-				cameraY = 45,
-				cameraYMin = 7,
-				renderDistance = 8,
-				roadChunks = [];
+  <div id="container">
+    <div id="title">Hanoi Books</div>
+    <div id="game">
+      <div class="tower" data-tower="0"><div class="tower-label">Tower A</div></div>
+      <div class="tower" data-tower="1"><div class="tower-label">Tower B</div></div>
+      <div class="tower" data-tower="2"><div class="tower-label">Tower C</div></div>
+    </div>
+    <div id="controls">
+      <select id="mode-select">
+        <option value="3">Easy (3 Books)</option>
+        <option value="4">Medium (4 Books)</option>
+        <option value="5">Hard (5 Books)</option>
+      </select>
+      <div id="moves">Moves: 0 | Minimum: 7</div>
+    </div>
+    <div id="game-over">
+      <h2>You Solved It!</h2>
+      <p>You used <span id="final-moves">0</span> moves.</p>
+      <button id="play-again">Play Again</button>
+    </div>
+    <div id="game-ready">
+      <button id="start-button">Start Game</button>
+    </div>
+  </div>
 
-			class Game {
-				constructor(args) {
-					let d = args.difficulty;
-					this.difficulty = d >= 0 && d <= 3 ? d : 1;
-					this.tutorial = args.tutorial === true;
-					this.over = false;
-					this.preparingNew = false;
-					this.score = 0;
-					this.noScoreXZone = 15;
-					this.vehicles = [
-						new Vehicle({ color: 0x2762f3, x: 0, z: 0, modelID: 0, speed: 1, acceleration: 0.001 * 2**d, name: "Vehicle 0", isPlayer: true })
-					];
-					this.vehicleSpawns = this.vehicles.length;
-					this.vehicleLimit = 9;
-					this.vehicleIDCtrld = 0;
-					this.spark = null;
-				}
-			}
+  <script>
+    const bookCovers = [
+      "https://covers.openlibrary.org/b/id/14601958-L.jpg", // Fourth Wing
+      "https://covers.openlibrary.org/b/id/9616518-L.jpg", // Da Vinci Code
+      "https://dauntbooks.co.uk/wp-content/uploads/2020/11/9780008220563.jpg", // Hillbilly Elegy
+      "https://m.media-amazon.com/images/I/91ePo2UNeAL._SL1500_.jpg", // Kamala Harris
+      "https://images.penguinrandomhouse.com/cover-large/059380158X", // Bill Gates
+      "https://covers.openlibrary.org/b/id/10251484-L.jpg", // Colleen Hoover
+      "https://play.google.com/books/publisher/content/images/frontcover/njVpDQAAQBAJ?fife=w240-h345", // Taylor Jenkins Reid
+      "https://sarahjmaas.com/wp-content/uploads/2023/10/9781639730957.min_.jpg", // Sarah J. Maas
+      "https://m.media-amazon.com/images/I/81YkqHLgjWL.jpg", // Atomic Habits
+      "https://images.penguinrandomhouse.com/cover/9780593441213", // Emily Henry
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyZtivnce1xcw2n9m8bX8Oa8Nx2-8cERaOxA&s", // Rebecca Yarros
+      "https://m.media-amazon.com/images/I/81FummA7aTL.jpg" // The Housemaid
+    ];
 
-			class RoadChunk {
-				constructor(zSpaces) {
-					let chunkSize = 40,
-						lineWidth = 1,
-						lineHeight = 4,
-						dotLines = 3;
-					this.chunkSize = chunkSize;
-					this.surfaceGeo = new THREE.PlaneBufferGeometry(chunkSize, chunkSize);
-					this.surfaceMat = new THREE.MeshLambertMaterial({ color: 0x575757 });
-					this.surface = new THREE.Mesh(this.surfaceGeo, this.surfaceMat);
-					this.surface.name = "Road Chunk";
-					this.surface.rotation.x = -Math.PI / 2;
-					this.surface.position.set(0, 0, zSpaces * chunkSize);
-					this.surface.receiveShadow = true;
-					scene.add(this.surface);
-					let lineGeo = new THREE.PlaneBufferGeometry(lineWidth, chunkSize),
-						lineMat = new THREE.MeshLambertMaterial({ color: 0xffffff }),
-						line = new THREE.Mesh(lineGeo, lineMat);
-					line.receiveShadow = true;
-					let leftShoulder = line.clone();
-					leftShoulder.position.set(-chunkSize * 0.375, 0, 0.01);
-					this.surface.add(leftShoulder);
-					let rightShoulder = line.clone();
-					rightShoulder.position.set(chunkSize * 0.375, 0, 0.01);
-					this.surface.add(rightShoulder);
-					let dotLineGeo = new THREE.PlaneBufferGeometry(lineWidth, lineHeight),
-						dotLineMat = new THREE.MeshLambertMaterial({ color: 0xffffff }),
-						dotLine = new THREE.Mesh(dotLineGeo, dotLineMat);
-					for (let l = 0; l < dotLines; ++l) {
-						let y = chunkSize / 2 - (chunkSize / dotLines) * l - lineHeight / 2;
-						let leftLine = dotLine.clone();
-						leftLine.position.set(-chunkSize * 0.125, y, 0.01);
-						this.surface.add(leftLine);
-						let rightLine = dotLine.clone();
-						rightLine.position.set(chunkSize * 0.125, y, 0.01);
-						this.surface.add(rightLine);
-					}
-				}
-			}
+    class Game {
+      constructor() {
+        this.towers = [
+          [], // Tower A
+          [], // Tower B
+          [], // Tower C
+        ];
+        this.selectedTower = null;
+        this.moves = 0;
+        this.minMoves = 7; // Default for 3 disks
+        this.numDisks = 3; // Default Easy mode
+        this.state = 'ready';
+        this.towerElements = document.querySelectorAll('.tower');
+        this.modeSelect = document.getElementById('mode-select');
+        this.movesDisplay = document.getElementById('moves');
+        this.finalMoves = document.getElementById('final-moves');
+        this.gameOver = document.getElementById('game-over');
+        this.gameReady = document.getElementById('game-ready');
+        this.startButton = document.getElementById('start-button');
+        this.playAgainButton = document.getElementById('play-again');
 
-			class Vehicle {
-				constructor(args) {
-					this.color = args.color || randomInt(0x171717, 0xcccccc);
-					this.x = args.x || 0;
-					this.z = args.z || 0;
-					this.width = 1;
-					this.height = 1;
-					this.depth = 1;
-					this.speed = args.speed || 1;
-					this.acceleration = args.acceleration || 0;
-					this.model = null;
-					this.name = args.name || "";
-					this.maxSpeed = 4;
-					this.isSteering = false;
-					this.steerAngle = 0;
-					this.maxSteerAngle = 30;
-					this.steerSpeed = 0.15;
-					this.steerDir = "";
-					this.xLimit = 20;
-					this.crashed = false;
-					this.deceleration = 0.01;
-					let modelID = args.modelID;
-					if (modelID === undefined) modelID = Math.round(Math.random() * 2);
-					switch (modelID) {
-						case 1:
-							this.width = 5;
-							this.height = 5;
-							this.depth = 10;
-							this.model = new Truck(this.color, this.x, this.z, this.name);
-							break;
-						case 2:
-							this.width = 5;
-							this.height = 8;
-							this.depth = 18;
-							this.model = new TractorTrailer(this.color, this.x, this.z, this.name);
-							break;
-						default:
-							this.width = 5;
-							this.height = 4;
-							this.depth = 10;
-							this.model = new Car(this.color, this.x, this.z, this.name, args.isPlayer);
-							break;
-					}
-				}
-				accelerate() {
-					if (this.speed < this.maxSpeed) {
-						this.speed += this.acceleration;
-						this.speed = +(this.speed).toFixed(3);
-					}
-				}
-				decelerate() {
-					if (this.speed > 0) {
-						this.speed -= this.deceleration;
-						this.speed = +(this.speed).toFixed(3);
-						if (this.speed < 0) this.speed = 0;
-					}
-				}
-				move() {
-					let mesh = this.model.mesh;
-					this.z -= this.speed;
-					mesh.position.z = this.z;
-					if (this.isSteering && !this.crashed) {
-						if (this.steerDir === "left") {
-							this.x -= this.steerSpeed;
-							if (this.steerAngle < this.maxSteerAngle) ++this.steerAngle;
-						} else if (this.steerDir === "right") {
-							this.x += this.steerSpeed;
-							if (this.steerAngle > -this.maxSteerAngle) --this.steerAngle;
-						}
-					} else if (!this.crashed) {
-						if (this.steerAngle > 0) {
-							--this.steerAngle;
-							this.x -= this.steerSpeed;
-						} else if (this.steerAngle < 0) {
-							++this.steerAngle;
-							this.x += this.steerSpeed;
-						}
-					}
-					if (this.x < -this.xLimit || this.x > this.xLimit) {
-						this.crashed = true;
-						game.over = true;
-					}
-					mesh.position.x = this.x;
-					mesh.rotation.y = this.steerAngle * Math.PI / 180;
-					if (!this.crashed) {
-						mesh.getObjectByName("FL").rotation.y = mesh.rotation.y;
-						mesh.getObjectByName("FR").rotation.y = mesh.rotation.y;
-					}
-				}
-				steer(dir) {
-					this.isSteering = true;
-					this.steerDir = dir;
-				}
-				straighten() {
-					this.isSteering = false;
-					this.steerDir = "";
-				}
-			}
+        this.startButton.addEventListener('click', () => this.startGame());
+        this.playAgainButton.addEventListener('click', () => this.resetGame());
+        this.modeSelect.addEventListener('change', () => {
+          this.numDisks = parseInt(this.modeSelect.value);
+          this.minMoves = (1 << this.numDisks) - 1; // 2^n - 1
+          this.updateMovesDisplay();
+        });
+        this.towerElements.forEach(tower => {
+          tower.addEventListener('click', () => this.handleTowerClick(tower.dataset.tower));
+        });
+      }
 
-			class Car {
-				constructor(color, x, z, name, isPlayer = false) {
-					this.mass = 3;
-					this.mesh = new THREE.Object3D();
-					this.mesh.name = name;
-					this.mesh.position.set(x, 2, z);
-					scene.add(this.mesh);
-					var carBodyBase = new THREE.Mesh(new THREE.BoxBufferGeometry(5, 3, 10)),
-						cutFront = new THREE.Mesh(new THREE.BoxBufferGeometry(5, 1, 3)),
-						cutBack = new THREE.Mesh(new THREE.BoxBufferGeometry(5, 1, 2)),
-						frontTireHoles = new THREE.Mesh(new THREE.CylinderBufferGeometry(1.2, 1.2, 5, 16, 16, false)),
-						backTireHoles = frontTireHoles.clone();
-					cutFront.position.set(0, 1, -3.5);
-					cutBack.position.set(0, 1, 4);
-					frontTireHoles.position.set(0, -1.5, -3);
-					frontTireHoles.rotation.z = 90 * Math.PI / 180;
-					backTireHoles.position.set(0, -1.5, 3);
-					backTireHoles.rotation.z = frontTireHoles.rotation.z;
-					carBodyBase.updateMatrix();
-					cutFront.updateMatrix();
-					cutBack.updateMatrix();
-					frontTireHoles.updateMatrix();
-					backTireHoles.updateMatrix();
-					var carBody = CSG.subtract(carBodyBase, [cutFront, cutBack, frontTireHoles, backTireHoles]);
-					carBody.material = new THREE.MeshLambertMaterial({ color: color });
-					carBody.position.set(0, 0.5, 0);
-					carBody.castShadow = true;
-					this.mesh.add(carBody);
-					var wheelGeo = new THREE.CylinderBufferGeometry(1, 1, 0.5, 24, 24, false),
-						wheelMat = new THREE.MeshLambertMaterial({ color: 0x171717 }),
-						wheel = new THREE.Mesh(wheelGeo, wheelMat);
-					wheel.castShadow = true;
-					wheel.rotation.z = -0.5 * Math.PI;
-					var wheelPos = [
-						{ x: -2.25, y: -1, z: 3, name: "BL" },
-						{ x: 2.25, y: -1, z: 3, name: "BR" },
-						{ x: -2.25, y: -1, z: -3, name: "FL" },
-						{ x: 2.25, y: -1, z: -3, name: "FR" }
-					];
-					for (let p of wheelPos) {
-						var w = wheel.clone();
-						w.name = p.name;
-						w.position.set(p.x, p.y, p.z);
-						this.mesh.add(w);
-					}
-					var windowMat = new THREE.MeshLambertMaterial({ color: 0x171717 }),
-						horzWindowGeo = new THREE.PlaneBufferGeometry(4.4, 0.8),
-						horzWindow = new THREE.Mesh(horzWindowGeo, windowMat),
-						midFrontWindowGeo = new THREE.PlaneBufferGeometry(2.3, 0.8),
-						midFrontWindow = new THREE.Mesh(midFrontWindowGeo, windowMat),
-						midBackWindowGeo = new THREE.PlaneBufferGeometry(1.5, 0.8),
-						midBackWindow = new THREE.Mesh(midBackWindowGeo, windowMat);
-					horzWindow.receiveShadow = true;
-					midFrontWindow.receiveShadow = true;
-					midBackWindow.receiveShadow = true;
-					var leftMFWindow = midFrontWindow.clone();
-					leftMFWindow.position.set(-2.51, 1.4, -0.4);
-					leftMFWindow.rotation.y = -0.5 * Math.PI;
-					this.mesh.add(leftMFWindow);
-					var rightMFWindow = midFrontWindow.clone();
-					rightMFWindow.position.set(2.51, 1.4, -0.4);
-					rightMFWindow.rotation.y = 0.5 * Math.PI;
-					this.mesh.add(rightMFWindow);
-					var leftMBWindow = midBackWindow.clone();
-					leftMBWindow.position.set(-2.51, 1.4, 1.9);
-					leftMBWindow.rotation.y = -0.5 * Math.PI;
-					this.mesh.add(leftMBWindow);
-					var rightMBWindow = midBackWindow.clone();
-					rightMBWindow.position.set(2.51, 1.4, 1.9);
-					rightMBWindow.rotation.y = 0.5 * Math.PI;
-					this.mesh.add(rightMBWindow);
-					var frontWindow = horzWindow.clone();
-					frontWindow.position.set(0, 1.4, -2.01);
-					frontWindow.rotation.y = Math.PI;
-					this.mesh.add(frontWindow);
-					var backWindow = horzWindow.clone();
-					backWindow.position.set(0, 1.4, 3.01);
-					this.mesh.add(backWindow);
-					var lightGeo = new THREE.PlaneBufferGeometry(1, 0.5),
-						frontLightMat = new THREE.MeshLambertMaterial({ color: 0xf1f1f1 }),
-						frontLight = new THREE.Mesh(lightGeo, frontLightMat),
-						backLightMat = new THREE.MeshLambertMaterial({ color: 0xf65555 }),
-						backLight = new THREE.Mesh(lightGeo, backLightMat);
-					frontLight.rotation.y = Math.PI;
-					var frontLeftLight = frontLight.clone();
-					frontLeftLight.position.set(-2, 0.25, -5.01);
-					this.mesh.add(frontLeftLight);
-					var frontRightLight = frontLight.clone();
-					frontRightLight.position.set(2, 0.25, -5.01);
-					this.mesh.add(frontRightLight);
-					var backLeftLight = backLight.clone();
-					backLeftLight.position.set(-2, 0.25, 5.01);
-					this.mesh.add(backLeftLight);
-					var backRightLight = backLight.clone();
-					backRightLight.position.set(2, 0.25, 5.01);
-					this.mesh.add(backRightLight);
-					if (isPlayer) {
-						var canvas = document.createElement('canvas');
-						canvas.width = 256;
-						canvas.height = 128;
-						var context = canvas.getContext('2d');
-						context.fillStyle = 'white';
-						context.font = 'bold 80px Arial';
-						context.fillText('TBS', 64, 96);
-						var texture = new THREE.CanvasTexture(canvas);
-						var textMat = new THREE.MeshLambertMaterial({ map: texture, transparent: true });
-						var textGeo = new THREE.PlaneBufferGeometry(2, 1);
-						var textMesh = new THREE.Mesh(textGeo, textMat);
-						textMesh.position.set(0, 1, 5.01);
-						this.mesh.add(textMesh);
-					}
-				}
-			}
+      startGame() {
+        this.state = 'playing';
+        this.gameReady.style.display = 'none';
+        this.resetGame();
+      }
 
-			class Truck {
-				constructor(color, x, z, name) {
-					this.mass = 4;
-					this.mesh = new THREE.Object3D();
-					this.mesh.name = name;
-					this.mesh.position.set(x, 2.5, z);
-					scene.add(this.mesh);
-					var truckBodyBase = new THREE.Mesh(new THREE.BoxBufferGeometry(5, 4, 10)),
-						cutFront = new THREE.Mesh(new THREE.BoxBufferGeometry(5, 1.5, 2.5)),
-						cutBack = new THREE.Mesh(new THREE.BoxBufferGeometry(5, 1.5, 4.5)),
-						frontTireHoles = new THREE.Mesh(new THREE.CylinderBufferGeometry(1.2, 1.2, 5, 16, 16, false)),
-						backTireHoles = frontTireHoles.clone(),
-						trunk = new THREE.Mesh(new THREE.BoxBufferGeometry(4.4, 1.5, 4));
-					cutFront.position.set(0, 1.25, -3.75);
-					cutBack.position.set(0, 1.25, 3);
-					frontTireHoles.position.set(0, -2, -3);
-					frontTireHoles.rotation.z = 90 * Math.PI / 180;
-					backTireHoles.position.set(0, -2, 3);
-					backTireHoles.rotation.z = frontTireHoles.rotation.z;
-					trunk.position.set(0, 0.1, 2.75);
-					truckBodyBase.updateMatrix();
-					cutFront.updateMatrix();
-					cutBack.updateMatrix();
-					frontTireHoles.updateMatrix();
-					backTireHoles.updateMatrix();
-					trunk.updateMatrix();
-					var truckBody = CSG.subtract(truckBodyBase, [cutFront, cutBack, frontTireHoles, backTireHoles, trunk]);
-					truckBody.material = new THREE.MeshLambertMaterial({ color: color });
-					truckBody.position.set(0, 0.5, 0);
-					truckBody.castShadow = true;
-					this.mesh.add(truckBody);
-					var wheelGeo = new THREE.CylinderBufferGeometry(1, 1, 0.5, 24, 24, false),
-						wheelMat = new THREE.MeshLambertMaterial({ color: 0x171717 }),
-						wheel = new THREE.Mesh(wheelGeo, wheelMat);
-					wheel.castShadow = true;
-					wheel.rotation.z = -0.5 * Math.PI;
-					var wheelPos = [
-						{ x: -2.25, y: -1.5, z: 3, name: "BL" },
-						{ x: 2.25, y: -1.5, z: 3, name: "BR" },
-						{ x: -2.25, y: -1.5, z: -3, name: "FL" },
-						{ x: 2.25, y: -1.5, z: -3, name: "FR" }
-					];
-					for (let p of wheelPos) {
-						var w = wheel.clone();
-						w.name = p.name;
-						w.position.set(p.x, p.y, p.z);
-						this.mesh.add(w);
-					}
-					var windowMat = new THREE.MeshLambertMaterial({ color: 0x171717 }),
-						horzWindowGeo = new THREE.PlaneBufferGeometry(4.4, 1.2),
-						horzWindow = new THREE.Mesh(horzWindowGeo, windowMat),
-						midFrontWindowGeo = new THREE.PlaneBufferGeometry(1.4, 1.2),
-						midFrontWindow = new THREE.Mesh(midFrontWindowGeo, windowMat),
-						midBackWindowGeo = new THREE.PlaneBufferGeometry(1, 1.2),
-						midBackWindow = new THREE.Mesh(midBackWindowGeo, windowMat);
-					horzWindow.receiveShadow = true;
-					midFrontWindow.receiveShadow = true;
-					midBackWindow.receiveShadow = true;
-					var leftMFWindow = midFrontWindow.clone();
-					leftMFWindow.position.set(-2.51, 1.55, -1.55);
-					leftMFWindow.rotation.y = -0.5 * Math.PI;
-					this.mesh.add(leftMFWindow);
-					var rightMFWindow = midFrontWindow.clone();
-					rightMFWindow.position.set(2.51, 1.55, -1.55);
-					rightMFWindow.rotation.y = 0.5 * Math.PI;
-					this.mesh.add(rightMFWindow);
-					var leftMBWindow = midBackWindow.clone();
-					leftMBWindow.position.set(-2.51, 1.55, -0.05);
-					leftMBWindow.rotation.y = -0.5 * Math.PI;
-					this.mesh.add(leftMBWindow);
-					var rightMBWindow = midBackWindow.clone();
-					rightMBWindow.position.set(2.51, 1.55, -0.05);
-					rightMBWindow.rotation.y = 0.5 * Math.PI;
-					this.mesh.add(rightMBWindow);
-					var frontWindow = horzWindow.clone();
-					frontWindow.position.set(0, 1.55, -2.51);
-					frontWindow.rotation.y = Math.PI;
-					this.mesh.add(frontWindow);
-					var backWindow = horzWindow.clone();
-					backWindow.position.set(0, 1.55, 0.76);
-					this.mesh.add(backWindow);
-					var lightGeo = new THREE.PlaneBufferGeometry(0.75, 1),
-						frontLightMat = new THREE.MeshLambertMaterial({ color: 0xf1f1f1 }),
-						frontLight = new THREE.Mesh(lightGeo, frontLightMat),
-						backLightMat = new THREE.MeshLambertMaterial({ color: 0xf65555 }),
-						backLight = new THREE.Mesh(lightGeo, backLightMat);
-					frontLight.rotation.y = Math.PI;
-					var frontLeftLight = frontLight.clone();
-					frontLeftLight.position.set(-2.125, 0.25, -5.01);
-					this.mesh.add(frontLeftLight);
-					var frontRightLight = frontLight.clone();
-					frontRightLight.position.set(2.125, 0.25, -5.01);
-					this.mesh.add(frontRightLight);
-					var backLeftLight = backLight.clone();
-					backLeftLight.position.set(-2.125, 0.25, 5.01);
-					this.mesh.add(backLeftLight);
-					var backRightLight = backLight.clone();
-					backRightLight.position.set(2.125, 0.25, 5.01);
-					this.mesh.add(backRightLight);
-				}
-			}
+      resetGame() {
+        this.state = 'playing';
+        this.gameOver.style.display = 'none';
+        this.moves = 0;
+        this.towers = [[], [], []];
+        this.selectedTower = null;
+        this.numDisks = parseInt(this.modeSelect.value);
+        this.minMoves = (1 << this.numDisks) - 1; // 2^n - 1
+        this.updateMovesDisplay();
 
-			class TractorTrailer {
-				constructor(color, x, z, name) {
-					this.mass = 12;
-					this.mesh = new THREE.Object3D();
-					this.mesh.name = name;
-					this.mesh.position.set(x, 4, z);
-					scene.add(this.mesh);
-					var cabPt1Geo = new THREE.BoxBufferGeometry(5, 4, 5),
-						cabPt1Mat = new THREE.MeshLambertMaterial({ color: color }),
-						cabPt1 = new THREE.Mesh(cabPt1Geo, cabPt1Mat);
-					cabPt1.position.set(0, 1, -6.5);
-					cabPt1.castShadow = true;
-					this.mesh.add(cabPt1);
-					var cabPt2Geo = new THREE.BoxBufferGeometry(5, 2, 0.5),
-						cabPt2Mat = cabPt1Mat,
-						cabPt2 = new THREE.Mesh(cabPt2Geo, cabPt2Mat);
-					cabPt2.position.set(0, -2, -8.75);
-					cabPt2.castShadow = true;
-					this.mesh.add(cabPt2);
-					var cabPt3Geo = new THREE.BoxBufferGeometry(3, 2, 8.25),
-						cabPt3Mat = new THREE.MeshLambertMaterial({ color: 0x3f3f3f }),
-						cabPt3 = new THREE.Mesh(cabPt3Geo, cabPt3Mat);
-					cabPt3.position.set(0, -2, -4.375);
-					cabPt3.castShadow = true;
-					this.mesh.add(cabPt3);
-					var cabLeftWindowGeo = new THREE.PlaneBufferGeometry(2.5, 2),
-						cabLeftWindowMat = new THREE.MeshLambertMaterial({ color: 0x171717 }),
-						cabLeftWindow = new THREE.Mesh(cabLeftWindowGeo, cabLeftWindowMat);
-					cabLeftWindow.position.set(-2.51, 1, -7.75);
-					cabLeftWindow.rotation.y = -0.5 * Math.PI;
-					cabLeftWindow.receiveShadow = true;
-					this.mesh.add(cabLeftWindow);
-					var cabRightWindow = cabLeftWindow.clone();
-					cabRightWindow.position.x = -cabLeftWindow.position.x;
-					cabRightWindow.rotation.y = -cabLeftWindow.rotation.y;
-					this.mesh.add(cabRightWindow);
-					var cabFrontWindowGeo = new THREE.PlaneBufferGeometry(5, 2),
-						cabFrontWindowMat = cabLeftWindowMat,
-						cabFrontWindow = new THREE.Mesh(cabFrontWindowGeo, cabFrontWindowMat);
-					cabFrontWindow.position.set(0, 1, -9.01);
-					cabFrontWindow.rotation.y = Math.PI;
-					cabFrontWindow.receiveShadow = true;
-					this.mesh.add(cabFrontWindow);
-					var lightGeo = new THREE.PlaneBufferGeometry(1, 1),
-						lightMat = new THREE.MeshLambertMaterial({ color: 0xf1f1f1 }),
-						light = new THREE.Mesh(lightGeo, lightMat);
-					light.rotation.y = Math.PI;
-					var leftLight = light.clone();
-					leftLight.position.set(-1.5, -1.5, -9.01);
-					this.mesh.add(leftLight);
-					var rightLight = light.clone();
-					rightLight.position.set(1.5, -1.5, -9.01);
-					this.mesh.add(rightLight);
-					var cabLeftCylinderGeo = new THREE.CylinderBufferGeometry(0.75, 0.75, 2.25, 16, 16, false),
-						cabLeftCylinderMat = new THREE.MeshLambertMaterial({ color: 0x7f7f7f }),
-						cabLeftCylinder = new THREE.Mesh(cabLeftCylinderGeo, cabLeftCylinderMat);
-					cabLeftCylinder.position.set(-2.25, -1.875, -3.875);
-					cabLeftCylinder.rotation.x = -0.5 * Math.PI;
-					cabLeftCylinder.castShadow = true;
-					this.mesh.add(cabLeftCylinder);
-					var cabRightCylinder = cabLeftCylinder.clone();
-					cabRightCylinder.position.x = -cabLeftCylinder.position.x;
-					this.mesh.add(cabRightCylinder);
-					var trailerGeo = new THREE.BoxBufferGeometry(5, 5, 12),
-						trailerMat = new THREE.MeshLambertMaterial({ color: 0xffffff }),
-						trailer = new THREE.Mesh(trailerGeo, trailerMat);
-					trailer.position.set(0, 1.5, 3);
-					trailer.castShadow = true;
-					this.mesh.add(trailer);
-					var trailerBottomGeo = new THREE.BoxBufferGeometry(3, 2, 2),
-						trailerBottomMat = cabPt3Mat,
-						trailerBottom = new THREE.Mesh(trailerBottomGeo, trailerBottomMat);
-					trailerBottom.position.set(0, -2, 7);
-					trailerBottom.castShadow = true;
-					this.mesh.add(trailerBottom);
-					var wheelGeo = new THREE.CylinderBufferGeometry(1.5, 1.5, 1, 24, 24, false),
-						wheelMat = new THREE.MeshLambertMaterial({ color: 0x242424 }),
-						wheel = new THREE.Mesh(wheelGeo, wheelMat);
-					wheel.castShadow = true;
-					wheel.rotation.z = -0.5 * Math.PI;
-					var wheelPos = [
-						{ x: -2, y: -2.5, z: 7, name: "BL" },
-						{ x: 2, y: -2.5, z: 7, name: "BR" },
-						{ x: -2, y: -2.5, z: -1, name: "ML" },
-						{ x: 2, y: -2.5, z: -1, name: "MR" },
-						{ x: -2, y: -2.5, z: -6.75, name: "FL" },
-						{ x: 2, y: -2.5, z: -6.75, name: "FR" }
-					];
-					for (let p of wheelPos) {
-						var w = wheel.clone();
-						w.name = p.name;
-						w.position.set(p.x, p.y, p.z);
-						this.mesh.add(w);
-					}
-				}
-			}
+        // Clear towers
+        this.towerElements.forEach(tower => {
+          while (tower.children.length > 1) { // Keep tower-label
+            tower.removeChild(tower.children[0]);
+          }
+        });
 
-			class Spark {
-				constructor(x, y, z, isHorz = false) {
-					this.center = new THREE.Object3D();
-					this.center.name = "Spark";
-					this.center.position.set(x, y, z);
-					scene.add(this.center);
-					this.isHorz = isHorz;
-					this.particles = [];
-					let particleGeo = new THREE.SphereBufferGeometry(1, 16, 16),
-						particleMat = new THREE.MeshBasicMaterial({ color: 0xffff00 }),
-						particleMesh = new THREE.Mesh(particleGeo, particleMat);
-					for (var m = 0; m < randomInt(6, 8); ++m) {
-						this.particles.push({
-							x: 0,
-							y: 0,
-							z: 0,
-							size: 1,
-							speed: 0.2,
-							decay: 0.04,
-							angle: randomInt(0, 359),
-							mesh: particleMesh.clone()
-						});
-						this.center.add(this.particles[m].mesh);
-					}
-				}
-				moveParticles() {
-					for (let p of this.particles) {
-						if (p.size > 0) {
-							p.size -= p.decay;
-							if (this.isHorz) {
-								p.x += p.speed * Math.sin(p.angle * Math.PI / 180);
-								p.mesh.position.x = p.x;
-							} else {
-								p.z += p.speed * Math.sin(p.angle * Math.PI / 180);
-								p.mesh.position.z = p.z;
-							}
-							p.y += p.speed * Math.cos(p.angle * Math.PI / 180);
-							p.mesh.position.y = p.y;
-							p.mesh.scale.set(p.size, p.size, p.size);
-						}
-					}
-				}
-			}
+        // Initialize disks on Tower A
+        for (let i = this.numDisks; i >= 1; i--) {
+          const disk = document.createElement('div');
+          disk.className = 'disk';
+          const width = 100 + i * 30; // Smaller disks at top
+          disk.style.width = `${width}px`;
+          disk.dataset.size = i;
+          disk.style.backgroundImage = `url(${bookCovers[Math.floor(Math.random() * bookCovers.length)]})`;
+          this.towers[0].push(disk);
+          this.towerElements[0].appendChild(disk);
+        }
+      }
 
-			var init = () => {
-				scene = new THREE.Scene();
-				camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 2000);
-				renderer = new THREE.WebGLRenderer({ logarithmicDepthBuffer: true });
-				renderer.setClearColor(new THREE.Color(skyColor));
-				renderer.setSize(window.innerWidth, window.innerHeight);
-				renderer.shadowMap.enabled = true;
-				var ambientLight = new THREE.AmbientLight(0xffffff);
-				ambientLight.name = "Ambient Light";
-				scene.add(ambientLight);
-				hemiLight = new THREE.HemisphereLight(0x0044ff, 0xffffff, 0.5);
-				hemiLight.name = "Hemisphere Light";
-				hemiLight.position.set(0, 5, 0);
-				scene.add(hemiLight);
-				pointLight = new THREE.PointLight(0xffffff, 0.5);
-				pointLight.name = "Point Light";
-				pointLight.position.set(0, 60, pointLightZ);
-				pointLight.castShadow = true;
-				pointLight.shadow.mapSize = new THREE.Vector2(1024, 1024);
-				scene.add(pointLight);
-				for (let r = 1; r > -renderDistance; --r) roadChunks.push(new RoadChunk(r));
-				var firstChunkSize = roadChunks[0].chunkSize,
-					grassDepth = firstChunkSize * (renderDistance + 1),
-					grassGeo = new THREE.PlaneBufferGeometry(400, grassDepth),
-					grassMat = new THREE.MeshLambertMaterial({ color: 0xbbe868 }),
-					grass = new THREE.Mesh(grassGeo, grassMat);
-				grass.name = "Grass";
-				grass.rotation.x = -Math.PI / 2;
-				grass.position.set(0, -0.05, -grassDepth / 2 + firstChunkSize * 1.5);
-				grass.receiveShadow = true;
-				scene.add(grass);
-				scene.fog = new THREE.Fog(skyColor, 0.01, grassDepth - firstChunkSize * 2);
-				camera.position.set(0, cameraYMin, 30);
-				camera.lookAt(scene.position);
-				document.body.appendChild(renderer.domElement);
-			};
+      handleTowerClick(towerIndex) {
+        if (this.state !== 'playing') return;
+        towerIndex = parseInt(towerIndex);
+        if (this.selectedTower === null) {
+          // Select a tower with a disk
+          if (this.towers[towerIndex].length > 0) {
+            this.selectedTower = towerIndex;
+            this.towerElements[towerIndex].style.background = '#e0e0e0';
+          }
+        } else {
+          // Attempt to move disk
+          const sourceTower = this.towers[this.selectedTower];
+          const destTower = this.towers[towerIndex];
+          const disk = sourceTower[sourceTower.length - 1];
 
-			var checkCollision = (a, b) => {
-				if (!a.crashed && !b.crashed && a.name !== b.name) {
-					let A_left = a.x - a.width / 2,
-						A_right = a.x + a.width / 2,
-						A_front = a.z - a.depth / 2,
-						A_back = a.z + a.depth / 2,
-						B_left = b.x - b.width / 2,
-						B_right = b.x + b.width / 2,
-						B_front = b.z - b.depth / 2,
-						B_back = b.z + b.depth / 2;
-					let touchedX_RL = (A_left <= B_right && A_left >= B_left),
-						touchedX_LR = (A_right >= B_left && A_right <= B_right),
-						touchedZ_FB = (A_front <= B_back && A_front >= B_front),
-						touchedZ_BF = (A_back >= B_front && A_back <= B_back);
-					if ((touchedX_RL || touchedX_LR) && (touchedZ_FB || touchedZ_BF)) {
-						var newMomentum = (a.model.mass * a.speed + b.model.mass * b.speed) / (a.model.mass + b.model.mass);
-						a.speed = newMomentum;
-						b.speed = newMomentum;
-						let sx = (touchedX_RL ? (A_left + B_right) : (A_right + B_left)) / 2;
-						let sz = (touchedZ_FB ? (A_front + B_back) : (A_back + B_front)) / 2;
-						if (a.name === "Vehicle 0") {
-							a.crashed = true;
-							game.over = true;
-							game.spark = new Spark(sx, a.height / 2, sz, Math.abs(A_front - B_back) < 1);
-						}
-					}
-				}
-			};
+          // Validate move
+          const canMove = (
+            disk && // Disk exists
+            (destTower.length === 0 || parseInt(destTower[destTower.length - 1].dataset.size) > parseInt(disk.dataset.size))
+          );
 
-			var toggleDifBtnStates = () => {
-				for (let b of difButtons) b.disabled = !b.disabled;
-			};
+          if (canMove) {
+            // Move disk
+            sourceTower.pop();
+            destTower.push(disk);
+            this.towerElements[towerIndex].appendChild(disk);
+            this.moves++;
+            this.updateMovesDisplay();
 
-			var toggleDifMenu = () => {
-				difSelectActive = !difSelectActive;
-				let activeClass = "menu-active",
-					inactiveClass = "menu-inactive";
-				if (difSelectActive) {
-					difSelect.classList.remove(inactiveClass);
-					difSelect.classList.add(activeClass);
-					setTimeout(toggleDifBtnStates, 1500);
-				} else {
-					difSelect.classList.remove(activeClass);
-					difSelect.classList.add(inactiveClass);
-					toggleDifBtnStates();
-				}
-			};
+            // Check win condition
+            if ((this.towers[2].length === this.numDisks || this.towers[1].length === this.numDisks) && this.state === 'playing') {
+              this.state = 'ended';
+              this.gameOver.style.display = 'flex';
+              this.finalMoves.textContent = this.moves;
+            }
+          }
 
-			var toggleScoreCounter = () => {
-				scoreCounterActive = !scoreCounterActive;
-				header.classList.toggle("score-active", scoreCounterActive);
-			};
+          // Deselect tower
+          this.towerElements[this.selectedTower].style.background = '#fff';
+          this.selectedTower = null;
+        }
+      }
 
-			var toggleReplayBtn = () => {
-				replayBtnActive = !replayBtnActive;
-				replayButton.disabled = !replayBtnActive;
-				replayButton.classList.toggle("replay-active", replayBtnActive);
-			};
+      updateMovesDisplay() {
+        this.movesDisplay.textContent = `Moves: ${this.moves} | Minimum: ${this.minMoves}`;
+      }
+    }
 
-			var showTutorial = () => {
-				if (game && game.tutorial) tutorialBox.classList.add("tutorial-active");
-			};
-
-			var hideTutorial = () => {
-				if (game && game.tutorial) {
-					game.tutorial = false;
-					tutorialBox.classList.remove("tutorial-active");
-				}
-			};
-
-			var startGame = (difficulty) => {
-				if (game && game.over) {
-					if (game.spark) {
-						scene.remove(scene.getObjectByName(game.spark.name));
-						game.spark = null;
-					}
-					for (let v of game.vehicles) {
-						scene.remove(scene.getObjectByName(v.name));
-					}
-				}
-				game = new Game({ difficulty: parseInt(difficulty), tutorial: !game });
-				header.innerHTML = game.score;
-				if (!scoreCounterActive) toggleScoreCounter();
-				if (difSelectActive) toggleDifMenu();
-				showTutorial();
-				if (game.over) toggleReplayBtn();
-			};
-
-			var update = () => {
-				if (cameraY > cameraYMin) {
-					cameraY -= 0.5;
-					camera.position.y = cameraY;
-					if (cameraY <= cameraYMin && !difSelectActive) {
-						toggleDifMenu();
-					}
-				}
-				if (game && !game.over && cameraY <= cameraYMin) {
-					let firstChunkSize = roadChunks[0].chunkSize,
-						player = game.vehicles[game.vehicleIDCtrld];
-					player.accelerate();
-					if (player.z <= -firstChunkSize) {
-						let vehiclesBehind = [];
-						game.vehicles.forEach((e, i) => {
-							e.z += firstChunkSize;
-							if (e.z - e.depth / 2 > player.z + firstChunkSize / 2) {
-								vehiclesBehind.push({ index: i, name: e.name });
-							}
-						});
-						vehiclesBehind.sort((a, b) => b.index - a.index);
-						for (let v of vehiclesBehind) {
-							scene.remove(scene.getObjectByName(v.name));
-							game.vehicles.splice(v.index, 1);
-							if (Math.abs(player.x) < game.noScoreXZone) {
-								++game.score;
-								header.innerHTML = game.score;
-							}
-						}
-						if (game.vehicles.length < game.vehicleLimit && !game.tutorial) {
-							let spawnTries = 3;
-							while (spawnTries--) {
-								if (Math.random() < 0.05 + game.difficulty * 0.025) {
-									game.vehicles.push(new Vehicle({
-										x: (-1 + spawnTries) * 10,
-										z: -renderDistance * firstChunkSize - spawnTries * 15,
-										name: "Vehicle " + game.vehicleSpawns
-									}));
-									++game.vehicleSpawns;
-								}
-							}
-						}
-					}
-					for (let v of game.vehicles) {
-						v.move();
-						for (let other of game.vehicles) {
-							if (v !== other) checkCollision(v, other);
-						}
-					}
-					if (game.spark) game.spark.moveParticles();
-					if (game.over && !replayBtnActive) toggleReplayBtn();
-					camera.position.set(player.x, cameraYMin, player.z + 30);
-					camera.lookAt(player.x, 0, player.z);
-				}
-				renderer.render(scene, camera);
-				requestAnimationFrame(update);
-			};
-
-			for (let b of difButtons) {
-				b.addEventListener("click", () => {
-					startGame(b.dataset.difficulty);
-				});
-			}
-
-			replayButton.addEventListener("click", () => {
-				startGame(game.difficulty);
-				toggleReplayBtn();
-			});
-
-			document.addEventListener("keydown", e => {
-				if (game && !game.over && !game.tutorial && !difSelectActive) {
-					let player = game.vehicles[game.vehicleIDCtrld];
-					if (e.key === "a" || e.key === "ArrowLeft") player.steer("left");
-					if (e.key === "d" || e.key === "ArrowRight") player.steer("right");
-					if (e.key === " " && game.tutorial) hideTutorial();
-				}
-			});
-
-			document.addEventListener("keyup", e => {
-				if (game && !game.over && !game.tutorial && !difSelectActive) {
-					let player = game.vehicles[game.vehicleIDCtrld];
-					if (e.key === "a" || e.key === "ArrowLeft" || e.key === "d" || e.key === "ArrowRight") {
-						player.straighten();
-					}
-				}
-			});
-
-			document.addEventListener("touchstart", e => {
-				if (game && !game.over && !game.tutorial && !difSelectActive) {
-					touch.hold = true;
-					touch.x = e.touches[0].clientX;
-				} else if (game && game.tutorial && !difSelectActive) {
-					hideTutorial();
-				}
-			});
-
-			document.addEventListener("touchmove", e => {
-				if (game && !game.over && !game.tutorial && !difSelectActive && touch.hold) {
-					let player = game.vehicles[game.vehicleIDCtrld];
-					let deltaX = e.touches[0].clientX - touch.x;
-					if (deltaX < -10) player.steer("left");
-					else if (deltaX > 10) player.steer("right");
-					else player.straighten();
-					touch.x = e.touches[0].clientX;
-				}
-			});
-
-			document.addEventListener("touchend", () => {
-				if (game && !game.over && !game.tutorial && !difSelectActive) {
-					let player = game.vehicles[game.vehicleIDCtrld];
-					touch.hold = false;
-					player.straighten();
-				}
-			});
-
-			init();
-			update();
-		}
-	</script>
+    const game = new Game();
+  </script>
 </body>
 </html>

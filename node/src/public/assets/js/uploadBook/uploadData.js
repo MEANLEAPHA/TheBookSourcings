@@ -17,6 +17,7 @@
     formData.append('subtitle', $('#subtitle').val());
     formData.append('summary', $('#summary').val());
     formData.append('author', $('#authorName').val());
+    formData.append('authorId', $('#authorId').val());
     formData.append('category', $('#category').val());
     formData.append('genre', $('#genre').val());
     formData.append('language', $('#language').val());

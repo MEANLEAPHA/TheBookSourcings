@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Author-Book Memory Match Game</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+
+    body {
+      font-family: 'Fredoka One', cursive;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: linear-gradient(120deg, #b6dcfe, #e2efff);
+      margin: 0;
+    }
+
+    .board {
+      display: grid;
+      grid-gap: 10px;
+      perspective: 800px;
+    }
+
+    .card {
+      position: relative;
+      width: 80px;
+      height: 100px;
+      transform-style: preserve-3d;
+      transition: transform 0.6s;
+      cursor: pointer;
+      border-radius: 8px;
+      
+    }
+
+    .card.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card.matched {
+      transform: rotateY(180deg);
+      opacity: 1;
+      cursor: default;
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.4);
+    }
+
+    .card .front,
+    .card .back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 8px;
+      backface-visibility: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .card .front {
+      background: #f0c674;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3em;
+      color: #fff;
+      border: 2px solid #e0b450;
+    }
+
+    .card .back {
+      background-size: cover;
+      background-position: center;
+      transform: rotateY(180deg);
+      border: 2px solid #fff;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255,255,255,0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.4s ease;
+    }
+
+    .overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .gameover {
+      background: white;
+      padding: 30px 60px;
+      border-radius: 20px;
+      border: 4px solid #4fa3ff;
+      text-align: center;
+    }
+
+    .reset {
+      background: #4fa3ff;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      font-size: 24px;
+      width: 60px;
+      height: 60px;
+      margin-top: 15px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="board"></div>
+
+  <template id="card-template">
+    <div class="card">
+      <div class="front">?</div>
+      <div class="back"></div>
+    </div>
+  </template>
+
+  <div class="overlay hidden">
+    <div class="gameover">
+      <p>YOU WON!</p>
+      <button class="reset">↻</button>
+    </div>
+  </div>
+
+  <script>
+    const board = document.querySelector('.board');
+    const template = document.querySelector('#card-template');
+    const overlay = document.querySelector('.overlay');
+    const reset = document.querySelector('.reset');
+
+    // 🧩 Choose your board size here (must be even for pairs)
+    const gridSize = 4; // 4x4 = 16 cards, 8 pairs
+
+    // Modern and trending author-book pairs with fixed image URLs
+    const pairs = [
+       {
+        author: "Rebecca Yarros",
+        authorImg: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQJ3pFZU3WA3GxLaA614k3YpT4chVTppI4BA&s",
+        bookImg: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyZtivnce1xcw2n9m8bX8Oa8Nx2-8cERaOxA&s"
+      },
+      {
+        author: "Dan Brown",
+        authorImg: "https://upload.wikimedia.org/wikipedia/commons/8/8b/Dan_Brown_bookjacket_cropped.jpg",
+        bookImg: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4jhEyAK1gqpasU2gUuFXXSVbm1SuBKMfhiw&s" // Using Da Vinci Code as example for fixed URL; replace with new if available
+      },
+      {
+        author: "J.D. Vance",
+        authorImg: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/January_2025_Official_Vice_Presidential_Portrait_of_JD_Vance.jpg/960px-January_2025_Official_Vice_Presidential_Portrait_of_JD_Vance.jpg",
+        bookImg: "https://dauntbooks.co.uk/wp-content/uploads/2020/11/9780008220563.jpg"
+      },
+      {
+        author: "Kamala Harris",
+        authorImg: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Kamala_Harris_Vice_Presidential_Portrait.jpg/250px-Kamala_Harris_Vice_Presidential_Portrait.jpg",
+        bookImg: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbV0xnkJXhowxXkvjXbkhmjDPTlkJbKlG0wg&s"
+      },
+      {
+        author: "Bill Gates",
+        authorImg: "https://upload.wikimedia.org/wikipedia/commons/8/88/Bill_Gates_at_the_European_Commission_-_2025_-_P067383-987995_%28cropped%29.jpg",
+        bookImg: "https://m.media-amazon.com/images/I/71yR+jQLqXL._UF1000,1000_QL80_.jpg"
+      },
+      {
+        author: "Colleen Hoover",
+        authorImg: "https://img.texasmonthly.com/2024/05/colleen-hoover-2.jpg?auto=compress&crop=faces&fit=fit&fm=jpg&h=0&ixlib=php-3.3.1&q=45&w=1250",
+        bookImg: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1688011813i/27362503.jpg"
+      },
+      {
+        author: "Taylor Jenkins Reid",
+        authorImg: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQtCH7aLrBNf0TxMn_zGBXgGFXkzrA72EA2g&s",
+        bookImg: "https://play.google.com/books/publisher/content/images/frontcover/njVpDQAAQBAJ?fife=w240-h345"
+      },
+      {
+        author: "Sarah J. Maas",
+        authorImg: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIyG75tt4-Bwen956f4GONZd5jaPdz5lREjA&s",
+        bookImg: "https://sarahjmaas.com/wp-content/uploads/2023/10/9781639730957.min_.jpg"
+      },
+      {
+        author: "SenLinYu",
+        authorImg: "https://hips.hearstapps.com/hmg-prod/images/senlinyu-c-katy-weaver-photography-688a3974059e8.jpg?crop=0.668xw:1.00xh;0.100xw,0&resize=1200:*",
+        bookImg: "https://images.penguinrandomhouse.com/cover/9780593972700"
+      },
+      {
+        author: "Brynne Weaver",
+        authorImg: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRo5Xah4Zlz2Px0Xa46K0rfZpDMAVai6twkdw&s",
+        bookImg: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnXhHTfRvp3jIJIgscEfiqnrOS1iK66rQ8wA&s"
+      },
+      {
+        author: "Jennifer L. Armentrout",
+        authorImg: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJOPR7kewl9HABfAKl8KK5qxRZWkuZqXMHgg&s",
+        bookImg: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1734440654i/52831200.jpg"
+      },
+      {
+        author: "Sally Rooney",
+        authorImg: "https://cdn.britannica.com/45/236745-050-6FB7333F/Irish-author-Sally-Rooney-2020.jpg",
+        bookImg: "https://cdn.penguin.co.in/wp-content/uploads/2024/07/9780571365470.jpg"
+      },
+      {
+        author: "Emily Henry",
+        authorImg: "https://images4.penguinrandomhouse.com/author/306512",
+        bookImg: "https://images.squarespace-cdn.com/content/v1/5ee7af80b0e5ab58bc5ee38e/25215e75-0b07-4064-bd6c-434b3be37843/9780593441299+copy.jpg"
+      },
+      {
+        author: "Freida McFadden",
+        authorImg: "https://www.freidamcfadden.com/wp-content/uploads/2025/08/author-freida-mcfadden.jpg",
+        bookImg: "https://m.media-amazon.com/images/I/81AHTyq2wVL._UF1000,1000_QL80_.jpg"
+      },
+      {
+        author: "James Clear",
+        authorImg: "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcSXUDnWe5dIFrJyRwiw8GRnUqgot_zo6udNFc2ZiAW8cVcKDMkyPfOPjnXkzoz2ralZwN9Q",
+        bookImg: "https://images3.penguinrandomhouse.com/cover/9780735211292"
+      },
+      {
+        author: "Cher",
+        authorImg: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQprdkrQBFQbbkMT3Zr6KvICissoxt5iGfzo5TSKLUUMmHWpDOg",
+        bookImg: "https://m.media-amazon.com/images/I/71yd1ym0TXL.jpg"
+      }
+    ];
+
+    const state = {
+      selections: [],
+      locked: false,
+      matches: 0
+    };
+
+    reset.addEventListener('click', resetGame);
+
+    function resetGame() {
+      state.locked = true;
+      state.selections = [];
+      state.matches = 0;
+      board.innerHTML = "";
+      overlay.classList.add("hidden");
+      createBoard();
+    }
+
+    function createBoard() {
+      board.style.gridTemplateColumns = `repeat(${gridSize}, 80px)`;
+
+      const numPairs = (gridSize * gridSize) / 2;
+      // Select random subset if more pairs available (for variety on reset)
+      const shuffledPairs = shuffle([...pairs]);
+      const selectedPairs = shuffledPairs.slice(0, numPairs);
+      
+      let tiles = [];
+      selectedPairs.forEach(p => {
+        tiles.push({type: 'author', img: p.authorImg, data: p.author});
+        tiles.push({type: 'book', img: p.bookImg, data: p.author});
+      });
+
+      tiles = shuffle(tiles);
+
+      tiles.forEach(tile => {
+        const card = template.content.firstElementChild.cloneNode(true);
+        card.querySelector('.back').style.backgroundImage = `url(${tile.img})`;
+        card.dataset.author = tile.data;
+        card.addEventListener('click', () => selectCard(card));
+        board.appendChild(card);
+      });
+
+      state.locked = false;
+    }
+
+    function selectCard(card) {
+      if (state.locked || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+
+      card.classList.add('flipped');
+      state.selections.push(card);
+
+      if (state.selections.length === 2) {
+        state.locked = true;
+        const [first, second] = state.selections;
+
+        if (first.dataset.author === second.dataset.author) {
+          first.classList.add('matched');
+          second.classList.add('matched');
+          state.matches++;
+          state.selections = [];
+          state.locked = false;
+
+          if (state.matches === (gridSize * gridSize) / 2) {
+            setTimeout(() => overlay.classList.remove('hidden'), 600);
+          }
+        } else {
+          setTimeout(() => {
+            first.classList.remove('flipped');
+            second.classList.remove('flipped');
+            state.selections = [];
+            state.locked = false;
+          }, 900);
+        }
+      }
+    }
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    createBoard();
+  </script>
+</body>
+</html>
+
+
