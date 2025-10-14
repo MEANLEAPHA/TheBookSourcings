@@ -45,7 +45,7 @@ const updateBook = async (req, res) => {
            pageCount=?, ISBN10=?, ISBN13=?, publisher=?, publishDate=?, comment=?, download=?, share=?, 
            bookCover=?, bookFile=? 
        WHERE bookQid=? AND member_id=?`,
-      [title, subTitle, summary, author, authorId, mainCategory, genre, language, pageCount, ISBN10, ISBN13,
+      [title, subTitle, summary, JSON.parse(author), JSON.parse(authorId), mainCategory, genre, language, pageCount, ISBN10, ISBN13,
        publisher, publishDate, comment, download, share, bookCoverUrl, bookFileUrl, bookQid, member_id]
     );
 

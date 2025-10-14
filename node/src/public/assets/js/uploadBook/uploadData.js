@@ -12,12 +12,16 @@
     if (bookFile) formData.append('bookFile', bookFile);
     if (bookCover) formData.append('bookCover', bookCover);
 
+    // Split by comma and convert to JSON
+    const authorNames = $('#authorName').val().split(',').map(a => a.trim()).filter(a => a);
+    const authorIds = $('#authorId').val().split(',').map(a => a.trim()).filter(a => a);
+
     // Add other fields
     formData.append('title', $('#title').val());
     formData.append('subtitle', $('#subtitle').val());
     formData.append('summary', $('#summary').val());
-    formData.append('author', $('#authorName').val());
-    formData.append('authorId', $('#authorId').val());
+    formData.append('author', JSON.stringify(authorNames));
+    formData.append('authorId', JSON.stringify(authorIds));
     formData.append('category', $('#category').val());
     formData.append('genre', $('#genre').val());
     formData.append('language', $('#language').val());
