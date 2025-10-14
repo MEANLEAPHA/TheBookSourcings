@@ -16,11 +16,13 @@ const uploadBook = async (req, res) => {
     const bookCoverUrl = await uploadToS3(req.files.bookCover[0], "covers/");
     const bookFileUrl = await uploadToS3(req.files.bookFile[0], "books/");
 
+    const authorJson = JSON.stringify(author);
+    const authorIdJson = JSON.stringify(authorId);
     try {
       // Save in DB
       const [result] = await db.query(
         "INSERT INTO uploadBook (member_id, member_email, title, subTitle, author, authorId, summary, mainCategory, genre, language, pageCount, ISBN10, ISBN13, publisher, publishDate, comment, download, share, bookCover, bookFile) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        [userId, userEmail, title, subtitle, JSON.parse(author), JSON.parse(authorId), summary, category, genre, language, pageCount, isbn10, isbn13, publisher, publishedDate, comment, download, share, bookCoverUrl, bookFileUrl]
+        [userId, userEmail, title, subtitle, authorJson, authorIdJson, summary, category, genre, language, pageCount, isbn10, isbn13, publisher, publishedDate, comment, download, share, bookCoverUrl, bookFileUrl]
       );
 
       res.json({ message: "Upload Book successfully" });
