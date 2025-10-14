@@ -222,19 +222,11 @@
           <textarea id="summary" rows="3" required></textarea>
         </div>
 
-  <!-- Author Section -->
-<div class="form-section">
-  <label class="form-label">Authors</label>
-  <div class="d-flex align-items-center gap-2 mb-2">
-    <input type="number" class="form-control w-auto" id="authorCount" min="1" max="5" placeholder="Number (1–5)">
-    <button type="button" class="btn btn-success" id="generateAuthors">Generate</button>
-  </div>
-  <div id="authorInputs" class="d-flex flex-column gap-2"></div>
-
-  <!-- Hidden textareas for DB -->
-  <textarea id="authorName" class="form-control" style="display:none;"></textarea>
-  <textarea id="authorId" class="form-control" style="display:none;"></textarea>
-</div>
+        <!-- make this hidden also add the authorId text area -->
+        <div class="form-section">
+          <label class="form-label">Author</label>
+          <textarea id="authorName" rows="2" required></textarea> 
+        </div>
 
         <!-- More Details -->
         <div class="form-section">
@@ -353,196 +345,141 @@
     </div>
   </div>
 
-<script src="../assets/js/jquery.js"></script>
-<script>
-$(document).ready(function(){
+  <script src="../assets/js/jquery.js"></script>
+  <script>
+  // ---- Book Cover Upload ----
+  const coverInput = document.getElementById('coverInput');
+  const coverPreview = document.getElementById('coverPreview');
+  const coverPlaceholder = document.getElementById('coverPlaceholder');
+  // const coverRemoveBtn = document.getElementById('coverRemoveBtn');
 
-  // --- Elements ---
-  const coverInput = $('#coverInput');
-  const coverPreview = $('#coverPreview');
-  const coverPlaceholder = $('#coverPlaceholder');
-
-  const fileInput = $('#fileInput');
-  const filePreview = $('#filePreview');
-  const filePlaceholder = $('#filePlaceholder');
-
-  const authorInputsContainer = $('#authorInputs');
-  const authorNameTextarea = $('#authorName');
-  const authorIdTextarea = $('#authorId');
-
-  const urlParams = new URLSearchParams(window.location.search);
-  const bookQid = urlParams.get('bookQid');
-  if (!bookQid) { alert("Book ID is missing!"); return; }
-
-  // --- Cover Upload ---
-  coverInput.on('change', function(){
+  coverInput.addEventListener('change', function () {
     const file = this.files[0];
-    if(file){
+    if (file) {
       const reader = new FileReader();
-      reader.onload = function(e){
-        coverPreview.attr('src', e.target.result).show();
-        coverPlaceholder.hide();
+      reader.onload = function (e) {
+        coverPreview.src = e.target.result;
+        coverPreview.style.display = 'block';
+        coverPlaceholder.style.display = 'none';
       };
       reader.readAsDataURL(file);
     }
   });
 
-  // --- File Upload ---
-  fileInput.on('change', function(){
+  // coverRemoveBtn.addEventListener('click', function () {
+  //   coverPreview.src = '';
+  //   coverPreview.style.display = 'none';
+  //   coverPlaceholder.style.display = 'block';
+  //   coverInput.value = '';
+  // });
+
+// ---- Book File Upload ----
+  const fileInput = document.getElementById('fileInput');
+  const filePreview = document.getElementById('filePreview');
+  const filePlaceholder = document.getElementById('filePlaceholder');
+  // const fileRemoveBtn = document.getElementById('fileRemoveBtn');
+
+  fileInput.addEventListener('change', function () {
     const file = this.files[0];
-    if(file){
+    if (file) {
       const fileURL = URL.createObjectURL(file);
-      filePreview.attr('src', fileURL).show();
-      filePlaceholder.hide();
+      filePreview.src = fileURL;
+      filePreview.style.display = 'block';
+      filePlaceholder.style.display = 'none';
     }
   });
 
-  // --- Author Functions ---
-  function renderAuthors(count){
-    authorInputsContainer.empty();
-    const currentNames = authorNameTextarea.val().split(',').map(a=>a.trim());
-    const currentIds = authorIdTextarea.val().split(',').map(a=>a.trim());
+  // fileRemoveBtn.addEventListener('click', function () {
+  //   fileInput.value = '';
+  //   filePreview.src = '';
+  //   filePreview.style.display = 'none';
+  //   filePlaceholder.style.display = 'inline';
+  // });
+    $(document).ready(function(){
+      const urlParams = new URLSearchParams(window.location.search);
+      const bookQid = urlParams.get('bookQid');
+      if (!bookQid) { alert("Book ID is missing!"); return; }
 
-    for(let i=0; i<count; i++){
-      const nameVal = currentNames[i] || '';
-      const idVal = currentIds[i] || '';
-      const row = $(`
-        <div class="row g-2 align-items-center author-row mb-2">
-          <div class="col-md-5">
-            <input type="text" class="form-control author-name" placeholder="Author ${i+1} Name" value="${nameVal}">
-          </div>
-          <div class="col-md-5">
-            <input type="text" class="form-control author-id" placeholder="Author ${i+1} ID" value="${idVal}">
-          </div>
-          <div class="col-md-2">
-            <button type="button" class="btn btn-danger btn-sm remove-author">Remove</button>
-          </div>
-        </div>
-      `);
-      authorInputsContainer.append(row);
-    }
-  }
+      // Fetch existing data
+      $.ajax({
+        url: `https://thebooksourcings.onrender.com/api/getBookByQid/${bookQid}`,
+        type: 'GET',
+        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+        success: function(data){
+          if(!data) return;
 
-  // Generate authors button
-  $('#generateAuthors').click(function(){
-    const count = parseInt($('#authorCount').val());
-    if(isNaN(count) || count < 1 || count > 5){
-      alert('Please enter a number between 1 and 5.');
-      return;
-    }
-    renderAuthors(count);
-  });
+          $('#title').val(data.title);
+          $('#subtitle').val(data.subTitle);
+          $('#summary').val(data.summary);
+          $('#authorName').val(data.author);
+          $('#genre').val(data.genre);
+          $('#pageCount').val(data.pageCount);
+          $('#isbn10').val(data.ISBN10);
+          $('#isbn13').val(data.ISBN13);
+          $('#publisher').val(data.publisher);
+          if (data.publishDate) {
+            const date = new Date(data.publishDate);
+            $('#publishedDate').val(date.toISOString().split('T')[0]);
+            }
 
-  // Remove author row
-  authorInputsContainer.on('click', '.remove-author', function(){
-    $(this).closest('.author-row').remove();
-  });
+          $('#category').val(data.mainCategory);
+          $('#language').val(data.language);
+          $('#comment').prop('checked', data.comment === 'active');
+          $('#download').prop('checked', data.download === 'active');
+          $('#share').prop('checked', data.share === 'active');
 
-  // Sync authors to hidden textareas
-  function syncAuthorsToTextarea(){
-    const names = [];
-    const ids = [];
-    $('.author-name').each(function(){ names.push($(this).val().trim()); });
-    $('.author-id').each(function(){ ids.push($(this).val().trim()); });
+          if (data.bookCover) {
+            $('#coverPreview').attr('src', data.bookCover).show();
+            $('#coverPlaceholder').hide();
+            }
+            if (data.bookFile) {
+            $('#filePreview').attr('src', data.bookFile).show();
+            $('#filePlaceholder').hide();
+            }
+        },
+        error: function(err){ console.error("Error fetching book data:", err); }
+      });
 
-    authorNameTextarea.val(names.join(', '));
-    authorIdTextarea.val(ids.join(', '));
-  }
+      // Update handler
+      $('#updateBtn').click(function(){
+        const formData = new FormData();
+        formData.append('title', $('#title').val());
+        formData.append('subTitle', $('#subtitle').val());
+        formData.append('summary', $('#summary').val());
+        formData.append('author', $('#authorName').val());
+        formData.append('genre', $('#genre').val());
+        formData.append('pageCount', $('#pageCount').val());
+        formData.append('ISBN10', $('#isbn10').val());
+        formData.append('ISBN13', $('#isbn13').val());
+        formData.append('publisher', $('#publisher').val());
+        formData.append('publishDate', $('#publishedDate').val());
+        formData.append('mainCategory', $('#category').val());
+        formData.append('language', $('#language').val());
+        formData.append('comment', $('#comment').is(':checked') ? 'active' : 'inactive');
+        formData.append('download', $('#download').is(':checked') ? 'active' : 'inactive');
+        formData.append('share', $('#share').is(':checked') ? 'active' : 'inactive');
 
-  // --- Fetch Existing Book Data ---
-  $.ajax({
-    url: `https://thebooksourcings.onrender.com/api/getBookByQid/${bookQid}`,
-    type: 'GET',
-    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
-    success: function(data){
-      if(!data) return;
+        if($('#fileInput')[0].files[0]) formData.append('bookFile', $('#fileInput')[0].files[0]);
+        if($('#coverInput')[0].files[0]) formData.append('bookCover', $('#coverInput')[0].files[0]);
 
-      $('#title').val(data.title);
-      $('#subtitle').val(data.subTitle);
-      $('#summary').val(data.summary);
-      $('#authorName').val(data.author);
-      $('#authorId').val(data.authorId || ''); // if your API returns author IDs
-      $('#genre').val(data.genre);
-      $('#pageCount').val(data.pageCount);
-      $('#isbn10').val(data.ISBN10);
-      $('#isbn13').val(data.ISBN13);
-      $('#publisher').val(data.publisher);
-      if(data.publishDate){
-        const date = new Date(data.publishDate);
-        $('#publishedDate').val(date.toISOString().split('T')[0]);
-      }
-      $('#category').val(data.mainCategory);
-      $('#language').val(data.language);
-      $('#comment').prop('checked', data.comment === 'active');
-      $('#download').prop('checked', data.download === 'active');
-      $('#share').prop('checked', data.share === 'active');
-
-      if(data.bookCover){
-        coverPreview.attr('src', data.bookCover).show();
-        coverPlaceholder.hide();
-      }
-      if(data.bookFile){
-        filePreview.attr('src', data.bookFile).show();
-        filePlaceholder.hide();
-      }
-
-      // Render author rows for existing authors
-      const existingNames = data.author || '';
-      const existingIds = data.authorId || '';
-      if(existingNames){
-        const namesArr = existingNames.split(',').map(a=>a.trim());
-        const idsArr = existingIds.split(',').map(a=>a.trim());
-        renderAuthors(Math.max(namesArr.length, idsArr.length));
-      }
-    },
-    error: function(err){ console.error("Error fetching book data:", err); }
-  });
-
-  // --- Update Book ---
-  $('#updateBtn').click(function(){
-    syncAuthorsToTextarea();
-
-    const formData = new FormData();
-    formData.append('title', $('#title').val());
-    formData.append('subTitle', $('#subtitle').val());
-    formData.append('summary', $('#summary').val());
-    formData.append('author', $('#authorName').val());
-    formData.append('authorId', $('#authorId').val());
-    formData.append('genre', $('#genre').val());
-    formData.append('pageCount', $('#pageCount').val());
-    formData.append('ISBN10', $('#isbn10').val());
-    formData.append('ISBN13', $('#isbn13').val());
-    formData.append('publisher', $('#publisher').val());
-    formData.append('publishDate', $('#publishedDate').val());
-    formData.append('mainCategory', $('#category').val());
-    formData.append('language', $('#language').val());
-    formData.append('comment', $('#comment').is(':checked') ? 'active' : 'inactive');
-    formData.append('download', $('#download').is(':checked') ? 'active' : 'inactive');
-    formData.append('share', $('#share').is(':checked') ? 'active' : 'inactive');
-
-    if(fileInput[0].files[0]) formData.append('bookFile', fileInput[0].files[0]);
-    if(coverInput[0].files[0]) formData.append('bookCover', coverInput[0].files[0]);
-
-    $.ajax({
-      url: `https://thebooksourcings.onrender.com/api/getMyBooks/updateBook/${bookQid}`,
-      method: 'PUT',
-      headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
-      data: formData,
-      processData: false,
-      contentType: false,
-      success: function(res){
-        alert("Book updated successfully!");
-        location.reload();
-      },
-      error: function(err){
-        console.error("Error updating book:", err);
-        alert("Failed to update book.");
-      }
+        $.ajax({
+          url: `https://thebooksourcings.onrender.com/api/getMyBooks/updateBook/${bookQid}`,
+          method: 'PUT',
+          headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function(res){
+            alert("Book updated successfully!");
+            location.reload();
+          },
+          error: function(err){
+            console.error("Error updating book:", err);
+            alert("Failed to update book.");
+          }
+        });
+      });
     });
-  });
-
-});
-</script>
-
+  </script>
 </body>
 </html>
