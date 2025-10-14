@@ -11,13 +11,15 @@ const {
   resetPassword,
   updatePassword,
   resendResetPin,
-  changePassword
+  changePassword,
+  fullRegister
   // validate_token
 } = require('../controller/userController');
 
 const {authMiddleware} = require('../middleware/authMiddleware');
 // Define routes
 const TheBookSourcingUser = (app) => {
+  app.put('/fullRegister', authMiddleware, fullRegister);
   app.post('/verify', authMiddleware, verifyMember);
   app.post('/resend-pin', authMiddleware, resendPin);
   app.get('/profile', authMiddleware, (req, res) => {

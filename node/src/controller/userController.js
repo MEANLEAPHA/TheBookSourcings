@@ -238,34 +238,7 @@ const resendPin = async (req, res) => {
 
 
 
-const updateAccount = async (req, res)=>{
- try {
 
-    const { user_id, username, email, timezone } = req.body;
-  const normalizedEmail = email.trim().toLowerCase();
-
-    // if (existingTask.length === 0) {
-    //   return res.status(403).json({ message: "Unauthorized or task not found", Result: "False" });
-    // }
-
-    const [result] = await db.query(
-      `UPDATE users SET username = ?, email = ?, timezone = ? WHERE user_id = ? `,
-      [username, normalizedEmail , timezone, user_id]
-    );
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Account not updated", Result: "False" });
-    }
-
-    const [listUser] = await db.query("SELECT * FROM users WHERE user_id = ?", [user_id]);
-
-    res.json({ message: "Account updated successfully", user: listUser });
-
-  } catch (error) {
-    console.error("Update error:", error.message);
-    res.status(500).json({ message: "Internal server error", error: error.message });
-  }
-}
 
 
 const verifyResetPin = async (req, res) => {
@@ -413,6 +386,71 @@ const changePassword = async (req, res) => {
 };
 
 
+
+const updateAccount = async (req, res)=>{
+ try {
+
+    const { user_id, username, email, timezone } = req.body;
+  const normalizedEmail = email.trim().toLowerCase();
+
+    // if (existingTask.length === 0) {
+    //   return res.status(403).json({ message: "Unauthorized or task not found", Result: "False" });
+    // }
+
+    const [result] = await db.query(
+      `UPDATE users SET username = ?, email = ?, timezone = ? WHERE user_id = ? `,
+      [username, normalizedEmail , timezone, user_id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Account not updated", Result: "False" });
+    }
+
+    const [listUser] = await db.query("SELECT * FROM users WHERE user_id = ?", [user_id]);
+
+    res.json({ message: "Account updated successfully", user: listUser });
+
+  } catch (error) {
+    console.error("Update error:", error.message);
+    res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+}
+const fullRegister = async(req,res) =>{
+  try{
+    const memberQid = req.user.memberQid
+    const {
+      fullname,
+      nickname,
+      dob,
+      gender,
+      work,
+      nationlity,
+      workPlace,
+      workRole,
+      websiteLink,
+      bio,
+      authorQid
+    } = req.body
+
+    const [update] = await db.query(
+      `UPDATE users SET fullname = ?, nickname = ?, DOB = ?, gender = ?, work = ?, nationality = ?, workPlace = ?, workRole = ?, websiteUrl = ?, bio = ?, authorQid = ? WHERE memberQid = ?`,
+      [fullname, nickname, dob, gender, work, nationlity, workPlace, workRole, websiteLink, bio, authorQid, memberQid]
+    );
+
+    if (update.affectedRows === 0) {
+      return res.status(404).json({ message: "Account not updated", Result: "False" });
+    }
+
+    res.json({ message: "successfully submit" });
+
+
+  }
+ catch(error){
+  console.error("Error in fullRegisterController:", error);
+  return res.status(500).json({ message: "failed to sumbit the full register" });
+ }
+}
+
 module.exports ={
     loginMember,
     createMember,
@@ -424,5 +462,6 @@ module.exports ={
     verifyMember,
     requestPasswordReset,
     resendPin,
-    verifyResetPin
+    verifyResetPin,
+    fullRegister
 }
