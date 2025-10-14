@@ -6,7 +6,7 @@ require('dotenv').config();
 const { sendPinCodeEmail, sendResendPinEmail, sendResetPasswordPinEmail} = require('../util/email');
 const { createToken } = require('../util/jwtHelp'); // adjust path if needed
 
-
+const {uploadToS3, deleteFromS3 } = require("../../../middleware/AWSuploadMiddleware");
 // login logical 
 const loginMember = async (req, res) => {
     try {
@@ -222,25 +222,6 @@ const resendPin = async (req, res) => {
     res.status(500).json({ message: "Server failed to resend PIN code. Our team is working on it. Sorry :(" });
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const verifyResetPin = async (req, res) => {
   const { email, pin } = req.body;
 
@@ -417,7 +398,7 @@ const updateAccount = async (req, res)=>{
 }
 const fullRegister = async(req,res) =>{
   try{
-    const memberQid = req.user.memberQid
+    const memberQid = req.user.memberQid;
     const {
       fullname,
       nickname,
@@ -433,8 +414,8 @@ const fullRegister = async(req,res) =>{
     } = req.body
 
     const [update] = await db.query(
-      `UPDATE users SET fullname = ?, nickname = ?, DOB = ?, gender = ?, work = ?, nationality = ?, workPlace = ?, workRole = ?, websiteUrl = ?, bio = ?, authorQid = ? WHERE memberQid = ?`,
-      [fullname, nickname, dob, gender, work, nationlity, workPlace, workRole, websiteLink, bio, authorQid, memberQid]
+      `UPDATE users SET fullname = ?, nickname = ?, pfUrl = ?, DOB = ?, gender = ?, work = ?, nationality = ?, workPlace = ?, workRole = ?, websiteUrl = ?, bio = ?, authorQid = ? WHERE memberQid = ?`,
+      [fullname, nickname, pfUrl, dob, gender, work, nationlity, workPlace, workRole, websiteLink, bio, authorQid, memberQid]
     );
 
     if (update.affectedRows === 0) {
@@ -451,6 +432,36 @@ const fullRegister = async(req,res) =>{
  }
 }
 
+const getFullRegisterData = async (req,res) => {
+    try{
+       const memberQid = req.user.memberQid;
+       const [displayData] = await db.query(
+        `SELECT 
+          fullname,
+          nickname,
+          pfUrl,
+          DOB,
+          gender,
+          work,
+          nationality,
+          workPlace,
+          workRole,
+          websiteUrl,
+          bio,
+        authorQid FROM users WHERE memberQid = ?
+       `,
+        [memberQid]
+       );
+        if (displayData.affectedRows === 0) {
+          return res.status(404).json({ message: "No data be found", Result: "False" });
+        }
+    }
+    catch(errror){
+      console.error("Error in fullRegisterController:", error);
+      return res.status(500).json({ message: "failed to sumbit the full register" });
+    }
+}
+
 module.exports ={
     loginMember,
     createMember,
@@ -463,5 +474,6 @@ module.exports ={
     requestPasswordReset,
     resendPin,
     verifyResetPin,
-    fullRegister
+    fullRegister,
+    getFullRegisterData 
 }

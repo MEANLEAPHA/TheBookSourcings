@@ -112,35 +112,31 @@
 <body>
 <div class="container py-4">
 
-
   <form id="authorForm" enctype="multipart/form-data">
     <div class="form-profile-wrapper d-flex flex-wrap gap-4">
-      
       <!-- Left Side Form -->
       <div class="form-section-left flex-grow-1" style="min-width: 300px;">
         <div class="row mb-3 gap-2">
           <div class="col-md-5">
             <label for="fullname" class="form-label">Full Name</label>
-            <input type="text" class="form-control" id="fullname" name="fullname" required>
+            <input type="text" class="form-control" id="fullname" required>
           </div>
           <div class="col-md-5">
   <label for="nickname" class="form-label">Nickname</label>
   <div class="input-group">
     <span class="input-group-text" id="nickname-addon">@</span>
-    <input type="text" class="form-control" id="nickname" name="nickname" aria-describedby="nickname-addon">
+    <input type="text" class="form-control" id="nickname" aria-describedby="nickname-addon">
   </div>
 </div>
-
         </div>
-
         <div class="row mb-3 gap-2">
           <div class="col-md-5">
             <label for="dob" class="form-label">Date of Birth</label>
-            <input type="date" class="form-control" id="dob" name="dob">
+            <input type="date" class="form-control" id="DOB">
           </div>
           <div class="col-md-5">
             <label for="gender" class="form-label">Gender</label>
-            <select class="form-select" id="gender" name="gender">
+            <select class="form-select" id="gender">
               <option value="" disabled selected></option>
               <option value="male">Male</option>
               <option value="female">Female</option>
@@ -152,7 +148,7 @@
         <div class="row mb-3 gap-2">
           <div class="col-md-5">
             <label for="work" class="form-label">Work</label>
-            <select class="form-select" id="work" name="work">
+            <select class="form-select" id="work">
               <option value="" disabled selected></option>
               <option value="Worker">Worker</option>
               <option value="Student">Student</option>
@@ -161,9 +157,8 @@
           <div class="col-md-5">
             <label for="nationality" class="form-label">Nationality</label>
             <select class="selectpicker form-control bg-white border-1 form-select"
-        data-live-search="true" id="nationality" name="nationality"
+        data-live-search="true" id="nationality" 
         title="Choose your nationality">
-
   <option data-content="<span class='fi fi-af me-2'></span>Afghanistan" value="Afghanistan">Afghanistan</option>
   <option data-content="<span class='fi fi-al me-2'></span>Albania" value="Albania">Albania</option>
   <option data-content="<span class='fi fi-dz me-2'></span>Algeria" value="Algeria">Algeria</option>
@@ -266,32 +261,30 @@
         </div>
 
         <div id="dynamicFields" class="form-section"></div>
-
         <div class="row mb-3 gap-2">
           <div class="col-md-5">
             <label for="website" class="form-label">Website Link</label>
-            <input type="url" class="form-control" id="website" name="website">
+            <input type="text" class="form-control" id="websiteLink">
           </div>
           <div class="col-md-5">
             <label for="bio" class="form-label">Bio</label>
-            <textarea class="form-control" id="bio" name="bio" rows="1"></textarea>
+            <textarea class="form-control" id="bio"  rows="1"></textarea>
           </div>
         </div>
-
-        <input type="text" id="author_id" name="author_id" value="" hidden>
+        <input type="text" id="authorQid"  value="" hidden>
       </div>
 
       <!-- Right Side Profile Upload -->
       <div class="profile-section-right text-center">
         <div class="profile-upload" id="profilePreview">
           <img id="profileImage" src=""  class="rounded mb-2" >
-          <input type="file" id="profileInput" name="profileImage" accept="image/*" class="form-control">
+          <input type="file" id="profileInput" accept="image/*" class="form-control">
         </div>
       </div>
     </div>
 
     <div class=" mt-2">
-      <button type="submit" class="btn btn-primary">Register as Author</button>
+      <button type="submit" class="btn btn-primary" id="submiteBtn">Register as Author</button>
     </div>
   </form>
 </div>
@@ -316,11 +309,11 @@ workSelect.addEventListener('change', function () {
       <div class="row mb-3 gap-2">
         <div class="col-md-5">
           <label for="company" class="form-label">Company Name</label>
-          <input type="text" class="form-control" id="company" name="company">
+          <input type="text" class="form-control" class="workPlace">
         </div>
         <div class="col-md-5">
           <label for="role" class="form-label">Role</label>
-          <input type="text" class="form-control" id="role" name="role">
+          <input type="text" class="form-control" class="workRole">
         </div>
       </div>`;
   } else if (this.value === 'Student') {
@@ -328,11 +321,11 @@ workSelect.addEventListener('change', function () {
       <div class="row mb-3 gap-2">
         <div class="col-md-5">
           <label for="school" class="form-label">School Name</label>
-          <input type="text" class="form-control" id="school" name="school">
+          <input type="text" class="form-control" class="workPlace">
         </div>
         <div class="col-md-5">
           <label for="major" class="form-label">Major</label>
-          <input type="text" class="form-control" id="major" name="major">
+          <input type="text" class="form-control" class="workRole">
         </div>
       </div>`;
   }
@@ -364,7 +357,7 @@ document.addEventListener("DOMContentLoaded", function () {
   $('.selectpicker').selectpicker();
 
   // Reference to author_id input
-  const authorIdInput = document.getElementById("author_id");
+  const authorIdInput = document.getElementById("authorQid");
 
   // Generate ID only if it's empty
   if (!authorIdInput.value || authorIdInput.value.trim() === "") {
@@ -378,6 +371,66 @@ document.addEventListener("DOMContentLoaded", function () {
     const randomLetter = letters.charAt(Math.floor(Math.random() * letters.length));
     return `TBS${randomNum}${randomLetter}`;
   }
+});
+</script>
+<script>
+$(document).ready(function(){
+  $.ajax({
+    url: `https://thebooksourcings.onrender.com/getFullRegister`,
+    type: 'GET',
+    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+    success: function(data) {
+      if (!data) return;
+      $('#fullname').val(data.fullname);
+      $('#nickname').val(data.nickname);
+      $('#bio').val(data.bio);
+      $('#DOB').val(data.DOB);
+      $('#websiteLink').val(data.websiteLink);
+      $('#gender').val(data.gender);
+      $('#nationality').val(data.nationality);
+      $('#work').val(data.work);
+      $('.workPlace').val(data.workPlace);
+      $('.workRole').val(data.workRole);
+      $('#authorQid').val(data.authorQid);
+      if (data.pfUrl) $('#profileImage').attr('src', data.pfUrl).show();
+    },
+    error: function(err) {
+      console.error("Error fetching book:", err);
+    }
+  });
+  $('#submiteBtn').click(function() {
+    syncAuthorsToTextarea();
+    const formData = new FormData();
+    formData.append('fullname', $('#fullname').val());
+    formData.append('nickname', $('#nickname').val());
+    formData.append('dob', $('#dob').val());
+    formData.append('gender', $('#gender').val());
+    formData.append('work', $('#work').val());
+    formData.append('nationlity', $('#nationlity').val());
+    formData.append('workPlace', $('#workPlace').val());
+    formData.append('workRole', $('#workRole').val());
+    formData.append('websiteLink', $('#websiteLink').val());
+    formData.append('bio', $('#bio').val());
+    formData.append('authorQid', $('#authorQid').val());
+    const pfInput = $('#profileInput')[0];
+    if (pfInput.files[0]) formData.append('pfUrl', pfInput.files[0]);
+    $.ajax({
+      url: `https://thebooksourcings.onrender.com/fullRegister`,
+      method: 'PUT',
+      headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function(res) {
+        alert(" successfully!");
+        location.reload();
+      },
+      error: function(err) {
+        console.error("Error updating book:", err);
+        alert("❌ Failed to update book.");
+      }
+    });
+  });
 });
 </script>
 
