@@ -3,7 +3,7 @@ const { deleteBook } = require("../../../controller/book/uploadBook/deleteBookCo
 const { updateBook } = require("../../../controller/book/uploadBook/updateBookController");
 
 const { authMiddleware } = require('../../../middleware/authMiddleware');
-const { upload } = require('../../../middleware/AWSuploadMiddleware'); // updated export
+const { upload } = require('../../../middleware/AWSuploadMiddleware'); 
 
 const bookRoutes = (app) => {
   app.post(

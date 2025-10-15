@@ -396,7 +396,49 @@ const updateAccount = async (req, res)=>{
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 }
+
 const fullRegister = async(req,res) =>{
+  const memberQid = req.user.memberQid
+
+  const [users] = await db.query(
+    `SELECT * from users WHERE memberQid = ?;
+    `,
+    [memberQid]
+  );
+
+  if (users.length === 0)
+      return res.status(404).json(
+    { message: "User account not found or not authorized" }
+  );
+
+    const oldUser = users[0];
+    let pfCoverUrl = oldUser.pfUrl;
+
+    if (req.files?.pfUrl && req.files.pfUrl[0]) {
+      try {
+        // Upload new profile picture to S3
+        const newPfCover = await uploadToS3(req.files.pfUrl[0], "userPf/");
+
+        // Safely delete old profile if it exists and is not empty
+        if (oldUser.pfUrl && oldUser.pfUrl.trim() !== "") {
+          try {
+            await deleteFromS3(oldUser.pfUrl);
+          } catch (deleteErr) {
+            console.warn("Warning: Failed to delete old profile image:", deleteErr.message);
+            // don't stop execution — deletion is not critical
+          }
+        }
+
+        pfCoverUrl = newPfCover;
+      } catch (uploadError) {
+        console.error("Error uploading profile image:", uploadError);
+        return res.status(500).json({ message: "Profile image upload failed" });
+      }
+    }
+
+
+    
+
   try{
     const memberQid = req.user.memberQid;
     const {
@@ -405,17 +447,24 @@ const fullRegister = async(req,res) =>{
       dob,
       gender,
       work,
-      nationlity,
+      nationality,
       workPlace,
       workRole,
       websiteLink,
       bio,
       authorQid
     } = req.body
+    
+    // --- Handle file uploads ---
+    if (req.files?.bookCover) {
+      const newCover = await uploadToS3(req.files.bookCover[0], "covers/");
+      if (oldBook.bookCover) await deleteFromS3(oldBook.bookCover);
+      bookCoverUrl = newCover;
+    }
 
     const [update] = await db.query(
       `UPDATE users SET fullname = ?, nickname = ?, pfUrl = ?, DOB = ?, gender = ?, work = ?, nationality = ?, workPlace = ?, workRole = ?, websiteUrl = ?, bio = ?, authorQid = ? WHERE memberQid = ?`,
-      [fullname, nickname, pfUrl, dob, gender, work, nationlity, workPlace, workRole, websiteLink, bio, authorQid, memberQid]
+      [fullname, nickname, pfCoverUrl, dob, gender, work, nationality, workPlace, workRole, websiteLink, bio, authorQid, memberQid]
     );
 
     if (update.affectedRows === 0) {

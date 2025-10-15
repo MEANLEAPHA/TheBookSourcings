@@ -293,8 +293,141 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
-
 <script>
+document.addEventListener("DOMContentLoaded", function () {
+  $('.selectpicker').selectpicker();
+
+  const workSelect = document.getElementById('work');
+  const dynamicFields = document.getElementById('dynamicFields');
+
+  // Helper function to render dynamic input fields
+  function renderDynamicFields(workType, workPlaceValue = "", workRoleValue = "") {
+    dynamicFields.innerHTML = "";
+
+    if (workType === "Worker") {
+      dynamicFields.innerHTML = `
+        <div class="row mb-3 gap-2">
+          <div class="col-md-5">
+            <label class="form-label">Company Name</label>
+            <input type="text" id="workPlace" class="form-control workPlace" value="${workPlaceValue}">
+          </div>
+          <div class="col-md-5">
+            <label class="form-label">Role</label>
+            <input type="text" id="workRole" class="form-control workRole" value="${workRoleValue}">
+          </div>
+        </div>`;
+    } else if (workType === "Student") {
+      dynamicFields.innerHTML = `
+        <div class="row mb-3 gap-2">
+          <div class="col-md-5">
+            <label class="form-label">School Name</label>
+            <input type="text" id="workPlace" class="form-control workPlace" value="${workPlaceValue}">
+          </div>
+          <div class="col-md-5">
+            <label class="form-label">Major</label>
+            <input type="text" id="workRole" class="form-control workRole" value="${workRoleValue}">
+          </div>
+        </div>`;
+    }
+  }
+
+  // Handle dropdown change
+  workSelect.addEventListener('change', function () {
+    const selected = this.value;
+
+    // When switching between Worker and Student, clear the old inputs
+    if (selected === "Worker" || selected === "Student") {
+      renderDynamicFields(selected, "", "");
+    } else {
+      dynamicFields.innerHTML = ""; // Clear everything if "None" or other value
+    }
+  });
+
+  // === Profile Upload Preview ===
+  const profileInput = document.getElementById('profileInput');
+  const profilePreview = document.getElementById('profilePreview');
+  const profileImage = document.getElementById('profileImage');
+
+  profilePreview.addEventListener('click', () => profileInput.click());
+
+  profileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        profileImage.src = event.target.result || 'assets/img/aUser.png';
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // === Load user info (for edit mode) ===
+  $.ajax({
+    url: `https://thebooksourcings.onrender.com/getFullRegister`,
+    type: 'GET',
+    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+    success: function(data) {
+      if (!data) return;
+
+      $('#fullname').val(data.fullname);
+      $('#nickname').val(data.nickname);
+      $('#bio').val(data.bio);
+      $('#DOB').val(data.DOB);
+      $('#websiteLink').val(data.websiteLink);
+      $('#gender').val(data.gender);
+      $('#nationality').val(data.nationality);
+      $('#work').val(data.work);
+
+      // Re-render dynamic fields based on existing work type
+      renderDynamicFields(data.work, data.workPlace || "", data.workRole || "");
+
+      $('#authorQid').val(data.authorQid);
+      if (data.pfUrl) $('#profileImage').attr('src', data.pfUrl).show();
+    },
+    error: function(err) {
+      console.error("Error fetching user:", err);
+    }
+  });
+
+  // === Submit update ===
+  $('#submiteBtn').click(function() {
+    const formData = new FormData();
+    formData.append('fullname', $('#fullname').val());
+    formData.append('nickname', $('#nickname').val());
+    formData.append('dob', $('#dob').val());
+    formData.append('gender', $('#gender').val());
+    formData.append('work', $('#work').val());
+    formData.append('nationlity', $('#nationlity').val());
+    formData.append('workPlace', $('#workPlace').val());
+    formData.append('workRole', $('#workRole').val());
+    formData.append('websiteLink', $('#websiteLink').val());
+    formData.append('bio', $('#bio').val());
+    formData.append('authorQid', $('#authorQid').val());
+
+    const pfInput = $('#profileInput')[0];
+    if (pfInput.files[0]) formData.append('pfUrl', pfInput.files[0]);
+
+    $.ajax({
+      url: `https://thebooksourcings.onrender.com/fullRegister`,
+      method: 'PUT',
+      headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function(res) {
+        alert("✅ Profile updated successfully!");
+        location.reload();
+      },
+      error: function(err) {
+        console.error("Error updating profile:", err);
+        alert("❌ Failed to update profile.");
+      }
+    });
+  });
+});
+</script>
+
+<!-- <script>
 document.addEventListener("DOMContentLoaded", function () {
   $('.selectpicker').selectpicker();
 });
@@ -309,11 +442,11 @@ workSelect.addEventListener('change', function () {
       <div class="row mb-3 gap-2">
         <div class="col-md-5">
           <label for="company" class="form-label">Company Name</label>
-          <input type="text" class="form-control" class="workPlace">
+          <input type="text" class="form-control workPlace">
         </div>
         <div class="col-md-5">
           <label for="role" class="form-label">Role</label>
-          <input type="text" class="form-control" class="workRole">
+          <input type="text" class="form-control workRole">
         </div>
       </div>`;
   } else if (this.value === 'Student') {
@@ -321,11 +454,11 @@ workSelect.addEventListener('change', function () {
       <div class="row mb-3 gap-2">
         <div class="col-md-5">
           <label for="school" class="form-label">School Name</label>
-          <input type="text" class="form-control" class="workPlace">
+          <input type="text" class="form-control workPlace">
         </div>
         <div class="col-md-5">
           <label for="major" class="form-label">Major</label>
-          <input type="text" class="form-control" class="workRole">
+          <input type="text" class="form-control workRole">
         </div>
       </div>`;
   }
@@ -432,7 +565,7 @@ $(document).ready(function(){
     });
   });
 });
-</script>
+</script> -->
 
 </body>
 </html>
