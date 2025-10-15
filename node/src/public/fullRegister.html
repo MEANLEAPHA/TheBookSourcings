@@ -369,7 +369,7 @@ document.addEventListener("DOMContentLoaded", function () {
     success: function(data) {
       if (!data) return;
 
-      $('#fullname').val(data.fullname);
+      $('#fullname').val(data.username);
       $('#nickname').val(data.nickname);
       $('#bio').val(data.bio);
       $('#DOB').val(data.DOB);

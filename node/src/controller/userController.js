@@ -484,9 +484,9 @@ const fullRegister = async(req,res) =>{
 const getFullRegisterData = async (req,res) => {
     try{
        const memberQid = req.user.memberQid;
-       const [displayData] = await db.query(
+       const [rows] = await db.query(
         `SELECT 
-          fullname,
+          username,
           nickname,
           pfUrl,
           DOB,
@@ -497,13 +497,19 @@ const getFullRegisterData = async (req,res) => {
           workRole,
           websiteUrl,
           bio,
-        authorQid FROM users WHERE memberQid = ?
+          authorQid 
+          FROM users 
+          WHERE memberQid = ?
        `,
         [memberQid]
        );
-        if (displayData.affectedRows === 0) {
-          return res.status(404).json({ message: "No data be found", Result: "False" });
-        }
+         // ✅ rows is an array
+    if (!rows || rows.length === 0) {
+      return res.status(404).json({ message: "No data found", Result: "False" });
+    }
+
+    // ✅ send data back
+    return res.status(200).json(rows[0]);
     }
     catch(errror){
       console.error("Error in fullRegisterController:", error);
