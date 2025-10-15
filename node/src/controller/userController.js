@@ -463,7 +463,7 @@ const fullRegister = async(req,res) =>{
     }
 
     const [update] = await db.query(
-      `UPDATE users SET fullname = ?, nickname = ?, pfUrl = ?, DOB = ?, gender = ?, work = ?, nationality = ?, workPlace = ?, workRole = ?, websiteUrl = ?, bio = ?, authorQid = ? WHERE memberQid = ?`,
+      `UPDATE users SET username = ?, nickname = ?, pfUrl = ?, DOB = ?, gender = ?, work = ?, nationality = ?, workPlace = ?, workRole = ?, websiteUrl = ?, bio = ?, authorQid = ? WHERE memberQid = ?`,
       [fullname, nickname, pfCoverUrl, dob, gender, work, nationality, workPlace, workRole, websiteLink, bio, authorQid, memberQid]
     );
 
