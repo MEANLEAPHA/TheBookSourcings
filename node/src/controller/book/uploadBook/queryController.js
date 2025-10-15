@@ -39,8 +39,10 @@ const getMyBooks = async (req, res) => {
     //   [authorQid]
     // );
     const [rows] = await db.query(
-      `SELECT * FROM uploadBook WHERE JSON_CONTAINS(authorId, '"${authorQid}"')`
-    );
+  `SELECT * FROM uploadBook WHERE JSON_CONTAINS(authorId, JSON_QUOTE(?))`,
+  [authorQid]
+);
+
 
     console.log("Books found:", rows.length);
     if (rows.length === 0) {
