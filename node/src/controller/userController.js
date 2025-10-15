@@ -45,6 +45,7 @@ const loginMember = async (req, res) => {
         const token = createToken({
             user_id: user.user_id,
             memberQid: user.memberQid,
+            authorQid: user.authorQid,
             username: user.username,
             email: user.email,
             timezone: user.timezone || 'UTC'
@@ -103,6 +104,7 @@ const createMember = async (req, res) => {
       const token = createToken({
         user_id: result.insertId,
         username,
+        authorQid: null,
         email,
         timezone: timezone || 'UTC'
       });

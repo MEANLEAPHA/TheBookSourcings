@@ -25,21 +25,53 @@ const getBookByQid = async (req, res) => {
     res.status(500).json({ message: "Internal server error", error: err.message });
   }
 };
-// --- Get all books for the logged-in user
+
 const getMyBooks = async (req, res) => {
   try {
-    const member_id = req.user.user_id;
+    const authorQid = req.user.authorQid; // must exist in your JWT or user record
+
+    if (!authorQid) {
+      return res.status(400).json({ message: "Author QID not found in user profile." });
+    }
 
     const [rows] = await db.query(
-      "SELECT * FROM uploadBook WHERE member_id = ? ORDER BY UploadAt DESC",
-      [member_id]
+      `
+      SELECT * FROM uploadBook
+      WHERE JSON_CONTAINS(authorId, JSON_QUOTE(?))
+      `,
+      [authorQid]
     );
 
-    res.json(rows);
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "No books found for this author." });
+    }
+
+    res.status(200).json({ message: "Books retrieved successfully.", books: rows });
   } catch (err) {
-    console.error("getMyBooks error:", err.message);
+    console.error("getMyBooks error:", err);
     res.status(500).json({ message: "Internal server error", error: err.message });
   }
 };
+
+// --- Get all books for the logged-in user
+// const getMyBooks = async (req, res) => {
+//   try {
+//     const member_id = req.user.user_id;
+//     const authorQid = req.user.authorQid;
+
+//     const [rows] = await db.query(
+//     `
+//       SELECT * FROM uploadBook
+//       WHERE JSON_CONTAINS(authorId, JSON_QUOTE(?))
+//     `,
+//       [member_id]
+//     );
+
+//     res.json(rows);
+//   } catch (err) {
+//     console.error("getMyBooks error:", err.message);
+//     res.status(500).json({ message: "Internal server error", error: err.message });
+//   }
+// };
 
 module.exports = { getBookByQid, getMyBooks };
