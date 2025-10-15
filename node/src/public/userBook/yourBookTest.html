@@ -378,13 +378,18 @@ async function yourBooks() {
       }
     });
 
-    if (!res.ok) throw new Error("Network response not ok");
-    const books = await res.json(); // Direct array
+ 
+   if (!res.ok) throw new Error("Network response not ok");
+
+    const data = await res.json();
+    const books = data.books; // ✅ use the array inside the returned object
+
+    console.log("Fetched books:", books);
 
     const tbody = document.getElementById("tbody");
-    tbody.innerHTML = ""; // Clear old content
+    tbody.innerHTML = "";
 
-    if (books.length === 0) {
+    if (!books || books.length === 0) {
       tbody.innerHTML = `<p>You haven't uploaded any books yet.</p>`;
       return;
     }
