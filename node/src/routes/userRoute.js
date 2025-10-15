@@ -18,7 +18,7 @@ const {
 } = require('../controller/userController');
 
 const {authMiddleware} = require('../middleware/authMiddleware');
-const { upload } = require('../../../middleware/AWSuploadMiddleware'); 
+const { upload } = require('../middleware/AWSuploadMiddleware'); 
 // Define routes
 const TheBookSourcingUser = (app) => {
   app.put('/fullRegister', authMiddleware, upload.fields([{ name: "pfUrl", maxCount: 1 }]), fullRegister);
