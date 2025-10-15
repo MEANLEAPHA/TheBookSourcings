@@ -22,7 +22,7 @@ const { upload } = require('../middleware/AWSuploadMiddleware');
 // Define routes
 const TheBookSourcingUser = (app) => {
   app.put('/fullRegister', authMiddleware, upload.fields([{ name: "pfUrl", maxCount: 1 }]), fullRegister);
-  app.get('getFullRegisterData', authMiddleware,  getFullRegisterData);
+  app.get('/getFullRegisterData', authMiddleware,  getFullRegisterData);
   app.post('/verify', authMiddleware, verifyMember);
   app.post('/resend-pin', authMiddleware, resendPin);
   app.get('/profile', authMiddleware, (req, res) => {

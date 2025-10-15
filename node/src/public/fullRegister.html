@@ -363,7 +363,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // === Load user info (for edit mode) ===
   $.ajax({
-    url: `https://thebooksourcings.onrender.com/getFullRegister`,
+    url: `https://thebooksourcings.onrender.com/getFullRegisterData`,
     type: 'GET',
     headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
     success: function(data) {
