@@ -34,9 +34,12 @@ const getMyBooks = async (req, res) => {
       return res.status(400).json({ message: "Author QID not found in user profile." });
     }
 
+    // const [rows] = await db.query(
+    //   `SELECT * FROM uploadBook WHERE JSON_CONTAINS(authorId, JSON_QUOTE(?))`,
+    //   [authorQid]
+    // );
     const [rows] = await db.query(
-      `SELECT * FROM uploadBook WHERE JSON_CONTAINS(authorId, JSON_QUOTE(?))`,
-      [authorQid]
+      `SELECT * FROM uploadBook WHERE JSON_CONTAINS(authorId, '"${authorQid}"')`
     );
 
     console.log("Books found:", rows.length);
