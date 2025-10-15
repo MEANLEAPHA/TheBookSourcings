@@ -25,23 +25,21 @@ const getBookByQid = async (req, res) => {
     res.status(500).json({ message: "Internal server error", error: err.message });
   }
 };
-
 const getMyBooks = async (req, res) => {
   try {
-    const authorQid = req.user.authorQid; // must exist in your JWT or user record
+    const authorQid = req.user.authorQid;
 
+    console.log("Checking books for authorQid:", authorQid);
     if (!authorQid) {
       return res.status(400).json({ message: "Author QID not found in user profile." });
     }
 
     const [rows] = await db.query(
-      `
-      SELECT * FROM uploadBook
-      WHERE JSON_CONTAINS(authorId, JSON_QUOTE(?))
-      `,
+      `SELECT * FROM uploadBook WHERE JSON_CONTAINS(authorId, JSON_QUOTE(?))`,
       [authorQid]
     );
 
+    console.log("Books found:", rows.length);
     if (rows.length === 0) {
       return res.status(404).json({ message: "No books found for this author." });
     }
@@ -52,6 +50,7 @@ const getMyBooks = async (req, res) => {
     res.status(500).json({ message: "Internal server error", error: err.message });
   }
 };
+
 
 // --- Get all books for the logged-in user
 // const getMyBooks = async (req, res) => {
