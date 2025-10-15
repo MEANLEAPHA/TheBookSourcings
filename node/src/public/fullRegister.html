@@ -418,9 +418,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // ✅ Profile image
   if (data.pfUrl) {
-    $('#profileImage').attr('src', data.pfUrl).show();
+    $('#profileImage').attr('src', data.pfUrl);
   } else {
-    $('#profileImage').hide(); // optional
+    $('#profileImage'); 
   }
     },
     error: function(err) {
