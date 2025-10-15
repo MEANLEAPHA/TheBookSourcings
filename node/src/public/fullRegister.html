@@ -271,7 +271,7 @@
             <textarea class="form-control" id="bio"  rows="1"></textarea>
           </div>
         </div>
-        <input type="text" id="authorQid"  value="">
+        <input type="text" id="authorQid"  value="" hidden>
       </div>
 
       <!-- Right Side Profile Upload -->
@@ -416,12 +416,14 @@ document.addEventListener("DOMContentLoaded", function () {
     $('#authorQid').val(data.authorQid);
   }
 
-  // ✅ Profile image
   if (data.pfUrl) {
-    $('#profileImage').attr('src', data.pfUrl);
-  } else {
-    $('#profileImage'); 
-  }
+  // 👇 Add a cache-busting query to force refresh
+  const freshUrl = data.pfUrl + '?t=' + new Date().getTime();
+  $('#profileImage').attr('src', freshUrl);
+} else {
+  $('#profileImage');
+}
+
     },
     error: function(err) {
       console.error("Error fetching user:", err);
