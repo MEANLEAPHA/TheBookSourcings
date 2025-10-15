@@ -376,27 +376,52 @@ document.addEventListener("DOMContentLoaded", function () {
     headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
     success: function(data) {
       if (!data) return;
+    $('#fullname').val(data.username || '');
+    $('#nickname').val(data.nickname || '');
+    $('#bio').val(data.bio || '');
+    $('#websiteLink').val(data.websiteUrl || '');
+    $('#gender').val(data.gender || '');
+    $('#work').val(data.work || '');
 
-      $('#fullname').val(data.username);
-      $('#nickname').val(data.nickname);
-      $('#bio').val(data.bio);
-      $('#DOB').val(data.DOB);
-      $('#websiteLink').val(data.websiteUrl);
-      $('#gender').val(data.gender);
-      $('#nationality').val(data.nationality);
-      $('#work').val(data.work);
+  // ✅ Date of Birth formatting
+  if (data.DOB) {
+    try {
+      const formattedDate = new Date(data.DOB).toISOString().split('T')[0];
+      $('#DOB').val(formattedDate);
+    } catch (err) {
+      console.warn("Invalid DOB format:", data.DOB);
+      $('#DOB').val('');
+    }
+  } else {
+    $('#DOB').val('');
+  }
 
-      // Re-render dynamic fields based on existing work type
-      renderDynamicFields(data.work, data.workPlace || "", data.workRole || "");
+  // ✅ Nationality (Bootstrap Select)
+  if (data.nationality) {
+    $('#nationality').val(data.nationality);
+    $('#nationality').selectpicker('refresh');
+  } else {
+    $('#nationality').val('');
+    $('#nationality').selectpicker('refresh');
+  }
 
-        // ✅ If authorQid is missing, generate and assign a new one
-      if (data.authorQid === null || !data.authorQid || data.authorQid.trim() === "") {
-        const newId = generateAuthorID();
-        $('#authorQid').val(newId);
-      } else {
-        $('#authorQid').val(data.authorQid);
-      }
-      if (data.pfUrl) $('#profileImage').attr('src', data.pfUrl).show();
+  // ✅ Re-render dynamic fields based on existing work type
+  renderDynamicFields(data.work || '', data.workPlace || '', data.workRole || '');
+
+  // ✅ Handle authorQid
+  if (!data.authorQid || data.authorQid.trim() === '') {
+    const newId = generateAuthorID();
+    $('#authorQid').val(newId);
+  } else {
+    $('#authorQid').val(data.authorQid);
+  }
+
+  // ✅ Profile image
+  if (data.pfUrl) {
+    $('#profileImage').attr('src', data.pfUrl).show();
+  } else {
+    $('#profileImage').hide(); // optional
+  }
     },
     error: function(err) {
       console.error("Error fetching user:", err);
