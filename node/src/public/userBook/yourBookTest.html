@@ -370,6 +370,19 @@
       const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
 async function yourBooks() {
   try {
+
+    const token = localStorage.getItem("token");
+
+    // 🔍 Decode token to inspect authorQid
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        console.log("🪪 Token payload:", payload);
+        console.log("👤 AuthorQid in token:", payload.authorQid);
+      } catch (decodeErr) {
+        console.error("Failed to decode token:", decodeErr);
+      }
+    }
     const res = await fetch("https://thebooksourcings.onrender.com/api/getMyBooks/notableWork", {
       headers: {
         "Authorization": `Bearer ${localStorage.getItem("token")}` // JWT token
