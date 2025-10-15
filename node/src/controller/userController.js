@@ -6,7 +6,7 @@ require('dotenv').config();
 const { sendPinCodeEmail, sendResendPinEmail, sendResetPasswordPinEmail} = require('../util/email');
 const { createToken } = require('../util/jwtHelp'); // adjust path if needed
 
-const {uploadToS3, deleteFromS3 } = require("../../../middleware/AWSuploadMiddleware");
+const {uploadToS3, deleteFromS3 } = require("../middleware/AWSuploadMiddleware");
 // login logical 
 const loginMember = async (req, res) => {
     try {
