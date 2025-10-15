@@ -150,8 +150,8 @@
             <label for="work" class="form-label">Work</label>
             <select class="form-select" id="work">
               <option value="" disabled selected></option>
-              <option value="Worker">Worker</option>
-              <option value="Student">Student</option>
+              <option value="worker">Worker</option>
+              <option value="student">Student</option>
             </select>
           </div>
           <div class="col-md-5">
@@ -410,10 +410,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const formData = new FormData();
     formData.append('fullname', $('#fullname').val());
     formData.append('nickname', $('#nickname').val());
-    formData.append('dob', $('#dob').val());
+    formData.append('dob', $('#DOB').val());
     formData.append('gender', $('#gender').val());
     formData.append('work', $('#work').val());
-    formData.append('nationlity', $('#nationlity').val());
+    formData.append('nationlity', $('#nationality').val());
     formData.append('workPlace', $('#workPlace').val());
     formData.append('workRole', $('#workRole').val());
     formData.append('websiteLink', $('#websiteLink').val());
