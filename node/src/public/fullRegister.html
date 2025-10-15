@@ -271,7 +271,7 @@
             <textarea class="form-control" id="bio"  rows="1"></textarea>
           </div>
         </div>
-        <input type="text" id="authorQid"  value="" hidden>
+        <input type="text" id="authorQid"  value="">
       </div>
 
       <!-- Right Side Profile Upload -->
@@ -297,14 +297,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   $('.selectpicker').selectpicker();
 
-  // Reference to author_id input
-  const authorIdInput = document.getElementById("authorQid");
-
-  // Generate ID only if it's empty
-  if (!authorIdInput.value || authorIdInput.value.trim() === "") {
-    authorIdInput.value = generateAuthorID();
-  }
-
   // ID generator function (example: TB19265S)
   function generateAuthorID() {
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -320,7 +312,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function renderDynamicFields(workType, workPlaceValue = "", workRoleValue = "") {
     dynamicFields.innerHTML = "";
 
-    if (workType === "Worker") {
+    if (workType === "worker") {
       dynamicFields.innerHTML = `
         <div class="row mb-3 gap-2">
           <div class="col-md-5">
@@ -332,7 +324,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <input type="text" id="workRole" class="form-control workRole" value="${workRoleValue}">
           </div>
         </div>`;
-    } else if (workType === "Student") {
+    } else if (workType === "student") {
       dynamicFields.innerHTML = `
         <div class="row mb-3 gap-2">
           <div class="col-md-5">
@@ -389,7 +381,7 @@ document.addEventListener("DOMContentLoaded", function () {
       $('#nickname').val(data.nickname);
       $('#bio').val(data.bio);
       $('#DOB').val(data.DOB);
-      $('#websiteLink').val(data.websiteLink);
+      $('#websiteLink').val(data.websiteUrl);
       $('#gender').val(data.gender);
       $('#nationality').val(data.nationality);
       $('#work').val(data.work);
@@ -397,7 +389,13 @@ document.addEventListener("DOMContentLoaded", function () {
       // Re-render dynamic fields based on existing work type
       renderDynamicFields(data.work, data.workPlace || "", data.workRole || "");
 
-      $('#authorQid').val(data.authorQid);
+        // ✅ If authorQid is missing, generate and assign a new one
+      if (data.authorQid === null || !data.authorQid || data.authorQid.trim() === "") {
+        const newId = generateAuthorID();
+        $('#authorQid').val(newId);
+      } else {
+        $('#authorQid').val(data.authorQid);
+      }
       if (data.pfUrl) $('#profileImage').attr('src', data.pfUrl).show();
     },
     error: function(err) {
@@ -413,7 +411,7 @@ document.addEventListener("DOMContentLoaded", function () {
     formData.append('dob', $('#DOB').val());
     formData.append('gender', $('#gender').val());
     formData.append('work', $('#work').val());
-    formData.append('nationlity', $('#nationality').val());
+    formData.append('nationality', $('#nationality').val());
     formData.append('workPlace', $('#workPlace').val());
     formData.append('workRole', $('#workRole').val());
     formData.append('websiteLink', $('#websiteLink').val());
