@@ -5,14 +5,19 @@ const getBookByQid = async (req, res) => {
   try {
     const { bookQid } = req.params;
     const member_id = req.user.user_id;
-
+    const authorQid = req.user.authorQid;
     if (!bookQid) {
       return res.status(400).json({ message: "Missing bookQid" });
     }
 
     const [rows] = await db.query(
-      "SELECT * FROM uploadBook WHERE bookQid = ? AND member_id = ?",
-      [bookQid, member_id]
+     `SELECT * 
+       FROM uploadBook 
+       WHERE bookQid = ? 
+       AND (member_id = ? 
+         OR (JSON_CONTAINS(authorId, JSON_QUOTE(?)) 
+             AND fullController = 'active'))`,
+      [bookQid, member_id, authorQid]
     );
 
     if (rows.length === 0) {

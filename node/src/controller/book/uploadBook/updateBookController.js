@@ -122,7 +122,7 @@ const updateBook = async (req, res) => {
       [
         title, subTitle, summary, authorJson, authorIdJson, mainCategory, genre, language,
         pageCount, ISBN10, ISBN13, publisher, publishDate, comment, download, share,
-        bookCoverUrl, bookFileUrl, , fullController, bookQid
+        bookCoverUrl, bookFileUrl, fullController, bookQid
       ]
     );
 
