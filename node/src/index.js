@@ -22,8 +22,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
-
-
 // Import Routes
 const { TheBookSourcingUser } = require('./routes/userRoute');
 const trendingRoutes = require('./routes/book/trending/trendingRoutes'); 
@@ -45,20 +43,16 @@ const followRoute = require('./routes/book/userFollowStatus/followRoute');
 const communityRoutes = require('./routes/chat/community/communityRoutes');
 // community comment post
 const communityCommentRoute = require('./routes/chat/community/commentViewRoutes');
-
 // community reply post 
 const communityReplyRoutes = require('./routes/chat/community/replyRoutes');
 const communityLikeRoute =  require('./routes/chat/community/communityLike/communityPostLikeRoutes');
 const communityFavRoute = require('./routes/chat/community/communityLike/communityPostFavRoutes');
-
 const communityCommentLikeRoutes = require('./routes/chat/community/communityLike/communityCommentLikeRoutes');
-
 const communityReplyLikeRoutes = require('./routes/chat/community/communityLike/communityReplyLikeRoutes');
 const verifySocketToken  = require('./middleware/verifySocketToken');
-
-
 // report post and comment
-const reportCommunityRoute = require('./routes/chat/community/reportPAC/reportRoutes')
+const reportCommunityRoute = require('./routes/chat/community/reportPAC/reportRoutes');
+const bookSellerRoutes = require("./routes/shop/saleRoute");
 
 // Initialize Routes
 TheBookSourcingUser(app);
@@ -79,28 +73,20 @@ app.use('/api/books', RDSroute);
 app.use('/api/LAFbook', LAF);
 app.use('/api', followRoute);
 app.use("/api/community", communityRoutes);
-
 // community comment post 
 app.use("/api/communityComment", communityCommentRoute);
-
 // community reply post
 app.use("/api/communityReply", communityReplyRoutes);
-
 app.use('/api/communityPostLike', communityLikeRoute);
 app.use('/api/communityPostFav', communityFavRoute)
-
 //community comment like 
 app.use('/api/communityCommentLike', communityCommentLikeRoutes);
-
 // community reply like 
 app.use('/api/communityReplyLike', communityReplyLikeRoutes);
-
-
-
 // report 
-app.use("/api/community", reportCommunityRoute)
+app.use("/api/community", reportCommunityRoute);
 
-
+app.use("/api/shop", bookSellerRoutes);
 
 // Create HTTP server from Express app
 const server = http.createServer(app);

@@ -3,7 +3,7 @@ const { upload, uploadToS3, deleteFromS3 } = require("../../../middleware/AWSupl
 
 const uploadBook = async (req, res) => {
   try {
-    const userId = req.user.user_id;
+    const userId = req.user.user_id; 
     const userEmail = req.user.email;
 
     const { title, subtitle, summary, author, authorId ,category, genre, language, pageCount, isbn10, isbn13, publisher, publishedDate, comment, download, share, fullControl } = req.body;
