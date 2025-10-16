@@ -41,6 +41,7 @@ $(document).ready(function() {
             $('#comment').prop('checked', data.comment === 'active');
             $('#download').prop('checked', data.download === 'active');
             $('#share').prop('checked', data.share === 'active');
+            $('#full-control').prop('checked', data.fullControl === 'active');
 
             // Preview existing files
             // if (data.bookCover) {

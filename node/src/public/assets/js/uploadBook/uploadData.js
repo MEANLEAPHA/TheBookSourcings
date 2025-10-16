@@ -33,6 +33,7 @@
     formData.append('comment', $('#comment').is(':checked') ? 'active' : 'inactive');
     formData.append('download', $('#download').is(':checked') ? 'active' : 'inactive');
     formData.append('share', $('#share').is(':checked') ? 'active' : 'inactive');
+    formData.append('fullControl', $('#full-control').is(':checked') ? 'active' : 'inactive');
 
     // AJAX request
     $.ajax({

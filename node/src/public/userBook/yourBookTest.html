@@ -496,8 +496,19 @@ function deleteBook(id){
             console.log(response);
             window.location.reload();
         },
-        error: function(xhr, status, error) {
-            alert('Error deleting Task: ' + error);
+        // error: function(xhr, status, error) {
+        //     alert('Error deleting Task: ' + error);
+        // }
+        error: function(err) {
+            console.error("Error deleting book:", err);
+
+            if (err.status === 403 && err.responseJSON?.message) {
+                alert("⚠️ " + err.responseJSON.message);
+            } else if (err.responseJSON?.message) {
+                alert("❌ " + err.responseJSON.message);
+            } else {
+                alert("❌ Failed to delete book. Please try again later.");
+            }
         }
     });         
 }

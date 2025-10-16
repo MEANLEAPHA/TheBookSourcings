@@ -343,6 +343,12 @@
             <input type="checkbox" id="share"><label for="share"></label>
           </div>
         </div>
+        <div class="form-section">
+          <label class="form-label">Allow other author with full control</label>
+          <div class="toggle-switch">
+            <input type="checkbox" id="full-control"><label for="full-control"></label>
+          </div>
+        </div>
 
         <button type="button" class="btn btn-success" id="updateBtn">Update Book</button>
       </form>
@@ -442,6 +448,7 @@ $(document).ready(function(){
       $('#comment').prop('checked', data.comment === 'active');
       $('#download').prop('checked', data.download === 'active');
       $('#share').prop('checked', data.share === 'active');
+      $('#full-control').prop('checked', data.fullController === 'active');
 
       if (data.publishDate) {
         const date = new Date(data.publishDate);
@@ -493,6 +500,7 @@ $(document).ready(function(){
     formData.append('comment', $('#comment').is(':checked') ? 'active' : 'inactive');
     formData.append('download', $('#download').is(':checked') ? 'active' : 'inactive');
     formData.append('share', $('#share').is(':checked') ? 'active' : 'inactive');
+    formData.append('fullController', $('#full-control').is(':checked') ? 'active' : 'inactive');
 
     const fileInput = $('#fileInput')[0];
     const coverInput = $('#coverInput')[0];
@@ -512,8 +520,21 @@ $(document).ready(function(){
       },
       error: function(err) {
         console.error("Error updating book:", err);
-        alert("❌ Failed to update book.");
+
+        // Backend permission message handler
+        if (err.status === 403 && err.responseJSON?.message) {
+          alert("⚠️ " + err.responseJSON.message);
+        } else if (err.responseJSON?.message) {
+          alert("❌ " + err.responseJSON.message);
+        } else {
+          alert("❌ Failed to update book. Please try again later.");
+        }
       }
+
+      // error: function(err) {
+      //   console.error("Error updating book:", err);
+      //   alert("❌ Failed to update book.");
+      // }
     });
   });
 
