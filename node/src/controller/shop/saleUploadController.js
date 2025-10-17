@@ -70,9 +70,7 @@ const saleUpload = async (req, res) => {
         message: "Book uploaded successfully!",
         data: {
           bookId: result.insertId,
-          title: bookTitle,
-          img: bookImgUrl,
-          previews: imgPreviewUrl
+          title: bookTitle
         }
       });
     } catch (dbError) {
