@@ -136,31 +136,47 @@ const saleUpload = async (req, res) => {
       bookFileUrl = await uploadToS3(req.files.bookFile[0], "BookSale/");
     }
 
-    // ✅ Insert into DB
-    const [result] = await db.query(
-      `INSERT INTO bookForSale 
-      (memberQid, vendor_email, title, description, original_price, price, discount_type, discount_price, bookImg, sale_type, book_type, imgPreview, bookFile, qty, quality, contact, website)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        memberQid,
-        userEmail,
-        bookTitle,
-        description,
-        originalPrice || 0,
-        price || 0,
-        discountType || null,
-        discountPrice || 0,
-        bookImgUrl,
-        saleType,
-        bookType,
-        JSON.stringify(imgPreviewUrl),
-        bookFileUrl,
-        qty,
-        bookQuality,
-        contact || null,
-        website || null
-      ]
-    );
+  try {
+      const [result] = await db.query(
+        `INSERT INTO bookForsale 
+        (memberQid, vendor_email, title, description, original_price, price, discount_type, discount_price, bookImg, sale_type, book_type, imgPreview, bookFile, qty, quality, contact, website)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          memberQid,
+          userEmail,
+          bookTitle,
+          description,
+          originalPrice,
+          price,
+          discountType,
+          discountPrice,
+          bookImgUrl,
+          saleType,
+          bookType,
+          JSON.stringify(imgPreviewUrl),
+          bookFileUrl,
+          qty,
+          bookQuality,
+          contact,
+          website
+        ]
+      );
+
+      res.status(201).json({
+        message: "Book uploaded successfully!",
+        data: {
+          bookId: result.insertId
+        }
+      });
+    } catch (dbError) {
+      // Rollback uploaded files if DB insertion fails
+      await deleteFromS3(bookImgUrl);
+      await deleteFromS3(bookFileUrl);
+      for (const url of imgPreviewUrl) {
+        await deleteFromS3(url);
+      }
+      throw dbError;
+    }
 
     res.status(201).json({
       message: "Book uploaded successfully!",
