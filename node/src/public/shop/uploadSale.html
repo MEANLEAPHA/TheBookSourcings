@@ -366,7 +366,8 @@
               <label class="form-label">Book Quality</label>
               <select class="form-select" id="bookQuality" required>
                 <option value="new">New</option>
-                <option value="used">Used</option>
+                <option value="almost new">Almost new</option>
+                <option value="second hand">Second hand</option>
               </select>
             </div>
 
@@ -508,7 +509,7 @@ document.getElementById("saleBookForm").addEventListener("submit", async (e) => 
   }
 
   const token = localStorage.getItem("token");
-  const res = await fetch(`${API_URL}/uploadSaleBook`, {
+  const res = await fetch(`https://thebooksourcings.onrender.com/api/shop/uploadSaleBook`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
     body: formData
