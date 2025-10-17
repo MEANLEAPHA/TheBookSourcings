@@ -134,7 +134,7 @@ const displayBooksBySidForSale = async (req,res) =>{
 }
 
 
-const getMySaleBook = async () => {
+const getMySaleBook = async (req, res) => {
   try{
     const memberQid = req.user.memberQid;
 
