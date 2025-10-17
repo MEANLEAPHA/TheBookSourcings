@@ -69,8 +69,7 @@ const saleUpload = async (req, res) => {
       res.status(201).json({
         message: "Book uploaded successfully!",
         data: {
-          bookId: result.insertId,
-          title: bookTitle
+          bookId: result.insertId
         }
       });
     } catch (dbError) {
