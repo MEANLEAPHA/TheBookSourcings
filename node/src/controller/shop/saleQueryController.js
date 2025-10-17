@@ -6,7 +6,8 @@ const displayBooksForSale = async (req, res) => {
     const {
       minPrice,
       maxPrice,
-      saleType,
+      saleType, // normal, discount, free
+      bookType, // ebook, paper
       discountType,
       quality,
       sortBy,       // optional: e.g. 'price_asc', 'price_desc', 'newest'
@@ -17,7 +18,7 @@ const displayBooksForSale = async (req, res) => {
     let sql = `SELECT 
         bookSid, memberQid, vendor_email, title, description, 
         original_price, price, discount_type, discount_price, 
-        sale_type, imgPreview, bookImg, qty, quality, contact, website, 
+        sale_type, book_type, imgPreview, bookImg, qty, quality, contact, website, 
         created_at
       FROM bookForSale
       WHERE 1=1`;
@@ -38,6 +39,11 @@ const displayBooksForSale = async (req, res) => {
       params.push(saleType);
     }
 
+    if (bookType) {
+      sql += " AND book_type = ?";
+      params.push(bookType);
+    }
+    
     if (discountType) {
       sql += " AND discount_type = ?";
       params.push(discountType);

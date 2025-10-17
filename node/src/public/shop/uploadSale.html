@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+         .step-section {
+      display: none;
+    }
+    .step-section.active {
+      display: block;
+    }
+    .progress {
+      height: 8px;
+    }
+    .progress-bar{
+      background-color: #275792;
+    }
+   
+       .form-section {
+       width: 35%;
+      padding: 10px;
+      border-radius: 5px;
+      
+      align-items: start;
+     justify-content: start;
+      border: 1px dashed gray;
+      margin-bottom: 10px;
+       height: auto;
+       display: inline-block; /* or block if you want them stacked */
+      vertical-align: top; 
+    
+    }
+    .is-invalid-section{
+      border: 1px dashed rgb(255, 4, 4);
+    }
+
+    #filePreview{
+      width: 100%;
+       height: 550px;
+      margin: auto;
+ 
+    }
+    
+    #coverPreview{
+      width: 100%;
+      height: 550px;
+      margin: auto;
+ 
+    }
+    .rows{
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        
+  align-items: flex-start;
+        justify-content: center;
+        gap: 10px;
+        height: auto;
+        flex-direction: row;
+    }
+    .rowb{
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        padding: 0px;
+       
+        align-items: flex-start;
+        gap: 10px;
+        margin: 0px auto;
+        height: auto;
+        flex-direction: row;
+    }
+    .btn-success-soft, .btn-danger-soft{
+        width: 60px;
+        height: 40px;
+       
+       
+    }
+  
+
+    .square{
+      height: auto;
+        display: inline-block; 
+      width: 100%;
+      background-color: #fff;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 100px;
+      color: rgba(208, 212, 217, 0.5);
+      position: relative;
+    }
+    .square img {
+      width: 100%;
+      height:auto;
+      display: none; /* hidden until upload */
+    }
+     .squares {
+      height: auto;
+      width: 100%;
+        display: inline-block; 
+      background-color: #fff;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 100px;
+      color: rgba(208, 212, 217, 0.5);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .squares img {
+      width: 100%;
+      height: 100%;
+   
+      display: none; /* hidden until upload */
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+      margin: 5px;
+    }
+
+    .btn-success-soft {
+      color: #28a745;
+      background-color: rgba(40, 167, 69, 0.1);
+    }
+
+    .btn-danger-soft {
+      color: #dc3545;
+      background-color: rgba(220, 53, 69, 0.1);
+    }
+
+    .btn-primary {
+      color: white;
+     
+      margin: auto;
+      width: 100%;
+    }
+
+    .btn-danger {
+      color: white;
+     
+    }
+
+    .actions {
+      text-align: right;
+      margin-top: 20px;
+    }
+
+    .alert-warning{
+     font-size: x-small;
+     width: 100%;
+     display: flex;
+     padding: 10px;
+     height: auto;
+     opacity: 0.7;
+     margin-top: 5px;
+     align-items: center;
+    }
+    .card-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+    padding-bottom: 20px;
+}
+#bookDetails{
+  width: 50%;
+}
+@media screen and (max-width:1225px){
+
+   
+  .form-section{
+    width: 45%;
+
+  }
+   #bookDetails{
+    width: 100%;
+   }
+   #filePreview{
+   
+       height: 600px;
+    
+ 
+    }
+    
+    #coverPreview{
+  
+      height: 600px;
+     
+ 
+    }
+}
+@media screen and (max-width:990px){
+  .form-section{
+    width: 100%;
+    padding: 10px;
+  }
+   .square, .squares{
+    height: auto;
+   }
+   #bookDetails{
+    width: 90%;
+   }
+    #filePreview{
+   
+       height: 550px;
+    
+ 
+    }
+    
+    #coverPreview{
+  
+      height: auto;
+     
+ 
+    }
+}
+.is-invalid {
+  border-color: #dc3545 !important;
+}
+.containerx{
+  width: 90%;
+  margin: auto;
+}
+ .toggleForThree{
+            display: flex;
+            align-items: center;
+            
+            gap: 5px;
+        }
+          .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .toggle-switch input {
+            display: none;
+        }
+        .toggle-switch label {
+            width: 45px;
+            height: 22px;
+            background: #ccc;
+            border-radius: 50px;
+            position: relative;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .toggle-switch input:checked + label {
+            background:rgb(69, 207, 19);
+        }
+        .toggle-switch label::before {
+            content: "";
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: white;
+            border-radius: 50%;
+            top: 50%;
+            left: 5px;
+            transform: translateY(-50%);
+            transition: 0.3s;
+        }
+        .toggle-switch input:checked + label::before {
+            left: 25px;
+        }
+    </style>
+</head>
+<body>
+    <div class="containerx">
+  <div class="card shadow">
+    <div class="card-body">
+      <div class="progress mb-4">
+        <div class="progress-bar" role="progressbar" id="progressBar" style="width: 20%;"></div>
+      </div>
+
+      <form id="saleBookForm">
+        <!-- STEP 1: Sale Type -->
+        <div class="step-section active" id="step-1">
+          <h5 class="mb-3">Select Sale Type</h5>
+          <select class="form-select" id="saleType" required>
+            <option value="" disabled selected>Select Sale Type</option>
+            <option value="normal">Normal Sale</option>
+            <option value="discount">Discount Sale</option>
+            <option value="free">Free</option>
+          </select>
+        </div>
+
+        <!-- STEP 2: Book Type & File Upload -->
+        <div class="step-section" id="step-2">
+          <h5 class="mb-3">Select Book Type</h5>
+          <select class="form-select mb-3" id="bookType" required>
+            <option value="" disabled selected>Select Book Type</option>
+            <option value="paper">Physical Book</option>
+            <option value="ebook">E-Book</option>
+          </select>
+
+          <div class="upload-section">
+            <!-- Book Image -->
+            <label class="form-label">Book Cover</label>
+            <input type="file" id="bookImg" class="form-control mb-3" accept="image/*" required>
+
+            <!-- Image Preview (multiple) -->
+            <label class="form-label">Preview Images (Optional)</label>
+            <input type="file" id="imgPreview" class="form-control mb-3" multiple accept="image/*">
+
+            <!-- Ebook File -->
+            <div id="ebookFileSection" style="display:none;">
+              <label class="form-label">Upload E-Book File</label>
+              <input type="file" id="bookFile" class="form-control mb-3" accept=".pdf,.epub,.doc,.txt">
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3: Pricing Section -->
+        <div class="step-section" id="step-3">
+          <h5 class="mb-3">Book Pricing</h5>
+
+          <div id="normalPriceSection">
+            <label class="form-label">Price ($)</label>
+            <input type="number" class="form-control" id="price" min="0" placeholder="Enter price">
+          </div>
+
+          <div id="discountSection" style="display:none;">
+            <label class="form-label">Original Price ($)</label>
+            <input type="number" class="form-control mb-2" id="originalPrice" min="0">
+
+            <div class="input-group mb-2">
+              <select class="form-select" id="discountType">
+                <option value="percent">Percent</option>
+                <option value="fixed">Fixed</option>
+              </select>
+              <input type="number" class="form-control" id="discountPrice" placeholder="Discount value" min="0">
+            </div>
+
+            <div>
+              <label class="form-label">Final Price ($)</label>
+              <input type="number" class="form-control" id="finalPrice" readonly>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 4: Basic Info -->
+        <div class="step-section" id="step-4">
+          <h5 class="mb-3">Book Information</h5>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Book Title</label>
+              <input type="text" class="form-control" id="bookTitle" required>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Book Quality</label>
+              <select class="form-select" id="bookQuality" required>
+                <option value="new">New</option>
+                <option value="used">Used</option>
+              </select>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">Description</label>
+              <textarea class="form-control" id="description" rows="3"></textarea>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Quantity</label>
+              <input type="number" class="form-control" id="qty" min="1" required>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Contact</label>
+              <input type="text" class="form-control" id="contact" placeholder="Phone or Email">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Website (Optional)</label>
+              <input type="text" class="form-control" id="website">
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="d-flex justify-content-between mt-4">
+          <button type="button" class="btn btn-secondary" id="prevBtn">Previous</button>
+          <button type="button" class="btn btn-primary" id="nextBtn">Next</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+    const steps = document.querySelectorAll(".step-section");
+const nextBtn = document.getElementById("nextBtn");
+const prevBtn = document.getElementById("prevBtn");
+const progressBar = document.getElementById("progressBar");
+
+let currentStep = 0;
+function showStep(step) {
+  steps.forEach((s, i) => s.classList.toggle("active", i === step));
+  prevBtn.style.display = step === 0 ? "none" : "inline-block";
+  nextBtn.textContent = step === steps.length - 1 ? "Submit" : "Next";
+  progressBar.style.width = ((step + 1) / steps.length) * 100 + "%";
+}
+showStep(currentStep);
+
+prevBtn.addEventListener("click", () => {
+  if (currentStep > 0) {
+    currentStep--;
+    showStep(currentStep);
+  }
+});
+
+// Dynamic field logic
+const saleType = document.getElementById("saleType");
+const bookType = document.getElementById("bookType");
+const ebookFileSection = document.getElementById("ebookFileSection");
+const normalPriceSection = document.getElementById("normalPriceSection");
+const discountSection = document.getElementById("discountSection");
+const originalPrice = document.getElementById("originalPrice");
+const discountType = document.getElementById("discountType");
+const discountPrice = document.getElementById("discountPrice");
+const finalPrice = document.getElementById("finalPrice");
+
+bookType.addEventListener("change", () => {
+  ebookFileSection.style.display = bookType.value === "ebook" ? "block" : "none";
+});
+
+saleType.addEventListener("change", () => {
+  if (saleType.value === "normal") {
+    normalPriceSection.style.display = "block";
+    discountSection.style.display = "none";
+  } else if (saleType.value === "discount") {
+    normalPriceSection.style.display = "none";
+    discountSection.style.display = "block";
+  } else {
+    normalPriceSection.style.display = "none";
+    discountSection.style.display = "none";
+  }
+});
+
+// Calculate final discount price
+function updateDiscount() {
+  const orig = parseFloat(originalPrice.value) || 0;
+  const discount = parseFloat(discountPrice.value) || 0;
+  let final = orig;
+  if (discountType.value === "percent") final = orig - (orig * discount) / 100;
+  else if (discountType.value === "fixed") final = orig - discount;
+  finalPrice.value = final > 0 ? final.toFixed(2) : 0;
+}
+originalPrice.addEventListener("input", updateDiscount);
+discountPrice.addEventListener("input", updateDiscount);
+discountType.addEventListener("change", updateDiscount);
+
+// Navigation
+nextBtn.addEventListener("click", () => {
+  if (currentStep < steps.length - 1) currentStep++;
+  else document.getElementById("saleBookForm").dispatchEvent(new Event("submit"));
+  showStep(currentStep);
+});
+
+// Form submit
+document.getElementById("saleBookForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData();
+  formData.append("saleType", saleType.value);
+  formData.append("bookType", bookType.value);
+  formData.append("bookTitle", document.getElementById("bookTitle").value);
+  formData.append("description", document.getElementById("description").value);
+  formData.append("qty", document.getElementById("qty").value);
+  formData.append("bookQuality", document.getElementById("bookQuality").value);
+  formData.append("contact", document.getElementById("contact").value);
+  formData.append("website", document.getElementById("website").value);
+
+  if (saleType.value === "normal") {
+    formData.append("price", document.getElementById("price").value);
+    formData.append("originalPrice", document.getElementById("price").value);
+  }
+  if (saleType.value === "discount") {
+    formData.append("originalPrice", originalPrice.value);
+    formData.append("discountType", discountType.value);
+    formData.append("discountPrice", discountPrice.value);
+    formData.append("price", finalPrice.value);
+  }
+
+  const bookImg = document.getElementById("bookImg").files[0];
+  const bookFile = document.getElementById("bookFile").files[0];
+  const imgPreview = document.getElementById("imgPreview").files;
+
+  if (bookImg) formData.append("bookImg", bookImg);
+  if (bookFile && bookType.value === "ebook") formData.append("bookFile", bookFile);
+  for (let i = 0; i < imgPreview.length; i++) {
+    formData.append("imgPreview", imgPreview[i]);
+  }
+
+  const token = localStorage.getItem("token");
+  const res = await fetch(`${API_URL}/uploadSaleBook`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData
+  });
+
+  const data = await res.json();
+  if (res.ok) alert("✅ Book uploaded successfully!");
+  else alert("❌ " + data.message);
+});
+
+</script>
+</body>
+</html>

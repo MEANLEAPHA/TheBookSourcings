@@ -14,13 +14,14 @@ const saleUpload = async (req, res) => {
       discountType,
       discountPrice,
       saleType,
+      bookType,
       qty,
       bookQuality,
       contact,
       website
     } = req.body;
 
-    if (!bookTitle || !originalPrice || !saleType || !qty || !bookQuality) {
+    if (!bookTitle || !originalPrice || !saleType || !qty || !bookQuality || !bookType) {
       return res.status(400).json({ message: "Please fill all required fields" });
     }
 
@@ -42,8 +43,8 @@ const saleUpload = async (req, res) => {
     try {
       const [result] = await db.query(
         `INSERT INTO bookForSale 
-        (memberQid, vendor_email, title, description, original_price, price, discount_type, discount_price, bookImg, sale_type, imgPreview, bookFile, qty, quality, contact, website)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        (memberQid, vendor_email, title, description, original_price, price, discount_type, discount_price, bookImg, sale_type, book_type, imgPreview, bookFile, qty, quality, contact, website)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           memberQid,
           userEmail,
@@ -55,6 +56,7 @@ const saleUpload = async (req, res) => {
           discountPrice,
           bookImgUrl,
           saleType,
+          bookType,
           JSON.stringify(imgPreviewUrl),
           bookFileUrl,
           qty,
