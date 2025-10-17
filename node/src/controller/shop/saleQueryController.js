@@ -136,10 +136,10 @@ const displayBooksBySidForSale = async (req,res) =>{
 
 const getMySaleBook = async () => {
   try{
-    const memberQid = req.user.memeberQid;
+    const memberQid = req.user.memberQid;
 
     const [rows] = await db.query(
-      "SELECT * FORM bookForsale WHERE memberQid = ?",
+      "SELECT * FROM bookForsale WHERE memberQid = ?",
       [memberQid]
     )
 
