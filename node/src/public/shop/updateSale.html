@@ -134,9 +134,7 @@
   async function loadBookData(bookSid) {
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`https://thebooksourcings.onrender.com/api/displaySaleBookBySid/${bookSid}`, {
-        headers: { "Authorization": `Bearer ${token}` }
-      });
+      const res = await fetch(`https://thebooksourcings.onrender.com/api/displaySaleBookBySid/${bookSid}`);
 
       if (!res.ok) throw new Error("Failed to fetch book data");
 
