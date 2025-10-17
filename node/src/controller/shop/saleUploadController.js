@@ -25,7 +25,7 @@ const saleUpload = async (req, res) => {
       return res.status(400).json({ message: "Please fill all required fields" });
     }
 
-    if (!req.files?.bookImg || !req.files?.bookFile) {
+    if (!req.files?.bookImg) {
       return res.status(400).json({ message: "Book image and file are required" });
     }
 
