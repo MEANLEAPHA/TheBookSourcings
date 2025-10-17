@@ -7,7 +7,7 @@ const updateBookForSale = async (req, res) => {
     const memberQid = req.user.memberQid;
 
     const [books] = await db.query(
-      "SELECT * FROM bookForSale WHERE bookSid = ? AND memberQid = ?",
+      "SELECT * FROM bookForsale WHERE bookSid = ? AND memberQid = ?",
       [bookSid, memberQid]
     );
 
@@ -74,7 +74,7 @@ const updateBookForSale = async (req, res) => {
     } = req.body;
 
     await db.query(
-      `UPDATE bookForSale SET 
+      `UPDATE bookForsale SET 
         title = ?, 
         description = ?, 
         original_price = ?, 

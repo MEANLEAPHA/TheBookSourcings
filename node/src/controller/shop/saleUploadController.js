@@ -137,51 +137,62 @@ const saleUpload = async (req, res) => {
     }
 
   try {
-      const [result] = await db.query(
-        `INSERT INTO bookForsale 
-        (memberQid, vendor_email, title, description, original_price, price, discount_type, discount_price, bookImg, sale_type, book_type, imgPreview, bookFile, qty, quality, contact, website)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          memberQid,
-          userEmail,
-          bookTitle,
-          description,
-          originalPrice,
-          price,
-          discountType,
-          discountPrice,
-          bookImgUrl,
-          saleType,
-          bookType,
-          JSON.stringify(imgPreviewUrl),
-          bookFileUrl,
-          qty,
-          bookQuality,
-          contact,
-          website
-        ]
-      );
+  const [result] = await db.query(
+    `INSERT INTO bookForsale 
+    (memberQid, vendor_email, title, description, original_price, price, discount_type, discount_price, bookImg, sale_type, book_type, imgPreview, bookFile, qty, quality, contact, website)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      memberQid,
+      userEmail,
+      bookTitle,
+      description,
+      originalPrice,
+      price,
+      discountType,
+      discountPrice,
+      bookImgUrl,
+      saleType,
+      bookType,
+      JSON.stringify(imgPreviewUrl),
+      bookFileUrl,
+      qty,
+      bookQuality,
+      contact,
+      website
+    ]
+  );
 
-      res.status(201).json({
-        message: "Book uploaded successfully!",
-        data: {
-          bookId: result.insertId
-        }
-      });
-    } catch (dbError) {
-      // Rollback uploaded files if DB insertion fails
-      await deleteFromS3(bookImgUrl);
-      await deleteFromS3(bookFileUrl);
-      for (const url of imgPreviewUrl) {
+  res.status(201).json({
+    message: "Book uploaded successfully!",
+    data: { bookId: result.insertId }
+  });
+
+} catch (dbError) {
+  console.error("Database insertion failed:", dbError);
+
+  // Rollback uploads safely
+  const allToDelete = [
+    bookImgUrl,
+    bookFileUrl,
+    ...(Array.isArray(imgPreviewUrl) ? imgPreviewUrl : [])
+  ];
+
+  for (const url of allToDelete) {
+    if (url && typeof url === "string") {
+      try {
         await deleteFromS3(url);
+      } catch (delErr) {
+        console.warn("Failed to delete from S3:", delErr.message);
       }
-      throw dbError;
     }
+  }
 
-    res.status(201).json({
-      message: "Book uploaded successfully!",
-      data: { bookId: result.insertId }
-    });
+  res.status(500).json({
+    message: "Failed to save book, rolled back uploaded files.",
+    error: dbError.message,
+  });
+}
+
   } catch (error) {
     console.error("💥 saleUploadController error:", error);
     res.status(500).json({

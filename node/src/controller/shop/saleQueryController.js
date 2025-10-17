@@ -20,7 +20,7 @@ const displayBooksForSale = async (req, res) => {
         original_price, price, discount_type, discount_price, 
         sale_type, book_type, imgPreview, bookImg, qty, quality, contact, website, 
         created_at
-      FROM bookForSale
+      FROM bookForsale
       WHERE 1=1`;
     const params = [];
 

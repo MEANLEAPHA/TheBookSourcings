@@ -15,7 +15,7 @@ const deleteBook = async (req, res) => {
 
     // 1️⃣ Check if the book exists and belongs to this user
     const [existingBook] = await db.query(
-      "SELECT * FROM bookForSale WHERE bookSid = ? AND memberQid = ?",
+      "SELECT * FROM bookForsale WHERE bookSid = ? AND memberQid = ?",
       [bookSid, memberQid]
     );
 
@@ -59,7 +59,7 @@ const deleteBook = async (req, res) => {
 
     // 3️⃣ Delete from DB
     const [result] = await db.query(
-      "DELETE FROM bookForSale WHERE bookSid = ? AND memberQid = ?",
+      "DELETE FROM bookForsale WHERE bookSid = ? AND memberQid = ?",
       [bookSid, memberQid]
     );
 
