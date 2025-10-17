@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form id="updateBookForm" enctype="multipart/form-data" class="p-4 max-w-3xl mx-auto bg-white rounded-lg shadow-md">
+  <h2 class="text-xl font-semibold mb-4 text-center">Update Book for Sale</h2>
+
+  <!-- Book Title -->
+  <div class="mb-3">
+    <label class="block font-medium">Book Title</label>
+    <input type="text" id="bookTitle" name="bookTitle" class="form-control" required />
+  </div>
+
+  <!-- Description -->
+  <div class="mb-3">
+    <label class="block font-medium">Description</label>
+    <textarea id="description" name="description" class="form-control" rows="3"></textarea>
+  </div>
+
+  <!-- Sale Type -->
+  <div class="mb-3">
+    <label class="block font-medium">Sale Type</label>
+    <select id="saleType" name="saleType" class="form-select" required>
+      <option value="paid">Paid</option>
+      <option value="free">Free</option>
+    </select>
+  </div>
+
+  <!-- Price Fields (conditionally visible) -->
+  <div id="priceFields">
+    <div class="mb-3">
+      <label class="block font-medium">Original Price ($)</label>
+      <input type="number" id="originalPrice" name="originalPrice" step="0.01" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+      <label class="block font-medium">Discount Type</label>
+      <select id="discountType" name="discountType" class="form-select">
+        <option value="">None</option>
+        <option value="percent">Percent</option>
+        <option value="flat">Flat</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label class="block font-medium">Discount Price</label>
+      <input type="number" id="discountPrice" name="discountPrice" step="0.01" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+      <label class="block font-medium">Final Price ($)</label>
+      <input type="number" id="price" name="price" step="0.01" class="form-control" />
+    </div>
+  </div>
+
+  <!-- Book Type -->
+  <div class="mb-3">
+    <label class="block font-medium">Book Type</label>
+    <select id="bookType" name="bookType" class="form-select" required>
+      <option value="ebook">E-Book</option>
+      <option value="physical">Physical</option>
+    </select>
+  </div>
+
+  <!-- Quantity -->
+  <div class="mb-3">
+    <label class="block font-medium">Quantity</label>
+    <input type="number" id="qty" name="qty" class="form-control" required />
+  </div>
+
+  <!-- Quality -->
+  <div class="mb-3">
+    <label class="block font-medium">Book Quality</label>
+    <select id="bookQuality" name="bookQuality" class="form-select" required>
+      <option value="new">New</option>
+      <option value="used">Used</option>
+    </select>
+  </div>
+
+  <!-- Contact -->
+  <div class="mb-3">
+    <label class="block font-medium">Contact</label>
+    <input type="text" id="contact" name="contact" class="form-control" />
+  </div>
+
+  <!-- Website -->
+  <div class="mb-3">
+    <label class="block font-medium">Website</label>
+    <input type="url" id="website" name="website" class="form-control" />
+  </div>
+
+  <!-- Book Cover -->
+  <div class="mb-3">
+    <label class="block font-medium">Book Cover Image</label>
+    <input type="file" id="bookImg" name="bookImg" class="form-control" />
+    <div id="bookImgPreview" class="mt-2"></div>
+  </div>
+
+  <!-- Preview Images -->
+  <div class="mb-3">
+    <label class="block font-medium">Preview Images</label>
+    <input type="file" id="imgPreview" name="imgPreview" multiple class="form-control" />
+    <div id="imgPreviewContainer" class="mt-2 grid grid-cols-3 gap-2"></div>
+  </div>
+
+  <!-- Ebook File -->
+  <div class="mb-3" id="bookFileGroup">
+    <label class="block font-medium">Ebook File</label>
+    <input type="file" id="bookFile" name="bookFile" class="form-control" />
+    <div id="bookFilePreview" class="mt-2 text-sm text-gray-500"></div>
+  </div>
+
+  <button type="submit" class="btn btn-primary w-full">Update Book</button>
+</form>
+
+<script>
+  const saleTypeSelect = document.getElementById("saleType");
+  const bookTypeSelect = document.getElementById("bookType");
+  const priceFields = document.getElementById("priceFields");
+  const bookFileGroup = document.getElementById("bookFileGroup");
+
+  function toggleFields() {
+    priceFields.style.display = saleTypeSelect.value === "free" ? "none" : "block";
+    bookFileGroup.style.display = bookTypeSelect.value === "ebook" ? "block" : "none";
+  }
+
+  saleTypeSelect.addEventListener("change", toggleFields);
+  bookTypeSelect.addEventListener("change", toggleFields);
+
+  async function loadBookData(bookSid) {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`https://thebooksourcings.onrender.com/api/displaySaleBookBySid/${bookSid}`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+
+      if (!res.ok) throw new Error("Failed to fetch book data");
+
+      const data = await res.json();
+      const book = data.book;
+
+      // Fill all text/number inputs
+      for (const [key, value] of Object.entries(book)) {
+        const el = document.getElementById(key);
+        if (el && el.tagName !== "SELECT" && el.type !== "file") {
+          el.value = value || "";
+        }
+      }
+
+      // Handle dropdowns
+      document.getElementById("saleType").value = book.sale_type || "paid";
+      document.getElementById("bookType").value = book.book_type || "ebook";
+      document.getElementById("bookQuality").value = book.quality || "new";
+      document.getElementById("discountType").value = book.discount_type || "";
+
+      // Image previews
+      if (book.bookImg) {
+        document.getElementById("bookImgPreview").innerHTML =
+          `<img src="${book.bookImg}" class="w-24 h-32 object-cover rounded shadow">`;
+      }
+
+      // Multiple preview images
+      if (book.imgPreview) {
+        const previews = JSON.parse(book.imgPreview);
+        const previewHTML = previews.map(url =>
+          `<img src="${url}" class="w-24 h-32 object-cover rounded shadow">`
+        ).join("");
+        document.getElementById("imgPreviewContainer").innerHTML = previewHTML;
+      }
+
+      // Ebook file info
+      if (book.bookFile) {
+        document.getElementById("bookFilePreview").textContent =
+          `Current File: ${book.bookFile}`;
+      }
+
+      toggleFields();
+
+    } catch (err) {
+      console.error("Error loading book:", err);
+      alert("Failed to load book details");
+    }
+  }
+
+  // Example usage (replace 123 with actual bookSid from URL or data)
+  const urlParams = new URLSearchParams(window.location.search);
+  const bookSid = urlParams.get("bookSid");
+  if (bookSid) loadBookData(bookSid);
+
+  // Submit update
+  document.getElementById("updateBookForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
+    const formData = new FormData(e.target);
+
+    try {
+      const res = await fetch(`https://thebooksourcings.onrender.com/api/shop/updateSaleBook/${bookSid}`, {
+        method: "PUT",
+        headers: { "Authorization": `Bearer ${token}` },
+        body: formData
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        alert("✅ Book updated successfully!");
+      } else {
+        alert("❌ Update failed: " + data.message);
+      }
+    } catch (err) {
+      console.error("Update error:", err);
+      alert("Something went wrong!");
+    }
+  });
+</script>
+
+</body>
+</html>

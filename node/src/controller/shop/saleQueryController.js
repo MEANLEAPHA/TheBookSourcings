@@ -106,4 +106,61 @@ const displayBooksForSale = async (req, res) => {
   }
 };
 
-module.exports = { displayBooksForSale };
+const displayBooksBySidForSale = async (req,res) =>{
+  try{
+    const bookSid = req.params;
+
+    const [rows] = await db.query(
+      `SELECT * FROM bookForsale WHERE bookSid = ?`,
+      [bookSid]
+    )
+
+    if(rows.length === 0){
+      return  res.status(404).json(
+        {
+          message : 'Book not found or unauthorized'
+        }
+      )
+    }
+    res.json(rows[0]);
+  }
+  catch(error){
+    console.error(error);
+     res.status(500).json({
+      message: "Internal Server Error",
+      error: error.message
+    });
+  }
+}
+
+
+const getMySaleBook = async () => {
+  try{
+    const memberQid = req.user.memeberQid;
+
+    const [rows] = await db.query(
+      "SELECT * FORM bookForSale WHERE memberQid = ?",
+      [memberQid]
+    )
+
+    if(rows.length === 0){
+      return res.status(404).json(
+        {
+          message : 'no book found or unauthorized'
+        }
+      )
+    }
+    res.status(200).json(
+      { message: "Books retrieved successfully.", books: rows }
+    );
+  }
+  catch(error){
+    console.error(error);
+    res.status(500).json({
+      message: "Internal Server Error",
+      error: error.message
+    });
+  }
+}
+
+module.exports = { displayBooksForSale, displayBooksBySidForSale, getMySaleBook };

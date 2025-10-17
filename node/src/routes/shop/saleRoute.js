@@ -7,10 +7,14 @@ const { upload } = require("../../middleware/AWSuploadMiddleware");
 const { saleUpload } = require("../../controller/shop/saleUploadController");
 const { updateBookForSale } = require("../../controller/shop/saleUpdateController");
 const { deleteBook } = require("../../controller/shop/saleDeleteController");
-const { displayBooksForSale } = require("../../controller/shop/saleQueryController");
+const { displayBooksForSale, displayBooksBySidForSale, getMySaleBook  } = require("../../controller/shop/saleQueryController");
 
 // 📘 Display all or filtered books for sale
 router.get("/displaySaleBook", displayBooksForSale);
+
+router.get("/displaySaleBookBySid/:bookSid", displayBooksBySidForSale);
+
+router.get("/displayUserSaleBook", authMiddleware, getMySaleBook)
 
 // 🆕 Upload a new book for sale
 router.post(
