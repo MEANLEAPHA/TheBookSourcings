@@ -106,32 +106,41 @@ const displayBooksForSale = async (req, res) => {
   }
 };
 
-const displayBooksBySidForSale = async (req,res) =>{
-  try{
-    const bookSid = req.params;
+const displayBooksBySidForSale = async (req, res) => {
+  try {
+    const { bookSid } = req.params;
 
-    const [rows] = await db.query(
-      `SELECT * FROM bookForsale WHERE bookSid = ?`,
-      [bookSid]
-    )
-
-    if(rows.length === 0){
-      return  res.status(404).json(
-        {
-          message : 'Book not found or unauthorized'
-        }
-      )
+    // ✅ Validate input
+    if (!bookSid) {
+      return res.status(400).json({ message: "Missing bookSid parameter." });
     }
-    res.json(rows[0]);
-  }
-  catch(error){
-    console.error(error);
-     res.status(500).json({
+
+    // ✅ Query the database
+    const [rows] = await db.query(
+      "SELECT * FROM bookForsale WHERE bookSid = ?",
+      [bookSid]
+    );
+
+    // ✅ Check if found
+    if (rows.length === 0) {
+      return res.status(404).json({
+        message: "Book not found or unauthorized",
+      });
+    }
+
+    // ✅ Return the book info
+    return res.status(200).json({
+      message: "Book retrieved successfully.",
+      book: rows[0],
+    });
+  } catch (error) {
+    console.error("Error in displayBooksBySidForSale:", error);
+    return res.status(500).json({
       message: "Internal Server Error",
-      error: error.message
+      error: error.message,
     });
   }
-}
+};
 
 
 const getMySaleBook = async (req, res) => {
