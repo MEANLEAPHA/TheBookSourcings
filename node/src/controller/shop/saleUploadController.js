@@ -21,7 +21,7 @@ const saleUpload = async (req, res) => {
       website
     } = req.body;
 
-    if (!bookTitle || !originalPrice || !saleType || !qty || !bookQuality || !bookType) {
+    if (!bookTitle || !saleType || !qty || !bookQuality || !bookType) {
       return res.status(400).json({ message: "Please fill all required fields" });
     }
 
