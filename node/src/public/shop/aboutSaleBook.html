@@ -1,11 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book Details</title>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; }
+  .book-container { display: flex; gap: 20px; margin-bottom: 20px; }
+  .book-img { width: 200px; height: 300px; object-fit: cover; border-radius: 5px; }
+  .book-info { flex: 1; }
+  .price { font-weight: bold; color: green; font-size: 1.2em; margin: 10px 0; }
+  button { padding: 10px 20px; border: none; background-color: #648dff; color: white; border-radius: 5px; cursor: pointer; }
+  button:hover { background-color: #5070e0; }
+  .toast { position: fixed; top: 20px; right: 20px; background: #333; color: #fff; padding: 15px 20px; border-radius: 5px; display: none; z-index: 1000; }
+  .toast button { margin-left: 10px; background: #fff; color: #333; }
+</style>
 </head>
 <body>
-    
+
+<h1 id="bookTitle">Book Title</h1>
+
+<div class="book-container">
+  <img id="bookImg" class="book-img" src="" alt="Book Image">
+  <div class="book-info">
+    <p id="description">Description of the book will appear here.</p>
+    <p class="price">Price: $<span id="price">0.00</span></p>
+    <p id="quality">Quality: New</p>
+    <p id="saleType">Sale Type: Normal</p>
+    <button id="orderBtn">Order This Book</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="orderToast" class="toast">
+  Are you sure you want to order this book?
+  <button id="confirmOrder">Yes</button>
+  <button id="cancelOrder">No</button>
+</div>
+
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+const bookSid = urlParams.get("bookSid");
+
+const bookTitleEl = document.getElementById("bookTitle");
+const bookImgEl = document.getElementById("bookImg");
+const descriptionEl = document.getElementById("description");
+const priceEl = document.getElementById("price");
+const qualityEl = document.getElementById("quality");
+const saleTypeEl = document.getElementById("saleType");
+
+const orderBtn = document.getElementById("orderBtn");
+const orderToast = document.getElementById("orderToast");
+const confirmOrder = document.getElementById("confirmOrder");
+const cancelOrder = document.getElementById("cancelOrder");
+
+// 1️⃣ Load book info
+async function loadBook() {
+  try {
+    const res = await axios.get(`https://thebooksourcings.onrender.com/api/shop/displaySaleBookBySid/${bookSid}`);
+    const book = res.data.book;
+
+    bookTitleEl.textContent = book.title;
+    bookImgEl.src = book.bookImg || "";
+    descriptionEl.textContent = book.description || "";
+    priceEl.textContent = book.price || book.original_price || "0.00";
+    qualityEl.textContent = `Quality: ${book.quality || "New"}`;
+    saleTypeEl.textContent = `Sale Type: ${book.sale_type || "Normal"}`;
+  } catch (err) {
+    console.error("Failed to load book:", err);
+    alert("Failed to load book info.");
+  }
+}
+
+// 2️⃣ Order flow
+orderBtn.addEventListener("click", () => {
+  orderToast.style.display = "block";
+});
+
+cancelOrder.addEventListener("click", () => {
+  orderToast.style.display = "none";
+});
+
+confirmOrder.addEventListener("click", async () => {
+  orderToast.style.display = "none";
+
+  try {
+    // Call API to create order and generate chat room
+    const token = localStorage.getItem("token"); // buyer token
+    const res = await axios.post(`https://thebooksourcings.onrender.com/api/orderBook`, { bookSid }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    const { roomId } = res.data; // backend returns roomId
+    // Redirect buyer to chat room
+    window.location.href = `/chat.html?roomId=${roomId}`;
+  } catch (err) {
+    console.error("Failed to create order:", err);
+    alert("Failed to place order.");
+  }
+});
+
+// Load book info on page load
+if (bookSid) loadBook();
+</script>
+
 </body>
 </html>

@@ -29,7 +29,8 @@
                     <div>Sell book</div>
                 </a>
                 </div>
-                <i class="fa-regular fa-bell"></i>
+                <i class="fa-solid fa-bell" id="liveNotiBtn"></i>
+                <i class="fa-solid fa-paper-plane" id="liveChatBtn"></i>
                 <img src="../assets/img/pf.jpg" class="userPf" alt="user" class="dropdown-item" style='color: rgb(60, 60, 60);font-family: "Reenie Beanie", cursive;font-weight: 599;font-size: large;' id="liveToastBtn">
             </div>
         </header>
@@ -177,6 +178,46 @@
                 <div id="BookContent"></div>
             </div>
         </main>
+
+         <!-- Notication collape -->
+    <div class="toast-container-chat ">
+      <div id="liveChat" class="toast" role="alert" aria-live="assertive" aria-atomic="true" >
+        <div class="toast-header-chat">
+            <img src="dog.png"  class="userPf">
+            <div class="userDetails">
+              <p>Chat</p>
+          </div>
+        </div>
+        <button id="liveChatClose"><i class="fa-solid fa-xmark"></i></button>
+        <div class="toast-body-chat" >
+           <div id="userList">
+                <div id="searchUser">
+                    <input type="text" placeholder="Search" id="searchUserTBS">
+                    <i class="fa-solid fa-magnifying-glass" id="searchUserIcon"></i>
+                </div>
+           </div>
+           <div id="chatContent">
+
+           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notication collape -->
+    <div class="toast-container position-fixed  end-0 p-3">
+      <div id="liveNoti" class="toast" role="alert" aria-live="assertive" aria-atomic="true" >
+        <div class="toast-header">
+            <img src="dog.png"  class="userPf">
+            <div class="userDetails">
+              <p>Noti</p>
+          </div>
+        </div>
+    
+        <div class="toast-body " >
+          <a href="userSign/login.html"><i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Login</span></a>
+        </div>
+      </div>
+    </div>
 
         <!-- account tool collapse -->
     <div class="toast-container position-fixed  end-0 p-3">
@@ -332,6 +373,7 @@
     fetchBooks();
     });
     </script>
+    <script src="../assets/js/index/chatAppToast.js"></script>
     <script src="../assets/js/index/darkmode.js" defer></script>
     <script src="../assets/js/index/collapseResponsive.js"></script>
     <script src="../assets/js/index/followingAcc.js"></script>

@@ -23,3 +23,24 @@ document.addEventListener('click', function (event) {
 //     localStorage.removeItem('token');
 //     window.location.href = "login.html";
 //   }
+
+
+const toastNotiTrigger = document.querySelector('#liveNotiBtn');
+const toastLiveNotiExample = document.getElementById('liveNoti');
+const toastNotiBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveNotiExample);
+
+if (toastNotiTrigger) {
+  toastNotiTrigger.addEventListener('click', () => {
+    toastNotiBootstrap.show();
+  });
+}
+
+// Close toast when clicking outside
+document.addEventListener('click', function (event) {
+  const isClickInside = toastLiveNotiExample.contains(event.target);
+  const isTrigger = toastNotiTrigger.contains(event.target);
+
+  if (!isClickInside && !isTrigger) {
+    toastNotiBootstrap.hide();
+  }
+});
