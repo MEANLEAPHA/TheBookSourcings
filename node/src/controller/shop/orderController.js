@@ -10,9 +10,9 @@ const orderBook = async (req, res) => {
       return res.status(400).json({ message: "Missing bookSid." });
     }
 
-    // ✅ 1. Get book info
+    // ✅ 1. Get book info (seller)
     const [bookRows] = await db.query(
-      "SELECT memberQid, title FROM bookForsale WHERE bookSid = ?",
+      "SELECT memberQid AS sellerQid, title FROM bookForsale WHERE bookSid = ?",
       [bookSid]
     );
 
@@ -29,14 +29,14 @@ const orderBook = async (req, res) => {
     // ✅ 2. Check if chat room already exists
     const [existingRoom] = await db.query(
       `SELECT * FROM chatRooms 
-       WHERE (buyerQid = ? AND sellerQid = ? AND bookSid = ?) 
+       WHERE buyerQid = ? AND sellerQid = ? AND bookSid = ?
        LIMIT 1`,
       [buyerQid, sellerQid, bookSid]
     );
 
-    let room;
+    let roomId;
     if (existingRoom.length > 0) {
-      room = existingRoom[0];
+      roomId = existingRoom[0].roomId;
     } else {
       // ✅ 3. Create a new chat room
       const [result] = await db.query(
@@ -44,24 +44,34 @@ const orderBook = async (req, res) => {
          VALUES (?, ?, ?, NOW())`,
         [buyerQid, sellerQid, bookSid]
       );
-      room = { roomId: result.insertId, buyerQid, sellerQid, bookSid };
+      roomId = result.insertId;
     }
 
-    // ✅ 4. (Optional) Log order record
+    // ✅ 4. Log order record
     await db.query(
       `INSERT INTO bookOrders (buyerQid, sellerQid, bookSid, ordered_at) 
        VALUES (?, ?, ?, NOW())`,
       [buyerQid, sellerQid, bookSid]
     );
 
+    // ✅ 5. (Optional) Add default message
+    await db.query(
+      `INSERT INTO messages (roomId, senderQid, receiverQid, message, created_at)
+       VALUES (?, ?, ?, ?)`,
+      [roomId, buyerQid, sellerQid, `Hi, I want to buy your book "${title}"`,]
+    );
+
     return res.status(200).json({
       message: `Chat room ready for ordering "${title}"`,
-      roomId: room.roomId,
+      roomId,
       sellerQid,
     });
   } catch (error) {
     console.error("Error in orderBook:", error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    return res.status(500).json({
+      message: "Internal Server Error",
+      error: error.message,
+    });
   }
 };
 
