@@ -88,10 +88,16 @@ confirmOrder.addEventListener("click", async () => {
   try {
     // Call API to create order and generate chat room
     const token = localStorage.getItem("token"); // buyer token
-    const res = await axios.post(`https://thebooksourcings.onrender.com/api/orderBook`, { bookSid }, {
-      headers: { Authorization: `Bearer ${token}` }
+   const res = await fetch("https://thebooksourcings.onrender.com/api/shop/orderBook", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ bookSid }),
     });
-
+    const data = await res.json();
+    console.log(data);
     const { roomId } = res.data; // backend returns roomId
     // Redirect buyer to chat room
     window.location.href = `/chat.html?roomId=${roomId}`;

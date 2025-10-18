@@ -50,4 +50,10 @@ router.put("/clearBookFile/:bookSid", authMiddleware, clearBookFile);
 // ❌ Delete a book
 router.delete("/deleteSaleBook/:bookSid", authMiddleware, deleteBook);
 
+// order and chat logic
+
+const { orderBook } = require("../../controller/shop/orderController");
+
+router.post("/orderBook", authMiddleware, orderBook);
+
 module.exports = router;
