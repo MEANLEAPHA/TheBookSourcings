@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">bookTitle>Document</title>
 </head>
 <body>
     <form id="updateBookForm" enctype="multipart/form-data" class="p-4 max-w-3xl mx-auto bg-white rounded-lg shadow-md">
@@ -25,7 +24,8 @@
   <div class="mb-3">
     <label class="block font-medium">Sale Type</label>
     <select id="saleType" name="saleType" class="form-select" required>
-      <option value="paid">Paid</option>
+      <option value="normal">Normal</option>
+      <option value="discount">Discount</option>
       <option value="free">Free</option>
     </select>
   </div>
@@ -34,7 +34,7 @@
   <div id="priceFields">
     <div class="mb-3">
       <label class="block font-medium">Original Price ($)</label>
-      <input type="number" id="originalPrice" name="originalPrice" step="0.01" class="form-control" />
+      <input type="number" id="originalPrice" step="0.01" class="form-control" />
     </div>
 
     <div class="mb-3">
@@ -42,7 +42,7 @@
       <select id="discountType" name="discountType" class="form-select">
         <option value="">None</option>
         <option value="percent">Percent</option>
-        <option value="flat">Flat</option>
+        <option value="fixed">Fixed</option>
       </select>
     </div>
 
@@ -62,7 +62,7 @@
     <label class="block font-medium">Book Type</label>
     <select id="bookType" name="bookType" class="form-select" required>
       <option value="ebook">E-Book</option>
-      <option value="physical">Physical</option>
+      <option value="paper">Physical</option>
     </select>
   </div>
 
@@ -150,10 +150,17 @@
       }
 
       // Handle dropdowns
-      document.getElementById("saleType").value = book.sale_type || "paid";
-      document.getElementById("bookType").value = book.book_type || "ebook";
-      document.getElementById("bookQuality").value = book.quality || "new";
+      document.getElementById("saleType").value = book.sale_type || "";
+      document.getElementById("bookType").value = book.book_type || "";
+      document.getElementById("bookQuality").value = book.quality || "";
       document.getElementById("discountType").value = book.discount_type || "";
+      document.getElementById("originalPrice").value = book.original_price || "";
+      document.getElementById("discountPrice").value = book.discount_price || "";
+      document.getElementById("price").value = book.price || "";
+      document.getElementById("qty").value = book.qty || "";
+      document.getElementById('bookTitle').value = book.title || '';
+      document.getElementById('contact').value = book.contact || '';
+      document.getElementById('website').value = book.website || '';
 
       // Image previews
       if (book.bookImg) {
