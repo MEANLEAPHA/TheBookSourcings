@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">bookTitle>Document</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">b</title>
 </head>
 <body>
     <form id="updateBookForm" enctype="multipart/form-data" class="p-4 max-w-3xl mx-auto bg-white rounded-lg shadow-md">
@@ -124,80 +124,108 @@
   const priceFields = document.getElementById("priceFields");
   const bookFileGroup = document.getElementById("bookFileGroup");
 
-  const discountFields = ["discountType", "discountPrice"]; // helper list
+  const originalPrice = document.getElementById("originalPrice");
+  const discountType = document.getElementById("discountType");
+  const discountPrice = document.getElementById("discountPrice");
+  const finalPrice = document.getElementById("price");
 
+  // 🧩 Helper: update discount automatically
+  function updateDiscount() {
+    const orig = parseFloat(originalPrice.value) || 0;
+    const discount = parseFloat(discountPrice.value) || 0;
+    let final = orig;
+
+    if (discountType.value === "percent") {
+      final = orig - (orig * discount) / 100;
+    } else if (discountType.value === "fixed") {
+      final = orig - discount;
+    }
+
+    // prevent negative
+    finalPrice.value = final > 0 ? final.toFixed(2) : 0;
+  }
+
+  // 🎯 Toggle field display
   function toggleFields() {
     const saleType = saleTypeSelect.value;
     const bookType = bookTypeSelect.value;
 
-    // 🎯 Toggle price visibility
+    // Sale Type logic
     if (saleType === "free") {
       priceFields.style.display = "none";
       clearPriceAndDiscountFields();
     } else if (saleType === "normal") {
       priceFields.style.display = "block";
 
-      // show only normal price
+      // show only normal price input
       document.getElementById("discountType").parentElement.style.display = "none";
       document.getElementById("discountPrice").parentElement.style.display = "none";
 
       // clear discount values
-      discountFields.forEach(id => document.getElementById(id).value = "");
+      discountType.value = "";
+      discountPrice.value = "";
     } else if (saleType === "discount") {
       priceFields.style.display = "block";
 
-      // show all
+      // show all discount fields
       document.getElementById("discountType").parentElement.style.display = "block";
       document.getElementById("discountPrice").parentElement.style.display = "block";
     }
 
-    // 🎯 Toggle book file field
+    // Book Type logic
     bookFileGroup.style.display = bookType === "ebook" ? "block" : "none";
   }
 
-  // Helper to reset all prices and discounts
+  // 🧹 Helper to clear all price/discount inputs
   function clearPriceAndDiscountFields() {
-    const fields = ["originalPrice", "price", "discountType", "discountPrice"];
-    fields.forEach(id => {
+    ["originalPrice", "price", "discountType", "discountPrice"].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.value = "";
     });
   }
 
+  // Event listeners
   saleTypeSelect.addEventListener("change", toggleFields);
   bookTypeSelect.addEventListener("change", toggleFields);
 
+  // Discount calculation live update
+  [originalPrice, discountType, discountPrice].forEach(el => {
+    el.addEventListener("input", () => {
+      if (saleTypeSelect.value === "discount") updateDiscount();
+    });
+  });
+
+  // Load book data
   async function loadBookData(bookSid) {
     const token = localStorage.getItem("token");
     try {
       const res = await fetch(`https://thebooksourcings.onrender.com/api/shop/displaySaleBookBySid/${bookSid}`);
-
       if (!res.ok) throw new Error("Failed to fetch book data");
 
       const data = await res.json();
       const book = data.book;
 
-      // Fill inputs
+      // fill fields
       document.getElementById("bookTitle").value = book.title || "";
       document.getElementById("description").value = book.description || "";
-      document.getElementById("saleType").value = book.sale_type || "normal";
-      document.getElementById("bookType").value = book.book_type || "ebook";
+      saleTypeSelect.value = book.sale_type || "normal";
+      bookTypeSelect.value = book.book_type || "ebook";
       document.getElementById("bookQuality").value = book.quality || "new";
-      document.getElementById("discountType").value = book.discount_type || "";
-      document.getElementById("originalPrice").value = book.original_price || "";
-      document.getElementById("discountPrice").value = book.discount_price || "";
-      document.getElementById("price").value = book.price || "";
+      originalPrice.value = book.original_price || "";
+      discountType.value = book.discount_type || "";
+      discountPrice.value = book.discount_price || "";
+      finalPrice.value = book.price || "";
       document.getElementById("qty").value = book.qty || "";
       document.getElementById("contact").value = book.contact || "";
       document.getElementById("website").value = book.website || "";
 
-      // Image previews
+      // 🖼️ main image
       if (book.bookImg) {
         document.getElementById("bookImgPreview").innerHTML =
           `<img src="${book.bookImg}" class="w-24 h-32 object-cover rounded shadow">`;
       }
 
-      // Multiple preview images
+      // 🖼️ multiple previews
       if (book.imgPreview) {
         try {
           const previews = JSON.parse(book.imgPreview);
@@ -208,13 +236,13 @@
         }
       }
 
-      // Ebook file info
+      // 📘 Ebook file preview
       if (book.bookFile) {
-        document.getElementById("bookFilePreview").textContent =
-          `Current File: ${book.bookFile}`;
+        document.getElementById("bookFilePreview").textContent = `Current File: ${book.bookFile}`;
       }
 
       toggleFields();
+      if (saleTypeSelect.value === "discount") updateDiscount();
 
     } catch (err) {
       console.error("Error loading book:", err);
@@ -226,7 +254,7 @@
   const bookSid = urlParams.get("bookSid");
   if (bookSid) loadBookData(bookSid);
 
-  // Submit form
+  // 📤 Submit form
   document.getElementById("updateBookForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
@@ -251,6 +279,7 @@
     }
   });
 </script>
+
 
 
 </body>
