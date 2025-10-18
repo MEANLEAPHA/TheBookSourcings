@@ -77,7 +77,8 @@
     <label class="block font-medium">Book Quality</label>
     <select id="bookQuality" name="bookQuality" class="form-select" required>
       <option value="new">New</option>
-      <option value="used">Used</option>
+      <option value="almost new">Almost new</option>
+      <option value="second hand">Second hand</option>
     </select>
   </div>
 
@@ -123,9 +124,44 @@
   const priceFields = document.getElementById("priceFields");
   const bookFileGroup = document.getElementById("bookFileGroup");
 
+  const discountFields = ["discountType", "discountPrice"]; // helper list
+
   function toggleFields() {
-    priceFields.style.display = saleTypeSelect.value === "free" ? "none" : "block";
-    bookFileGroup.style.display = bookTypeSelect.value === "ebook" ? "block" : "none";
+    const saleType = saleTypeSelect.value;
+    const bookType = bookTypeSelect.value;
+
+    // 🎯 Toggle price visibility
+    if (saleType === "free") {
+      priceFields.style.display = "none";
+      clearPriceAndDiscountFields();
+    } else if (saleType === "normal") {
+      priceFields.style.display = "block";
+
+      // show only normal price
+      document.getElementById("discountType").parentElement.style.display = "none";
+      document.getElementById("discountPrice").parentElement.style.display = "none";
+
+      // clear discount values
+      discountFields.forEach(id => document.getElementById(id).value = "");
+    } else if (saleType === "discount") {
+      priceFields.style.display = "block";
+
+      // show all
+      document.getElementById("discountType").parentElement.style.display = "block";
+      document.getElementById("discountPrice").parentElement.style.display = "block";
+    }
+
+    // 🎯 Toggle book file field
+    bookFileGroup.style.display = bookType === "ebook" ? "block" : "none";
+  }
+
+  // Helper to reset all prices and discounts
+  function clearPriceAndDiscountFields() {
+    const fields = ["originalPrice", "price", "discountType", "discountPrice"];
+    fields.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = "";
+    });
   }
 
   saleTypeSelect.addEventListener("change", toggleFields);
@@ -141,26 +177,19 @@
       const data = await res.json();
       const book = data.book;
 
-      // Fill all text/number inputs
-      for (const [key, value] of Object.entries(book)) {
-        const el = document.getElementById(key);
-        if (el && el.tagName !== "SELECT" && el.type !== "file") {
-          el.value = value || "";
-        }
-      }
-
-      // Handle dropdowns
-      document.getElementById("saleType").value = book.sale_type || "";
-      document.getElementById("bookType").value = book.book_type || "";
-      document.getElementById("bookQuality").value = book.quality || "";
+      // Fill inputs
+      document.getElementById("bookTitle").value = book.title || "";
+      document.getElementById("description").value = book.description || "";
+      document.getElementById("saleType").value = book.sale_type || "normal";
+      document.getElementById("bookType").value = book.book_type || "ebook";
+      document.getElementById("bookQuality").value = book.quality || "new";
       document.getElementById("discountType").value = book.discount_type || "";
       document.getElementById("originalPrice").value = book.original_price || "";
       document.getElementById("discountPrice").value = book.discount_price || "";
       document.getElementById("price").value = book.price || "";
       document.getElementById("qty").value = book.qty || "";
-      document.getElementById('bookTitle').value = book.title || '';
-      document.getElementById('contact').value = book.contact || '';
-      document.getElementById('website').value = book.website || '';
+      document.getElementById("contact").value = book.contact || "";
+      document.getElementById("website").value = book.website || "";
 
       // Image previews
       if (book.bookImg) {
@@ -170,11 +199,13 @@
 
       // Multiple preview images
       if (book.imgPreview) {
-        const previews = JSON.parse(book.imgPreview);
-        const previewHTML = previews.map(url =>
-          `<img src="${url}" class="w-24 h-32 object-cover rounded shadow">`
-        ).join("");
-        document.getElementById("imgPreviewContainer").innerHTML = previewHTML;
+        try {
+          const previews = JSON.parse(book.imgPreview);
+          document.getElementById("imgPreviewContainer").innerHTML =
+            previews.map(url => `<img src="${url}" class="w-24 h-32 object-cover rounded shadow">`).join("");
+        } catch {
+          console.warn("Invalid imgPreview JSON:", book.imgPreview);
+        }
       }
 
       // Ebook file info
@@ -191,12 +222,11 @@
     }
   }
 
-  // Example usage (replace 123 with actual bookSid from URL or data)
   const urlParams = new URLSearchParams(window.location.search);
   const bookSid = urlParams.get("bookSid");
   if (bookSid) loadBookData(bookSid);
 
-  // Submit update
+  // Submit form
   document.getElementById("updateBookForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
@@ -221,6 +251,7 @@
     }
   });
 </script>
+
 
 </body>
 </html>
