@@ -34,7 +34,7 @@
   <div id="priceFields">
     <div class="mb-3">
       <label class="block font-medium">Original Price ($)</label>
-      <input type="number" id="originalPrice" step="0.01" class="form-control" />
+      <input type="number" id="originalPrice" name="originalPrice" step="0.01" class="form-control" />
     </div>
 
     <div class="mb-3">
@@ -119,6 +119,215 @@
 </form>
 
 <script>
+  const saleTypeSelect = document.getElementById("saleType");
+  const bookTypeSelect = document.getElementById("bookType");
+  const priceFields = document.getElementById("priceFields");
+  const bookFileGroup = document.getElementById("bookFileGroup");
+
+  const originalPrice = document.getElementById("originalPrice");
+  const discountType = document.getElementById("discountType");
+  const discountPrice = document.getElementById("discountPrice");
+  const finalPrice = document.getElementById("price");
+
+  // store file URL temporarily
+  let currentBookFileUrl = "";
+
+  // 🧩 Helper: update discount automatically
+  function updateDiscount() {
+    const orig = parseFloat(originalPrice.value) || 0;
+    const discount = parseFloat(discountPrice.value) || 0;
+    let final = orig;
+
+    if (discountType.value === "percent") {
+      final = orig - (orig * discount) / 100;
+    } else if (discountType.value === "fixed") {
+      final = orig - discount;
+    }
+
+    // prevent negative
+    finalPrice.value = final > 0 ? final.toFixed(2) : 0;
+  }
+
+  // 🎯 Toggle field display
+  function toggleFields() {
+    const saleType = saleTypeSelect.value;
+    const bookType = bookTypeSelect.value;
+
+    // Sale Type logic
+    if (saleType === "free") {
+      priceFields.style.display = "none";
+      clearPriceAndDiscountFields();
+    } else if (saleType === "normal") {
+      priceFields.style.display = "block";
+      document.getElementById("discountType").parentElement.style.display = "none";
+      document.getElementById("discountPrice").parentElement.style.display = "none";
+      discountType.value = "";
+      discountPrice.value = "";
+    } else if (saleType === "discount") {
+      priceFields.style.display = "block";
+      document.getElementById("discountType").parentElement.style.display = "block";
+      document.getElementById("discountPrice").parentElement.style.display = "block";
+    }
+
+    // Book Type logic (if switching from ebook → paperBook)
+    if (bookType === "ebook") {
+      bookFileGroup.style.display = "block";
+    } else {
+      bookFileGroup.style.display = "none";
+
+      // Delete file if exists
+      if (currentBookFileUrl) {
+        deleteBookFileFromS3(currentBookFileUrl);
+      }
+    }
+  }
+
+  // 🧹 Helper to clear price/discount inputs
+  function clearPriceAndDiscountFields() {
+    ["originalPrice", "price", "discountType", "discountPrice"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = "";
+    });
+  }
+
+  // 💾 Delete S3 file and clear DB field
+  async function deleteBookFileFromS3(fileUrl) {
+    const token = localStorage.getItem("token");
+    if (!fileUrl) return;
+
+    try {
+      const res = await fetch(`https://thebooksourcings.onrender.com/api/shop/delete-book-file`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({ fileUrl }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        console.log("✅ File deleted from S3");
+        document.getElementById("bookFilePreview").textContent = "No file uploaded";
+        currentBookFileUrl = "";
+
+        // Update DB to set bookFile = NULL
+        await fetch(`https://thebooksourcings.onrender.com/api/shop/clearBookFile/${bookSid}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+
+        console.log("✅ bookFile cleared in DB");
+      } else {
+        console.warn("⚠️ Failed to delete from S3:", data.message);
+      }
+    } catch (err) {
+      console.error("❌ Error deleting file from S3:", err);
+    }
+  }
+
+  // Event listeners
+  saleTypeSelect.addEventListener("change", toggleFields);
+  bookTypeSelect.addEventListener("change", toggleFields);
+
+  [originalPrice, discountType, discountPrice].forEach(el => {
+    el.addEventListener("input", () => {
+      if (saleTypeSelect.value === "discount") updateDiscount();
+    });
+  });
+
+  // Load book data
+  async function loadBookData(bookSid) {
+    try {
+      const res = await fetch(`https://thebooksourcings.onrender.com/api/shop/displaySaleBookBySid/${bookSid}`);
+      if (!res.ok) throw new Error("Failed to fetch book data");
+
+      const data = await res.json();
+      const book = data.book;
+
+      // fill form
+      document.getElementById("bookTitle").value = book.title || "";
+      document.getElementById("description").value = book.description || "";
+      saleTypeSelect.value = book.sale_type || "normal";
+      bookTypeSelect.value = book.book_type || "ebook";
+      document.getElementById("bookQuality").value = book.quality || "new";
+      originalPrice.value = book.original_price || "";
+      discountType.value = book.discount_type || "";
+      discountPrice.value = book.discount_price || "";
+      finalPrice.value = book.price || "";
+      document.getElementById("qty").value = book.qty || "";
+      document.getElementById("contact").value = book.contact || "";
+      document.getElementById("website").value = book.website || "";
+
+      // 🖼️ main image
+      if (book.bookImg) {
+        document.getElementById("bookImgPreview").innerHTML =
+          `<img src="${book.bookImg}" class="w-24 h-32 object-cover rounded shadow">`;
+      }
+
+      // 🖼️ multiple previews
+      if (book.imgPreview) {
+        try {
+          const previews = JSON.parse(book.imgPreview);
+          document.getElementById("imgPreviewContainer").innerHTML =
+            previews.map(url => `<img src="${url}" class="w-24 h-32 object-cover rounded shadow">`).join("");
+        } catch {
+          console.warn("Invalid imgPreview JSON:", book.imgPreview);
+        }
+      }
+
+      // 📘 Ebook file preview
+      if (book.bookFile) {
+        currentBookFileUrl = book.bookFile;
+        document.getElementById("bookFilePreview").textContent = `Current File: ${book.bookFile}`;
+      } else {
+        document.getElementById("bookFilePreview").textContent = "No file uploaded";
+      }
+
+      toggleFields();
+      if (saleTypeSelect.value === "discount") updateDiscount();
+
+    } catch (err) {
+      console.error("Error loading book:", err);
+      alert("Failed to load book details");
+    }
+  }
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const bookSid = urlParams.get("bookSid");
+  if (bookSid) loadBookData(bookSid);
+
+  // 📤 Submit form
+  document.getElementById("updateBookForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
+    const formData = new FormData(e.target);
+
+    try {
+      const res = await fetch(`https://thebooksourcings.onrender.com/api/shop/updateSaleBook/${bookSid}`, {
+        method: "PUT",
+        headers: { "Authorization": `Bearer ${token}` },
+        body: formData
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        alert("✅ Book updated successfully!");
+      } else {
+        alert("❌ Update failed: " + data.message);
+      }
+    } catch (err) {
+      console.error("Update error:", err);
+      alert("Something went wrong!");
+    }
+  });
+</script>
+
+
+<!-- <script>
   const saleTypeSelect = document.getElementById("saleType");
   const bookTypeSelect = document.getElementById("bookType");
   const priceFields = document.getElementById("priceFields");
@@ -278,7 +487,7 @@
       alert("Something went wrong!");
     }
   });
-</script>
+</script> -->
 
 
 

@@ -8,13 +8,16 @@ const { saleUpload } = require("../../controller/shop/saleUploadController");
 const { updateBookForSale } = require("../../controller/shop/saleUpdateController");
 const { deleteBook } = require("../../controller/shop/saleDeleteController");
 const { displayBooksForSale, displayBooksBySidForSale, getMySaleBook  } = require("../../controller/shop/saleQueryController");
-
+const {deleteBookFile} = require("../../controller/shop/deleteBookFileController");
+const { clearBookFile } = require('../../controller/shop/clearBookFileController');
 // 📘 Display all or filtered books for sale
 router.get("/displaySaleBook", displayBooksForSale);
 
 router.get("/displaySaleBookBySid/:bookSid", displayBooksBySidForSale);
 
-router.get("/displayUserSaleBook", authMiddleware, getMySaleBook)
+router.get("/displayUserSaleBook", authMiddleware, getMySaleBook);
+
+
 
 // 🆕 Upload a new book for sale
 router.post(
@@ -39,6 +42,10 @@ router.put(
   ]),
   updateBookForSale
 );
+
+router.delete("/delete-book-file", authMiddleware, deleteBookFile);
+
+router.put("/clearBookFile/:bookSid", authMiddleware, clearBookFile);
 
 // ❌ Delete a book
 router.delete("/deleteSaleBook/:bookSid", authMiddleware, deleteBook);
