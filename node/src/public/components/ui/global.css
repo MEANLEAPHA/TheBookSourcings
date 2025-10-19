@@ -1302,20 +1302,50 @@ top:0px;
 .no-room { color: #888; padding: 10px; text-align: center; }
 
 .chat-box {
-  height: 400px;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   padding: 10px;
-  background: #f9f9f9;
+  overflow-y: auto;
+  height: 70vh;
 }
 
 .message {
-  padding: 8px 12px;
-  border-radius: 10px;
-  margin: 4px 0;
   max-width: 70%;
+  padding: 8px 12px;
+  border-radius: 12px;
+  margin: 5px 0;
+  word-wrap: break-word;
+  position: relative;
 }
-.message.me { background: #648dff; color: #fff; align-self: flex-end; }
-.message.other { background: #e5e5e5; align-self: flex-start; }
+
+.message.me {
+  align-self: flex-end;
+  background-color: #d1e7ff;
+  text-align: right;
+}
+
+.message.other {
+  align-self: flex-start;
+  background-color: #f1f1f1;
+  text-align: left;
+}
+
+.message .three-dots {
+  font-size: 18px;
+  cursor: pointer;
+  margin-left: 6px;
+}
+
+.checkmark {
+  font-size: 12px;
+  margin-left: 5px;
+  color: gray;
+}
+
+.checkmark.seen {
+  color: #0084ff;
+}
+
 .chat-input {
   display: flex;
   border-top: 1px solid #ddd;
