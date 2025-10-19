@@ -40,7 +40,7 @@ const getChatMessages = async (req, res) => {
           m.created_at,
           u.username AS senderName
        FROM messages m
-       LEFT JOIN members u ON m.senderQid = u.memberQid
+       LEFT JOIN users u ON m.senderQid = u.memberQid
        WHERE m.roomId = ?
        ORDER BY m.created_at ASC`,
       [roomId]
