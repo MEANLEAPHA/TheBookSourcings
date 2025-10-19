@@ -179,7 +179,7 @@
             </div>
         </main>
 
-         <!-- Notication collape -->
+    <!-- chat collape -->
     <div class="toast-container-chat ">
       <div id="liveChat" class="toast" role="alert" aria-live="assertive" aria-atomic="true" >
         <div class="toast-header-chat">
@@ -194,6 +194,9 @@
                 <div id="searchUser">
                     <input type="text" placeholder="Search" id="searchUserTBS">
                     <i class="fa-solid fa-magnifying-glass" id="searchUserIcon"></i>
+                </div>
+                <div id="roomList">
+
                 </div>
            </div>
            <div id="chatContent">
@@ -381,5 +384,93 @@
     <script src="../assets/js/index/navNewFeed.js"></script>
     <script src="../assets/js/index/feedbackToast.js"></script>
     <script src="../assets/js/index/headerSearch.js"></script>
+
+    <!-- room chat script -->
+    <script>
+const token = localStorage.getItem("token");
+if (!token) {
+  alert("Login required");
+  window.location.href = "/login.html";
+}
+
+const currentUser = JSON.parse(atob(token.split('.')[1])).memberQid;
+const socket = io("https://thebooksourcings.onrender.com", {
+  auth: { token },
+  transports: ["websocket"]
+});
+
+const roomList = document.getElementById("roomList");
+const chatContent = document.getElementById("chatContent");
+let activeRoomId = null;
+
+// 🔹 Load Chat Rooms
+async function loadChatRooms() {
+  try {
+    const res = await axios.get("https://thebooksourcings.onrender.com/api/chat/rooms", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const rooms = res.data.rooms || [];
+    roomList.innerHTML = "";
+
+    if (!rooms.length) {
+      roomList.innerHTML = `<p class='no-room'>No chats yet.</p>`;
+      return;
+    }
+
+    rooms.forEach(room => {
+      const div = document.createElement("div");
+      div.className = "room-item";
+      div.innerHTML = `
+        <img src="${room.otherProfileImg || 'default.png'}" class="room-avatar">
+        <div class="room-info">
+          <p class="room-name">${room.otherUsername}</p>
+          <p class="room-last">${room.lastMessage || 'No messages yet'}</p>
+        </div>
+      `;
+      div.addEventListener("click", () => openRoom(room.roomId));
+      roomList.appendChild(div);
+    });
+  } catch (err) {
+    console.error("Failed to load chat rooms:", err);
+  }
+}
+
+// 🔹 Load Messages of Selected Room
+async function openRoom(roomId) {
+  activeRoomId = roomId;
+  chatContent.innerHTML = "";
+  socket.emit("joinRoom", roomId);
+
+  const res = await axios.get(`https://thebooksourcings.onrender.com/api/chat/${roomId}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+
+  const messages = res.data.messages || [];
+  const chatBox = document.createElement("div");
+  chatBox.className = "chat-box";
+
+  messages.forEach(msg => {
+    const msgDiv = document.createElement("div");
+    msgDiv.className = msg.senderQid === currentUser ? "message me" : "message other";
+    msgDiv.textContent = msg.message;
+    chatBox.appendChild(msgDiv);
+  });
+
+  chatContent.appendChild(chatBox);
+}
+
+// 🔹 Real-time updates
+socket.on("receiveMessage", (data) => {
+  if (data.roomId === activeRoomId) {
+    const msgDiv = document.createElement("div");
+    msgDiv.className = data.senderQid === currentUser ? "message me" : "message other";
+    msgDiv.textContent = data.message;
+    document.querySelector(".chat-box").appendChild(msgDiv);
+  }
+});
+
+loadChatRooms();
+</script>
+
     </body>
 </html>

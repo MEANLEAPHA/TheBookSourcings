@@ -90,9 +90,51 @@ const deleteChatMessage = async (messageId, senderQid) => {
   }
 };
 
+
+// 📦 Get all rooms for a user
+const getUserChatRooms = async (req, res) => {
+  try {
+    const userQid = req.user.memberQid;
+
+    const [rows] = await db.query(
+      `SELECT 
+          r.roomId,
+          CASE 
+            WHEN r.buyerQid = ? THEN r.sellerQid
+            ELSE r.buyerQid
+          END AS otherUserQid,
+          u.username AS otherUsername,
+          u.pfUrl AS otherProfileImg,
+          (SELECT message FROM messages 
+             WHERE roomId = r.roomId 
+             ORDER BY created_at DESC 
+             LIMIT 1) AS lastMessage,
+          (SELECT created_at FROM messages 
+             WHERE roomId = r.roomId 
+             ORDER BY created_at DESC 
+             LIMIT 1) AS lastMessageTime
+       FROM chatRooms r
+       JOIN users u 
+         ON u.memberQid = CASE 
+                            WHEN r.buyerQid = ? THEN r.sellerQid
+                            ELSE r.buyerQid
+                          END
+       WHERE r.buyerQid = ? OR r.sellerQid = ?
+       ORDER BY lastMessageTime DESC`,
+      [userQid, userQid, userQid, userQid]
+    );
+
+    res.json({ rooms: rows });
+  } catch (err) {
+    console.error("❌ Error fetching chat rooms:", err);
+    res.status(500).json({ message: "Failed to load chat rooms" });
+  }
+};
+
 module.exports = {
   saveChatMessage,
   getChatMessages,
   updateChatMessage,
-  deleteChatMessage
+  deleteChatMessage,
+  getUserChatRooms
 };

@@ -1283,6 +1283,40 @@ top:0px;
     border-top-right-radius: 35px;
 
 }
+
+.room-item {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid #e1e1e1;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.room-item:hover { background: #f0f4ff; }
+.room-avatar {
+  width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;
+}
+.room-info { flex: 1; }
+.room-name { font-weight: bold; margin: 0; font-size: 14px; }
+.room-last { color: gray; margin: 0; font-size: 12px; }
+.no-room { color: #888; padding: 10px; text-align: center; }
+
+.chat-box {
+  height: 400px;
+  overflow-y: auto;
+  padding: 10px;
+  background: #f9f9f9;
+}
+
+.message {
+  padding: 8px 12px;
+  border-radius: 10px;
+  margin: 4px 0;
+  max-width: 70%;
+}
+.message.me { background: #648dff; color: #fff; align-self: flex-end; }
+.message.other { background: #e5e5e5; align-self: flex-start; }
+
 @media screen and (max-width: 768px) {
 
 .toast-container-chat #liveChat #userList{ 
