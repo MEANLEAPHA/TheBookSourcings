@@ -482,15 +482,15 @@ async function openRoom(roomId) {
   };
 
   // Receive messages in real time
-  socket.on("receiveMessage", (data) => {
-    if (data.roomId === roomId) {
-      const msgDiv = document.createElement("div");
-      msgDiv.className = data.senderQid === currentUser ? "message me" : "message other";
-      msgDiv.textContent = data.message;
-      chatBox.appendChild(msgDiv);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
-  });
+//   socket.on("receiveMessage", (data) => {
+//     if (data.roomId === roomId) {
+//       const msgDiv = document.createElement("div");
+//       msgDiv.className = data.senderQid === currentUser ? "message me" : "message other";
+//       msgDiv.textContent = data.message;
+//       chatBox.appendChild(msgDiv);
+//       chatBox.scrollTop = chatBox.scrollHeight;
+//     }
+//   });
 }
 
 
