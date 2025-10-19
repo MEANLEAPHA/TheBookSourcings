@@ -98,7 +98,9 @@ confirmOrder.addEventListener("click", async () => {
     });
     const data = await res.json();
     console.log(data);
-    const { roomId } = res.data; // backend returns roomId
+    const { roomId } = data; // ✅ correct — backend sends { message, roomId, sellerQid }
+    window.location.href = `/chat.html?roomId=${roomId}`;
+// backend returns roomId
     // Redirect buyer to chat room
     window.location.href = `/chat.html?roomId=${roomId}`;
   } catch (err) {
