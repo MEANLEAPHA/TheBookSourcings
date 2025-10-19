@@ -1,12 +1,9 @@
 const db = require("../../../config/db");
 
-/**
- * 💾 Save a new chat message
- * Called by socket when someone sends a message
- */
+
+// ✅ Save new message
 const saveChatMessage = async (roomId, senderQid, message) => {
   try {
-    // Get receiver dynamically
     const [roomRows] = await db.query(
       "SELECT buyerQid, sellerQid FROM chatRooms WHERE roomId = ?",
       [roomId]
@@ -16,40 +13,66 @@ const saveChatMessage = async (roomId, senderQid, message) => {
     const { buyerQid, sellerQid } = roomRows[0];
     const receiverQid = senderQid === buyerQid ? sellerQid : buyerQid;
 
-    await db.query(
-      `INSERT INTO messages (roomId, senderQid, receiverQid, message, created_at)
-       VALUES (?, ?, ?, ?, NOW())`,
+    const [result] = await db.query(
+      `INSERT INTO messages (roomId, senderQid, receiverQid, message, status, created_at)
+       VALUES (?, ?, ?, ?, 'sent', NOW())`,
       [roomId, senderQid, receiverQid, message]
     );
+
+    return {
+      messageId: result.insertId,
+      roomId,
+      senderQid,
+      receiverQid,
+      message,
+      status: "sent",
+      timestamp: new Date(),
+    };
   } catch (err) {
     console.error("❌ Error saving chat message:", err);
   }
 };
 
+// ✅ Mark message as seen
+const markMessageSeen = async (messageId, viewerQid) => {
+  try {
+    const [rows] = await db.query(
+      `SELECT receiverQid, status FROM messages WHERE messageId = ?`,
+      [messageId]
+    );
+    if (!rows.length) return false;
 
-/**
- * 📜 Get all messages in a chat room
- * Called by REST API when user loads chat page
- */
+    const msg = rows[0];
+    if (msg.receiverQid !== viewerQid) return false; // Only receiver can mark as seen
+    if (msg.status === "seen") return true; // Already seen
+
+    await db.query(
+      `UPDATE messages SET status = 'seen', seen_at = NOW() WHERE messageId = ?`,
+      [messageId]
+    );
+    return true;
+  } catch (err) {
+    console.error("❌ Error marking message seen:", err);
+    return false;
+  }
+};
+
+// ✅ Get all messages (load on open)
 const getChatMessages = async (req, res) => {
   try {
     const { roomId } = req.params;
+    if (!roomId) return res.status(400).json({ message: "Missing roomId" });
 
-    // Check if roomId exists
-    if (!roomId) {
-      return res.status(400).json({ message: "Missing roomId parameter." });
-    }
-
-    // Fetch messages sorted by time
     const [rows] = await db.query(
       `SELECT 
-          m.messageId,
-          m.roomId,
-          m.senderQid,
-          m.receiverQid,
-          m.message,
-          m.created_at,
-          u.username AS senderName
+        m.messageId,
+        m.roomId,
+        m.senderQid,
+        m.receiverQid,
+        m.message,
+        m.status,
+        m.created_at,
+        u.username AS senderName
        FROM messages m
        LEFT JOIN users u ON m.senderQid = u.memberQid
        WHERE m.roomId = ?
@@ -63,7 +86,6 @@ const getChatMessages = async (req, res) => {
     return res.status(500).json({ message: "Failed to load chat messages" });
   }
 };
-
 // Update message
 const updateChatMessage = async (messageId, senderQid, newMessage) => {
   try {
