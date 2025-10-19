@@ -213,7 +213,7 @@ io.on("connection", (socket) => {
 
     try {
       // Save message in DB
-      await chatController.saveChatMessage(roomId, senderQid, null, message);
+      await chatController.saveChatMessage(roomId, senderQid, message);
 
       // Emit to everyone in the room
       io.to(roomId).emit("receiveMessage", {

@@ -4,8 +4,18 @@ const db = require("../../../config/db");
  * 💾 Save a new chat message
  * Called by socket when someone sends a message
  */
-const saveChatMessage = async (roomId, senderQid, receiverQid, message) => {
+const saveChatMessage = async (roomId, senderQid, message) => {
   try {
+    // Get receiver dynamically
+    const [roomRows] = await db.query(
+      "SELECT buyerQid, sellerQid FROM chatRooms WHERE roomId = ?",
+      [roomId]
+    );
+    if (!roomRows.length) throw new Error("Room not found");
+
+    const { buyerQid, sellerQid } = roomRows[0];
+    const receiverQid = senderQid === buyerQid ? sellerQid : buyerQid;
+
     await db.query(
       `INSERT INTO messages (roomId, senderQid, receiverQid, message, created_at)
        VALUES (?, ?, ?, ?, NOW())`,
@@ -15,6 +25,7 @@ const saveChatMessage = async (roomId, senderQid, receiverQid, message) => {
     console.error("❌ Error saving chat message:", err);
   }
 };
+
 
 /**
  * 📜 Get all messages in a chat room
