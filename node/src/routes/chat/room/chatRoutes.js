@@ -2,15 +2,9 @@ const express = require('express');
 const router = express.Router();
 
 const chatController = require('../../../controller/chat/room/chatController');
+const { authMiddleware } = require("../../../middleware/authMiddleware");
 
 
-router.get("/:roomId", async (req, res) => {
-  try {
-    const messages = await chatController.getChatMessages(req.params.roomId);
-    res.json(messages);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to load chat messages" });
-  }
-});
+router.get("/:roomId", authMiddleware, chatController.getChatMessages);
 
 module.exports = router;
