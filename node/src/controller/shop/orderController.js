@@ -57,7 +57,7 @@ const orderBook = async (req, res) => {
     // ✅ 5. (Optional) Add default message
     await db.query(
       `INSERT INTO messages (roomId, senderQid, receiverQid, message, created_at)
-       VALUES (?, ?, ?, ?, ?)`,
+       VALUES (?, ?, ?, ?, NOW())`,
       [roomId, buyerQid, sellerQid, `Hi, I want to buy your book "${title}"`,]
     );
 
