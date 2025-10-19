@@ -93,104 +93,77 @@
     <button id="sendBtn">Send</button>
   </div>
 
-  <script>
-    const socket = io("https://thebooksourcings.onrender.com", {
-      transports: ["websocket"]
-    });
+ <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Login required");
+    window.location.href = "/login.html";
+  }
 
-    const chatBox = document.getElementById("chatBox");
-    const messageInput = document.getElementById("messageInput");
-    const sendBtn = document.getElementById("sendBtn");
+  const socket = io("https://thebooksourcings.onrender.com", {
+    auth: { token },
+    transports: ["websocket"]
+  });
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const roomId = urlParams.get("roomId");
-    const token = localStorage.getItem("token");
+  const chatBox = document.getElementById("chatBox");
+  const messageInput = document.getElementById("messageInput");
+  const sendBtn = document.getElementById("sendBtn");
 
-    let currentUser = null; // will store your memberQid
+  const urlParams = new URLSearchParams(window.location.search);
+  const roomId = urlParams.get("roomId");
 
-    // ✅ Decode JWT manually to get user info
-    function parseJwt(token) {
-      try {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(atob(base64).split('').map(c =>
-          '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-        ).join(''));
-        return JSON.parse(jsonPayload);
-      } catch (e) {
-        return null;
-      }
-    }
+  let currentUser = JSON.parse(atob(token.split('.')[1])).memberQid;
 
-    // ✅ Get your info from token
-    if (token) {
-      const decoded = parseJwt(token);
-      currentUser = decoded?.memberQid;
-    } else {
-      alert("You must be logged in to chat.");
-      window.location.href = "/login.html";
-    }
+  // Join room
+  socket.emit("joinRoom", roomId);
 
-    // ✅ Join chat room
-    socket.emit("joinRoom", roomId);
-
-    // ✅ Load old messages
-    async function loadChatHistory() {
-      try {
-        const res = await axios.get(`https://thebooksourcings.onrender.com/api/chat/${roomId}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const messages = res.data.messages || [];
-
-        chatBox.innerHTML = "";
-        messages.forEach(msg => appendMessage(msg.message, msg.senderQid === currentUser));
-        scrollToBottom();
-      } catch (err) {
-        console.error("Failed to load chat:", err);
-      }
-    }
-
-    // ✅ Append message to chat
-    function appendMessage(text, isMe = false) {
-      const msgDiv = document.createElement("div");
-      msgDiv.classList.add("message", isMe ? "me" : "other");
-      msgDiv.textContent = text;
-      chatBox.appendChild(msgDiv);
-    }
-
-    // ✅ Scroll to bottom
-    function scrollToBottom() {
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-    // ✅ Send message
-    sendBtn.addEventListener("click", () => {
-      const text = messageInput.value.trim();
-      if (!text) return;
-
-      // Display immediately
-      appendMessage(text, true);
-      scrollToBottom();
-
-      // Send to backend
-      socket.emit("sendMessage", {
-        roomId,
-        message: text,
+  // Load previous messages
+  async function loadChatHistory() {
+    try {
+      const res = await axios.get(`https://thebooksourcings.onrender.com/api/chat/${roomId}`, {
+        headers: { Authorization: `Bearer ${token}` }
       });
+      const messages = res.data.messages || [];
+      chatBox.innerHTML = "";
+      messages.forEach(msg => appendMessage(msg.message, msg.senderQid === currentUser));
+      scrollToBottom();
+    } catch (err) {
+      console.error("Failed to load chat:", err);
+    }
+  }
 
-      messageInput.value = "";
-    });
+  function appendMessage(text, isMe = false) {
+    const msgDiv = document.createElement("div");
+    msgDiv.textContent = text;
+    msgDiv.className = isMe ? "message me" : "message other";
+    chatBox.appendChild(msgDiv);
+  }
 
-    // ✅ Receive live messages
-    socket.on("receiveMessage", (data) => {
-      if (data.roomId === roomId && data.senderQid !== currentUser) {
-        appendMessage(data.message, false);
-        scrollToBottom();
-      }
-    });
+  function scrollToBottom() {
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
 
-    // ✅ Start everything
-    loadChatHistory();
-  </script>
+  sendBtn.addEventListener("click", () => {
+    const text = messageInput.value.trim();
+    if (!text) return;
+
+    appendMessage(text, true);
+    scrollToBottom();
+
+    socket.emit("sendMessage", { roomId, message: text });
+    messageInput.value = "";
+  });
+
+  socket.on("receiveMessage", (data) => {
+    if (data.roomId === roomId && data.senderQid !== currentUser) {
+      appendMessage(data.message, false);
+      scrollToBottom();
+    }
+  });
+
+  loadChatHistory();
+</script>
 </body>
 </html>

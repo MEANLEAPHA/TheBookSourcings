@@ -199,36 +199,66 @@ io.on("connection", (socket) => {
 
 
   // chat room 
-
-  // Join room
+// ✅ Join room
   socket.on("joinRoom", (roomId) => {
+    if (!socket.user) return;
     socket.join(roomId);
-    console.log(`🟢 Socket ${socket.id} joined room ${roomId}`);
+    console.log(`🟢 User ${socket.user.memberQid} joined room ${roomId}`);
   });
 
-  // Handle new chat message
-  socket.on("sendMessage", async (data) => {
+  // ✅ Handle sending chat message
+  socket.on("sendMessage", async ({ roomId, message }) => {
+    if (!socket.user) return;
+    const senderQid = socket.user.memberQid;
+
     try {
-      const { roomId, senderId, message } = data;
-      console.log("💬 Message received:", data);
+      // Save message in DB
+      await chatController.saveChatMessage(roomId, senderQid, null, message);
 
-      // Save to DB
-      await chatController.saveChatMessage(roomId, senderId, message);
-
-      // Emit message to others in the same room
+      // Emit to everyone in the room
       io.to(roomId).emit("receiveMessage", {
-        senderId,
+        roomId,
+        senderQid,
         message,
         timestamp: new Date(),
       });
-    } catch (error) {
-      console.error("Error saving chat message:", error);
+    } catch (err) {
+      console.error("Error saving chat message:", err);
     }
   });
 
   socket.on("disconnect", () => {
-    console.log("🔴 Client disconnected:", socket.id);
+    console.log("🔴 User disconnected:", socket.user?.memberQid || socket.id);
   });
+  // // Join room
+  // socket.on("joinRoom", (roomId) => {
+  //   socket.join(roomId);
+  //   console.log(`🟢 Socket ${socket.id} joined room ${roomId}`);
+  // });
+
+  // // Handle new chat message
+  // socket.on("sendMessage", async (data) => {
+  //   try {
+  //     const { roomId, senderId, message } = data;
+  //     console.log("💬 Message received:", data);
+
+  //     // Save to DB
+  //     await chatController.saveChatMessage(roomId, senderId, message);
+
+  //     // Emit message to others in the same room
+  //     io.to(roomId).emit("receiveMessage", {
+  //       senderId,
+  //       message,
+  //       timestamp: new Date(),
+  //     });
+  //   } catch (error) {
+  //     console.error("Error saving chat message:", error);
+  //   }
+  // });
+
+  // socket.on("disconnect", () => {
+  //   console.log("🔴 Client disconnected:", socket.id);
+  // });
 
 });
 
