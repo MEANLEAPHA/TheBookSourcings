@@ -3,167 +3,210 @@
 <head>
   <meta charset="UTF-8">
   <title>Chat Room</title>
-  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f7f8fa;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-    }
-
-    .chat-header {
-      background: #648dff;
-      color: white;
-      padding: 12px;
-      text-align: center;
-      font-size: 18px;
-      font-weight: bold;
-    }
-
-    .chat-box {
-      flex: 1;
-      overflow-y: auto;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .message {
-      max-width: 70%;
-      padding: 10px 14px;
-      border-radius: 15px;
-      line-height: 1.4;
-      word-wrap: break-word;
-    }
-
-    .message.me {
-      background: #648dff;
-      color: white;
-      align-self: flex-end;
-    }
-
-    .message.other {
-      background: #e5e5ea;
-      color: #333;
-      align-self: flex-start;
-    }
-
-    .chat-input {
-      display: flex;
-      padding: 10px;
-      border-top: 1px solid #ddd;
-      background: white;
-    }
-
-    .chat-input input {
-      flex: 1;
-      border: 1px solid #ccc;
-      border-radius: 20px;
-      padding: 8px 14px;
-      outline: none;
-    }
-
-    .chat-input button {
-      background: #648dff;
-      color: white;
-      border: none;
-      border-radius: 20px;
-      padding: 8px 18px;
-      margin-left: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .chat-input button:hover {
-      background: #4b6fd6;
-    }
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    #chatContainer { display: flex; flex-direction: column; height: 100vh; max-width: 600px; margin: auto; border: 1px solid #ccc; }
+    #chatBox { flex: 1; overflow-y: auto; padding: 10px; background: #f9f9f9; }
+    .message { padding: 8px 12px; margin: 5px 0; border-radius: 5px; max-width: 70%; position: relative; }
+    .me { background-color: #648dff; color: white; margin-left: auto; }
+    .other { background-color: #e0e0e0; color: black; margin-right: auto; }
+    .message-text { display: inline-block; }
+    .three-dots { position: absolute; right: 5px; top: 5px; cursor: pointer; }
+    #inputContainer { display: flex; padding: 10px; border-top: 1px solid #ccc; }
+    #messageInput { flex: 1; padding: 8px; }
+    #sendBtn { padding: 8px 12px; margin-left: 5px; }
+    /* Toast styles */
+    .toast { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border: 1px solid #ccc; padding: 15px; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+    .toast button { margin: 5px; }
   </style>
 </head>
 <body>
-  <div class="chat-header">Book Chat Room</div>
-  <div class="chat-box" id="chatBox"></div>
-  <div class="chat-input">
-    <input type="text" id="messageInput" placeholder="Type your message..." />
+<div id="chatContainer">
+  <div id="chatBox"></div>
+  <div id="inputContainer">
+    <input type="text" id="messageInput" placeholder="Type a message..." />
     <button id="sendBtn">Send</button>
   </div>
+</div>
 
- <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="/socket.io/socket.io.js"></script>
+<!-- Edit/Delete Toast -->
+<div id="editDeleteToast" class="toast">
+  <button id="editBtn">Edit</button>
+  <button id="deleteBtn">Delete</button>
+  <button id="closeToast">Cancel</button>
+</div>
+
+<!-- Edit Message Toast -->
+<div id="editMessageToast" class="toast">
+  <input type="text" id="editInput" style="width: 80%" />
+  <button id="submitEdit">Save</button>
+  <button id="cancelEdit">Cancel</button>
+</div>
+
+<!-- Delete Confirmation Toast -->
+<div id="deleteMessageToast" class="toast">
+  <p>Are you sure you want to delete this message?</p>
+  <button id="confirmDelete">Yes</button>
+  <button id="cancelDelete">Cancel</button>
+</div>
+
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-  const token = localStorage.getItem("token");
-  if (!token) {
-    alert("Login required");
-    window.location.href = "/login.html";
-  }
+const token = localStorage.getItem("token");
+if (!token) {
+  alert("Login required");
+  window.location.href = "/login.html";
+}
 
-  const socket = io("https://thebooksourcings.onrender.com", {
-    auth: { token },
-    transports: ["websocket"]
-  });
+const socket = io("https://thebooksourcings.onrender.com", {
+  auth: { token },
+  transports: ["websocket"]
+});
 
-  const chatBox = document.getElementById("chatBox");
-  const messageInput = document.getElementById("messageInput");
-  const sendBtn = document.getElementById("sendBtn");
+const chatBox = document.getElementById("chatBox");
+const messageInput = document.getElementById("messageInput");
+const sendBtn = document.getElementById("sendBtn");
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const roomId = urlParams.get("roomId");
+const urlParams = new URLSearchParams(window.location.search);
+const roomId = urlParams.get("roomId");
 
-  let currentUser = JSON.parse(atob(token.split('.')[1])).memberQid;
+// Decode JWT for current user
+const currentUser = JSON.parse(atob(token.split('.')[1])).memberQid;
 
-  // Join room
-  socket.emit("joinRoom", roomId);
+// Join chat room
+socket.emit("joinRoom", roomId);
 
-  // Load previous messages
-  async function loadChatHistory() {
-    try {
-      const res = await axios.get(`https://thebooksourcings.onrender.com/api/chat/${roomId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const messages = res.data.messages || [];
-      chatBox.innerHTML = "";
-      messages.forEach(msg => appendMessage(msg.message, msg.senderQid === currentUser));
-      scrollToBottom();
-    } catch (err) {
-      console.error("Failed to load chat:", err);
-    }
-  }
-
-  function appendMessage(text, isMe = false) {
-    const msgDiv = document.createElement("div");
-    msgDiv.textContent = text;
-    msgDiv.className = isMe ? "message me" : "message other";
-    chatBox.appendChild(msgDiv);
-  }
-
-  function scrollToBottom() {
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }
-
-  sendBtn.addEventListener("click", () => {
-    const text = messageInput.value.trim();
-    if (!text) return;
-
-    appendMessage(text, true);
+// Load chat history
+async function loadChatHistory() {
+  try {
+    const res = await axios.get(`https://thebooksourcings.onrender.com/api/chat/${roomId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const messages = res.data.messages || [];
+    chatBox.innerHTML = "";
+    messages.forEach(msg => appendMessage(msg, msg.senderQid === currentUser));
     scrollToBottom();
+  } catch (err) {
+    console.error("Failed to load chat:", err);
+  }
+}
 
-    socket.emit("sendMessage", { roomId, message: text });
-    messageInput.value = "";
+// Append a message
+function appendMessage(messageObj, isMe = false) {
+  const msgDiv = document.createElement("div");
+  msgDiv.className = isMe ? "message me" : "message other";
+  msgDiv.dataset.messageId = messageObj.messageId;
+
+  const textSpan = document.createElement("span");
+  textSpan.className = "message-text";
+  textSpan.textContent = messageObj.message;
+  msgDiv.appendChild(textSpan);
+
+  if (isMe) {
+    const threeDots = document.createElement("span");
+    threeDots.textContent = "⋮";
+    threeDots.className = "three-dots";
+    msgDiv.appendChild(threeDots);
+
+    threeDots.addEventListener("click", () => showEditDeleteToast(msgDiv, messageObj.messageId));
+  }
+
+  chatBox.appendChild(msgDiv);
+  scrollToBottom();
+}
+
+function scrollToBottom() {
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+// Send new message
+sendBtn.addEventListener("click", () => {
+  const text = messageInput.value.trim();
+  if (!text) return;
+
+  // Find receiver
+  const receiverQid = null; // implement logic if multiple participants, otherwise backend can infer
+
+  socket.emit("sendMessage", {
+    roomId,
+    senderQid: currentUser,
+    receiverQid,
+    message: text
   });
 
-  socket.on("receiveMessage", (data) => {
-    if (data.roomId === roomId && data.senderQid !== currentUser) {
-      appendMessage(data.message, false);
-      scrollToBottom();
-    }
-  });
+  // Show locally
+  appendMessage({ messageId: "temp_" + Date.now(), message: text, senderQid: currentUser }, true);
+  messageInput.value = "";
+});
 
-  loadChatHistory();
+// Receive messages
+socket.on("receiveMessage", data => {
+  if (data.roomId === roomId && data.senderQid !== currentUser) {
+    appendMessage(data, false);
+  }
+});
+
+// Message edited
+socket.on("messageEdited", data => {
+  const msgDiv = chatBox.querySelector(`[data-message-id="${data.messageId}"]`);
+  if (msgDiv) msgDiv.querySelector(".message-text").textContent = data.newMessage;
+});
+
+// Message deleted
+socket.on("messageDeleted", data => {
+  const msgDiv = chatBox.querySelector(`[data-message-id="${data.messageId}"]`);
+  if (msgDiv) msgDiv.remove();
+});
+
+// ---------------- Toasts ----------------
+function showEditDeleteToast(msgDiv, messageId) {
+  const toast = document.getElementById("editDeleteToast");
+  toast.style.display = "block";
+
+  const editBtn = toast.querySelector("#editBtn");
+  const deleteBtn = toast.querySelector("#deleteBtn");
+  const closeBtn = toast.querySelector("#closeToast");
+
+  editBtn.onclick = () => { toast.style.display="none"; showEditMessageToast(msgDiv, messageId); };
+  deleteBtn.onclick = () => { toast.style.display="none"; showDeleteMessageToast(msgDiv, messageId); };
+  closeBtn.onclick = () => { toast.style.display="none"; };
+}
+
+function showEditMessageToast(msgDiv, messageId) {
+  const toast = document.getElementById("editMessageToast");
+  const input = toast.querySelector("#editInput");
+  const submit = toast.querySelector("#submitEdit");
+  const cancel = toast.querySelector("#cancelEdit");
+
+  input.value = msgDiv.querySelector(".message-text").textContent;
+  toast.style.display = "block";
+
+  submit.onclick = () => {
+    const newMessage = input.value.trim();
+    if (!newMessage) return;
+    socket.emit("editMessage", { roomId, messageId, newMessage });
+    toast.style.display = "none";
+  };
+  cancel.onclick = () => toast.style.display = "none";
+}
+
+function showDeleteMessageToast(msgDiv, messageId) {
+  const toast = document.getElementById("deleteMessageToast");
+  const confirm = toast.querySelector("#confirmDelete");
+  const cancel = toast.querySelector("#cancelDelete");
+
+  toast.style.display = "block";
+
+  confirm.onclick = () => {
+    socket.emit("deleteMessage", { roomId, messageId });
+    toast.style.display = "none";
+  };
+  cancel.onclick = () => toast.style.display = "none";
+}
+
+// ---------------- Start ----------------
+loadChatHistory();
 </script>
 </body>
 </html>

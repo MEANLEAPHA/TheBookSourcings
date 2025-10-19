@@ -64,7 +64,35 @@ const getChatMessages = async (req, res) => {
   }
 };
 
+// Update message
+const updateChatMessage = async (messageId, senderQid, newMessage) => {
+  try {
+    const [result] = await db.query(
+      `UPDATE messages SET message = ? WHERE messageId = ? AND senderQid = ?`,
+      [newMessage, messageId, senderQid]
+    );
+    return result.affectedRows;
+  } catch (err) {
+    console.error("❌ Error updating message:", err);
+  }
+};
+
+// Delete message
+const deleteChatMessage = async (messageId, senderQid) => {
+  try {
+    const [result] = await db.query(
+      `DELETE FROM messages WHERE messageId = ? AND senderQid = ?`,
+      [messageId, senderQid]
+    );
+    return result.affectedRows;
+  } catch (err) {
+    console.error("❌ Error deleting message:", err);
+  }
+};
+
 module.exports = {
   saveChatMessage,
   getChatMessages,
+  updateChatMessage,
+  deleteChatMessage
 };

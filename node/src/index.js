@@ -230,6 +230,26 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("🔴 User disconnected:", socket.user?.memberQid || socket.id);
   });
+
+  // Edit message
+socket.on("editMessage", async (data) => {
+  const senderQid = socket.user.memberQid;
+  const { messageId, newMessage } = data;
+  const updated = await chatController.updateChatMessage(messageId, senderQid, newMessage);
+  if (updated) {
+    io.to(data.roomId).emit("messageEdited", { messageId, newMessage });
+  }
+});
+
+// Delete message
+socket.on("deleteMessage", async (data) => {
+  const senderQid = socket.user.memberQid;
+  const { messageId } = data;
+  const deleted = await chatController.deleteChatMessage(messageId, senderQid);
+  if (deleted) {
+    io.to(data.roomId).emit("messageDeleted", { messageId });
+  }
+});
   // // Join room
   // socket.on("joinRoom", (roomId) => {
   //   socket.join(roomId);
