@@ -55,7 +55,9 @@ const reportCommunityRoute = require('./routes/chat/community/reportPAC/reportRo
 const bookSellerRoutes = require("./routes/shop/saleRoute");
 
 // order and chat 
-const chatController = require("./controller/chat/room/chatController")
+const chatController = require("./controller/chat/room/chatController");
+
+const roomChat = require("./routes/chat/room/chatRoutes");
 
 // Initialize Routes
 TheBookSourcingUser(app);
@@ -90,6 +92,8 @@ app.use('/api/communityReplyLike', communityReplyLikeRoutes);
 app.use("/api/community", reportCommunityRoute);
 
 app.use("/api/shop", bookSellerRoutes);
+
+app.use("/api/chat", roomChat);
 
 // Create HTTP server from Express app
 const server = http.createServer(app);
