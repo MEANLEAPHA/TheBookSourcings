@@ -471,7 +471,7 @@ async function openRoom(roomId) {
 
   const chatBox = document.getElementById("chatBox");
   const messageInput = document.getElementById("messageInput");
-  const sendBtn = document.getElementById("sendBtn");
+
 
   socket.emit("joinRoom", roomId);
 
@@ -493,16 +493,23 @@ async function openRoom(roomId) {
   }
 
   // 🔹 Send message
-  sendBtn.onclick = () => {
-    const text = messageInput.value.trim();
-    if (!text) return;
+ const sendBtn = document.getElementById("sendBtn");
 
-    const tempId = "temp_" + Date.now();
-    appendMessage({ messageId: tempId, message: text, senderQid: currentUser, status: "pending" }, true);
+// Remove old listener by cloning
+const newSendBtn = sendBtn.cloneNode(true);
+sendBtn.parentNode.replaceChild(newSendBtn, sendBtn);
 
-    socket.emit("sendMessage", { roomId, message: text });
-    messageInput.value = "";
-  };
+newSendBtn.addEventListener("click", () => {
+  const text = messageInput.value.trim();
+  if (!text) return;
+
+  const tempId = "temp_" + Date.now();
+  appendMessage({ messageId: tempId, message: text, senderQid: currentUser, status: "pending" }, true);
+
+  socket.emit("sendMessage", { roomId, message: text });
+  messageInput.value = "";
+});
+
 }
 
 // 🔹 Append message function (with status icon)
