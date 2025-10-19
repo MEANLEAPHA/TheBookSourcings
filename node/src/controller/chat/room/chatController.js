@@ -1,4 +1,4 @@
-const db = require("../config/db");
+const db = require("../../../config/db");
 
 /**
  * 💾 Save a new chat message
