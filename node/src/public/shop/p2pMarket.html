@@ -440,26 +440,59 @@ async function loadChatRooms() {
 // 🔹 Load Messages of Selected Room
 async function openRoom(roomId) {
   activeRoomId = roomId;
-  chatContent.innerHTML = "";
+  chatContent.innerHTML = `
+    <div id="chatBox" class="chat-box"></div>
+    <div class="chat-input">
+      <input type="text" id="messageInput" placeholder="Type a message..." />
+      <button id="sendBtn"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
+  `;
+
+  const chatBox = document.getElementById("chatBox");
+  const messageInput = document.getElementById("messageInput");
+  const sendBtn = document.getElementById("sendBtn");
+
+  // Join room
   socket.emit("joinRoom", roomId);
 
-  const res = await axios.get(`https://thebooksourcings.onrender.com/api/chat/${roomId}`, {
-    headers: { Authorization: `Bearer ${token}` }
+  // Load old messages
+  try {
+    const res = await axios.get(`https://thebooksourcings.onrender.com/api/chat/${roomId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const messages = res.data.messages || [];
+
+    messages.forEach(msg => {
+      const msgDiv = document.createElement("div");
+      msgDiv.className = msg.senderQid === currentUser ? "message me" : "message other";
+      msgDiv.textContent = msg.message;
+      chatBox.appendChild(msgDiv);
+    });
+    chatBox.scrollTop = chatBox.scrollHeight;
+  } catch (err) {
+    console.error("Failed to load messages:", err);
+  }
+
+  // Send message
+  sendBtn.onclick = () => {
+    const text = messageInput.value.trim();
+    if (!text) return;
+    socket.emit("sendMessage", { roomId, message: text });
+    messageInput.value = "";
+  };
+
+  // Receive messages in real time
+  socket.on("receiveMessage", (data) => {
+    if (data.roomId === roomId) {
+      const msgDiv = document.createElement("div");
+      msgDiv.className = data.senderQid === currentUser ? "message me" : "message other";
+      msgDiv.textContent = data.message;
+      chatBox.appendChild(msgDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
   });
-
-  const messages = res.data.messages || [];
-  const chatBox = document.createElement("div");
-  chatBox.className = "chat-box";
-
-  messages.forEach(msg => {
-    const msgDiv = document.createElement("div");
-    msgDiv.className = msg.senderQid === currentUser ? "message me" : "message other";
-    msgDiv.textContent = msg.message;
-    chatBox.appendChild(msgDiv);
-  });
-
-  chatContent.appendChild(chatBox);
 }
+
 
 // 🔹 Real-time updates
 socket.on("receiveMessage", (data) => {

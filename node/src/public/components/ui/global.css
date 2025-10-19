@@ -1316,6 +1316,27 @@ top:0px;
 }
 .message.me { background: #648dff; color: #fff; align-self: flex-end; }
 .message.other { background: #e5e5e5; align-self: flex-start; }
+.chat-input {
+  display: flex;
+  border-top: 1px solid #ddd;
+  background: white;
+  padding: 8px;
+}
+.chat-input input {
+  flex: 1;
+  border: none;
+  padding: 8px;
+  font-size: 14px;
+  outline: none;
+}
+.chat-input button {
+  border: none;
+  background: #648dff;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
 
 @media screen and (max-width: 768px) {
 
