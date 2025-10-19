@@ -54,6 +54,9 @@ const verifySocketToken  = require('./middleware/verifySocketToken');
 const reportCommunityRoute = require('./routes/chat/community/reportPAC/reportRoutes');
 const bookSellerRoutes = require("./routes/shop/saleRoute");
 
+// order and chat 
+const chatController = require("./controller/chat/room/chatController")
+
 // Initialize Routes
 TheBookSourcingUser(app);
 bookRoutes(app);
@@ -186,6 +189,41 @@ io.on("connection", (socket) => {
   socket.on("delete-reply", (data) => {
     if(!socket.user) return;
     io.emit("reply-deleted", data)
+  });
+
+
+
+
+  // chat room 
+
+  // Join room
+  socket.on("joinRoom", (roomId) => {
+    socket.join(roomId);
+    console.log(`🟢 Socket ${socket.id} joined room ${roomId}`);
+  });
+
+  // Handle new chat message
+  socket.on("sendMessage", async (data) => {
+    try {
+      const { roomId, senderId, message } = data;
+      console.log("💬 Message received:", data);
+
+      // Save to DB
+      await chatController.saveChatMessage(roomId, senderId, message);
+
+      // Emit message to others in the same room
+      io.to(roomId).emit("receiveMessage", {
+        senderId,
+        message,
+        timestamp: new Date(),
+      });
+    } catch (error) {
+      console.error("Error saving chat message:", error);
+    }
+  });
+
+  socket.on("disconnect", () => {
+    console.log("🔴 Client disconnected:", socket.id);
   });
 
 });

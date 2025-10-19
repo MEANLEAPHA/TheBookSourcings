@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chat Room</title>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f8fa;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .chat-header {
+      background: #648dff;
+      color: white;
+      padding: 12px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .chat-box {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .message {
+      max-width: 70%;
+      padding: 10px 14px;
+      border-radius: 15px;
+      line-height: 1.4;
+      word-wrap: break-word;
+    }
+
+    .message.me {
+      background: #648dff;
+      color: white;
+      align-self: flex-end;
+    }
+
+    .message.other {
+      background: #e5e5ea;
+      color: #333;
+      align-self: flex-start;
+    }
+
+    .chat-input {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #ddd;
+      background: white;
+    }
+
+    .chat-input input {
+      flex: 1;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      padding: 8px 14px;
+      outline: none;
+    }
+
+    .chat-input button {
+      background: #648dff;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 18px;
+      margin-left: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .chat-input button:hover {
+      background: #4b6fd6;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-header">Book Chat Room</div>
+  <div class="chat-box" id="chatBox"></div>
+  <div class="chat-input">
+    <input type="text" id="messageInput" placeholder="Type your message..." />
+    <button id="sendBtn">Send</button>
+  </div>
+
+  <script>
+    const socket = io("https://thebooksourcings.onrender.com", {
+      transports: ["websocket"]
+    });
+
+    const chatBox = document.getElementById("chatBox");
+    const messageInput = document.getElementById("messageInput");
+    const sendBtn = document.getElementById("sendBtn");
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const roomId = urlParams.get("roomId");
+    const token = localStorage.getItem("token");
+
+    let currentUser = null; // will store your memberQid
+
+    // ✅ Decode JWT manually to get user info
+    function parseJwt(token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(c =>
+          '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+        ).join(''));
+        return JSON.parse(jsonPayload);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    // ✅ Get your info from token
+    if (token) {
+      const decoded = parseJwt(token);
+      currentUser = decoded?.memberQid;
+    } else {
+      alert("You must be logged in to chat.");
+      window.location.href = "/login.html";
+    }
+
+    // ✅ Join chat room
+    socket.emit("joinRoom", roomId);
+
+    // ✅ Load old messages
+    async function loadChatHistory() {
+      try {
+        const res = await axios.get(`https://thebooksourcings.onrender.com/api/chat/${roomId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const messages = res.data.messages || [];
+
+        chatBox.innerHTML = "";
+        messages.forEach(msg => appendMessage(msg.message, msg.senderQid === currentUser));
+        scrollToBottom();
+      } catch (err) {
+        console.error("Failed to load chat:", err);
+      }
+    }
+
+    // ✅ Append message to chat
+    function appendMessage(text, isMe = false) {
+      const msgDiv = document.createElement("div");
+      msgDiv.classList.add("message", isMe ? "me" : "other");
+      msgDiv.textContent = text;
+      chatBox.appendChild(msgDiv);
+    }
+
+    // ✅ Scroll to bottom
+    function scrollToBottom() {
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // ✅ Send message
+    sendBtn.addEventListener("click", () => {
+      const text = messageInput.value.trim();
+      if (!text) return;
+
+      // Display immediately
+      appendMessage(text, true);
+      scrollToBottom();
+
+      // Send to backend
+      socket.emit("sendMessage", {
+        roomId,
+        message: text,
+      });
+
+      messageInput.value = "";
+    });
+
+    // ✅ Receive live messages
+    socket.on("receiveMessage", (data) => {
+      if (data.roomId === roomId && data.senderQid !== currentUser) {
+        appendMessage(data.message, false);
+        scrollToBottom();
+      }
+    });
+
+    // ✅ Start everything
+    loadChatHistory();
+  </script>
+</body>
+</html>
