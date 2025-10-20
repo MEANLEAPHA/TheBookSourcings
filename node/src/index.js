@@ -294,19 +294,19 @@ io.on("connection", (socket) => {
 
   
   // ✅ Seen message logic
-  socket.on("messageSeen", async ({ messageId, roomId }) => {
-    if (!socket.user || !messageId || !roomId) return;
-    const viewerQid = socket.user.memberQid;
+  // socket.on("messageSeen", async ({ messageId, roomId }) => {
+  //   if (!socket.user || !messageId || !roomId) return;
+  //   const viewerQid = socket.user.memberQid;
 
-    try {
-      const updated = await chatController.markMessageSeen(messageId, viewerQid);
-      if (updated) {
-        io.to(roomId).emit("messageSeen", { messageId });
-      }
-    } catch (err) {
-      console.error("❌ Error marking message seen:", err);
-    }
-  });
+  //   try {
+  //     const updated = await chatController.markMessageSeen(messageId, viewerQid);
+  //     if (updated) {
+  //       io.to(roomId).emit("messageSeen", { messageId });
+  //     }
+  //   } catch (err) {
+  //     console.error("❌ Error marking message seen:", err);
+  //   }
+  // });
 
   // ✅ Edit message logic
   socket.on("editMessage", async ({ messageId, newMessage, roomId }) => {

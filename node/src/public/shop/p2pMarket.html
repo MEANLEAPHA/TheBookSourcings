@@ -409,7 +409,7 @@
 
 
     <!-- room chat script -->
-     <script>
+     <!-- <script>
 const token = localStorage.getItem("token");
 if (!token) {
   alert("Login required");
@@ -520,18 +520,18 @@ function appendMessage(msg, isMe = false) {
   msgDiv.appendChild(textSpan);
 
   // ✅ Add status icons for your messages only
-  if (isMe) {
-    const status = document.createElement("span");
-    status.className = "status";
-    status.style.marginLeft = "6px";
+  // if (isMe) {
+  //   const status = document.createElement("span");
+  //   status.className = "status";
+  //   status.style.marginLeft = "6px";
 
-    if (msg.status === "pending") status.innerHTML = `<i class="fa-solid fa-clock"></i>`;
-    else if (msg.status === "sent") status.innerHTML = `<i class="fa-solid fa-check"></i>`;
-    else if (msg.status === "delivered") status.innerHTML = `<i class="fa-solid fa-check-double"></i>`;
-    else if (msg.status === "seen") status.innerHTML = `<i class="fa-solid fa-check-double" style="color:#0d6efd"></i>`;
+  //   if (msg.status === "pending") status.innerHTML = `<i class="fa-solid fa-clock"></i>`;
+  //   else if (msg.status === "sent") status.innerHTML = `<i class="fa-solid fa-check"></i>`;
+  //   else if (msg.status === "delivered") status.innerHTML = `<i class="fa-solid fa-check-double"></i>`;
+  //   else if (msg.status === "seen") status.innerHTML = `<i class="fa-solid fa-check-double" style="color:#0d6efd"></i>`;
 
-    msgDiv.appendChild(status);
-  }
+  //   msgDiv.appendChild(status);
+  // }
 
   // ⚙️ Add edit/delete for sender
   if (isMe) {
@@ -563,7 +563,7 @@ socket.on("receiveMessage", (msg) => {
   if (msg.roomId === activeRoomId) {
     appendMessage(msg, msg.senderQid === currentUser);
     // Auto mark as seen if viewing room
-    socket.emit("messageSeen", { messageId: msg.messageId, roomId: activeRoomId });
+    // socket.emit("messageSeen", { messageId: msg.messageId, roomId: activeRoomId });
   }
 });
 
@@ -647,9 +647,9 @@ function showDeleteMessageToast(messageId) {
 }
 
 loadChatRooms();
-</script>
+</script> -->
 
-    <!-- <script>
+    <script>
 const token = localStorage.getItem("token");
 if (!token) {
   alert("Login required");
@@ -841,7 +841,7 @@ function showDeleteMessageToast(messageId) {
 }
 
 loadChatRooms();
-</script> -->
+</script>
 <script src="../assets/js/index/chatAppToast.js"></script>
     </body>
 </html>

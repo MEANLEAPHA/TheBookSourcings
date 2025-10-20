@@ -34,28 +34,28 @@ const saveChatMessage = async (roomId, senderQid, message) => {
 };
 
 // ✅ Mark message as seen
-const markMessageSeen = async (messageId, viewerQid) => {
-  try {
-    const [rows] = await db.query(
-      `SELECT receiverQid, status FROM messages WHERE messageId = ?`,
-      [messageId]
-    );
-    if (!rows.length) return false;
+// const markMessageSeen = async (messageId, viewerQid) => {
+//   try {
+//     const [rows] = await db.query(
+//       `SELECT receiverQid, status FROM messages WHERE messageId = ?`,
+//       [messageId]
+//     );
+//     if (!rows.length) return false;
 
-    const msg = rows[0];
-    if (msg.receiverQid !== viewerQid) return false; // Only receiver can mark as seen
-    if (msg.status === "seen") return true; // Already seen
+//     const msg = rows[0];
+//     if (msg.receiverQid !== viewerQid) return false; // Only receiver can mark as seen
+//     if (msg.status === "seen") return true; // Already seen
 
-    await db.query(
-      `UPDATE messages SET status = 'seen', seen_at = NOW() WHERE messageId = ?`,
-      [messageId]
-    );
-    return true;
-  } catch (err) {
-    console.error("❌ Error marking message seen:", err);
-    return false;
-  }
-};
+//     await db.query(
+//       `UPDATE messages SET status = 'seen', seen_at = NOW() WHERE messageId = ?`,
+//       [messageId]
+//     );
+//     return true;
+//   } catch (err) {
+//     console.error("❌ Error marking message seen:", err);
+//     return false;
+//   }
+// };
 
 // ✅ Get all messages (load on open)
 const getChatMessages = async (req, res) => {
@@ -159,5 +159,5 @@ module.exports = {
   updateChatMessage,
   deleteChatMessage,
   getUserChatRooms,
-  markMessageSeen
+
 };
