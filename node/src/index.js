@@ -273,7 +273,7 @@ io.on("connection", (socket) => {
     console.log(`🟢 User ${socket.user.memberQid} joined room ${roomId}`);
   });
 
-  socket.on("sendMessage", async ({ roomId, message }) => {
+   socket.on("sendMessage", async ({ roomId, message }) => {
     if (!socket.user) return;
     const senderQid = socket.user.memberQid;
 
@@ -290,23 +290,10 @@ io.on("connection", (socket) => {
     } catch (err) {
       console.error("Error saving chat message:", err);
     }
-  })
+  });
 
   
-  // ✅ Seen message logic
-  // socket.on("messageSeen", async ({ messageId, roomId }) => {
-  //   if (!socket.user || !messageId || !roomId) return;
-  //   const viewerQid = socket.user.memberQid;
-
-  //   try {
-  //     const updated = await chatController.markMessageSeen(messageId, viewerQid);
-  //     if (updated) {
-  //       io.to(roomId).emit("messageSeen", { messageId });
-  //     }
-  //   } catch (err) {
-  //     console.error("❌ Error marking message seen:", err);
-  //   }
-  // });
+ 
 
   // ✅ Edit message logic
   socket.on("editMessage", async ({ messageId, newMessage, roomId }) => {

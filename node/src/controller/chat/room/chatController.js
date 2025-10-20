@@ -14,8 +14,8 @@ const saveChatMessage = async (roomId, senderQid, message) => {
     const receiverQid = senderQid === buyerQid ? sellerQid : buyerQid;
 
     const [result] = await db.query(
-      `INSERT INTO messages (roomId, senderQid, receiverQid, message, status, created_at)
-       VALUES (?, ?, ?, ?, 'sent', NOW())`,
+      `INSERT INTO messages (roomId, senderQid, receiverQid, message, created_at)
+       VALUES (?, ?, ?, ?, NOW())`,
       [roomId, senderQid, receiverQid, message]
     );
 
@@ -25,7 +25,6 @@ const saveChatMessage = async (roomId, senderQid, message) => {
       senderQid,
       receiverQid,
       message,
-      status: "sent",
       timestamp: new Date(),
     };
   } catch (err) {
@@ -70,7 +69,6 @@ const getChatMessages = async (req, res) => {
         m.senderQid,
         m.receiverQid,
         m.message,
-        m.status,
         m.created_at,
         u.username AS senderName
        FROM messages m
@@ -159,5 +157,4 @@ module.exports = {
   updateChatMessage,
   deleteChatMessage,
   getUserChatRooms,
-
 };
