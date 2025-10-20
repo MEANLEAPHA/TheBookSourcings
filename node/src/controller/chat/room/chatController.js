@@ -2,6 +2,37 @@ const db = require("../../../config/db");
 
 
 // ✅ Save new message
+// const saveChatMessage = async (roomId, senderQid, message) => {
+//   try {
+//     const [roomRows] = await db.query(
+//       "SELECT buyerQid, sellerQid FROM chatRooms WHERE roomId = ?",
+//       [roomId]
+//     );
+//     if (!roomRows.length) throw new Error("Room not found");
+
+//     const { buyerQid, sellerQid } = roomRows[0];
+//     const receiverQid = senderQid === buyerQid ? sellerQid : buyerQid;
+
+//     const [result] = await db.query(
+//       `INSERT INTO messages (roomId, senderQid, receiverQid, message, status, created_at)
+//        VALUES (?, ?, ?, ?, 'sent', NOW())`,
+//       [roomId, senderQid, receiverQid, message]
+//     );
+
+//     return {
+//       messageId: result.insertId,
+//       roomId,
+//       senderQid,
+//       receiverQid,
+//       message,
+//       status: "sent",
+//       timestamp: new Date(),
+//     };
+//   } catch (err) {
+//     console.error("❌ Error saving chat message:", err);
+//   }
+// };
+// controller/chat/room/chatController.js
 const saveChatMessage = async (roomId, senderQid, message) => {
   try {
     const [roomRows] = await db.query(
@@ -26,12 +57,14 @@ const saveChatMessage = async (roomId, senderQid, message) => {
       receiverQid,
       message,
       status: "sent",
-      timestamp: new Date(),
+      created_at: new Date()
     };
   } catch (err) {
     console.error("❌ Error saving chat message:", err);
+    return null;
   }
 };
+
 
 // ✅ Mark message as seen
 const markMessageSeen = async (messageId, viewerQid) => {
@@ -43,19 +76,23 @@ const markMessageSeen = async (messageId, viewerQid) => {
     if (!rows.length) return false;
 
     const msg = rows[0];
-    if (msg.receiverQid !== viewerQid) return false; // Only receiver can mark as seen
-    if (msg.status === "seen") return true; // Already seen
+    if (msg.receiverQid !== viewerQid) return false; // only receiver can mark as seen
+    if (msg.status === "seen") return true; // already seen
 
     await db.query(
-      `UPDATE messages SET status = 'seen', seen_at = NOW() WHERE messageId = ?`,
+      `UPDATE messages 
+       SET status = 'seen', receiverSeen = 1, seen_at = NOW() 
+       WHERE messageId = ?`,
       [messageId]
     );
+
     return true;
   } catch (err) {
     console.error("❌ Error marking message seen:", err);
     return false;
   }
 };
+
 
 // ✅ Get all messages (load on open)
 const getChatMessages = async (req, res) => {
