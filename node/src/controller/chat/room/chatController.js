@@ -14,8 +14,8 @@ const saveChatMessage = async (roomId, senderQid, message) => {
     const receiverQid = senderQid === buyerQid ? sellerQid : buyerQid;
 
     const [result] = await db.query(
-      `INSERT INTO messages (roomId, senderQid, receiverQid, message, created_at)
-       VALUES (?, ?, ?, ?, NOW())`,
+      `INSERT INTO messages (roomId, senderQid, receiverQid, message, status, created_at)
+       VALUES (?, ?, ?, ?, 'sent', NOW())`,
       [roomId, senderQid, receiverQid, message]
     );
 
@@ -25,6 +25,7 @@ const saveChatMessage = async (roomId, senderQid, message) => {
       senderQid,
       receiverQid,
       message,
+      status: "sent",
       timestamp: new Date(),
     };
   } catch (err) {
@@ -33,28 +34,28 @@ const saveChatMessage = async (roomId, senderQid, message) => {
 };
 
 // ✅ Mark message as seen
-// const markMessageSeen = async (messageId, viewerQid) => {
-//   try {
-//     const [rows] = await db.query(
-//       `SELECT receiverQid, status FROM messages WHERE messageId = ?`,
-//       [messageId]
-//     );
-//     if (!rows.length) return false;
+const markMessageSeen = async (messageId, viewerQid) => {
+  try {
+    const [rows] = await db.query(
+      `SELECT receiverQid, status FROM messages WHERE messageId = ?`,
+      [messageId]
+    );
+    if (!rows.length) return false;
 
-//     const msg = rows[0];
-//     if (msg.receiverQid !== viewerQid) return false; // Only receiver can mark as seen
-//     if (msg.status === "seen") return true; // Already seen
+    const msg = rows[0];
+    if (msg.receiverQid !== viewerQid) return false; // Only receiver can mark as seen
+    if (msg.status === "seen") return true; // Already seen
 
-//     await db.query(
-//       `UPDATE messages SET status = 'seen', seen_at = NOW() WHERE messageId = ?`,
-//       [messageId]
-//     );
-//     return true;
-//   } catch (err) {
-//     console.error("❌ Error marking message seen:", err);
-//     return false;
-//   }
-// };
+    await db.query(
+      `UPDATE messages SET status = 'seen', seen_at = NOW() WHERE messageId = ?`,
+      [messageId]
+    );
+    return true;
+  } catch (err) {
+    console.error("❌ Error marking message seen:", err);
+    return false;
+  }
+};
 
 // ✅ Get all messages (load on open)
 const getChatMessages = async (req, res) => {
@@ -69,6 +70,7 @@ const getChatMessages = async (req, res) => {
         m.senderQid,
         m.receiverQid,
         m.message,
+        m.status,
         m.created_at,
         u.username AS senderName
        FROM messages m
@@ -157,4 +159,5 @@ module.exports = {
   updateChatMessage,
   deleteChatMessage,
   getUserChatRooms,
+  markMessageSeen
 };
