@@ -158,5 +158,6 @@ module.exports = {
   getChatMessages,
   updateChatMessage,
   deleteChatMessage,
-  getUserChatRooms
+  getUserChatRooms,
+  markMessageSeen
 };
