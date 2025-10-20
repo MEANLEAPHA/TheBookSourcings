@@ -487,32 +487,36 @@ async function openRoom(roomId) {
     chatBox.scrollTop = chatBox.scrollHeight;
 
     // Mark as seen when room opened
-    socket.emit("messageSeen", { roomId });
+    // socket.emit("messageSeen", { roomId });
+    // socket.emit("markRoomSeen", { roomId });
+
   } catch (err) {
     console.error("Failed to load messages:", err);
   }
 
-  // 🔹 Send message
-  // sendBtn.onclick = () => {
-  //   const text = messageInput.value.trim();
-  //   if (!text) return;
+ 
+//   sendBtn.onclick = () => {
+//   const text = messageInput.value.trim();
+//   if (!text) return;
 
-  //   const tempId = "temp_" + Date.now();
-  //   appendMessage({ messageId: tempId, message: text, senderQid: currentUser, status: "pending" }, true);
+//   const tempId = "temp_" + Date.now();
+//   appendMessage({ messageId: tempId, message: text, senderQid: currentUser, status: "pending" }, true);
 
-  //   socket.emit("sendMessage", { roomId, message: text });
-  //   messageInput.value = "";
-  // };
-  sendBtn.onclick = () => {
+//   socket.emit("sendMessage", { roomId, message: text, tempId });
+//   messageInput.value = "";
+// };
+sendBtn.onclick = () => {
   const text = messageInput.value.trim();
   if (!text) return;
 
   const tempId = "temp_" + Date.now();
+  // show a pending UI that uses the tempId exactly
   appendMessage({ messageId: tempId, message: text, senderQid: currentUser, status: "pending" }, true);
 
   socket.emit("sendMessage", { roomId, message: text, tempId });
   messageInput.value = "";
 };
+
 
 }
 
@@ -571,19 +575,40 @@ function updateMessageStatus(messageId, status) {
 
 // 🔹 Real-time message receiving
 socket.on("receiveMessage", (msg) => {
-  if (msg.senderQid !== currentUser) {
-    appendMessage(msg, false);
-    // Mark as seen automatically if you're in that room
-    socket.emit("messageSeen", { messageId: msg.messageId, roomId: activeRoomId });
+  const isMe = msg.senderQid === currentUser;
+  appendMessage(msg, isMe);
+
+  if (!isMe) {
+    // Mark message as delivered to sender
+    socket.emit("messageDelivered", { messageId: msg.messageId, roomId: msg.roomId });
+
+    // Mark as seen only if in the same room & tab is visible
+    if (msg.roomId === activeRoomId && document.visibilityState === "visible") {
+      socket.emit("messageSeen", { messageId: msg.messageId, roomId: msg.roomId });
+    }
   }
 });
+
+
 // socket.on("receiveMessage", (msg) => {
-//   if (msg.roomId === activeRoomId) {
-//     appendMessage(msg, msg.senderQid === currentUser);
-//     // Auto mark as seen if viewing room
+//   if (msg.senderQid !== currentUser) {
+//     appendMessage(msg, false);
+
+//     // Only mark as seen if user is viewing this same room & tab is visible
+//     if (activeRoomId === msg.roomId && document.visibilityState === "visible") {
+//       socket.emit("messageSeen", { messageId: msg.messageId, roomId: msg.roomId });
+//     }
+//   }
+// });
+
+// socket.on("receiveMessage", (msg) => {
+//   if (msg.senderQid !== currentUser) {
+//     appendMessage(msg, false);
+//     // Mark as seen automatically if you're in that room
 //     socket.emit("messageSeen", { messageId: msg.messageId, roomId: activeRoomId });
 //   }
 // });
+
 
 // 🔹 Message seen updates (make all blue)
 socket.on("messageSeen", ({ messageId }) => {
@@ -594,25 +619,49 @@ socket.on("messageSeen", ({ messageId }) => {
 // });
 
 // 🔹 Confirm message sent from server
+// socket.on("messageSent", (msg) => {
+//   const tempMsg = document.querySelector(`[data-message-id^="temp_"]`);
+//   if (tempMsg) {
+//     // Replace temporary pending message
+//     tempMsg.dataset.messageId = msg.messageId;
+//     const statusEl = tempMsg.querySelector(".status");
+//     if (statusEl) statusEl.innerHTML = `<i class="fa-solid fa-check"></i>`;
+//   } else {
+//     appendMessage(msg, msg.senderQid === currentUser);
+//   }
+// });
 socket.on("messageSent", (msg) => {
-  const tempMsg = document.querySelector(`[data-message-id^="temp_"]`);
-  if (tempMsg) {
-    // Replace temporary pending message
-    tempMsg.dataset.messageId = msg.messageId;
-    const statusEl = tempMsg.querySelector(".status");
-    if (statusEl) statusEl.innerHTML = `<i class="fa-solid fa-check"></i>`;
-  } else {
-    appendMessage(msg, msg.senderQid === currentUser);
+  // server includes tempId if client sent one
+  const { tempId } = msg || {};
+  if (tempId) {
+    // find the exact element with that tempId
+    const tempMsg = document.querySelector(`[data-message-id="${tempId}"]`);
+    if (tempMsg) {
+      tempMsg.dataset.messageId = msg.messageId; // replace id
+      const statusEl = tempMsg.querySelector(".status");
+      if (statusEl) statusEl.innerHTML = `<i class="fa-solid fa-check"></i>`; // sent
+      return;
+    }
   }
+
+  // fallback — append the saved message if we didn't find a temp element
+  appendMessage(msg, msg.senderQid === currentUser);
 });
+
 // socket.on("messageSent", (msg) => {
 //   updateMessageStatus(msg.messageId, "sent");
 // });
 
 // 🔹 Delivered confirmation
-socket.on("messageDelivered", (msg) => {
-  updateMessageStatus(msg.messageId, "delivered");
+socket.on("messageDelivered", ({ messageIds, roomId }) => {
+  if (roomId !== activeRoomId) return;
+  if (!Array.isArray(messageIds)) return;
+  messageIds.forEach(id => updateMessageStatus(id, "delivered"));
 });
+
+// socket.on("messageDelivered", (msg) => {
+//   updateMessageStatus(msg.messageId, "delivered");
+// });
 
 // 🔹 Edit / Delete logic remains same
 socket.on("messageEdited", (data) => {
@@ -624,6 +673,12 @@ socket.on("messageDeleted", (data) => {
   const msgDiv = document.querySelector(`[data-message-id="${data.messageId}"]`);
   if (msgDiv) msgDiv.remove();
 });
+
+socket.on("roomMessagesSeen", ({ messageIds }) => {
+  if (!Array.isArray(messageIds)) return;
+  messageIds.forEach(id => updateMessageStatus(id, "seen"));
+});
+
 
 // ---------- Toast logic ----------
 function showEditDeleteToast(msgDiv, messageId) {
@@ -679,6 +734,13 @@ function showDeleteMessageToast(messageId) {
 }
 
 loadChatRooms();
+// 🔹 When user switches back to the chat tab, mark messages as seen
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible" && activeRoomId) {
+    socket.emit("markRoomSeen", { roomId: activeRoomId });
+  }
+});
+
 </script>
 
    
