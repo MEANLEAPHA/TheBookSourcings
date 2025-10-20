@@ -273,23 +273,29 @@ io.on("connection", (socket) => {
     console.log(`🟢 User ${socket.user.memberQid} joined room ${roomId}`);
   });
 
-   socket.on("sendMessage", async ({ roomId, message }) => {
-    if (!socket.user) return;
-    const senderQid = socket.user.memberQid;
+  //  socket.on("sendMessage", async ({ roomId, message }) => {
+  //   if (!socket.user) return;
+  //   const senderQid = socket.user.memberQid;
 
-    try {
+  //   try {
    
-      await chatController.saveChatMessage(roomId, senderQid, message);
+  //     await chatController.saveChatMessage(roomId, senderQid, message);
 
-      io.to(roomId).emit("receiveMessage", {
-        roomId,
-        senderQid,
-        message,
-        timestamp: new Date(),
-      });
-    } catch (err) {
-      console.error("Error saving chat message:", err);
-    }
+  //     io.to(roomId).emit("receiveMessage", {
+  //       roomId,
+  //       senderQid,
+  //       message,
+  //       timestamp: new Date(),
+  //     });
+  //   } catch (err) {
+  //     console.error("Error saving chat message:", err);
+  //   }
+  // });
+ socket.on("sendMessage", async ({ roomId, message }) => {
+    const senderQid = socket.user.memberQid;
+    const savedMessage = await chatController.saveChatMessage(roomId, senderQid, message);
+
+    io.to(roomId).emit("receiveMessage", savedMessage);
   });
 
   
