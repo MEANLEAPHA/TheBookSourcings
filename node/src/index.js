@@ -291,14 +291,27 @@ io.on("connection", (socket) => {
   //     console.error("Error saving chat message:", err);
   //   }
   // });
- socket.on("sendMessage", async ({ roomId, message }) => {
-    const senderQid = socket.user.memberQid;
-    const savedMessage = await chatController.saveChatMessage(roomId, senderQid, message);
+//  socket.on("sendMessage", async ({ roomId, message }) => {
+//     const senderQid = socket.user.memberQid;
+//     const savedMessage = await chatController.saveChatMessage(roomId, senderQid, message);
 
-    io.to(roomId).emit("receiveMessage", savedMessage);
-  });
+//     io.to(roomId).emit("receiveMessage", savedMessage);
+//   });
+socket.on("sendMessage", async (data) => {
+  try {
+    const senderQid = socket.user.memberQid; // always use JWT decoded QID
+    await chatController.saveChatMessage(data.roomId, senderQid, data.message);
 
-  
+    io.to(data.roomId).emit("receiveMessage", {
+      senderQid,
+      message: data.message,
+      timestamp: new Date()
+    });
+  } catch (err) {
+    console.error("Error sending chat message:", err);
+  }
+});
+
  
 
   // ✅ Edit message logic
