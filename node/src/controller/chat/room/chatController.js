@@ -1,71 +1,49 @@
 const db = require("../../../config/db");
 
-
-// ✅ Save new message
-// const saveChatMessage = async (roomId, senderQid, message) => {
-//   try {
-//     const [roomRows] = await db.query(
-//       "SELECT buyerQid, sellerQid FROM chatRooms WHERE roomId = ?",
-//       [roomId]
-//     );
-//     if (!roomRows.length) throw new Error("Room not found");
-
-//     const { buyerQid, sellerQid } = roomRows[0];
-//     const receiverQid = senderQid === buyerQid ? sellerQid : buyerQid;
-
-//     const [result] = await db.query(
-//       `INSERT INTO messages (roomId, senderQid, receiverQid, message, status, created_at)
-//        VALUES (?, ?, ?, ?, 'sent', NOW())`,
-//       [roomId, senderQid, receiverQid, message]
-//     );
-
-//     return {
-//       messageId: result.insertId,
-//       roomId,
-//       senderQid,
-//       receiverQid,
-//       message,
-//       status: "sent",
-//       timestamp: new Date(),
-//     };
-//   } catch (err) {
-//     console.error("❌ Error saving chat message:", err);
-//   }
-// };
-
-// controller/chat/room/chatController.js
-// const saveChatMessage = async (roomId, senderQid, message) => {
-//   try {
-//     const [roomRows] = await db.query(
-//       "SELECT buyerQid, sellerQid FROM chatRooms WHERE roomId = ?",
-//       [roomId]
-//     );
-//     if (!roomRows.length) throw new Error("Room not found");
-
-//     const { buyerQid, sellerQid } = roomRows[0];
-//     const receiverQid = senderQid === buyerQid ? sellerQid : buyerQid;
-
-//     const [result] = await db.query(
-//       `INSERT INTO messages (roomId, senderQid, receiverQid, message, status, created_at)
-//        VALUES (?, ?, ?, ?, 'sent', NOW())`,
-//       [roomId, senderQid, receiverQid, message]
-//     );
-
-//     return {
-//       messageId: result.insertId,
-//       roomId,
-//       senderQid,
-//       receiverQid,
-//       message,
-//       status: "sent",
-//       created_at: new Date()
-//     };
-//   } catch (err) {
-//     console.error("❌ Error saving chat message:", err);
-//     return null;
-//   }
-// };
 // saveChatMessage: return full saved object (you already do this but ensure it returns)
+// const markMessageDelivered = async (roomId, receiverQid) => {
+//   try {
+//     // select messageIds that will be updated
+//     const [rows] = await db.query(
+//       `SELECT messageId FROM messages WHERE roomId = ? AND receiverQid = ? AND status = 'sent'`,
+//       [roomId, receiverQid]
+//     );
+//     const ids = rows.map(r => r.messageId);
+//     if (!ids.length) return [];
+
+//     // update them to delivered
+//     await db.query(
+//       `UPDATE messages SET status = 'delivered' WHERE messageId IN (?)`,
+//       [ids]
+//     );
+
+//     return ids;
+//   } catch (err) {
+//     console.error("❌ Error marking message delivered:", err);
+//     return [];
+//   }
+// };
+
+// const markAllMessagesSeen = async (roomId, viewerQid) => {
+//   try {
+//     // find all sent/delivered messages for this viewer in this room
+//     const [rows] = await db.query(
+//       `SELECT messageId FROM messages WHERE roomId = ? AND receiverQid = ? AND status != 'seen'`,
+//       [roomId, viewerQid]
+//     );
+//     const ids = rows.map(r => r.messageId);
+//     if (!ids.length) return [];
+
+//     await db.query(
+//       `UPDATE messages SET status = 'seen', receiverSeen = 1, seen_at = NOW() WHERE messageId IN (?)`,
+//       [ids]
+//     );
+//     return ids;
+//   } catch (err) {
+//     console.error("❌ Error marking all messages seen:", err);
+//     return [];
+//   }
+// };
 const saveChatMessage = async (roomId, senderQid, message) => {
   try {
     const [roomRows] = await db.query(
@@ -143,29 +121,6 @@ const markAllMessagesSeen = async (roomId, viewerQid) => {
   }
 };
 
-// const markMessageDelivered = async (roomId, receiverQid) => {
-//   try {
-//     // select messageIds that will be updated
-//     const [rows] = await db.query(
-//       `SELECT messageId FROM messages WHERE roomId = ? AND receiverQid = ? AND status = 'sent'`,
-//       [roomId, receiverQid]
-//     );
-//     const ids = rows.map(r => r.messageId);
-//     if (!ids.length) return [];
-
-//     // update them to delivered
-//     await db.query(
-//       `UPDATE messages SET status = 'delivered' WHERE messageId IN (?)`,
-//       [ids]
-//     );
-
-//     return ids;
-//   } catch (err) {
-//     console.error("❌ Error marking message delivered:", err);
-//     return [];
-//   }
-// };
-
 
 // ✅ Mark message as seen
 const markMessageSeen = async (messageId, viewerQid) => {
@@ -190,26 +145,7 @@ const markMessageSeen = async (messageId, viewerQid) => {
   }
 };
 
-// const markAllMessagesSeen = async (roomId, viewerQid) => {
-//   try {
-//     // find all sent/delivered messages for this viewer in this room
-//     const [rows] = await db.query(
-//       `SELECT messageId FROM messages WHERE roomId = ? AND receiverQid = ? AND status != 'seen'`,
-//       [roomId, viewerQid]
-//     );
-//     const ids = rows.map(r => r.messageId);
-//     if (!ids.length) return [];
 
-//     await db.query(
-//       `UPDATE messages SET status = 'seen', receiverSeen = 1, seen_at = NOW() WHERE messageId IN (?)`,
-//       [ids]
-//     );
-//     return ids;
-//   } catch (err) {
-//     console.error("❌ Error marking all messages seen:", err);
-//     return [];
-//   }
-// };
 
 
 

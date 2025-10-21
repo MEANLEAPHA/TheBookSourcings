@@ -236,6 +236,21 @@ io.on("connection", (socket) => {
   //     console.error("Error saving chat message:", err);
   //   }
   // })
+  socket.on("messageDelivered", async ({ messageId, roomId }) => {
+  if (!socket.user) return;
+  const receiverQid = socket.user.memberQid;
+
+  try {
+    await db.query(
+      "UPDATE messages SET status='delivered', receiverSeen=0 WHERE messageId=? AND receiverQid=?",
+      [messageId, receiverQid]
+    );
+    io.to(roomId).emit("messageDelivered", { messageIds: [messageId], roomId });
+  } catch (err) {
+    console.error("❌ Error marking message delivered (single):", err);
+  }
+});
+
 socket.on("sendMessage", async ({ roomId, message, tempId }) => {
     if (!socket.user) return;
     const senderQid = socket.user.memberQid;
