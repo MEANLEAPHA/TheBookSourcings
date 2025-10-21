@@ -98,22 +98,47 @@ const saveChatMessage = async (roomId, senderQid, message) => {
 };
 
 
+// const markMessageDelivered = async (roomId, receiverQid) => {
+//   try {
+//     // select messageIds that will be updated
+//     const [rows] = await db.query(
+//       `SELECT messageId FROM messages WHERE roomId = ? AND receiverQid = ? AND status = 'sent'`,
+//       [roomId, receiverQid]
+//     );
+//     const ids = rows.map(r => r.messageId);
+//     if (!ids.length) return [];
+
+//     // update them to delivered
+//     await db.query(
+//       `UPDATE messages SET status = 'delivered' WHERE messageId IN (?)`,
+//       [ids]
+//     );
+
+//     return ids;
+//   } catch (err) {
+//     console.error("❌ Error marking message delivered:", err);
+//     return [];
+//   }
+// };
+
+
+// ✅ Mark message as seen
+// in controller
 const markMessageDelivered = async (roomId, receiverQid) => {
   try {
-    // select messageIds that will be updated
+    // return list of IDs that were updated
     const [rows] = await db.query(
-      `SELECT messageId FROM messages WHERE roomId = ? AND receiverQid = ? AND status = 'sent'`,
+      `SELECT messageId FROM messages 
+       WHERE roomId = ? AND receiverQid = ? AND status = 'sent'`,
       [roomId, receiverQid]
     );
+    if (!rows.length) return [];
+
     const ids = rows.map(r => r.messageId);
-    if (!ids.length) return [];
-
-    // update them to delivered
     await db.query(
-      `UPDATE messages SET status = 'delivered' WHERE messageId IN (?)`,
-      [ids]
+      `UPDATE messages SET status = 'delivered', receiverSeen = 0 WHERE messageId IN (${ids.map(()=>'?').join(',')})`,
+      ids
     );
-
     return ids;
   } catch (err) {
     console.error("❌ Error marking message delivered:", err);
@@ -121,50 +146,30 @@ const markMessageDelivered = async (roomId, receiverQid) => {
   }
 };
 
-
-// ✅ Mark message as seen
-const markMessageSeen = async (messageId, viewerQid) => {
-  try {
-    const [rows] = await db.query(
-      `SELECT receiverQid, status FROM messages WHERE messageId = ?`,
-      [messageId]
-    );
-    if (!rows.length) return false;
-    const msg = rows[0];
-    if (msg.receiverQid !== viewerQid) return false; // only receiver can mark as seen
-    if (msg.status === 'seen') return true;
-
-    await db.query(
-      `UPDATE messages SET status = 'seen', receiverSeen = 1, seen_at = NOW() WHERE messageId = ?`,
-      [messageId]
-    );
-    return true;
-  } catch (err) {
-    console.error("❌ Error marking message seen:", err);
-    return false;
-  }
-};
-
 const markAllMessagesSeen = async (roomId, viewerQid) => {
   try {
-    // find all sent/delivered messages for this viewer in this room
+    // select message ids where viewer is receiver and not yet seen
     const [rows] = await db.query(
-      `SELECT messageId FROM messages WHERE roomId = ? AND receiverQid = ? AND status != 'seen'`,
+      `SELECT messageId FROM messages 
+       WHERE roomId = ? AND receiverQid = ? AND receiverSeen = 0`,
       [roomId, viewerQid]
     );
-    const ids = rows.map(r => r.messageId);
-    if (!ids.length) return [];
+    if (!rows.length) return [];
 
+    const ids = rows.map(r => r.messageId);
     await db.query(
-      `UPDATE messages SET status = 'seen', receiverSeen = 1, seen_at = NOW() WHERE messageId IN (?)`,
-      [ids]
+      `UPDATE messages SET receiverSeen = 1, status = 'seen', seen_at = NOW() 
+       WHERE messageId IN (${ids.map(()=>'?').join(',')})`,
+      ids
     );
+
     return ids;
   } catch (err) {
     console.error("❌ Error marking all messages seen:", err);
     return [];
   }
 };
+
 
 
 

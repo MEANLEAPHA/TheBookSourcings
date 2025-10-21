@@ -488,7 +488,7 @@ async function openRoom(roomId) {
 
     // Mark as seen when room opened
     // socket.emit("messageSeen", { roomId });
-    // socket.emit("markRoomSeen", { roomId });
+    socket.emit("markRoomSeen", { roomId });
 
   } catch (err) {
     console.error("Failed to load messages:", err);
@@ -579,15 +579,17 @@ socket.on("receiveMessage", (msg) => {
   appendMessage(msg, isMe);
 
   if (!isMe) {
-    // Mark message as delivered to sender
+    // ✅ Always mark as delivered when received (not seen yet)
     socket.emit("messageDelivered", { messageId: msg.messageId, roomId: msg.roomId });
 
-    // Mark as seen only if in the same room & tab is visible
+    // ✅ Only mark as seen if user is viewing THIS room and the tab is visible
     if (msg.roomId === activeRoomId && document.visibilityState === "visible") {
       socket.emit("messageSeen", { messageId: msg.messageId, roomId: msg.roomId });
     }
   }
 });
+
+
 
 
 // socket.on("receiveMessage", (msg) => {
@@ -611,9 +613,11 @@ socket.on("receiveMessage", (msg) => {
 
 
 // 🔹 Message seen updates (make all blue)
-socket.on("messageSeen", ({ messageId }) => {
+socket.on("messageSeen", ({ messageId, roomId }) => {
+  if (roomId !== activeRoomId) return;
   updateMessageStatus(messageId, "seen");
 });
+
 // socket.on("messageSeen", ({ messageId }) => {
 //   updateMessageStatus(messageId, "seen");
 // });
@@ -653,11 +657,11 @@ socket.on("messageSent", (msg) => {
 // });
 
 // 🔹 Delivered confirmation
-socket.on("messageDelivered", ({ messageIds, roomId }) => {
-  if (roomId !== activeRoomId) return;
+socket.on("messageDelivered", ({ messageIds }) => {
   if (!Array.isArray(messageIds)) return;
   messageIds.forEach(id => updateMessageStatus(id, "delivered"));
 });
+
 
 // socket.on("messageDelivered", (msg) => {
 //   updateMessageStatus(msg.messageId, "delivered");
