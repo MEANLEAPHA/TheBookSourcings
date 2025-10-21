@@ -579,15 +579,16 @@ socket.on("receiveMessage", (msg) => {
   appendMessage(msg, isMe);
 
   if (!isMe) {
-    // ✅ Always mark as delivered when received (not seen yet)
+    // ✅ 1. Mark as delivered immediately (you received it)
     socket.emit("messageDelivered", { messageId: msg.messageId, roomId: msg.roomId });
 
-    // ✅ Only mark as seen if user is viewing THIS room and the tab is visible
-    if (msg.roomId === activeRoomId && document.visibilityState === "visible") {
+    // ✅ 2. Mark as seen only if you are viewing THIS room and the tab is visible
+    if (activeRoomId === msg.roomId && document.visibilityState === "visible") {
       socket.emit("messageSeen", { messageId: msg.messageId, roomId: msg.roomId });
     }
   }
 });
+
 
 
 
