@@ -47,9 +47,9 @@ const followIcon = document.querySelector('.followIcon');
 const followCount = document.querySelector('.followCount');
 const followBtn = document.querySelector('.followBtn');
 
-async function loadChannelInfo(memberQid) {
+async function loadChannelInfo(followedQid) {
   try {
-    const res = await fetch(`https://thebooksourcings.onrender.com/api/followStatus/${memberQid}`, {
+    const res = await fetch(`https://thebooksourcings.onrender.com/api/followStatus/${followedQid}`, {
       headers: {
         "Authorization": `Bearer ${localStorage.getItem("token")}`
       }
