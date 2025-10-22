@@ -65,9 +65,9 @@ async function loadChannelInfo(memberQid) {
   }
 }
 
-async function toggleFollowActivity(memberQid) {
+async function toggleFollowActivity(followedQid) {
   try {
-    const res = await fetch(`https://thebooksourcings.onrender.com/api/channel/follow/${memberQid}`, {
+    const res = await fetch(`https://thebooksourcings.onrender.com/api/channel/follow/${followedQid}`, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${localStorage.getItem("token")}`,
@@ -82,7 +82,7 @@ async function toggleFollowActivity(memberQid) {
     followIcon.style.color = data.followed ? "gold" : "black";
 
     // Safer: re-fetch updated count instead of manual increment
-    await loadChannelInfo(memberQid);
+    await loadChannelInfo(followedQid);
 
   } catch (err) {
     console.error(err);

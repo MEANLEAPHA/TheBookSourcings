@@ -3,24 +3,24 @@ const db = require("../../../config/db");
 // Get book details + user status
 const getFollowDetailsWithStatus = async (req, res) => {
   try {
-    const { memberQid } = req.params;
-    const userId = req.user.user_id;
+    const { followedQid } = req.params;
+    const followerQid = req.user.memberQid;
 
     // Book info
     const [memberRows] = await db.query(
-      "SELECT  followCount FROM users WHERE memberQid = ?",
-      [memberQid]
+      "SELECT  followCount FROM users WHERE followedQid = ?",
+      [followedQid]
     );
 
     if (memberRows.length === 0) {
-      return res.status(404).json({ message: "memberQid not found" });
+      return res.status(404).json({ message: "followedQid not found" });
     }
     const member = memberRows[0];
 
     // User status
     const [statusRows] = await db.query(
-      "SELECT followed FROM user_follow_status WHERE user_id = ? AND memberQid = ?",
-      [userId, memberQid]
+      "SELECT followed FROM user_follow_status WHERE followerQid = ? AND followedQid = ?",
+      [followerQid, followedQid]
     );
 
     const status = statusRows.length > 0 ? statusRows[0] : { followed: 0 };
@@ -38,13 +38,13 @@ const getFollowDetailsWithStatus = async (req, res) => {
 // Toggle follow
 const toggleFollow = async (req, res) => {
   try {
-    const { memberQid } = req.params;
-    const userId = req.user.user_id;
+    const { followedQid } = req.params;
+    const followerQid = req.user.memberQid;
 
     // Check current status
     const [rows] = await db.query(
-      "SELECT followed FROM user_follow_status WHERE user_id = ? AND memberQid = ?",
-      [userId, memberQid]
+      "SELECT followed FROM user_follow_status WHERE followerQid = ? AND followedQid = ?",
+      [followerQid, followedQid]
     );
 
     let followed = 0;
@@ -52,21 +52,21 @@ const toggleFollow = async (req, res) => {
     if (rows.length > 0) {
       followed = rows[0].followed ? 0 : 1;
       await db.query(
-        "UPDATE user_follow_status SET followed = ?, updated_at = NOW() WHERE user_id = ? AND memberQid = ?",
-        [followed, userId, memberQid]
+        "UPDATE user_follow_status SET followed = ?, updated_at = NOW() WHERE followerQid = ? AND followedQid = ?",
+        [followed, followerQid, followedQid]
       );
     } else {
       followed = 1;
       await db.query(
-        "INSERT INTO user_follow_status (user_id, memberQid, followed) VALUES (?, ?, 1)",
-        [userId, memberQid]
+        "INSERT INTO user_follow_status (followerQid, followedQid, followed) VALUES (?, ?, 1)",
+        [followerQid, followedQid]
       );
     }
 
     // Update uploadBook count
     await db.query(
-      "UPDATE users SET followCount = (SELECT COUNT(*) FROM user_follow_status WHERE memberQid = ? AND followed = 1) WHERE memberQid = ?",
-      [memberQid, memberQid]
+      "UPDATE users SET followCount = (SELECT COUNT(*) FROM user_follow_status WHERE followedQid = ? AND followed = 1) WHERE followedQid = ?",
+      [followedQid, followedQid]
     );
 
     res.json({ followed });

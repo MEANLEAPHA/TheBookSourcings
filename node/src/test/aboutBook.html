@@ -3,266 +3,341 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>About the Book</title>
-</head>
-<body>
-  <!-- <h1 id="title"></h1>
-  <h3 id="author"></h3>
-  <img id="cover" alt="Book cover" />
-  <p id="description"></p> -->
-  <header></header>
-  <main>
-     
-  </main>
-  <footer></footer>
-</body>
-<script>
-  // Detect source from bookId
-  function detectSource(bookId) {
-    if (/^OL\d+(W|M|A)$/.test(bookId)) return "openlibrary";
-    if (/^\d+$/.test(bookId)) return "gutenberg";
-    return "google"; // fallback for Google Books
-  }
-
-  const urlParams = new URLSearchParams(window.location.search);
-  const bookId = urlParams.get("bookId");
-  const source = detectSource(bookId);
-
-  // Fetch book from your backend unified endpoint
-  fetch(`/api/aboutBook/${source}/${bookId}`)
-    .then(res => res.json())
-    .then(renderBook)
-    .catch(err => {
-      console.error("Failed to fetch book:", err);
-      document.querySelector("#title").textContent = "Book not found";
-      document.querySelector("#description").textContent = "";
-      document.querySelector("#cover").src = "fallback.jpg";
-      document.querySelector("#author").textContent = "";
-    });
-
-  // Render book info
-  function renderBook(data) {
-    document.querySelector("#title").textContent = data.title || "No title";
-    document.querySelector("#author").textContent = data.authors?.join(", ") || "Unknown author";
-    document.querySelector("#description").innerHTML = data.description || "No description available.";
-    document.querySelector("#cover").src = data.cover || "fallback.jpg";
-  }
-</script>
-</html>
-    // after fetching the book
-description.textContent = data.description || "No description available.";
-
-// now run read more / read less logic
-let descriptions = description.textContent;
-
-const seemore = document.getElementById('seemore');
-const seeless = document.getElementById('seeless');
-
-if(descriptions.length > 1000){
-    const shortText = descriptions.slice(0,1000) + "......";
-    description.innerText = shortText;
-    seemore.style.display = "inline"; // or "block"
-    seeless.style.display = "none";
-
-    seemore.addEventListener('click', ()=>{
-        description.innerText = descriptions;
-        seemore.style.display = "none";
-        seeless.style.display = "inline"; // or "block"
-    });
-
-    seeless.addEventListener('click', ()=>{
-        description.innerText = shortText;
-        seemore.style.display = "inline";
-        seeless.style.display = "none";
-    });
-} else {
-    seemore.style.display = "none";
-    seeless.style.display = "none";
+  <script src="https://kit.fontawesome.com/ec7a51a641.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://kit.fontawesome.com/ec7a51a641.js" crossorigin="anonymous"></script>
+  <title>Document</title>
+  <style>
+    #BookContent{
+      width: 82%;
+      height: auto;
+      display: flex;
+      justify-content: start;
+      margin-top: 10px;
+      flex-wrap: wrap;
+      /* border: 1px solid black; */
+      padding-top: 10px;
+      padding-left: 5px;
+      gap: 10px;
+      align-items: flex-start;
+      margin:auto ;
+    }
+     #BookContent .saleBook-container{
+      width: calc(100%/5.2);
+      height: 480px;
+   
+      overflow: hidden;
+    }
+    .saleBook-cover-holder{
+      width: 100%;
+      height:350px;
+      position: relative;
+   
+    }
+    /* .card-name{
+      width: 100%;
+      height: 30px;
+      
+      margin: 0;
+      overflow: hidden;
+    } */
+     .card-name {
+  width: 100%;
+  height: 30px;
+  margin: 0;
+  overflow: hidden;
+    display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1; /* number of lines */
 }
-
-
-const { fetchJson } = require("../../../util/apiClient");
-
-async function getGutenbergBookById(req, res) {
-  try {
-    const { bookId } = req.params;
-    const url = `https://gutendex.com/books/${bookId}`;
-    const data = await fetchJson(url);
-
-    if (!data || !data.id) {
-      return res.status(404).json({ error: "No data about this Book" });
+    .card-book-type{
+      width: 100%;
+      height: 25px;
+   
+      padding-top: 10px;
+    }
+    .card-book-price{
+      width: 100%;
+      height: 30px;
+      padding-top: 4px;
+    
     }
 
-    const book = {
-      source: "Project Gutenberg",
-      bookId: data.id || null,
-      title: data.title || null,
-      subtitle: null, // Gutenberg does not provide a subtitle
-      authors: data.authors?.map(a => a.name).replace(",", "") || [],
-      description: data.summaries?.[0] || "No Date", // usually missing in Gutendex
-      cover: data.formats?.["image/jpeg"] || "No Date",
-      categories: data.subjects || [],
-      language: data.languages?.[0] || "No Date",
-      page: "No Date", // Gutenberg doesn’t provide page count
-      ISBN_10: "No Date", // not available in Gutenberg
-      ISBN_13: "No Date", // not available in Gutenberg
-      publishDate: data?.copyright ? data?.copyright : "No Date", // Gutendex rarely has real date
-      publisher: "No Date", // default since publisher info not in API
-    };
+    .saleBook-cover-holder:hover .badge-promotion{
+      visibility: hidden;
+      transition: opacity 1s ease-out;
+    }
+    .badge-promotion{
+      position: absolute;
+      top: 10px;
+      right: -35px;
+      transform: rotate(35deg);
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      padding: 3px 10px 3px 10px;
+      width: 155px;
+      text-align: center;
+      transition: opacity 1s ease-out;
 
-    res.json(book);
-  } catch (err) {
-    console.error("aboutGutenbergController.js Error:", err.message);
-    res.status(500).json({
-      error: "Failed to fetch the Book From aboutGutenbergController.js",
-      status: false,
-    });
-  }
+
+    }
+    .free-type{
+      background-color: rgba(0, 255, 85, 0.808);
+    }
+    .discount-type{
+      background-color: rgba(255, 0, 0, 0.808);
+    }
+
+    .saleBook-src{
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+    .saleBook-title{
+      font-family: monospace;
+      font-size: large;
+      font-weight: bold;
+      margin: 8px 0;
+    }
+    .book-type{
+      font-size: x-small;
+      margin: 0;
+      color: gray;
+      font-family: sans-serif;
+    }
+
+    .order-saleBook-btn{
+      border: none;
+      background:none;
+      padding: 0;
+      margin-top: 2px;
+      
+    }
+    .order-saleBook-btn:hover{
+      background-color: rgba(0, 255, 85, 0.808);
+      padding-right: 10px;
+      border-radius: 25px;
+    }
+    .order-saleBook-btn a{
+      color: grey;
+      text-decoration: none;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+        transition: gap 0.3s ease; /* animate the gap */
+    }
+    .order-saleBook-btn a i{
+      transform: rotate(40deg);
+      background-color: rgba(0, 255, 85, 0.808);
+      padding: 10px;
+      width: 35px;
+       transition: transform 0.3s ease, background-color 0.3s ease;
+      height: 35px;
+      border-radius: 50%;
+    }
+    .order-saleBook-btn:hover a  {
+     gap: 0px;
 }
-
-module.exports = { getGutenbergBookById };
-// Import fetchJson using require
-const { fetchJson } = require('../../../util/apiClient');
-
-// Define the async function
-async function getOpenLibraryTrending() {
-  const url = "https://openlibrary.org/trending/daily.json";
-  const data = await fetchJson(url);
-
-  if (!data || !data.works) return [];
-  const authorNames = await Promise.all(
-        (data.authors || []).map(async (a) => {
-          const authorData = await fetchJson(`https://openlibrary.org${a.author.key}.json`);
-          return authorData.name || "Unknown";
-        })
-      );
-  return data.works.slice(0, 10).map(book => ({
-    source: "Open Library",
-    title: book.title,
-    authors: authorNames,
-    cover: book.cover_i
-      ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg`
-      : null,
-    bookId: book.key.replace("/works/", ""),
-    categories: book.subjects || [],
-  }));
+    .order-saleBook-btn:hover a i {
+  transform: rotate(90deg); 
+  background:none;/* rotate to 90deg on hover */
 }
-
-// Export the function using CommonJS
-module.exports = {
-  getOpenLibraryTrending
-};
-
-
-// Import fetchJson using require
-const { fetchJson } = require('../../../util/apiClient');
-
-// Define the async function
-async function getGutenbergTrending() {
-  const url = "https://gutendex.com/books?sort=popular";
-  const data = await fetchJson(url);
-
-  if (!data || !data.results) return [];
-
+@media screen and (max-width:1290px){
+ 
+ #BookContent .saleBook-container{
+      width: calc(100%/5.3);
+      height: 420px;
+    
+      overflow: hidden;
+    }
+    .saleBook-cover-holder{
+      width: 100%;
+      height:290px;
+      position: relative;
+   
+    }
+}
+@media screen and (max-width:1100px){
+ 
+ #BookContent .saleBook-container{
+      width: calc(100%/5.3);
+      height: 380px;
   
-
-  return data.results.slice(0, 10).map(book => ({
-    source: "Project Gutenberg",
-    title: book.title,
-    authors: book.authors.map(a => a.name),
-    cover: book.formats["image/jpeg"] || null,
-    subjects: book.subjects || [],
-    bookId: book.id,
-    categories: book.subjects || []
-  }));
+      overflow: hidden;
+    }
+    .saleBook-cover-holder{
+      width: 100%;
+      height:255px;
+      position: relative;
+   
+    }
 }
-
-// Export the function using CommonJS
-module.exports = {
-  getGutenbergTrending
-};
-
-
-// controllers/openLibraryController.js
-const { fetchJson } = require("../../../util/apiClient");
-
-async function getOpenLibraryBookById(req, res) {
-  try {
-    const { bookId } = req.params;
-
-    // Fetch Work data
-    const url = `https://openlibrary.org/works/${bookId}.json`;
-    const data = await fetchJson(url);
-
-    if (!data) {
-      return res.status(404).json({
-        error: "No data about this Book",
-      });
-    }
-
-    // Try to fetch one edition (for ISBNs, pages, publishers, ocaid, etc.)
-    let editionData = null;
-    try {
-      const editionUrl = `https://openlibrary.org/works/${bookId}/editions.json?limit=1`;
-      const editionResponse = await fetchJson(editionUrl);
-      if (editionResponse && editionResponse.entries && editionResponse.entries.length > 0) {
-        editionData = editionResponse.entries[0];
-      }
-    } catch (err) {
-      console.warn("No edition data found for book:", bookId);
-    }
-
-    // Extract identifiers (ISBNs, OCLC, LCCN, etc.)
-    const identifiers = editionData?.identifiers || {};
-    const authorNames = await Promise.all(
-      (data.authors || []).map(async (a) => {
-        const authorData = await fetchJson(`https://openlibrary.org${a.author.key}.json`);
-        return authorData.name || "Unknown";
-      })
-    );
-
-    // Build read & download links if ocaid exists
-    let read = null;
-    let download = null;
-
-    if (editionData?.ocaid) {
-      const ocaid = editionData.ocaid;
-      read = `https://archive.org/details/${ocaid}`;
-      download = `https://archive.org/download/${ocaid}/${ocaid}.pdf`;
-    }
-
-    const book = {
-      source: "Open Library",
-      bookId: data.key || bookId,
-      title: data.title || null,
-      subtitle: editionData?.subtitle || null,
-      authors: authorNames,
-      description:
-        typeof data.description === "string"
-          ? data.description
-          : data.description?.value || null,
-      cover: data.covers
-        ? `https://covers.openlibrary.org/b/id/${data.covers[0]}-L.jpg`
-        : null,
-      categories: data.subjects || [],
-      language: editionData?.languages?.[0]?.key?.replace("/languages/", "") || null,
-      page: editionData?.pagination || null,
-      ISBN_10: editionData?.isbn_10 ? editionData.isbn_10[0] : null,
-      ISBN_13: editionData?.isbn_13 ? editionData.isbn_13[0] : null,
-      publishDate: editionData?.publish_date || null,
-      publisher: editionData?.publishers ? editionData.publishers[0] : null,
-      read,
-      download,
-    };
-
-    res.json(book);
-  } catch (err) {
-    console.error("openLibraryController.js Error:", err.message);
-    res.status(500).json({
-      error: "Failed to fetch the book data",
-      status: false,
-    });
+@media screen and (max-width:1024px){
+  #BookContent{
+    width: 100%;
+    padding-left: 15px;
   }
+   #BookContent .saleBook-container{
+      width: calc(100%/4.2);
+      height: 430px;
+     
+      overflow: hidden;
+    }
+    .saleBook-cover-holder{
+      width: 100%;
+      height:305px;
+      position: relative;
+   
+    }
 }
+@media screen and (max-width:800px){
+   #BookContent .saleBook-container{
+      height: 390px;
+    }
+.saleBook-cover-holder{
+      width: 100%;
+      height:265px;
+      position: relative;
+   
+    }
+}
+@media screen and (max-width:768px){
+  #BookContent{
+    width: 100%;
+    padding-left: 15px;
+  }
+   #BookContent .saleBook-container{
+      width: calc(100%/3.2);
+      height: 420px;
+   
+      overflow: hidden;
+    }
+    .saleBook-cover-holder{
+      width: 100%;
+      height:290px;
+      position: relative;
+   
+    }
+}
+@media screen and (max-width:600px) {
+ 
+  #BookContent{
+    width: 100%;
+    padding-left: 12px;
+  }
+  #BookContent .saleBook-container{
+      width: calc(100%/2.1);
+      height: 435px;
+      overflow: hidden;
+    }
+    .saleBook-cover-holder{
+      width: 100%;
+      height:310px;
+      position: relative;
+   
+    }
+  
+}
+  </style>
+</head>
+<body>  
+  <div id="BookContent">
 
-module.exports = { getOpenLibraryBookById };
+
+  <!-- Free Book -->
+  <div class="saleBook-container">
+    <div class="saleBook">
+      <div class="saleBook-cover-holder">
+        <div class="badge-promotion free-type"><span class="sale-type">Free</span></div>
+        <img src="https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1729098091i/218559595.jpg" class="saleBook-src" alt="Free Book">
+      </div>
+      <div class="card-body"> 
+        <div class="card-name">
+          <p class="saleBook-title">The Alchemist greatest of all the time</p>
+        </div>
+        <div class="card-book-type">
+          <p class="book-type">EBOOK</p>
+        </div>
+        <div class="card-book-price">
+          <p class="mb-1"><span class="fw-bold ">$0</span></p>
+        </div>
+        <button class="order-saleBook-btn"><a href="aboutSaleBook.html?bookSid=1"><i class="fa-solid fa-arrow-up"></i>View Book</a></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Discount Book -->
+  <div class="saleBook-container">
+    <div class="saleBook">
+      <div class="saleBook-cover-holder">
+        <div class="badge-promotion discount-type"><span class="sale-type">-20%</span></div>
+        <img src="https://media-cldnry.s-nbcnews.com/image/upload/t_fit-320w,f_auto,q_auto:best/rockcms/2024-12/71dZkTxmnQL-5a6ee5.jpg" class="saleBook-src" alt="Discount Book">
+      </div>
+      <div class="card-body">
+        <p class="saleBook-title">The Alchemist</p>
+        <p class="book-type">HARDCOVER</p>
+        <p class="mb-1">
+          <span class="fw-bold ">$8</span>
+          <small class="text-decoration-line-through text-danger ms-2">$10</small>
+        </p>
+        <button class="order-saleBook-btn"><a href="aboutSaleBook.html?bookSid=2"><i class="fa-solid fa-arrow-up"></i>View Book</a></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Premium Book -->
+  <div class="saleBook-container">
+    <div class="saleBook">
+      <div class="saleBook-cover-holder">
+        <img src="https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1720712855i/216223604.jpg" class="saleBook-src" alt="Premium Book">
+      </div>
+      <div class="card-body">
+        <p class="saleBook-title">The Alchemist</p>
+        <p class="book-type">AUDIOBOOK</p>
+        <p class="mb-1"><span class="fw-bold ">$25</span></p>
+        <button class="order-saleBook-btn"><a href="aboutSaleBook.html?bookSid=3"><i class="fa-solid fa-arrow-up"></i>View Book</a></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Regular Book -->
+  <div class="saleBook-container">
+    <div class="saleBook">
+      <div class="saleBook-cover-holder">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_BuyUI-RPbFEVZEN0Qz-Hmw8Emlmc6KasYoJxIsgQ11S64L-lNvcRi_Z3vuCCHDMGqkc&usqp=CAU" class="saleBook-src" alt="Regular Book">
+      </div>
+      <div class="card-body">
+        <p class="saleBook-title">The Alchemist</p>
+        <p class="book-type">PAPERBACK</p>
+        <p class="mb-1"><span class="fw-bold ">$12</span></p>
+        <button class="order-saleBook-btn"><a href="aboutSaleBook.html?bookSid=4"><i class="fa-solid fa-arrow-up"></i>View Book</a></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="saleBook-container">
+    <div class="saleBook">
+      <div class="saleBook-cover-holder">
+         <div class="badge-promotion discount-type"><span class="sale-type">-4$</span></div>
+        <img src="https://media-cldnry.s-nbcnews.com/image/upload/t_fit-320w,f_auto,q_auto:best/rockcms/2024-12/71dZkTxmnQL-5a6ee5.jpg" class="saleBook-src" alt="Discount Book">
+      </div>
+      <div class="card-body">
+        <p class="saleBook-title">The Alchemist</p>
+        <p class="book-type">HARDCOVER</p>
+        <p class="mb-1">
+          <span class="fw-bold ">$8</span>
+          <small class="text-decoration-line-through text-danger ms-2">$10</small>
+        </p>
+        <button class="order-saleBook-btn"><a href="aboutSaleBook.html?bookSid=2"><i class="fa-solid fa-arrow-up"></i>View Book</a></button>
+      </div>
+    </div>
+  </div>
+
+
+
+  </div>
+  
+</body>
+</html>
