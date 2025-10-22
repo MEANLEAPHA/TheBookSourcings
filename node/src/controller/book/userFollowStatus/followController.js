@@ -8,7 +8,7 @@ const getFollowDetailsWithStatus = async (req, res) => {
 
     // Book info
     const [memberRows] = await db.query(
-      "SELECT  followCount FROM users WHERE followedQid = ?",
+      "SELECT followCount FROM users WHERE memberQid = ?",
       [followedQid]
     );
 
