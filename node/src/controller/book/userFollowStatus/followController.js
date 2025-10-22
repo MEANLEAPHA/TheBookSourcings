@@ -65,7 +65,7 @@ const toggleFollow = async (req, res) => {
 
     // Update uploadBook count
     await db.query(
-      "UPDATE users SET followCount = (SELECT COUNT(*) FROM user_follow_status WHERE followedQid = ? AND followed = 1) WHERE followedQid = ?",
+      "UPDATE users SET followCount = (SELECT COUNT(*) FROM user_follow_status WHERE followedQid = ? AND followed = 1) WHERE memberQid = ?",
       [followedQid, followedQid]
     );
 
