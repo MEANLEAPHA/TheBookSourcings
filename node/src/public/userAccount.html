@@ -97,7 +97,7 @@
     async function syncNotifications() {
   try {
     const res = await fetch(`${API_BASE}/follow/notifications`, {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${TOKEN}` },
     });
 
     if (!res.ok) throw new Error("Failed to sync notifications");
