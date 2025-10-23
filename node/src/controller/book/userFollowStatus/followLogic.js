@@ -355,25 +355,42 @@ const toggleFollow = async (req, res) => {
 // ===========================
 const followBackController = async (req, res) => {
   try {
-    const followerQid = req.user.memberQid; // current user
-    const { followerOfQid } = req.params;   // the person who followed me
+    // 🧠 The logged-in user is the one doing the follow-back
+    const followedQid = req.user.memberQid;
 
-    const result = await toggleFollowLogic(followerQid, followerOfQid);
+    // 🧠 The one who originally followed me
+    const { followerQid } = req.params;
 
-    if (result.is_mutual) {
+    if (!followerQid || !followedQid) {
+      return res.status(400).json({ message: "Missing follower or followed QID" });
+    }
+
+    // 🧩 Call your logic — make sure the first param = follower, second = followed
+    const result = await toggleFollowLogic(followedQid, followerQid);
+
+    // ✅ If it's now mutual, send a notification
+    if (result?.is_mutual) {
       await db.query(
         `INSERT INTO notifications (senderQid, receiverQid, type, message)
          VALUES (?, ?, 'follow', ?)`,
-        [followerQid, followerOfQid, `🎉 ${req.user.username} followed you back. You are now friends!`]
+        [
+          followedQid,
+          followerQid,
+          `🎉 ${req.user.username} followed you back. You are now friends!`
+        ]
       );
     }
 
-    res.json({ message: "Follow back completed", mutual: result.is_mutual });
+    res.json({
+      message: "Follow back completed",
+      mutual: result?.is_mutual || false,
+    });
   } catch (err) {
     console.error("Error in followBackController:", err);
     res.status(500).json({ message: err.message || "Server error" });
   }
 };
+
 
 const getFollowing = async (req, res) => {
   try {
