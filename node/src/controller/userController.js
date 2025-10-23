@@ -522,9 +522,9 @@ const getFullRegisterData = async (req,res) => {
 
 const loadUser = async (req,res) =>{
   try{
-    const {memberQid} = req.params;
+    const {userQid} = req.params;
     const [rows] = await db.query("SELECT * FROM users WHERE memberQid = ?",
-      [memberQid]
+      [userQid]
     );
     if(rows.length === 0 ){
       return res.status(404).json({

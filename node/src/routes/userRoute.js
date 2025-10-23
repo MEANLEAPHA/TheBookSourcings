@@ -38,8 +38,8 @@ const TheBookSourcingUser = (app) => {
   app.put('/updatePassword', updatePassword);
   app.post('/resendresetpin', resendResetPin);
   app.put('/changepassword', authMiddleware, changePassword);
-  
-  app.put('/userInfo', loadUser);
+
+  app.put('/userInfo/:userQid', loadUser);
 
 };
 
