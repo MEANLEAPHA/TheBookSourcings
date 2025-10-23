@@ -35,102 +35,102 @@ const getFollowDetailsWithStatus = async (req, res) => {
   }
 };
 
-const toggleFollow = async (req, res) => {
-  try {
-    const followerQid = req.user.memberQid;
-    const { followedQid } = req.params;
+// const toggleFollow = async (req, res) => {
+//   try {
+//     const followerQid = req.user.memberQid;
+//     const { followedQid } = req.params;
 
-    if (followerQid === followedQid) {
-      return res.status(400).json({ message: "You cannot follow yourself" });
-    }
+//     if (followerQid === followedQid) {
+//       return res.status(400).json({ message: "You cannot follow yourself" });
+//     }
 
-    // Check existing follow
-    const [rows] = await db.query(
-      "SELECT followed FROM user_follow_status WHERE followerQid = ? AND followedQid = ?",
-      [followerQid, followedQid]
-    );
+//     // Check existing follow
+//     const [rows] = await db.query(
+//       "SELECT followed FROM user_follow_status WHERE followerQid = ? AND followedQid = ?",
+//       [followerQid, followedQid]
+//     );
 
-    let followed;
-    if (rows.length > 0) {
-      // Toggle follow/unfollow
-      followed = rows[0].followed ? 0 : 1;
-      await db.query(
-        "UPDATE user_follow_status SET followed = ?, updated_at = NOW() WHERE followerQid = ? AND followedQid = ?",
-        [followed, followerQid, followedQid]
-      );
+//     let followed;
+//     if (rows.length > 0) {
+//       // Toggle follow/unfollow
+//       followed = rows[0].followed ? 0 : 1;
+//       await db.query(
+//         "UPDATE user_follow_status SET followed = ?, updated_at = NOW() WHERE followerQid = ? AND followedQid = ?",
+//         [followed, followerQid, followedQid]
+//       );
 
-      if (followed === 0) {
-        // Unfollow → reset is_mutual and notified for both directions
-        await db.query(
-          "UPDATE user_follow_status SET is_mutual = 0, notified = 0 WHERE (followerQid = ? AND followedQid = ?) OR (followerQid = ? AND followedQid = ?)",
-          [followerQid, followedQid, followedQid, followerQid]
-        );
-      }
-    } else {
-      // New follow
-      followed = 1;
-      await db.query(
-        "INSERT INTO user_follow_status (followerQid, followedQid, followed, notified) VALUES (?, ?, 1, 0)",
-        [followerQid, followedQid]
-      );
-    }
+//       if (followed === 0) {
+//         // Unfollow → reset is_mutual and notified for both directions
+//         await db.query(
+//           "UPDATE user_follow_status SET is_mutual = 0, notified = 0 WHERE (followerQid = ? AND followedQid = ?) OR (followerQid = ? AND followedQid = ?)",
+//           [followerQid, followedQid, followedQid, followerQid]
+//         );
+//       }
+//     } else {
+//       // New follow
+//       followed = 1;
+//       await db.query(
+//         "INSERT INTO user_follow_status (followerQid, followedQid, followed, notified) VALUES (?, ?, 1, 0)",
+//         [followerQid, followedQid]
+//       );
+//     }
 
-    // Update follower/following counts
-    await db.query(
-      "UPDATE users SET followingCount = GREATEST(followingCount + ?, 0) WHERE memberQid = ?",
-      [followed ? 1 : -1, followerQid]
-    );
-    await db.query(
-      "UPDATE users SET followerCount = GREATEST(followerCount + ?, 0) WHERE memberQid = ?",
-      [followed ? 1 : -1, followedQid]
-    );
+//     // Update follower/following counts
+//     await db.query(
+//       "UPDATE users SET followingCount = GREATEST(followingCount + ?, 0) WHERE memberQid = ?",
+//       [followed ? 1 : -1, followerQid]
+//     );
+//     await db.query(
+//       "UPDATE users SET followerCount = GREATEST(followerCount + ?, 0) WHERE memberQid = ?",
+//       [followed ? 1 : -1, followedQid]
+//     );
 
-    // Handle notification when following
-    if (followed) {
-      const [notifCheck] = await db.query(
-        "SELECT notified FROM user_follow_status WHERE followerQid = ? AND followedQid = ?",
-        [followerQid, followedQid]
-      );
-      if (notifCheck.length && notifCheck[0].notified === 0) {
-        // Send notification or mark as notified
-        await db.query(
-          "UPDATE user_follow_status SET notified = 1 WHERE followerQid = ? AND followedQid = ?",
-          [followerQid, followedQid]
-        );
-      }
+//     // Handle notification when following
+//     if (followed) {
+//       const [notifCheck] = await db.query(
+//         "SELECT notified FROM user_follow_status WHERE followerQid = ? AND followedQid = ?",
+//         [followerQid, followedQid]
+//       );
+//       if (notifCheck.length && notifCheck[0].notified === 0) {
+//         // Send notification or mark as notified
+//         await db.query(
+//           "UPDATE user_follow_status SET notified = 1 WHERE followerQid = ? AND followedQid = ?",
+//           [followerQid, followedQid]
+//         );
+//       }
 
-      // Check for mutual follow
-      const [mutualCheck] = await db.query(
-        "SELECT followed FROM user_follow_status WHERE followerQid = ? AND followedQid = ? AND followed = 1",
-        [followedQid, followerQid]
-      );
+//       // Check for mutual follow
+//       const [mutualCheck] = await db.query(
+//         "SELECT followed FROM user_follow_status WHERE followerQid = ? AND followedQid = ? AND followed = 1",
+//         [followedQid, followerQid]
+//       );
 
-      if (mutualCheck.length > 0) {
-        // Mutual follow → set is_mutual for both
-        await db.query(
-          `UPDATE user_follow_status 
-           SET is_mutual = 1 
-           WHERE (followerQid = ? AND followedQid = ?) 
-              OR (followerQid = ? AND followedQid = ?)`,
-          [followerQid, followedQid, followedQid, followerQid]
-        );
-      }
-    }
+//       if (mutualCheck.length > 0) {
+//         // Mutual follow → set is_mutual for both
+//         await db.query(
+//           `UPDATE user_follow_status 
+//            SET is_mutual = 1 
+//            WHERE (followerQid = ? AND followedQid = ?) 
+//               OR (followerQid = ? AND followedQid = ?)`,
+//           [followerQid, followedQid, followedQid, followerQid]
+//         );
+//       }
+//     }
 
-    // ✅ Get current is_mutual after all updates
-    const [statusRows] = await db.query(
-      "SELECT is_mutual FROM user_follow_status WHERE followerQid = ? AND followedQid = ?",
-      [followerQid, followedQid]
-    );
-    const is_mutual = statusRows.length > 0 ? statusRows[0].is_mutual : 0;
+//     // ✅ Get current is_mutual after all updates
+//     const [statusRows] = await db.query(
+//       "SELECT is_mutual FROM user_follow_status WHERE followerQid = ? AND followedQid = ?",
+//       [followerQid, followedQid]
+//     );
+//     const is_mutual = statusRows.length > 0 ? statusRows[0].is_mutual : 0;
 
-    res.json({ followed, is_mutual, message: followed ? "Followed" : "Unfollowed" });
+//     res.json({ followed, is_mutual, message: followed ? "Followed" : "Unfollowed" });
 
-  } catch (err) {
-    console.error("Error in toggleFollow:", err);
-    res.status(500).json({ message: "Server error" });
-  }
-};
+//   } catch (err) {
+//     console.error("Error in toggleFollow:", err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
 
 
 // const toggleFollow = async (req, res) => {
@@ -234,39 +234,146 @@ const toggleFollow = async (req, res) => {
 
 // 3️⃣ Follow Back Controller
 
+// const followBackController = async (req, res) => {
+//   try {
+//     const followerQid = req.user.memberQid;       // B - current user
+//     const { followerOfQid } = req.params;         // A - the follower
+
+//     // Set params to call toggleFollow
+//     req.params.followedQid = followerOfQid;
+//     const toggleResult = await toggleFollow(req, res); // returns { followed, is_mutual }
+
+//     // If mutual follow happened, create notifications
+//     if (toggleResult.is_mutual) {
+//       // Notify followerOfQid (A)
+//       await db.query(
+//         `INSERT INTO notifications (senderQid, receiverQid, type, message)
+//          VALUES (?, ?, 'follow', ?)`,
+//         [followerQid, followerOfQid, `🎉 ${req.user.username} followed you back. You are now friends!`]
+//       );
+
+//       // Optionally, notify current user (B)
+//       await db.query(
+//         `INSERT INTO notifications (senderQid, receiverQid, type, message)
+//          VALUES (?, ?, 'follow', ?)`,
+//         [followerOfQid, followerQid, `🎉 You and ${req.user.username} are now friends!`]
+//       );
+//     }
+
+//     res.json({ message: "Follow back completed", mutual: toggleResult.is_mutual });
+//   } catch (err) {
+//     console.error("Error in followBackController:", err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
+
+// ===========================
+// ✅ Helper (no res.json here)
+// ===========================
+const toggleFollowLogic = async (followerQid, followedQid) => {
+  if (followerQid === followedQid) {
+    throw new Error("You cannot follow yourself");
+  }
+
+  // Check existing follow
+  const [rows] = await db.query(
+    "SELECT followed FROM user_follow_status WHERE followerQid = ? AND followedQid = ?",
+    [followerQid, followedQid]
+  );
+
+  let followed;
+  if (rows.length > 0) {
+    followed = rows[0].followed ? 0 : 1;
+    await db.query(
+      "UPDATE user_follow_status SET followed = ?, updated_at = NOW() WHERE followerQid = ? AND followedQid = ?",
+      [followed, followerQid, followedQid]
+    );
+
+    if (followed === 0) {
+      await db.query(
+        "UPDATE user_follow_status SET is_mutual = 0, notified = 0 WHERE (followerQid = ? AND followedQid = ?) OR (followerQid = ? AND followedQid = ?)",
+        [followerQid, followedQid, followedQid, followerQid]
+      );
+    }
+  } else {
+    followed = 1;
+    await db.query(
+      "INSERT INTO user_follow_status (followerQid, followedQid, followed, notified) VALUES (?, ?, 1, 0)",
+      [followerQid, followedQid]
+    );
+  }
+
+  // Update counts
+  await db.query(
+    "UPDATE users SET followingCount = GREATEST(followingCount + ?, 0) WHERE memberQid = ?",
+    [followed ? 1 : -1, followerQid]
+  );
+  await db.query(
+    "UPDATE users SET followerCount = GREATEST(followerCount + ?, 0) WHERE memberQid = ?",
+    [followed ? 1 : -1, followedQid]
+  );
+
+  let is_mutual = 0;
+  if (followed) {
+    const [mutualCheck] = await db.query(
+      "SELECT followed FROM user_follow_status WHERE followerQid = ? AND followedQid = ? AND followed = 1",
+      [followedQid, followerQid]
+    );
+
+    if (mutualCheck.length > 0) {
+      await db.query(
+        `UPDATE user_follow_status 
+         SET is_mutual = 1 
+         WHERE (followerQid = ? AND followedQid = ?) 
+            OR (followerQid = ? AND followedQid = ?)`,
+        [followerQid, followedQid, followedQid, followerQid]
+      );
+      is_mutual = 1;
+    }
+  }
+
+  return { followed, is_mutual };
+};
+
+// ===========================
+// 🚀 toggleFollow Controller
+// ===========================
+const toggleFollow = async (req, res) => {
+  try {
+    const followerQid = req.user.memberQid;
+    const { followedQid } = req.params;
+    const result = await toggleFollowLogic(followerQid, followedQid);
+    res.json({ ...result, message: result.followed ? "Followed" : "Unfollowed" });
+  } catch (err) {
+    console.error("Error in toggleFollow:", err);
+    res.status(500).json({ message: err.message || "Server error" });
+  }
+};
+
+// ===========================
+// 🚀 followBackController
+// ===========================
 const followBackController = async (req, res) => {
   try {
-    const followerQid = req.user.memberQid;       // B - current user
-    const { followerOfQid } = req.params;         // A - the follower
+    const followerQid = req.user.memberQid; // current user
+    const { followerOfQid } = req.params;   // the person who followed me
 
-    // Set params to call toggleFollow
-    req.params.followedQid = followerOfQid;
-    const toggleResult = await toggleFollow(req, res); // returns { followed, is_mutual }
+    const result = await toggleFollowLogic(followerQid, followerOfQid);
 
-    // If mutual follow happened, create notifications
-    if (toggleResult.is_mutual) {
-      // Notify followerOfQid (A)
+    if (result.is_mutual) {
       await db.query(
         `INSERT INTO notifications (senderQid, receiverQid, type, message)
          VALUES (?, ?, 'follow', ?)`,
         [followerQid, followerOfQid, `🎉 ${req.user.username} followed you back. You are now friends!`]
       );
-
-      // Optionally, notify current user (B)
-      await db.query(
-        `INSERT INTO notifications (senderQid, receiverQid, type, message)
-         VALUES (?, ?, 'follow', ?)`,
-        [followerOfQid, followerQid, `🎉 You and ${req.user.username} are now friends!`]
-      );
     }
 
-    res.json({ message: "Follow back completed", mutual: toggleResult.is_mutual });
+    res.json({ message: "Follow back completed", mutual: result.is_mutual });
   } catch (err) {
     console.error("Error in followBackController:", err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: err.message || "Server error" });
   }
 };
-
 
 const getFollowing = async (req, res) => {
   try {
