@@ -114,9 +114,11 @@
   }
 }
 
+loadUserInfo();
+
     // ===== Initialization =====
     document.addEventListener("DOMContentLoaded", async () => {
-      await loadUserInfo();
+    //   await loadUserInfo();
       await loadChannelInfo(userQid);
       await syncNotifications();
 
