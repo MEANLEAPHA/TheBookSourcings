@@ -78,21 +78,41 @@
     }
 
     // ===== Background notification sync =====
-    async function syncNotifications() {
-      try {
-        const res = await fetch(`${API_BASE}/follow/notifications`, { headers });
-        if (!res.ok) throw new Error("Failed to fetch notifications");
-        const data = await res.json();
+    // async function syncNotifications() {
+    //   try {
+    //     const res = await fetch(`${API_BASE}/follow/notifications`, { headers });
+    //     if (!res.ok) throw new Error("Failed to fetch notifications");
+    //     const data = await res.json();
 
-        for (const noti of data.notifications) {
-          if (noti.is_mutual) {
-            console.log(`🎉 You and ${noti.senderName} are now friends.`);
-          }
-        }
-      } catch (err) {
-        console.error("Notification sync error:", err);
-      }
+    //     for (const noti of data.notifications) {
+    //       if (noti.is_mutual) {
+    //         console.log(`🎉 You and ${noti.senderName} are now friends.`);
+    //       }
+    //     }
+    //   } catch (err) {
+    //     console.error("Notification sync error:", err);
+    //   }
+    // }
+
+    async function syncNotifications() {
+  try {
+    const res = await fetch(`${API_BASE}/follow/notifications`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (!res.ok) throw new Error("Failed to sync notifications");
+
+    const data = await res.json();
+
+    // This silently confirms notifications (no display)
+    if (data.pendingFollowBacks?.length > 0) {
+      console.log(`Synced ${data.pendingFollowBacks.length} follow notifications`);
     }
+
+  } catch (err) {
+    console.error("Notification sync error:", err);
+  }
+}
 
     // ===== Initialization =====
     document.addEventListener("DOMContentLoaded", async () => {

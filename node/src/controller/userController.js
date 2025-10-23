@@ -523,7 +523,7 @@ const getFullRegisterData = async (req,res) => {
 const loadUser = async (req,res) =>{
   try{
     const {memberQid} = req.params;
-    const [rows] = await db.query("SELECT * FROM USER WHERE memberQid = ?",
+    const [rows] = await db.query("SELECT * FROM users WHERE memberQid = ?",
       [memberQid]
     );
     if(rows.length === 0 ){
