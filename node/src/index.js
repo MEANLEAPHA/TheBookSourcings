@@ -79,7 +79,7 @@ app.use('/api/books/view', viewRoute);
 app.use('/api/books', RDSroute);
 app.use('/api/LAFbook', LAF);
 // app.use('/api', followRoute); old follow route
-app.user('/api', followLogicRoute);
+app.use('/api', followLogicRoute);
 app.use("/api/community", communityRoutes);
 // community comment post 
 app.use("/api/communityComment", communityCommentRoute);
