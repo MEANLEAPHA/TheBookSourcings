@@ -35,7 +35,7 @@
         const user = await res.json();
         username.textContent = user.username;
         nickname.textContent = user.nickname;
-        followCount.textContent = user.followCount;
+        followCount.textContent = user.followerCount;
         followingCount.textContent = user.followingCount;
       } catch (err) {
         console.error("Failed to fetch user info:", err);
@@ -49,7 +49,7 @@
         if (!res.ok) throw new Error("Failed to fetch follow status");
         const data = await res.json();
 
-        followCount.textContent = data.member.followCount;
+        followCount.textContent = data.member.followerCount;
         followSpan.textContent = data.userStatus.followed ? "Unfollow" : "Follow";
       } catch (err) {
         console.error("Follow status error:", err);

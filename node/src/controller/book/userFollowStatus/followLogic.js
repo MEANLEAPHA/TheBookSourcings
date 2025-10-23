@@ -9,7 +9,7 @@ const getFollowDetailsWithStatus = async (req, res) => {
     const followerQid = req.user.memberQid;
 
     const [memberRows] = await db.query(
-      "SELECT followCount, followingCount, followerCount FROM users WHERE memberQid = ?",
+      "SELECT followingCount, followerCount FROM users WHERE memberQid = ?",
       [followedQid]
     );
 
