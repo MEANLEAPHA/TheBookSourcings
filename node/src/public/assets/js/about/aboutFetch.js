@@ -58,7 +58,7 @@ async function loadChannelInfo(followedQid) {
 
     const data = await res.json();
 
-    followCount.textContent = data.member.followCount;
+    followCount.textContent = data.member.followerCount;
     followIcon.style.color = data.userStatus.followed ? "gold" : "black";
   } catch (err) {
     console.error(err);
