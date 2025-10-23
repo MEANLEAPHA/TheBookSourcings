@@ -39,7 +39,9 @@ const displayUserUploadBookRoute = require('./routes/book/displayUserBook/displa
 const viewRoute = require('./routes/book/bookActivity/viewRoute');
 const RDSroute = require('./routes/book/bookActivity/RDSroute');
 const LAF = require('./routes/book/userBookStatus/LAFroutes');
-const followRoute = require('./routes/book/userFollowStatus/followRoute');
+// const followRoute = require('./routes/book/userFollowStatus/followRoute'); old
+
+const followLogicRoute = require('./routes/book/userFollowStatus/followLogicRoute');
 const communityRoutes = require('./routes/chat/community/communityRoutes');
 // community comment post
 const communityCommentRoute = require('./routes/chat/community/commentViewRoutes');
@@ -76,7 +78,8 @@ app.use('/api/books', displayUserUploadBookRoute);
 app.use('/api/books/view', viewRoute);
 app.use('/api/books', RDSroute);
 app.use('/api/LAFbook', LAF);
-app.use('/api', followRoute);
+// app.use('/api', followRoute); old follow route
+app.user('/api', followLogicRoute);
 app.use("/api/community", communityRoutes);
 // community comment post 
 app.use("/api/communityComment", communityCommentRoute);

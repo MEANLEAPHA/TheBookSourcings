@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Account</title>
+</head>
+<body>
+
+  <h6>Username: <span id="username"></span></h6>
+  <h6>Nickname: <span id="nickname"></span></h6>
+  <p>Follower: <span id="followCount"></span> | Following: <span id="followingCount"></span></p>
+
+  <button id="followBtn"><span id="followSpan">Follow</span></button>
+
+  <script>
+    const API_BASE = "https://thebooksourcings.onrender.com/api";
+    const TOKEN = localStorage.getItem("token");
+    const headers = { "Authorization": `Bearer ${TOKEN}`, "Content-Type": "application/json" };
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const userQid = urlParams.get("memberQid");
+
+    const followBtn = document.getElementById('followBtn');
+    const followSpan = document.getElementById('followSpan');
+    const username = document.getElementById('username');
+    const nickname = document.getElementById('nickname');
+    const followCount = document.getElementById('followCount');
+    const followingCount = document.getElementById('followingCount');
+
+    // ===== Load user info =====
+    async function loadUserInfo() {
+      try {
+        const res = await fetch(`https://thebooksourcings.onrender.com/userInfo/${userQid}`);
+        const user = await res.json();
+        username.textContent = user.username;
+        nickname.textContent = user.nickname;
+        followCount.textContent = user.followCount;
+        followingCount.textContent = user.followingCount;
+      } catch (err) {
+        console.error("Failed to fetch user info:", err);
+      }
+    }
+
+    // ===== Load follow status =====
+    async function loadChannelInfo(followedQid) {
+      try {
+        const res = await fetch(`${API_BASE}/followStatus/${followedQid}`, { headers });
+        if (!res.ok) throw new Error("Failed to fetch follow status");
+        const data = await res.json();
+
+        followCount.textContent = data.member.followCount;
+        followSpan.textContent = data.userStatus.followed ? "Unfollow" : "Follow";
+      } catch (err) {
+        console.error("Follow status error:", err);
+      }
+    }
+
+    // ===== Toggle follow =====
+    async function toggleFollowActivity(followedQid) {
+      try {
+        const res = await fetch(`${API_BASE}/channel/follow/${followedQid}`, {
+          method: "POST",
+          headers
+        });
+        if (!res.ok) throw new Error("Failed to toggle follow");
+
+        const data = await res.json();
+        followSpan.textContent = data.followed ? "Unfollow" : "Follow";
+
+        // Background notification sync (silent)
+        await syncNotifications();
+        await loadChannelInfo(followedQid);
+
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // ===== Background notification sync =====
+    async function syncNotifications() {
+      try {
+        const res = await fetch(`${API_BASE}/follow/notifications`, { headers });
+        if (!res.ok) throw new Error("Failed to fetch notifications");
+        const data = await res.json();
+
+        for (const noti of data.notifications) {
+          if (noti.is_mutual) {
+            console.log(`🎉 You and ${noti.senderName} are now friends.`);
+          }
+        }
+      } catch (err) {
+        console.error("Notification sync error:", err);
+      }
+    }
+
+    // ===== Initialization =====
+    document.addEventListener("DOMContentLoaded", async () => {
+      await loadUserInfo();
+      await loadChannelInfo(userQid);
+      await syncNotifications();
+
+      followBtn.addEventListener("click", () => toggleFollowActivity(userQid));
+
+      // Optional: re-sync noti every 20s
+      setInterval(syncNotifications, 20000);
+    });
+  </script>
+</body>
+</html>

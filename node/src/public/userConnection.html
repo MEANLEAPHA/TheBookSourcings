@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Connection</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f6f8fc;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      margin-top: 30px;
+      font-size: 20px;
+      border-bottom: 2px solid #648dff;
+      padding-bottom: 8px;
+    }
+
+    .user-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f1f4ff;
+      border-radius: 10px;
+      padding: 10px 15px;
+      margin-top: 10px;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .username {
+      font-weight: 600;
+    }
+
+    .nickname {
+      font-size: 13px;
+      color: #555;
+    }
+
+    .follow-btn {
+      background: #648dff;
+      color: white;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .follow-btn:hover {
+      background: #4a6bdb;
+    }
+
+    .unfollow-btn {
+      background: #ff6363;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Followers</h2>
+    <div id="followersList" class="user-list"></div>
+
+    <h2>Following</h2>
+    <div id="followingList" class="user-list"></div>
+  </div>
+
+  <script>
+    const API_BASE = "https://thebooksourcings.onrender.com/api";
+    const TOKEN = localStorage.getItem("token");
+    const headers = {
+      "Authorization": `Bearer ${TOKEN}`,
+      "Content-Type": "application/json"
+    };
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      await syncNotifications(); // background sync only
+      await loadFollowers();
+      await loadFollowing();
+    });
+
+    // ✅ Background Notification Sync (no UI)
+    async function syncNotifications() {
+      try {
+        const res = await fetch(`${API_BASE}/follow/notifications`, { headers });
+        if (!res.ok) throw new Error("Failed to fetch notifications");
+        const data = await res.json();
+
+        // Background auto-updates: if mutual friendship is detected
+        for (const noti of data.notifications) {
+          if (noti.is_mutual) {
+            console.log(`✅ You and ${noti.senderName} are now friends.`);
+          }
+        }
+      } catch (err) {
+        console.error("Notification sync error:", err);
+      }
+    }
+
+    // ✅ Load Followers
+    async function loadFollowers() {
+      try {
+        const res = await fetch(`${API_BASE}/followers`, { headers });
+        if (!res.ok) throw new Error("Failed to fetch followers");
+        const data = await res.json();
+
+        const container = document.getElementById("followersList");
+        container.innerHTML = "";
+
+        data.followers.forEach(user => {
+          const card = createUserCard(user, true);
+          container.appendChild(card);
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // ✅ Load Following
+    async function loadFollowing() {
+      try {
+        const res = await fetch(`${API_BASE}/following`, { headers });
+        if (!res.ok) throw new Error("Failed to fetch following");
+        const data = await res.json();
+
+        const container = document.getElementById("followingList");
+        container.innerHTML = "";
+
+        data.following.forEach(user => {
+          const card = createUserCard(user, false);
+          container.appendChild(card);
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // ✅ Follow Back
+    async function followBack(followerQid) {
+      try {
+        const res = await fetch(`${API_BASE}/followBack/${followerQid}`, {
+          method: "POST",
+          headers
+        });
+        if (!res.ok) throw new Error("Failed to follow back");
+        await syncNotifications(); // silent refresh
+        await loadFollowers();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // ✅ Unfollow
+    async function unfollowUser(followedQid) {
+      try {
+        const res = await fetch(`${API_BASE}/channel/follow/${followedQid}`, {
+          method: "POST",
+          headers
+        });
+        if (!res.ok) throw new Error("Failed to unfollow");
+        await loadFollowing();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // ✅ Create User Card
+    function createUserCard(user, isFollower) {
+      const div = document.createElement("div");
+      div.className = "user-card";
+
+      const infoDiv = document.createElement("div");
+      infoDiv.className = "user-info";
+
+      const username = document.createElement("span");
+      username.className = "username";
+      username.textContent = user.username;
+
+      const nickname = document.createElement("span");
+      nickname.className = "nickname";
+      nickname.textContent = user.nickname;
+
+      infoDiv.appendChild(username);
+      infoDiv.appendChild(nickname);
+
+      const btn = document.createElement("button");
+      btn.className = "follow-btn";
+      if (isFollower) {
+        btn.textContent = user.is_mutual ? "Friend" : "Follow Back";
+        if (!user.is_mutual) btn.onclick = () => followBack(user.memberQid);
+      } else {
+        btn.textContent = "Unfollow";
+        btn.classList.add("unfollow-btn");
+        btn.onclick = () => unfollowUser(user.memberQid);
+      }
+
+      div.appendChild(infoDiv);
+      div.appendChild(btn);
+      return div;
+    }
+  </script>
+</body>
+</html>

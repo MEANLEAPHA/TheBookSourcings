@@ -514,10 +514,32 @@ const getFullRegisterData = async (req,res) => {
     // ✅ send data back
     return res.status(200).json(rows[0]);
     }
-    catch(errror){
+    catch(error){
       console.error("Error in fullRegisterController:", error);
       return res.status(500).json({ message: "failed to sumbit the full register" });
     }
+}
+
+const loadUser = async (req,res) =>{
+  try{
+    const {memberQid} = req.params;
+    const [rows] = await db.query("SELECT * FROM USER WHERE memberQid = ?",
+      [memberQid]
+    );
+    if(rows.length === 0 ){
+      return res.status(404).json({
+        message: 'no information found on this user! sorry'
+      });
+    }
+    const user = rows[0];
+    res.json({
+      user
+    })
+  }
+  catch(error){
+    console.error("Error in LoadUser:", error);
+    return res.status(500).json({ message: "failed to load user data on backend" });
+  }
 }
 
 module.exports ={
@@ -533,5 +555,6 @@ module.exports ={
     resendPin,
     verifyResetPin,
     fullRegister,
-    getFullRegisterData 
+    getFullRegisterData,
+    loadUser
 }
