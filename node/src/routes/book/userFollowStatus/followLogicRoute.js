@@ -5,7 +5,9 @@ const {
   getFollowDetailsWithStatus,
   toggleFollow,
   followBackController,
-  getFollowNotifications
+  getFollowNotifications,
+  getFollowers,
+  getFollowing
 } = require("../../../controller/book/userFollowStatus/followLogic");
 
 // =====================
@@ -31,5 +33,8 @@ router.post("/followBack/:followerQid", authMiddleware, followBackController);
 
 // Get follow notifications for current user
 router.get("/follow/notifications", authMiddleware, getFollowNotifications);
+
+router.get("/followers", authMiddleware, getFollowers);
+router.get("/following", authMiddleware, getFollowing);
 
 module.exports = router;
