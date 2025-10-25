@@ -153,7 +153,6 @@
       transition: 0.2s;
     }
     #followBtn:hover { background: #4a6bdb; }
-    #followBtn.hidden { display: none; }
   </style>
 </head>
 <body>
@@ -161,7 +160,7 @@
   <h6>Username: <span id="username"></span></h6>
   <h6>Nickname: <span id="nickname"></span></h6>
   <p>Follower: <span id="followCount"></span> | Following: <span id="followingCount"></span></p>
-  <button id="followBtn" class="hidden"><span id="followSpan">Follow</span></button>
+  <button id="followBtn"><span id="followSpan">Follow</span></button>
 
   <script>
     const API_BASE = "https://thebooksourcings.onrender.com/api";
@@ -169,32 +168,18 @@
     const headers = { "Authorization": `Bearer ${TOKEN}`, "Content-Type": "application/json" };
 
     const urlParams = new URLSearchParams(window.location.search);
-    const viewedQid = urlParams.get("memberQid"); // the account being viewed
+    const viewedQid = urlParams.get("memberQid"); // user being viewed
 
-    const followBtn = document.getElementById('followBtn');
-    const followSpan = document.getElementById('followSpan');
-    const username = document.getElementById('username');
-    const nickname = document.getElementById('nickname');
-    const followCount = document.getElementById('followCount');
-    const followingCount = document.getElementById('followingCount');
+    const username = document.getElementById("username");
+    const nickname = document.getElementById("nickname");
+    const followCount = document.getElementById("followCount");
+    const followingCount = document.getElementById("followingCount");
+    const followBtn = document.getElementById("followBtn");
+    const followSpan = document.getElementById("followSpan");
 
-    let currentUserQid = null;
-    let currentStatus = null;
-    let theyFollowYou = false; // new flag
+    let currentStatus = null; // hold current follow data
 
-    // ===== Get logged-in user info =====
-    async function getCurrentUser() {
-      try {
-        const res = await fetch(`${API_BASE}/me`, { headers });
-        if (!res.ok) throw new Error("Unauthorized");
-        const data = await res.json();
-        currentUserQid = data.memberQid;
-      } catch (err) {
-        console.error("Failed to get current user:", err);
-      }
-    }
-
-    // ===== Load viewed user info =====
+    // ========== Load viewed user's info ==========
     async function loadUserInfo() {
       try {
         const res = await fetch(`https://thebooksourcings.onrender.com/userInfo/${viewedQid}`);
@@ -209,67 +194,65 @@
       }
     }
 
-    // ===== Load follow status =====
+    // ========== Load follow status ==========
     async function loadFollowStatus() {
       try {
-        // check if I follow them
         const res = await fetch(`${API_BASE}/followStatus/${viewedQid}`, { headers });
         if (!res.ok) throw new Error("Failed to fetch follow status");
         const data = await res.json();
         currentStatus = data.userStatus;
 
-        // check if they follow me
-        const reverseRes = await fetch(`${API_BASE}/followStatus/${currentUserQid}?asViewer=${viewedQid}`, {
-          headers: { "Authorization": `Bearer ${TOKEN}` }
-        });
-        if (reverseRes.ok) {
-          const reverseData = await reverseRes.json();
-          theyFollowYou = reverseData.userStatus.followed === 1;
-        }
+        const { followed, is_mutual } = currentStatus;
 
-        updateFollowButton();
+        if (is_mutual === 1) {
+          followSpan.textContent = "Friends ✅";
+          followBtn.disabled = true;
+        } else if (followed === 1) {
+          followSpan.textContent = "Unfollow";
+          followBtn.disabled = false;
+        } else {
+          // check if they follow you (for Follow Back case)
+          const theyFollowYou = await checkIfTheyFollowYou(viewedQid);
+          followSpan.textContent = theyFollowYou ? "Follow Back" : "Follow";
+          followBtn.disabled = false;
+        }
       } catch (err) {
         console.error("Follow status error:", err);
       }
     }
 
-    // ===== Update follow button display =====
-    function updateFollowButton() {
-      if (currentUserQid === viewedQid) {
-        followBtn.classList.add("hidden");
-        return;
-      }
-
-      followBtn.classList.remove("hidden");
-
-      if (currentStatus.is_mutual === 1) {
-        followSpan.textContent = "Friends ✅";
-        followBtn.disabled = true;
-      } else if (currentStatus.followed === 1) {
-        followSpan.textContent = "Unfollow";
-        followBtn.disabled = false;
-      } else if (theyFollowYou) {
-        followSpan.textContent = "Follow Back";
-        followBtn.disabled = false;
-      } else {
-        followSpan.textContent = "Follow";
-        followBtn.disabled = false;
+    // ========== Check if they follow you ==========
+    async function checkIfTheyFollowYou(targetQid) {
+      try {
+        const res = await fetch(`${API_BASE}/followStatus/${targetQid}`, { headers });
+        if (!res.ok) return false;
+        const data = await res.json();
+        // if the target user follows me (reverse check)
+        return data.userStatus?.followed === 1;
+      } catch (err) {
+        console.error("Check follow-back failed:", err);
+        return false;
       }
     }
 
-    // ===== Toggle follow/unfollow =====
+    // ========== Toggle follow / unfollow / follow-back ==========
     async function toggleFollow() {
       try {
+        const { followed, is_mutual } = currentStatus;
+
+        // If not followed but they follow me → follow back
+        const theyFollowYou = await checkIfTheyFollowYou(viewedQid);
         const endpoint =
-          theyFollowYou && currentStatus.followed === 0
+          (!followed && theyFollowYou)
             ? `${API_BASE}/followBack/${viewedQid}`
             : `${API_BASE}/channel/follow/${viewedQid}`;
 
         const res = await fetch(endpoint, { method: "POST", headers });
         if (!res.ok) throw new Error("Failed to toggle follow");
         const data = await res.json();
-        console.log("Follow action:", data);
+        console.log("Toggle result:", data);
 
+        // reload to refresh text + count
         await loadUserInfo();
         await loadFollowStatus();
       } catch (err) {
@@ -277,9 +260,8 @@
       }
     }
 
-    // ===== Initialization =====
+    // ========== Initialization ==========
     document.addEventListener("DOMContentLoaded", async () => {
-      await getCurrentUser();
       await loadUserInfo();
       await loadFollowStatus();
       followBtn.addEventListener("click", toggleFollow);
