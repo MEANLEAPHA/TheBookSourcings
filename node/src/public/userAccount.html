@@ -136,12 +136,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>User Account</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f6f8fc;
-      margin: 0;
-      padding: 20px;
-    }
+    body { font-family: Arial, sans-serif; background: #f6f8fc; margin: 0; padding: 20px; }
     h6, p { margin: 8px 0; }
     #followBtn {
       background: #648dff;
@@ -168,7 +163,7 @@
     const headers = { "Authorization": `Bearer ${TOKEN}`, "Content-Type": "application/json" };
 
     const urlParams = new URLSearchParams(window.location.search);
-    const viewedQid = urlParams.get("memberQid"); // user being viewed
+    const viewedQid = urlParams.get("memberQid");
 
     const username = document.getElementById("username");
     const nickname = document.getElementById("nickname");
@@ -177,12 +172,12 @@
     const followBtn = document.getElementById("followBtn");
     const followSpan = document.getElementById("followSpan");
 
-    let currentStatus = null; // hold current follow data
+    let currentStatus = null;
 
-    // ========== Load viewed user's info ==========
+    // Load user info
     async function loadUserInfo() {
       try {
-        const res = await fetch(`https://thebooksourcings.onrender.com/userInfo/${viewedQid}`);
+        const res = await fetch(`${API_BASE}/userInfo/${viewedQid}`);
         if (!res.ok) throw new Error("User not found");
         const { user } = await res.json();
         username.textContent = user.username;
@@ -194,7 +189,7 @@
       }
     }
 
-    // ========== Load follow status ==========
+    // Load follow status
     async function loadFollowStatus() {
       try {
         const res = await fetch(`${API_BASE}/followStatus/${viewedQid}`, { headers });
@@ -205,15 +200,12 @@
         const { followed, is_mutual } = currentStatus;
 
         if (is_mutual === 1) {
-          // Already friends
           followSpan.textContent = "Friends ✅";
           followBtn.disabled = true;
         } else if (followed === 1 && is_mutual === 0) {
-          // B follows A → show Follow Back
           followSpan.textContent = "Follow Back";
           followBtn.disabled = false;
         } else {
-          // B does not follow A → show Follow
           followSpan.textContent = "Follow";
           followBtn.disabled = false;
         }
@@ -222,30 +214,24 @@
       }
     }
 
-    // ========== Toggle follow / follow-back ==========
+    // Toggle follow / follow-back
     async function toggleFollow() {
       try {
         const { followed, is_mutual } = currentStatus;
 
         let endpoint = "";
-
         if (followed === 1 && is_mutual === 0) {
-          // Follow back
+          // Follow Back
           endpoint = `${API_BASE}/followBack/${viewedQid}`;
         } else if (followed === 0 && is_mutual === 0) {
-          // Follow normally
+          // Normal follow
           endpoint = `${API_BASE}/channel/follow/${viewedQid}`;
         } else {
-          // Should not happen
           return;
         }
 
         const res = await fetch(endpoint, { method: "POST", headers });
         if (!res.ok) throw new Error("Failed to follow");
-        const data = await res.json();
-        console.log("Follow result:", data);
-
-        // Reload to update UI
         await loadUserInfo();
         await loadFollowStatus();
       } catch (err) {
@@ -253,7 +239,6 @@
       }
     }
 
-    // ========== Initialization ==========
     document.addEventListener("DOMContentLoaded", async () => {
       await loadUserInfo();
       await loadFollowStatus();
