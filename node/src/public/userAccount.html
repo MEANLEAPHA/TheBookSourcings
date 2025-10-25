@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,17 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>User Account</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f6f8fc;
-      margin: 0;
-      padding: 20px;
+    body { 
+      font-family: Arial, sans-serif; 
+      background: #f6f8fc; 
+      margin: 0; 
+      padding: 20px; 
     }
-
-    h6, p {
-      margin: 8px 0;
-    }
-
+    h6, p { margin: 8px 0; }
     #followBtn {
       background: #648dff;
       color: white;
@@ -27,10 +21,8 @@
       cursor: pointer;
       transition: 0.2s;
     }
-
-    #followBtn:hover {
-      background: #4a6bdb;
-    }
+    #followBtn:hover:not(:disabled) { background: #4a6bdb; }
+    #followBtn:disabled { opacity: 0.7; cursor: default; }
   </style>
 </head>
 <body>
@@ -40,25 +32,30 @@
   <p>Follower: <span id="followCount"></span> | Following: <span id="followingCount"></span></p>
   <button id="followBtn"><span id="followSpan">Follow</span></button>
 
-<!--  <script>
+  <script>
     const API_BASE = "https://thebooksourcings.onrender.com/api";
     const TOKEN = localStorage.getItem("token");
-    const headers = { "Authorization": `Bearer ${TOKEN}`, "Content-Type": "application/json" };
+    const headers = { 
+      "Authorization": `Bearer ${TOKEN}`, 
+      "Content-Type": "application/json" 
+    };
 
     const urlParams = new URLSearchParams(window.location.search);
-    const userQid = urlParams.get("memberQid");
+    const viewedQid = urlParams.get("memberQid");
 
-    const followBtn = document.getElementById('followBtn');
-    const followSpan = document.getElementById('followSpan');
-    const username = document.getElementById('username');
-    const nickname = document.getElementById('nickname');
-    const followCount = document.getElementById('followCount');
-    const followingCount = document.getElementById('followingCount');
+    const username = document.getElementById("username");
+    const nickname = document.getElementById("nickname");
+    const followCount = document.getElementById("followCount");
+    const followingCount = document.getElementById("followingCount");
+    const followBtn = document.getElementById("followBtn");
+    const followSpan = document.getElementById("followSpan");
 
-    // ===== Load user info =====
+    let currentStatus = null;
+
+    // Load viewed user's info
     async function loadUserInfo() {
       try {
-        const res = await fetch(`https://thebooksourcings.onrender.com/userInfo/${userQid}`);
+        const res = await fetch(`https://thebooksourcings.onrender.com/userInfo/${viewedQid}`);
         if (!res.ok) throw new Error("User not found");
         const { user } = await res.json();
         username.textContent = user.username;
@@ -70,168 +67,60 @@
       }
     }
 
-    // ===== Load follow status =====
-    async function loadChannelInfo(followedQid) {
+    // Load follow status (relationship between logged user and viewed user)
+    async function loadFollowStatus() {
       try {
-        const res = await fetch(`${API_BASE}/followStatus/${followedQid}`, { headers });
+        const res = await fetch(`${API_BASE}/followStatus/${viewedQid}`, { headers });
         if (!res.ok) throw new Error("Failed to fetch follow status");
         const data = await res.json();
-        followSpan.textContent = data.userStatus.followed ? "Unfollow" : "Follow";
-        followCount.textContent = data.member.followerCount;
+        currentStatus = data.userStatus;
+
+        const { followed, is_mutual } = currentStatus;
+
+        if (followed === 1) {
+          // I already follow them
+          followSpan.textContent = is_mutual === 1 ? "Friends ✅" : "Following";
+          followBtn.disabled = true;
+        } else {
+          // I don't follow them
+          followSpan.textContent = "Follow";
+          followBtn.disabled = false;
+        }
       } catch (err) {
         console.error("Follow status error:", err);
       }
     }
 
-    // ===== Toggle follow/unfollow =====
-    async function toggleFollowActivity(followedQid) {
+    // Handle follow button click
+    async function toggleFollow() {
       try {
-        const res = await fetch(`${API_BASE}/channel/follow/${followedQid}`, {
+        const { followed } = currentStatus;
+
+        if (followed === 1) return; // already following, no unfollow
+
+        followSpan.textContent = "Following";
+        followBtn.disabled = true;
+
+        const res = await fetch(`${API_BASE}/channel/follow/${viewedQid}`, {
           method: "POST",
           headers
         });
-        if (!res.ok) throw new Error("Failed to toggle follow");
-        const data = await res.json();
-        followSpan.textContent = data.followed ? "Unfollow" : "Follow";
 
-        // Background notification sync (silent)
-        await syncNotifications();
-        await loadChannelInfo(followedQid);
+        if (!res.ok) throw new Error("Failed to follow");
+
+        await loadUserInfo();
+        await loadFollowStatus();
+
       } catch (err) {
-        console.error(err);
+        console.error("Follow action error:", err);
       }
     }
 
-    // ===== Silent notification sync =====
-    async function syncNotifications() {
-      try {
-        const res = await fetch(`${API_BASE}/follow/notifications`, { headers });
-        if (!res.ok) throw new Error("Failed to sync notifications");
-        const data = await res.json();
-        if (data.pendingFollowBacks?.length > 0) {
-          console.log(`Synced ${data.pendingFollowBacks.length} follow notifications`);
-        }
-      } catch (err) {
-        console.error("Notification sync error:", err);
-      }
-    }
-
-    // ===== Initialization =====
     document.addEventListener("DOMContentLoaded", async () => {
       await loadUserInfo();
-      await loadChannelInfo(userQid);
-      await syncNotifications();
-      followBtn.addEventListener("click", () => toggleFollowActivity(userQid));
-
-      // Optional: background sync every 20 seconds
-      setInterval(syncNotifications, 20000);
+      await loadFollowStatus();
+      followBtn.addEventListener("click", toggleFollow);
     });
   </script>
 </body>
-</html> -->
-<script>
-const API_BASE = "https://thebooksourcings.onrender.com/api";
-const TOKEN = localStorage.getItem("token");
-const headers = { "Authorization": `Bearer ${TOKEN}`, "Content-Type": "application/json" };
-
-const urlParams = new URLSearchParams(window.location.search);
-const viewedQid = urlParams.get("memberQid");
-
-const username = document.getElementById("username");
-const nickname = document.getElementById("nickname");
-const followCount = document.getElementById("followCount");
-const followingCount = document.getElementById("followingCount");
-const followBtn = document.getElementById("followBtn");
-const followSpan = document.getElementById("followSpan");
-
-let currentStatus = null;
-
-// Fetch viewed user's public info
-async function loadUserInfo() {
-  try {
-    const res = await fetch(`https://thebooksourcings.onrender.com/userInfo/${viewedQid}`);
-    if (!res.ok) throw new Error("User not found");
-    const { user } = await res.json();
-    username.textContent = user.username;
-    nickname.textContent = user.nickname;
-    followCount.textContent = user.followerCount;
-    followingCount.textContent = user.followingCount;
-  } catch (err) {
-    console.error("Failed to fetch user info:", err);
-  }
-}
-
-// Fetch relation between logged-in user and viewed user
-async function loadFollowStatus() {
-  try {
-    const res = await fetch(`${API_BASE}/followStatus/${viewedQid}`, { headers });
-    if (!res.ok) throw new Error("Failed to fetch follow status");
-    const data = await res.json();
-    currentStatus = data.userStatus;
-
-    const { followed, is_mutual } = currentStatus;
-
-    if (is_mutual === 1) {
-      // Both follow each other
-      followSpan.textContent = "Friends ✅";
-      followBtn.disabled = true;
-    } 
-    else if (followed === 1 && is_mutual === 0) {
-      // Viewed user follows me, I don’t → show Follow Back
-      followSpan.textContent = "Follow Back";
-      followBtn.disabled = false;
-      followBtn.dataset.action = "followBack";
-    } 
-    else if (followed === 0 && is_mutual === 0) {
-      // Neither follows → show Follow
-      followSpan.textContent = "Follow";
-      followBtn.disabled = false;
-      followBtn.dataset.action = "follow";
-    }
-  } catch (err) {
-    console.error("Follow status error:", err);
-  }
-}
-
-// Handle follow / follow-back click
-async function toggleFollow() {
-  try {
-    const action = followBtn.dataset.action;
-
-    let endpoint = "";
-    if (action === "follow") {
-      endpoint = `${API_BASE}/channel/follow/${viewedQid}`;
-      followSpan.textContent = "Following";
-    } else if (action === "followBack") {
-      endpoint = `${API_BASE}/channel/follow/${viewedQid}`; 
-      // ✅ Use the SAME follow endpoint (you are following them)
-      followSpan.textContent = "Friends ✅";
-    } else {
-      return;
-    }
-
-    followBtn.disabled = true;
-
-    const res = await fetch(endpoint, { method: "POST", headers });
-    if (!res.ok) throw new Error("Failed to follow");
-
-    // Refresh UI safely after update
-    await loadUserInfo();
-    await loadFollowStatus();
-
-  } catch (err) {
-    console.error("Toggle follow error:", err);
-  }
-}
-
-document.addEventListener("DOMContentLoaded", async () => {
-  await loadUserInfo();
-  await loadFollowStatus();
-  followBtn.addEventListener("click", toggleFollow);
-});
-</script>
-
-
-
-
-
+</html>
