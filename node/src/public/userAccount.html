@@ -145,8 +145,8 @@ const followBtn = document.getElementById("followBtn");
 const followSpan = document.getElementById("followSpan");
 
 let currentStatus = null;
-let iFollowViewed = false; // our manual perspective
 
+// Fetch viewed user's public info
 async function loadUserInfo() {
   try {
     const res = await fetch(`https://thebooksourcings.onrender.com/userInfo/${viewedQid}`);
@@ -161,6 +161,7 @@ async function loadUserInfo() {
   }
 }
 
+// Fetch relation between logged-in user and viewed user
 async function loadFollowStatus() {
   try {
     const res = await fetch(`${API_BASE}/followStatus/${viewedQid}`, { headers });
@@ -170,54 +171,54 @@ async function loadFollowStatus() {
 
     const { followed, is_mutual } = currentStatus;
 
-    // 💡 Our API describes if viewed user follows ME, so reverse perspective
-    // if they follow me → means I have NOT followed them yet (until mutual)
     if (is_mutual === 1) {
+      // Both follow each other
       followSpan.textContent = "Friends ✅";
       followBtn.disabled = true;
-      iFollowViewed = true;
-    } else if (followed === 1 && is_mutual === 0) {
-      // viewed user follows me but I don't follow them yet
+    } 
+    else if (followed === 1 && is_mutual === 0) {
+      // Viewed user follows me, I don’t → show Follow Back
       followSpan.textContent = "Follow Back";
       followBtn.disabled = false;
-      iFollowViewed = false;
-    } else if (followed === 0 && is_mutual === 0) {
-      // neither follows → I don’t follow them
+      followBtn.dataset.action = "followBack";
+    } 
+    else if (followed === 0 && is_mutual === 0) {
+      // Neither follows → show Follow
       followSpan.textContent = "Follow";
       followBtn.disabled = false;
-      iFollowViewed = false;
+      followBtn.dataset.action = "follow";
     }
-
   } catch (err) {
     console.error("Follow status error:", err);
   }
 }
 
+// Handle follow / follow-back click
 async function toggleFollow() {
   try {
-    const { followed, is_mutual } = currentStatus;
+    const action = followBtn.dataset.action;
+
     let endpoint = "";
-
-    if (is_mutual === 1) return; // already mutual
-
-    if (!iFollowViewed && followed === 1 && is_mutual === 0) {
-      // I click Follow Back
-      endpoint = `${API_BASE}/followBack/${viewedQid}`;
-      followSpan.textContent = "Friends ✅";
-    } else if (!iFollowViewed && followed === 0 && is_mutual === 0) {
-      // I click Follow first
+    if (action === "follow") {
       endpoint = `${API_BASE}/channel/follow/${viewedQid}`;
       followSpan.textContent = "Following";
+    } else if (action === "followBack") {
+      endpoint = `${API_BASE}/channel/follow/${viewedQid}`; 
+      // ✅ Use the SAME follow endpoint (you are following them)
+      followSpan.textContent = "Friends ✅";
+    } else {
+      return;
     }
 
-    followBtn.disabled = true; // visually disable
-    iFollowViewed = true; // now I follow them
+    followBtn.disabled = true;
 
     const res = await fetch(endpoint, { method: "POST", headers });
     if (!res.ok) throw new Error("Failed to follow");
 
+    // Refresh UI safely after update
     await loadUserInfo();
-    // ⛔ no loadFollowStatus() here — that flips the perspective again and breaks UI
+    await loadFollowStatus();
+
   } catch (err) {
     console.error("Toggle follow error:", err);
   }
@@ -229,6 +230,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   followBtn.addEventListener("click", toggleFollow);
 });
 </script>
+
 
 
 
