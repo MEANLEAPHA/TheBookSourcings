@@ -145,6 +145,7 @@ const followBtn = document.getElementById("followBtn");
 const followSpan = document.getElementById("followSpan");
 
 let currentStatus = null;
+let iFollowViewed = false; // our manual perspective
 
 async function loadUserInfo() {
   try {
@@ -169,16 +170,22 @@ async function loadFollowStatus() {
 
     const { followed, is_mutual } = currentStatus;
 
-    // ✅ Interpret correctly (followed means viewed user follows ME)
+    // 💡 Our API describes if viewed user follows ME, so reverse perspective
+    // if they follow me → means I have NOT followed them yet (until mutual)
     if (is_mutual === 1) {
       followSpan.textContent = "Friends ✅";
       followBtn.disabled = true;
+      iFollowViewed = true;
     } else if (followed === 1 && is_mutual === 0) {
+      // viewed user follows me but I don't follow them yet
       followSpan.textContent = "Follow Back";
       followBtn.disabled = false;
+      iFollowViewed = false;
     } else if (followed === 0 && is_mutual === 0) {
+      // neither follows → I don’t follow them
       followSpan.textContent = "Follow";
       followBtn.disabled = false;
+      iFollowViewed = false;
     }
 
   } catch (err) {
@@ -191,27 +198,26 @@ async function toggleFollow() {
     const { followed, is_mutual } = currentStatus;
     let endpoint = "";
 
-    // ✅ I’m always initiating the follow — not the viewed user
-    if (is_mutual === 1) return;
+    if (is_mutual === 1) return; // already mutual
 
-    if (followed === 1 && is_mutual === 0) {
-      // They follow me → I follow back
+    if (!iFollowViewed && followed === 1 && is_mutual === 0) {
+      // I click Follow Back
       endpoint = `${API_BASE}/followBack/${viewedQid}`;
       followSpan.textContent = "Friends ✅";
-    } else if (followed === 0 && is_mutual === 0) {
-      // I follow them first
+    } else if (!iFollowViewed && followed === 0 && is_mutual === 0) {
+      // I click Follow first
       endpoint = `${API_BASE}/channel/follow/${viewedQid}`;
       followSpan.textContent = "Following";
     }
 
-    followBtn.disabled = true; // immediately disable (UI feedback)
+    followBtn.disabled = true; // visually disable
+    iFollowViewed = true; // now I follow them
 
     const res = await fetch(endpoint, { method: "POST", headers });
     if (!res.ok) throw new Error("Failed to follow");
 
     await loadUserInfo();
-    await loadFollowStatus();
-
+    // ⛔ no loadFollowStatus() here — that flips the perspective again and breaks UI
   } catch (err) {
     console.error("Toggle follow error:", err);
   }
@@ -223,6 +229,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   followBtn.addEventListener("click", toggleFollow);
 });
 </script>
+
 
 
 
