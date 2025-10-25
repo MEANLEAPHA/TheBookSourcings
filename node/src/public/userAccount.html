@@ -172,12 +172,12 @@
     const followBtn = document.getElementById("followBtn");
     const followSpan = document.getElementById("followSpan");
 
-    let currentStatus = null;
+    let userStatus = null;
 
-    // Load user info
+    // Load viewed user info
     async function loadUserInfo() {
       try {
-        const res = await fetch(`https://thebooksourcings.onrender.com/userInfo/${viewedQid}`);
+        const res = await fetch(`${API_BASE}/userInfo/${viewedQid}`);
         if (!res.ok) throw new Error("User not found");
         const { user } = await res.json();
         username.textContent = user.username;
@@ -195,17 +195,20 @@
         const res = await fetch(`${API_BASE}/followStatus/${viewedQid}`, { headers });
         if (!res.ok) throw new Error("Failed to fetch follow status");
         const data = await res.json();
-        currentStatus = data.userStatus;
+        userStatus = data.userStatus;
 
-        const { followed, is_mutual } = currentStatus;
+        const { followed, is_mutual } = userStatus;
 
+        // Logic:
+        // followed = 1 → viewed user follows me
+        // is_mutual = 0 → I haven't followed back yet
         if (is_mutual === 1) {
           followSpan.textContent = "Friends ✅";
           followBtn.disabled = true;
         } else if (followed === 1 && is_mutual === 0) {
           followSpan.textContent = "Follow Back";
           followBtn.disabled = false;
-        } else {
+        } else if (followed === 0 && is_mutual === 0) {
           followSpan.textContent = "Follow";
           followBtn.disabled = false;
         }
@@ -217,21 +220,25 @@
     // Toggle follow / follow-back
     async function toggleFollow() {
       try {
-        const { followed, is_mutual } = currentStatus;
+        if (!userStatus) return;
+        const { followed, is_mutual } = userStatus;
 
         let endpoint = "";
         if (followed === 1 && is_mutual === 0) {
           // Follow Back
           endpoint = `${API_BASE}/followBack/${viewedQid}`;
         } else if (followed === 0 && is_mutual === 0) {
-          // Normal follow
+          // Normal Follow
           endpoint = `${API_BASE}/channel/follow/${viewedQid}`;
         } else {
+          // Already mutual / friends, nothing to do
           return;
         }
 
         const res = await fetch(endpoint, { method: "POST", headers });
         if (!res.ok) throw new Error("Failed to follow");
+
+        // Refresh info
         await loadUserInfo();
         await loadFollowStatus();
       } catch (err) {
@@ -247,3 +254,5 @@
   </script>
 </body>
 </html>
+
+
