@@ -177,7 +177,7 @@
     // Load user info
     async function loadUserInfo() {
       try {
-        const res = await fetch(`${API_BASE}/userInfo/${viewedQid}`);
+        const res = await fetch(`https://thebooksourcings.onrender.com/userInfo/${viewedQid}`);
         if (!res.ok) throw new Error("User not found");
         const { user } = await res.json();
         username.textContent = user.username;
