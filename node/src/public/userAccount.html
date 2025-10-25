@@ -129,41 +129,13 @@
   </script>
 </body>
 </html> -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>User Account</title>
-  <style>
-    body { font-family: Arial, sans-serif; background: #f6f8fc; margin: 0; padding: 20px; }
-    h6, p { margin: 8px 0; }
-    #followBtn {
-      background: #648dff;
-      color: white;
-      border: none;
-      padding: 6px 14px;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    #followBtn:hover { background: #4a6bdb; }
-  </style>
-</head>
-<body>
-
-  <h6>Username: <span id="username"></span></h6>
-  <h6>Nickname: <span id="nickname"></span></h6>
-  <p>Follower: <span id="followCount"></span> | Following: <span id="followingCount"></span></p>
-  <button id="followBtn"><span id="followSpan">Follow</span></button>
-
-  <script>
+<script>
 const API_BASE = "https://thebooksourcings.onrender.com/api";
 const TOKEN = localStorage.getItem("token");
 const headers = { "Authorization": `Bearer ${TOKEN}`, "Content-Type": "application/json" };
 
 const urlParams = new URLSearchParams(window.location.search);
-const viewedQid = urlParams.get("memberQid"); // the user being viewed
+const viewedQid = urlParams.get("memberQid");
 
 const username = document.getElementById("username");
 const nickname = document.getElementById("nickname");
@@ -174,7 +146,6 @@ const followSpan = document.getElementById("followSpan");
 
 let currentStatus = null;
 
-// Load user info
 async function loadUserInfo() {
   try {
     const res = await fetch(`https://thebooksourcings.onrender.com/userInfo/${viewedQid}`);
@@ -189,7 +160,6 @@ async function loadUserInfo() {
   }
 }
 
-// Load follow status
 async function loadFollowStatus() {
   try {
     const res = await fetch(`${API_BASE}/followStatus/${viewedQid}`, { headers });
@@ -199,53 +169,46 @@ async function loadFollowStatus() {
 
     const { followed, is_mutual } = currentStatus;
 
+    // ✅ Interpret correctly (followed means viewed user follows ME)
     if (is_mutual === 1) {
-      // Both follow each other
       followSpan.textContent = "Friends ✅";
       followBtn.disabled = true;
     } else if (followed === 1 && is_mutual === 0) {
-      // Viewed user follows me, I don’t → show Follow Back
       followSpan.textContent = "Follow Back";
       followBtn.disabled = false;
     } else if (followed === 0 && is_mutual === 0) {
-      // I don’t follow viewed user → show Follow
       followSpan.textContent = "Follow";
       followBtn.disabled = false;
     }
+
   } catch (err) {
     console.error("Follow status error:", err);
   }
 }
 
-// Toggle Follow / Follow Back
 async function toggleFollow() {
   try {
     const { followed, is_mutual } = currentStatus;
     let endpoint = "";
 
+    // ✅ I’m always initiating the follow — not the viewed user
+    if (is_mutual === 1) return;
+
     if (followed === 1 && is_mutual === 0) {
-      // Follow Back
+      // They follow me → I follow back
       endpoint = `${API_BASE}/followBack/${viewedQid}`;
+      followSpan.textContent = "Friends ✅";
     } else if (followed === 0 && is_mutual === 0) {
-      // Normal Follow
+      // I follow them first
       endpoint = `${API_BASE}/channel/follow/${viewedQid}`;
-    } else {
-      return; // Do nothing if already friends
+      followSpan.textContent = "Following";
     }
+
+    followBtn.disabled = true; // immediately disable (UI feedback)
 
     const res = await fetch(endpoint, { method: "POST", headers });
     if (!res.ok) throw new Error("Failed to follow");
 
-    // Update UI immediately
-    if (followed === 0 && is_mutual === 0) {
-      followSpan.textContent = "Following";
-      followBtn.disabled = true;
-    } else if (followed === 1 && is_mutual === 0) {
-      followSpan.textContent = "Friends ✅";
-      followBtn.disabled = true;
-    }
-
-    // Refresh counts
     await loadUserInfo();
     await loadFollowStatus();
 
@@ -261,7 +224,5 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 </script>
 
-</body>
-</html>
 
 
