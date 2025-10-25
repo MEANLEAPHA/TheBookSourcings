@@ -282,6 +282,7 @@ const toggleFollowLogic = async (followerQid, followedQid) => {
   );
 
   let followed;
+
   if (rows.length > 0) {
     // Toggle follow
     followed = rows[0].followed ? 0 : 1;
@@ -291,15 +292,21 @@ const toggleFollowLogic = async (followerQid, followedQid) => {
       [followed, followerQid, followedQid]
     );
 
-    // 🧩 If unfollowed, clear mutual + notified
     if (followed === 0) {
+      // 🧩 Unfollow: clear mutual + notified
       await db.query(
         "UPDATE user_follow_status SET is_mutual = 0, notified = 0 WHERE (followerQid = ? AND followedQid = ?) OR (followerQid = ? AND followedQid = ?)",
         [followerQid, followedQid, followedQid, followerQid]
       );
+
+      // 🧩 Delete the old follow notification
+      await db.query(
+        "DELETE FROM notifications WHERE senderQid = ? AND receiverQid = ? AND type = 'follow'",
+        [followerQid, followedQid]
+      );
     } 
-    // 🧩 If re-followed and not yet notified, send notification again
     else if (rows[0].notified === 0) {
+      // 🧩 Re-follow: send notification again
       const [sender] = await db.query(
         "SELECT username FROM users WHERE memberQid = ?",
         [followerQid]
@@ -320,14 +327,13 @@ const toggleFollowLogic = async (followerQid, followedQid) => {
     }
 
   } else {
-    // First-time follow
+    // 🧩 First-time follow
     followed = 1;
     await db.query(
       "INSERT INTO user_follow_status (followerQid, followedQid, followed, notified) VALUES (?, ?, 1, 0)",
       [followerQid, followedQid]
     );
 
-    // ✅ Send notification for first follow
     const [sender] = await db.query(
       "SELECT username FROM users WHERE memberQid = ?",
       [followerQid]
@@ -341,14 +347,13 @@ const toggleFollowLogic = async (followerQid, followedQid) => {
       [followerQid, followedQid, `👋 ${senderName} started following you!`]
     );
 
-    // ✅ Mark notified = 1
     await db.query(
       "UPDATE user_follow_status SET notified = 1 WHERE followerQid = ? AND followedQid = ?",
       [followerQid, followedQid]
     );
   }
 
-  // Update follower/following counts
+  // 🧩 Update follower/following counts
   await db.query(
     "UPDATE users SET followingCount = GREATEST(followingCount + ?, 0) WHERE memberQid = ?",
     [followed ? 1 : -1, followerQid]
@@ -358,7 +363,7 @@ const toggleFollowLogic = async (followerQid, followedQid) => {
     [followed ? 1 : -1, followedQid]
   );
 
-  // ✅ Mutual check
+  // 🧩 Mutual check
   let is_mutual = 0;
   if (followed) {
     const [mutualCheck] = await db.query(
@@ -372,6 +377,7 @@ const toggleFollowLogic = async (followerQid, followedQid) => {
          SET is_mutual = 1 
          WHERE (followerQid = ? AND followedQid = ?) 
             OR (followerQid = ? AND followedQid = ?)`,
+
         [followerQid, followedQid, followedQid, followerQid]
       );
       is_mutual = 1;
@@ -380,6 +386,7 @@ const toggleFollowLogic = async (followerQid, followedQid) => {
 
   return { followed, is_mutual };
 };
+
 
 
 // const toggleFollowLogic = async (followerQid, followedQid) => {
