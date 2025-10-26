@@ -214,66 +214,39 @@ dd
   });
 
   // === LOAD CHAT ROOMS ===
-async function loadChatRooms(type = "friend") {
-  try {
-    roomList.innerHTML = `<p class='loading'>Loading...</p>`;
-    const res = await axios.get(
-      `https://thebooksourcings.onrender.com/api/chat/rooms?type=${type}`,
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    const rooms = res.data.rooms || [];
-    roomList.innerHTML = "";
+  async function loadChatRooms(type = "friend") {
+    try {
+      roomList.innerHTML = `<p class='loading'>Loading...</p>`;
+      const res = await axios.get(
+        `https://thebooksourcings.onrender.com/api/chat/rooms?type=${type}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const rooms = res.data.rooms || [];
+      roomList.innerHTML = "";
 
-    if (!rooms.length) {
-      roomList.innerHTML = `<p class='no-room'>No ${type} chats yet.</p>`;
-      return;
-    }
+      if (!rooms.length) {
+        roomList.innerHTML = `<p class='no-room'>No ${type} chats yet.</p>`;
+        return;
+      }
 
-    rooms.forEach((room) => {
-      const div = document.createElement("div");
-      div.className = "room-item d-flex justify-content-between align-items-center";
-      div.innerHTML = `
-        <div class="d-flex align-items-center">
+      rooms.forEach((room) => {
+        const div = document.createElement("div");
+        div.className = "room-item";
+        div.innerHTML = `
           <img src="${room.otherProfileImg || "default.png"}" class="room-avatar">
           <div class="room-info">
             <p class="room-name">${room.otherUsername}</p>
             <p class="room-last">${room.lastMessage || "No messages yet"}</p>
           </div>
-        </div>
-        <div class="dropdown">
-          <i class="fa-solid fa-ellipsis-vertical" data-bs-toggle="dropdown" aria-expanded="false"></i>
-          <ul class="dropdown-menu">
-            ${
-              type === "archive"
-                ? `<li><a class="dropdown-item unarchive-room" href="#">Unarchive</a></li>`
-                : `<li><a class="dropdown-item archive-room" href="#">Move to Archive</a></li>`
-            }
-          </ul>
-        </div>
-      `;
-
-      // Open room when clicking the item
-      div.addEventListener("click", () => openRoom(room.roomId));
-      roomList.appendChild(div);
-
-      // === ARCHIVE / UNARCHIVE ACTIONS ===
-      if (type === "archive") {
-        div.querySelector(".unarchive-room").addEventListener("click", async (e) => {
-          e.stopPropagation();
-          await archiveAction(room.roomId, false);
-        });
-      } else {
-        div.querySelector(".archive-room").addEventListener("click", async (e) => {
-          e.stopPropagation();
-          await archiveAction(room.roomId, true);
-        });
-      }
-    });
-  } catch (err) {
-    console.error("Failed to load chat rooms:", err);
-    roomList.innerHTML = `<p class='error'>Error loading rooms</p>`;
+        `;
+        div.addEventListener("click", () => openRoom(room.roomId));
+        roomList.appendChild(div);
+      });
+    } catch (err) {
+      console.error("Failed to load chat rooms:", err);
+      roomList.innerHTML = `<p class='error'>Error loading rooms</p>`;
+    }
   }
-}
 
   // === OPEN CHAT ROOM ===
   async function openRoom(roomId) {
@@ -480,23 +453,7 @@ async function loadChatRooms(type = "friend") {
   }
 
   // === INITIAL LOAD ===
-// === INITIAL LOAD ===
-loadChatRooms(activeType);
-
-// === ARCHIVE / UNARCHIVE FUNCTION ===
-async function archiveAction(roomId, isArchive) {
-  const url = isArchive
-    ? `https://thebooksourcings.onrender.com/api/chat/archive/${roomId}`
-    : `https://thebooksourcings.onrender.com/api/chat/unarchive/${roomId}`;
-
-  try {
-    await axios.put(url, {}, { headers: { Authorization: `Bearer ${token}` } });
-    loadChatRooms(activeType); // reload current list
-  } catch (err) {
-    console.error("❌ Archive/Unarchive failed:", err);
-  }
-}
-
+  loadChatRooms(activeType);
 </script>
 
     </body>

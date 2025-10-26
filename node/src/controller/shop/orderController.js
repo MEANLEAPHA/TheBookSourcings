@@ -4,7 +4,7 @@ const db = require("../../config/db");
 // 🧠 Reusable helper to ensure a chat room exists (works for both order + friend chats)
 const ensureChatRoom = async (buyerQid, sellerQid, type = "order", bookSid = null) => {
   try {
-    // ✅ Check if chat room already exists (one room per buyer–seller pair)
+    // ✅ Check if chat room already exists (same buyer-seller pair and type)
     const [rows] = await db.query(
       `SELECT roomId FROM chatRooms 
        WHERE ((buyerQid = ? AND sellerQid = ?) OR (buyerQid = ? AND sellerQid = ?))
@@ -14,14 +14,14 @@ const ensureChatRoom = async (buyerQid, sellerQid, type = "order", bookSid = nul
     );
 
     if (rows.length > 0) {
-      return rows[0].roomId; // existing room
+      return rows[0].roomId; // existing room found
     }
 
-    // ✅ Otherwise, create new one
+    // ✅ Otherwise, create a new chat room
     const [result] = await db.query(
-      `INSERT INTO chatRooms (buyerQid, sellerQid, type, bookSid, created_at)
-       VALUES (?, ?, ?, ?, NOW())`,
-      [buyerQid, sellerQid, type, bookSid]
+      `INSERT INTO chatRooms (buyerQid, sellerQid, type, previousType, bookSid, created_at)
+       VALUES (?, ?, ?, ?, ?, NOW())`,
+      [buyerQid, sellerQid, type, type, bookSid] // previousType = initial type (friend/order)
     );
 
     return result.insertId; // new roomId
@@ -30,6 +30,36 @@ const ensureChatRoom = async (buyerQid, sellerQid, type = "order", bookSid = nul
     throw err;
   }
 };
+
+
+// const ensureChatRoom = async (buyerQid, sellerQid, type = "order", bookSid = null) => {
+//   try {
+//     // ✅ Check if chat room already exists (one room per buyer–seller pair)
+//     const [rows] = await db.query(
+//       `SELECT roomId FROM chatRooms 
+//        WHERE ((buyerQid = ? AND sellerQid = ?) OR (buyerQid = ? AND sellerQid = ?))
+//          AND type = ?
+//        LIMIT 1`,
+//       [buyerQid, sellerQid, sellerQid, buyerQid, type]
+//     );
+
+//     if (rows.length > 0) {
+//       return rows[0].roomId; // existing room
+//     }
+
+//     // ✅ Otherwise, create new one
+//     const [result] = await db.query(
+//       `INSERT INTO chatRooms (buyerQid, sellerQid, type, bookSid, created_at)
+//        VALUES (?, ?, ?, ?, NOW())`,
+//       [buyerQid, sellerQid, type, bookSid]
+//     );
+
+//     return result.insertId; // new roomId
+//   } catch (err) {
+//     console.error("❌ Error ensuring chat room:", err);
+//     throw err;
+//   }
+// };
 
 // 🛒 Order a book → ensure chat room and record order
 const orderBook = async (req, res) => {

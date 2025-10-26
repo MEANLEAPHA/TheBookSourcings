@@ -6,5 +6,8 @@ const { authMiddleware } = require("../../../middleware/authMiddleware");
 
 router.get("/rooms", authMiddleware, chatController.getUserChatRooms);
 router.get("/:roomId", authMiddleware, chatController.getChatMessages);
+router.put("/archive/:roomId", authMiddleware, chatController.archiveRoom);
+router.put("/unarchive/:roomId", authMiddleware, chatController.unarchiveRoom);
+
 
 module.exports = router;

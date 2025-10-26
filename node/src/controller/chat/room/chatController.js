@@ -440,6 +440,80 @@ const getUserChatRooms = async (req, res) => {
   }
 };
 
+
+// PUT /api/chat/archive/:roomId
+export const archiveRoom = async (req, res) => {
+  try {
+    const { roomId } = req.params;
+    const memberQid = req.user.memberQid;
+
+    // ✅ Ensure this user is part of the room
+    const [check] = await db.query(
+      `SELECT * FROM chatRooms 
+       WHERE roomId = ? 
+         AND (buyerQid = ? OR sellerQid = ?)`,
+      [roomId, memberQid, memberQid]
+    );
+
+    if (!check.length) {
+      return res.status(403).json({ message: "Access denied: not part of this chat." });
+    }
+
+    // ✅ Move to archive
+    await db.query(
+      `UPDATE chatRooms 
+       SET type = 'archive'
+       WHERE roomId = ?`,
+      [roomId]
+    );
+
+    res.json({ message: "Chat moved to archive ✅" });
+  } catch (err) {
+    console.error("❌ Error archiving room:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+// PUT /api/chat/unarchive/:roomId
+export const unarchiveRoom = async (req, res) => {
+  try {
+    const { roomId } = req.params;
+    const memberQid = req.user.memberQid;
+
+    // ✅ Ensure this user is part of the room
+    const [check] = await db.query(
+      `SELECT previousType FROM chatRooms 
+       WHERE roomId = ? 
+         AND (buyerQid = ? OR sellerQid = ?)`,
+      [roomId, memberQid, memberQid]
+    );
+
+    if (!check.length) {
+      return res.status(403).json({ message: "Access denied: not part of this chat." });
+    }
+
+    const { previousType } = check[0];
+    if (!previousType) {
+      return res.status(400).json({ message: "Missing previousType — cannot restore chat." });
+    }
+
+    // ✅ Restore original type (friend/order)
+    await db.query(
+      `UPDATE chatRooms 
+       SET type = ?
+       WHERE roomId = ?`,
+      [previousType, roomId]
+    );
+
+    res.json({ message: `Chat restored to ${previousType} ✅` });
+  } catch (err) {
+    console.error("❌ Error unarchiving room:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
 module.exports = {
   saveChatMessage,
   getChatMessages,
@@ -448,5 +522,7 @@ module.exports = {
   getUserChatRooms,
   markMessageSeen,
   markMessageDelivered,
-  markAllMessagesSeen
+  markAllMessagesSeen,
+  archiveRoom,
+  unarchiveRoom
 };
