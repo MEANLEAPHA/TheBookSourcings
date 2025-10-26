@@ -1,6 +1,5 @@
 const db = require("../../../config/db");
-
-
+const { ensureChatRoom } = require("../../shop/orderController");
 // ===============================
 // 1️⃣ Get user details + follow status
 // ===============================
@@ -69,6 +68,31 @@ const toggleFollowLogic = async (followerQid, followedQid) => {
         "DELETE FROM notifications WHERE senderQid = ? AND receiverQid = ? AND type = 'follow'",
         [followerQid, followedQid]
       );
+       await db.query(
+        `UPDATE chatRooms 
+        SET soft_delete_by = ? 
+        WHERE ((buyerQid = ? AND sellerQid = ?) OR (buyerQid = ? AND sellerQid = ?))
+          AND type = 'friend' AND soft_delete_by IS NULL`,
+        [followerQid, followerQid, followedQid, followedQid, followerQid]
+      );
+
+      // Check if both already unfollowed (mutual 0)
+      const [bothUnfollow] = await db.query(
+        `SELECT * FROM user_follow_status 
+        WHERE ((followerQid = ? AND followedQid = ?) OR (followerQid = ? AND followedQid = ?))
+          AND followed = 1`,
+        [followerQid, followedQid, followedQid, followerQid]
+      );
+
+      if (bothUnfollow.length === 0) {
+        // Both unfollowed → hard delete chat room
+        await db.query(
+          `DELETE FROM chatRooms 
+          WHERE ((buyerQid = ? AND sellerQid = ?) OR (buyerQid = ? AND sellerQid = ?))
+            AND type = 'friend'`,
+          [followerQid, followedQid, followedQid, followerQid]
+        );
+  }
     } 
     else if (rows[0].notified === 0) {
       // 🧩 Re-follow: send notification again
@@ -146,6 +170,11 @@ const toggleFollowLogic = async (followerQid, followedQid) => {
         [followerQid, followedQid, followedQid, followerQid]
       );
       is_mutual = 1;
+      try {
+        await ensureChatRoom(followerQid, followedQid, "friend");
+      } catch (err) {
+        console.error("Failed to create friend chat room:", err);
+      }
     }
   }
 
@@ -193,7 +222,7 @@ const followBackController = async (req, res) => {
         [
           followedQid,
           followerQid,
-          `🎉 ${req.user.username} followed you back. You are now friends!`
+          `🎉 ${req.user.username} followed you back. Start chatting and become closed firend`,
         ]
       );
     }

@@ -202,57 +202,79 @@ io.on("connection", (socket) => {
 
   console.log("🟢 User connected:", socket.user?.memberQid);
 
-  // ✅ Join specific chat room
- socket.on("joinRoom", async (roomId) => {
+
+// ✅ User joins a chat room
+socket.on("joinRoom", async (roomId) => {
   if (!socket.user) return;
   socket.join(roomId);
 
-  // mark delivered for this receiver (returns array of ids)
-  const receiverQid = socket.user.memberQid;
-  const deliveredIds = await chatController.markMessageDelivered(roomId, receiverQid);
-  if (deliveredIds.length) {
-    io.to(roomId).emit("messageDelivered", { messageIds: deliveredIds, roomId });
-  }
-});
-
-  // socket.on("joinRoom", (roomId) => {
-  //   if (!socket.user) return;
-  //   socket.join(roomId);
-  //   console.log(`🟢 User ${socket.user.memberQid} joined room ${roomId}`);
-  // });
-
-  // socket.on("sendMessage", async ({ roomId, message }) => {
-  //   if (!socket.user) return;
-  //   const senderQid = socket.user.memberQid;
-
-  //   try {
-   
-  //     await chatController.saveChatMessage(roomId, senderQid, message);
-
-  //     io.to(roomId).emit("receiveMessage", {
-  //       roomId,
-  //       senderQid,
-  //       message,
-  //       timestamp: new Date(),
-  //     });
-  //   } catch (err) {
-  //     console.error("Error saving chat message:", err);
-  //   }
-  // })
-  socket.on("messageDelivered", async ({ messageId, roomId }) => {
-  if (!socket.user) return;
   const receiverQid = socket.user.memberQid;
 
   try {
+    // Mark all pending messages in this room as delivered
+    const deliveredIds = await chatController.markMessageDelivered(roomId, receiverQid);
+
+    if (deliveredIds.length) {
+      // Notify everyone in the room about delivered messages
+      io.to(roomId).emit("messageDelivered", { messageIds: deliveredIds, roomId });
+    }
+  } catch (err) {
+    console.error("❌ Error marking messages delivered on joinRoom:", err);
+  }
+});
+
+// ✅ Single message delivery (real-time online scenario)
+socket.on("messageDelivered", async ({ messageId, roomId }) => {
+  if (!socket.user || !messageId || !roomId) return;
+  const receiverQid = socket.user.memberQid;
+
+  try {
+    // Only update if message still 'sent'
+    const [rows] = await db.query(
+      "SELECT status FROM messages WHERE messageId=? AND receiverQid=?",
+      [messageId, receiverQid]
+    );
+    if (!rows.length || rows[0].status !== 'sent') return;
+
     await db.query(
       "UPDATE messages SET status='delivered', receiverSeen=0 WHERE messageId=? AND receiverQid=?",
       [messageId, receiverQid]
     );
+
+    // Notify the room about the delivered message
     io.to(roomId).emit("messageDelivered", { messageIds: [messageId], roomId });
   } catch (err) {
-    console.error("❌ Error marking message delivered (single):", err);
+    console.error("❌ Error marking single message delivered:", err);
   }
 });
+
+//  socket.on("joinRoom", async (roomId) => {
+//   if (!socket.user) return;
+//   socket.join(roomId);
+
+//   // mark delivered for this receiver (returns array of ids)
+//   const receiverQid = socket.user.memberQid;
+//   const deliveredIds = await chatController.markMessageDelivered(roomId, receiverQid);
+//   if (deliveredIds.length) {
+//     io.to(roomId).emit("messageDelivered", { messageIds: deliveredIds, roomId });
+//   }
+// });
+
+
+//   socket.on("messageDelivered", async ({ messageId, roomId }) => {
+//   if (!socket.user) return;
+//   const receiverQid = socket.user.memberQid;
+
+//   try {
+//     await db.query(
+//       "UPDATE messages SET status='delivered', receiverSeen=0 WHERE messageId=? AND receiverQid=?",
+//       [messageId, receiverQid]
+//     );
+//     io.to(roomId).emit("messageDelivered", { messageIds: [messageId], roomId });
+//   } catch (err) {
+//     console.error("❌ Error marking message delivered (single):", err);
+//   }
+// });
 
 socket.on("sendMessage", async ({ roomId, message, tempId }) => {
     if (!socket.user) return;
@@ -273,17 +295,7 @@ socket.on("sendMessage", async ({ roomId, message, tempId }) => {
     }
   });
 
-
-  
   // ✅ Seen message logic
- socket.on("markRoomSeen", async ({ roomId }) => {
-  if (!socket.user) return;
-  const viewerQid = socket.user.memberQid;
-  const seenIds = await chatController.markAllMessagesSeen(roomId, viewerQid);
-  if (seenIds.length) {
-    io.to(roomId).emit("roomMessagesSeen", { messageIds: seenIds, roomId });
-  }
-});
 socket.on("markRoomSeen", async ({ roomId }) => {
     if (!socket.user) return;
     const viewerQid = socket.user.memberQid;
@@ -297,20 +309,26 @@ socket.on("markRoomSeen", async ({ roomId }) => {
     }
   });
 
+//    socket.on("markRoomSeen", async ({ roomId }) => {
+//   if (!socket.user) return;
+//   const viewerQid = socket.user.memberQid;
+//   const seenIds = await chatController.markAllMessagesSeen(roomId, viewerQid);
+//   if (seenIds.length) {
+//     io.to(roomId).emit("roomMessagesSeen", { messageIds: seenIds, roomId });
+//   }
+// });
 
-  // socket.on("messageSeen", async ({ messageId, roomId }) => {
-  //   if (!socket.user || !messageId || !roomId) return;
-  //   const viewerQid = socket.user.memberQid;
+  // Mark all messages in a room as seen
+  socket.on("markRoomSeen", async ({ roomId }) => {
+    if (!socket.user) return;
+    try {
+      const seenIds = await chatController.markAllMessagesSeen(roomId, socket.user.memberQid);
+      if (seenIds.length) io.to(roomId).emit("roomMessagesSeen", { messageIds: seenIds, roomId });
+    } catch (err) {
+      console.error("❌ Error marking room messages seen:", err);
+    }
+  });
 
-  //   try {
-  //     const updated = await chatController.markMessageSeen(messageId, viewerQid);
-  //     if (updated) {
-  //       io.to(roomId).emit("messageSeen", { messageId });
-  //     }
-  //   } catch (err) {
-  //     console.error("❌ Error marking message seen:", err);
-  //   }
-  // });
   socket.on("messageSeen", async ({ messageId, roomId }) => {
   if (!socket.user || !messageId || !roomId) return;
   const viewerQid = socket.user.memberQid;
@@ -324,7 +342,6 @@ socket.on("markRoomSeen", async ({ roomId }) => {
     console.error("❌ Error marking message seen:", err);
   }
 });
-
 
   // ✅ Edit message logic
   socket.on("editMessage", async ({ messageId, newMessage, roomId }) => {
@@ -356,12 +373,10 @@ socket.on("markRoomSeen", async ({ roomId }) => {
     }
   });
 
-  // ✅ Handle disconnect
+  // disconnect for status in future online || offine
   socket.on("disconnect", () => {
     console.log("🔴 User disconnected:", socket.user?.memberQid || socket.id);
   });
-
-
 
 });
 
