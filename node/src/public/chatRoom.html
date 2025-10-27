@@ -239,16 +239,16 @@ async function loadChatRooms(type = "friend") {
             <p class="room-name">${room.otherUsername}</p>
             <p class="room-last">${room.lastMessage || "No messages yet"}</p>
           </div>
-        </div>
-        <div class="dropdown">
-          <i class="fa-solid fa-ellipsis-vertical" data-bs-toggle="dropdown" aria-expanded="false"></i>
-          <ul class="dropdown-menu">
-            ${
-              type === "archive"
-                ? `<li><a class="dropdown-item unarchive-room" href="#">Unarchive</a></li>`
-                : `<li><a class="dropdown-item archive-room" href="#">Move to Archive</a></li>`
-            }
-          </ul>
+          <div class="dropdown">
+            <i class="fa-solid fa-ellipsis-vertical" data-bs-toggle="dropdown" aria-expanded="false"></i>
+            <ul class="dropdown-menu">
+              ${
+                type === "archive"
+                  ? `<li><a class="dropdown-item unarchive-room" href="#">Unarchive</a></li>`
+                  : `<li><a class="dropdown-item archive-room" href="#">Move to Archive</a></li>`
+              }
+            </ul>
+          </div>
         </div>
       `;
 
