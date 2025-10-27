@@ -408,30 +408,55 @@ const deleteChatMessage = async (messageId, senderQid) => {
 const getUserChatRooms = async (req, res) => {
   try {
     const userQid = req.user.memberQid;
-    const type = req.query.type || 'order'; // default = 'order'
+    const type = req.query.type || "order"; // can be: 'order', 'friend', or 'archive'
 
-    const [rows] = await db.query(
-      `SELECT 
-          r.roomId,
-          CASE WHEN r.buyerQid = ? THEN r.sellerQid ELSE r.buyerQid END AS otherUserQid,
-          u.username AS otherUsername,
-          u.pfUrl AS otherProfileImg,
-          (SELECT message FROM messages 
-             WHERE roomId = r.roomId 
-             ORDER BY created_at DESC 
-             LIMIT 1) AS lastMessage,
-          (SELECT created_at FROM messages 
-             WHERE roomId = r.roomId 
-             ORDER BY created_at DESC 
-             LIMIT 1) AS lastMessageTime
-       FROM chatRooms r
-       JOIN users u 
-         ON u.memberQid = CASE WHEN r.buyerQid = ? THEN r.sellerQid ELSE r.buyerQid END
-       WHERE (r.buyerQid = ? OR r.sellerQid = ?)
-         AND r.type = ?
-       ORDER BY lastMessageTime DESC`,
-      [userQid, userQid, userQid, userQid, type]
-    );
+    let sql = `
+      SELECT 
+        r.roomId,
+        CASE WHEN r.buyerQid = ? THEN r.sellerQid ELSE r.buyerQid END AS otherUserQid,
+        u.username AS otherUsername,
+        u.pfUrl AS otherProfileImg,
+        (SELECT message FROM messages 
+           WHERE roomId = r.roomId 
+           ORDER BY created_at DESC 
+           LIMIT 1) AS lastMessage,
+        (SELECT created_at FROM messages 
+           WHERE roomId = r.roomId 
+           ORDER BY created_at DESC 
+           LIMIT 1) AS lastMessageTime
+      FROM chatRooms r
+      JOIN users u 
+        ON u.memberQid = CASE WHEN r.buyerQid = ? THEN r.sellerQid ELSE r.buyerQid END
+      WHERE (r.buyerQid = ? OR r.sellerQid = ?)
+    `;
+
+    // 🧠 Handle normal and archived views separately
+    if (type === "archive") {
+      sql += `
+        AND (
+          (r.buyerQid = ? AND r.buyerArchived = 1)
+          OR (r.sellerQid = ? AND r.sellerArchived = 1)
+        )
+      `;
+    } else {
+      sql += `
+        AND (
+          (r.buyerQid = ? AND r.buyerArchived = 0)
+          OR (r.sellerQid = ? AND r.sellerArchived = 0)
+        )
+        AND r.type = ?
+      `;
+    }
+
+    sql += " ORDER BY lastMessageTime DESC";
+
+    // 🧾 Choose parameters based on query type
+    const params =
+      type === "archive"
+        ? [userQid, userQid, userQid, userQid, userQid, userQid]
+        : [userQid, userQid, userQid, userQid, userQid, userQid, type];
+
+    const [rows] = await db.query(sql, params);
 
     res.json({ rooms: rows });
   } catch (err) {
@@ -441,77 +466,63 @@ const getUserChatRooms = async (req, res) => {
 };
 
 
-// PUT /api/chat/archive/:roomId
- const archiveRoom = async (req, res) => {
+
+const archiveRoom = async (req, res) => {
   try {
-    const { roomId } = req.params;
     const memberQid = req.user.memberQid;
+    const { roomId } = req.params;
 
-    // ✅ Ensure this user is part of the room
-    const [check] = await db.query(
-      `SELECT * FROM chatRooms 
-       WHERE roomId = ? 
-         AND (buyerQid = ? OR sellerQid = ?)`,
-      [roomId, memberQid, memberQid]
-    );
-
-    if (!check.length) {
-      return res.status(403).json({ message: "Access denied: not part of this chat." });
-    }
-
-    // ✅ Move to archive
-    await db.query(
-      `UPDATE chatRooms 
-       SET type = 'archive'
-       WHERE roomId = ?`,
+    const [rows] = await db.query(
+      "SELECT buyerQid, sellerQid FROM chatRooms WHERE roomId = ?",
       [roomId]
     );
+    if (!rows.length) return res.status(404).json({ message: "Room not found" });
 
-    res.json({ message: "Chat moved to archive ✅" });
+    const room = rows[0];
+    let column = "";
+
+    if (room.buyerQid === memberQid) column = "buyerArchived";
+    else if (room.sellerQid === memberQid) column = "sellerArchived";
+    else return res.status(403).json({ message: "Not your chat" });
+
+    await db.query(`UPDATE chatRooms SET ${column} = 1 WHERE roomId = ?`, [roomId]);
+
+    res.json({ message: "Conversation archived" });
   } catch (err) {
-    console.error("❌ Error archiving room:", err);
+    console.error("❌ Archive failed:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
 
 
-// PUT /api/chat/unarchive/:roomId
- const unarchiveRoom = async (req, res) => {
+
+const unarchiveRoom = async (req, res) => {
   try {
-    const { roomId } = req.params;
     const memberQid = req.user.memberQid;
+    const { roomId } = req.params;
 
-    // ✅ Ensure this user is part of the room
-    const [check] = await db.query(
-      `SELECT previousType FROM chatRooms 
-       WHERE roomId = ? 
-         AND (buyerQid = ? OR sellerQid = ?)`,
-      [roomId, memberQid, memberQid]
+    const [rows] = await db.query(
+      "SELECT buyerQid, sellerQid FROM chatRooms WHERE roomId = ?",
+      [roomId]
     );
+    if (!rows.length) return res.status(404).json({ message: "Room not found" });
 
-    if (!check.length) {
-      return res.status(403).json({ message: "Access denied: not part of this chat." });
-    }
+    const room = rows[0];
+    let column = "";
 
-    const { previousType } = check[0];
-    if (!previousType) {
-      return res.status(400).json({ message: "Missing previousType — cannot restore chat." });
-    }
+    if (room.buyerQid === memberQid) column = "buyerArchived";
+    else if (room.sellerQid === memberQid) column = "sellerArchived";
+    else return res.status(403).json({ message: "Not your chat" });
 
-    // ✅ Restore original type (friend/order)
-    await db.query(
-      `UPDATE chatRooms 
-       SET type = ?
-       WHERE roomId = ?`,
-      [previousType, roomId]
-    );
+    await db.query(`UPDATE chatRooms SET ${column} = 0 WHERE roomId = ?`, [roomId]);
 
-    res.json({ message: `Chat restored to ${previousType} ✅` });
+    res.json({ message: "Conversation unarchived" });
   } catch (err) {
-    console.error("❌ Error unarchiving room:", err);
+    console.error("❌ Unarchive failed:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 
 module.exports = {
