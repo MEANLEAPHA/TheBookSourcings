@@ -8,6 +8,7 @@ router.get("/rooms", authMiddleware, chatController.getUserChatRooms);
 router.get("/:roomId", authMiddleware, chatController.getChatMessages);
 router.put("/archive/:roomId", authMiddleware, chatController.archiveRoom);
 router.put("/unarchive/:roomId", authMiddleware, chatController.unarchiveRoom);
+router.put("/delete/:roomId", authMiddleware, chatController.softDeleteRoom);
 
 
 module.exports = router;

@@ -120,7 +120,66 @@
                 height: 100%;
             }
 
+.message {
+  max-width: 70%;
+  padding: 8px 12px;
+  border-radius: 12px;
+  margin: 5px 0;
+  word-wrap: break-word;
+  position: relative;
+}
 
+.message.me {
+  align-self: flex-end;
+  background-color: #d1e7ff;
+  text-align: right;
+}
+
+.message.other {
+  align-self: flex-start;
+  background-color: #f1f1f1;
+  text-align: left;
+}
+
+.message .three-dots {
+  font-size: 18px;
+  cursor: pointer;
+  margin-left: 6px;
+}
+
+.checkmark {
+  font-size: 12px;
+  margin-left: 5px;
+  color: gray;
+}
+
+.checkmark.seen {
+  color: #0084ff;
+}
+
+.chat-input {
+  display: flex;
+  border-top: 1px solid #ddd;
+  background: white;
+  padding: 8px;
+}
+.chat-input input {
+  flex: 1;
+  border: none;
+  padding: 8px;
+  font-size: 14px;
+  outline: none;
+}
+.chat-input button {
+  border: none;
+  background: #648dff;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+    .toast button { margin: 5px; }
            
         </style>
     </head>
@@ -232,31 +291,39 @@ async function loadChatRooms(type = "friend") {
     rooms.forEach((room) => {
       const div = document.createElement("div");
       div.className = "room-item d-flex justify-content-between align-items-center";
+      div.setAttribute("data-room-id", room.roomId); // ✅ add data-room-id
+      div.dataset.roomId = room.roomId;
+
+      // Highlight based on type
+      div.style.borderLeft = type === "friend" ? "4px solid #0d6efd" :
+                             type === "order" ? "4px solid #198754" :
+                             "4px solid #6c757d";
+
       div.innerHTML = `
-        <div class="d-flex align-items-center">
+        <div class="d-flex align-items-center room-main">
           <img src="${room.otherProfileImg || "default.png"}" class="room-avatar">
           <div class="room-info">
             <p class="room-name">${room.otherUsername}</p>
             <p class="room-last">${room.lastMessage || "No messages yet"}</p>
           </div>
-          <div class="dropdown">
-            <i class="fa-solid fa-ellipsis-vertical" data-bs-toggle="dropdown" aria-expanded="false"></i>
-            <ul class="dropdown-menu">
-              ${
-                type === "archive"
-                  ? `<li><a class="dropdown-item unarchive-room" href="#">Unarchive</a></li>`
-                  : `<li><a class="dropdown-item archive-room" href="#">Move to Archive</a></li>`
-              }
-            </ul>
-          </div>
+        </div>
+        <div class="dropdown">
+          <i class="fa-solid fa-ellipsis-vertical" data-bs-toggle="dropdown" aria-expanded="false"></i>
+          <ul class="dropdown-menu">
+            ${
+              type === "archive"
+                ? `<li><a class="dropdown-item unarchive-room" href="#">Unarchive</a></li>`
+                : `<li><a class="dropdown-item archive-room" href="#">Move to Archive</a></li>`
+            }
+            <li><a class="dropdown-item delete-room" href="#">Delete Conversation</a></li>
+          </ul>
         </div>
       `;
 
-      // Open room when clicking the item
-      div.addEventListener("click", () => openRoom(room.roomId));
-      roomList.appendChild(div);
+      // Click to open chat only on the main part
+      div.querySelector(".room-main").addEventListener("click", () => openRoom(room.roomId));
 
-      // === ARCHIVE / UNARCHIVE ACTIONS ===
+      // Archive/unarchive
       if (type === "archive") {
         div.querySelector(".unarchive-room").addEventListener("click", async (e) => {
           e.stopPropagation();
@@ -268,6 +335,16 @@ async function loadChatRooms(type = "friend") {
           await archiveAction(room.roomId, true);
         });
       }
+
+      // Soft delete
+      div.querySelector(".delete-room").addEventListener("click", async (e) => {
+        e.stopPropagation();
+        if (!confirm("Delete this conversation?")) return;
+        await deleteRoom(room.roomId);
+        loadChatRooms(activeType); // reload list
+      });
+
+      roomList.appendChild(div);
     });
   } catch (err) {
     console.error("Failed to load chat rooms:", err);
@@ -495,7 +572,30 @@ async function archiveAction(roomId, isArchive) {
   } catch (err) {
     console.error("❌ Archive/Unarchive failed:", err);
   }
+};
+
+
+// delete
+async function deleteRoom(roomId) {
+  if (!confirm("Delete this conversation?")) return;
+
+  const token = localStorage.getItem("token");
+  try {
+    const res = await fetch(`/api/chat/delete/${roomId}`, {
+      method: "PUT",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (!res.ok) throw new Error("Failed to delete room");
+
+    // Instantly remove from UI
+    document.querySelector(`[data-room-id="${roomId}"]`)?.remove();
+  } catch (err) {
+    console.error(err);
+    alert("Could not delete chat");
+  }
 }
+
 
 </script>
 

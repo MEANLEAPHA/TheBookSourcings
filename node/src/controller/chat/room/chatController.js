@@ -219,11 +219,23 @@ const saveChatMessage = async (roomId, senderQid, message) => {
       "SELECT buyerQid, sellerQid FROM chatRooms WHERE roomId = ?",
       [roomId]
     );
+
     if (!roomRows.length) throw new Error("Room not found");
 
     const { buyerQid, sellerQid } = roomRows[0];
     const receiverQid = senderQid === buyerQid ? sellerQid : buyerQid;
 
+    // 🧠 When a new message is sent — reappear if previously deleted
+    await db.query(
+      `UPDATE chatRooms 
+       SET 
+         buyerDeleted = CASE WHEN buyerQid = ? THEN 0 ELSE buyerDeleted END,
+         sellerDeleted = CASE WHEN sellerQid = ? THEN 0 ELSE sellerDeleted END
+       WHERE roomId = ?`,
+      [senderQid, senderQid, roomId]
+    );
+
+    // 💬 Save the message
     const [result] = await db.query(
       `INSERT INTO messages (roomId, senderQid, receiverQid, message, status, created_at)
        VALUES (?, ?, ?, ?, 'sent', NOW())`,
@@ -244,6 +256,7 @@ const saveChatMessage = async (roomId, senderQid, message) => {
     return null;
   }
 };
+
 
 // ✅ Mark messages delivered
 // const markMessageDelivered = async (roomId, receiverQid) => {
@@ -408,7 +421,7 @@ const deleteChatMessage = async (messageId, senderQid) => {
 const getUserChatRooms = async (req, res) => {
   try {
     const userQid = req.user.memberQid;
-    const type = req.query.type || "order"; // can be: 'order', 'friend', or 'archive'
+    const type = req.query.type || "order"; // can be: 'order', 'friend', 'archive'
 
     let sql = `
       SELECT 
@@ -430,27 +443,26 @@ const getUserChatRooms = async (req, res) => {
       WHERE (r.buyerQid = ? OR r.sellerQid = ?)
     `;
 
-    // 🧠 Handle normal and archived views separately
+    // 🧩 Handle query type logic (normal vs archive)
     if (type === "archive") {
       sql += `
         AND (
-          (r.buyerQid = ? AND r.buyerArchived = 1)
-          OR (r.sellerQid = ? AND r.sellerArchived = 1)
+          (r.buyerQid = ? AND r.buyerArchived = 1 AND r.buyerDeleted = 0)
+          OR (r.sellerQid = ? AND r.sellerArchived = 1 AND r.sellerDeleted = 0)
         )
       `;
     } else {
       sql += `
         AND (
-          (r.buyerQid = ? AND r.buyerArchived = 0)
-          OR (r.sellerQid = ? AND r.sellerArchived = 0)
+          (r.buyerQid = ? AND r.buyerArchived = 0 AND r.buyerDeleted = 0)
+          OR (r.sellerQid = ? AND r.sellerArchived = 0 AND r.sellerDeleted = 0)
         )
         AND r.type = ?
       `;
     }
 
-    sql += " ORDER BY lastMessageTime DESC";
+    sql += ` ORDER BY lastMessageTime DESC`;
 
-    // 🧾 Choose parameters based on query type
     const params =
       type === "archive"
         ? [userQid, userQid, userQid, userQid, userQid, userQid]
@@ -464,6 +476,8 @@ const getUserChatRooms = async (req, res) => {
     res.status(500).json({ message: "Failed to load chat rooms" });
   }
 };
+
+
 
 
 
@@ -523,6 +537,51 @@ const unarchiveRoom = async (req, res) => {
   }
 };
 
+// Soft delete a chat room (individual)
+const softDeleteRoom = async (req, res) => {
+  try {
+    const userQid = req.user.memberQid;
+    const { roomId } = req.params;
+
+    // Get room info
+    const [rows] = await db.query(
+      `SELECT buyerQid, sellerQid, buyerDeleted, sellerDeleted 
+       FROM chatRooms WHERE roomId = ?`,
+      [roomId]
+    );
+    if (!rows.length) return res.status(404).json({ message: "Room not found" });
+
+    const room = rows[0];
+    let fieldToUpdate = null;
+    if (room.buyerQid === userQid) fieldToUpdate = "buyerDeleted";
+    else if (room.sellerQid === userQid) fieldToUpdate = "sellerDeleted";
+    else return res.status(403).json({ message: "Not your room" });
+
+    // 🟡 Step 1: Soft delete (set user flag)
+    await db.query(`UPDATE chatRooms SET ${fieldToUpdate} = 1 WHERE roomId = ?`, [roomId]);
+
+    // 🟢 Step 2: Re-check current status from DB
+    const [check] = await db.query(
+      `SELECT buyerDeleted, sellerDeleted FROM chatRooms WHERE roomId = ?`,
+      [roomId]
+    );
+    const { buyerDeleted, sellerDeleted } = check[0];
+
+    // 🧨 Step 3: If both deleted, hard delete
+    if (buyerDeleted && sellerDeleted) {
+      await db.query(`DELETE FROM messages WHERE roomId = ?`, [roomId]);
+      await db.query(`DELETE FROM chatRooms WHERE roomId = ?`, [roomId]);
+      return res.json({ message: "Room permanently deleted" });
+    }
+
+    res.json({ message: "Room soft deleted" });
+  } catch (err) {
+    console.error("❌ Error soft deleting chat room:", err);
+    res.status(500).json({ message: "Failed to delete chat room" });
+  }
+};
+
+
 
 
 module.exports = {
@@ -535,5 +594,6 @@ module.exports = {
   markMessageDelivered,
   markAllMessagesSeen,
   archiveRoom,
-  unarchiveRoom
+  unarchiveRoom,
+  softDeleteRoom
 };
