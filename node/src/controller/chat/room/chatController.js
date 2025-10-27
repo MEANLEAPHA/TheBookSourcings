@@ -215,19 +215,27 @@ const db = require("../../../config/db");
 // ✅ Save a message
 const saveChatMessage = async (roomId, senderQid, message) => {
   try {
+    // ✅ Fetch room info
     const [roomRows] = await db.query(
-      "SELECT buyerQid, sellerQid FROM chatRooms WHERE roomId = ?",
+      "SELECT buyerQid, sellerQid, buyerDeleted, sellerDeleted FROM chatRooms WHERE roomId = ?",
       [roomId]
     );
 
-    if (!roomRows.length) throw new Error("Room not found");
+    if (!roomRows.length) {
+      console.error("❌ Room not found for roomId:", roomId);
+      throw new Error("Room not found");
+    }
 
-    const { buyerQid, sellerQid } = roomRows[0];
+    const room = roomRows[0];
+    const { buyerQid, sellerQid, buyerDeleted, sellerDeleted } = room;
     const receiverQid = senderQid === buyerQid ? sellerQid : buyerQid;
 
-    // 🧠 When a new message is sent — reappear if previously deleted
-    await db.query(
-      `UPDATE chatRooms 
+    console.log("🔹 Sending message in room:", roomId);
+    console.log({ senderQid, receiverQid, buyerDeleted, sellerDeleted });
+
+    // 🧠 Restore soft-deleted room if necessary
+    const updateRes = await db.query(
+      `UPDATE chatRooms
        SET 
          buyerDeleted = CASE WHEN buyerQid = ? THEN 0 ELSE buyerDeleted END,
          sellerDeleted = CASE WHEN sellerQid = ? THEN 0 ELSE sellerDeleted END
@@ -235,12 +243,16 @@ const saveChatMessage = async (roomId, senderQid, message) => {
       [senderQid, senderQid, roomId]
     );
 
-    // 💬 Save the message
+    console.log("✅ Soft-delete flags updated:", updateRes);
+
+    // 💬 Insert the new message
     const [result] = await db.query(
       `INSERT INTO messages (roomId, senderQid, receiverQid, message, status, created_at)
        VALUES (?, ?, ?, ?, 'sent', NOW())`,
       [roomId, senderQid, receiverQid, message]
     );
+
+    console.log("✅ Message saved with ID:", result.insertId);
 
     return {
       messageId: result.insertId,
@@ -252,10 +264,11 @@ const saveChatMessage = async (roomId, senderQid, message) => {
       created_at: new Date()
     };
   } catch (err) {
-    console.error("❌ Error saving chat message:", err);
+    console.error("❌ Error in saveChatMessage:", err);
     return null;
   }
 };
+
 
 
 // ✅ Mark messages delivered
