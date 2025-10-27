@@ -215,35 +215,35 @@ const db = require("../../../config/db");
 // ✅ Save a message
 const saveChatMessage = async (roomId, senderQid, message) => {
   try {
-    // ✅ Fetch room info
     const [roomRows] = await db.query(
       "SELECT buyerQid, sellerQid, buyerDeleted, sellerDeleted FROM chatRooms WHERE roomId = ?",
       [roomId]
     );
 
-    if (!roomRows.length) {
-      console.error("❌ Room not found for roomId:", roomId);
-      throw new Error("Room not found");
-    }
+    if (!roomRows.length) throw new Error("Room not found");
 
     const room = roomRows[0];
     const { buyerQid, sellerQid, buyerDeleted, sellerDeleted } = room;
     const receiverQid = senderQid === buyerQid ? sellerQid : buyerQid;
 
     console.log("🔹 Sending message in room:", roomId);
-    console.log({ senderQid, receiverQid, buyerDeleted, sellerDeleted });
+    console.log({
+      senderQid,
+      receiverQid,
+      buyerDeleted,
+      sellerDeleted,
+    });
 
-    // 🧠 Restore soft-deleted room if necessary
-    const updateRes = await db.query(
-      `UPDATE chatRooms
-       SET 
-         buyerDeleted = CASE WHEN buyerQid = ? THEN 0 ELSE buyerDeleted END,
-         sellerDeleted = CASE WHEN sellerQid = ? THEN 0 ELSE sellerDeleted END
-       WHERE roomId = ?`,
-      [senderQid, senderQid, roomId]
-    );
+    // 🧠 Restore soft-deleted room for the receiver if needed
+    let updateQuery = `
+      UPDATE chatRooms SET 
+        buyerDeleted = CASE WHEN buyerDeleted = 1 AND buyerQid = ? THEN 0 ELSE buyerDeleted END,
+        sellerDeleted = CASE WHEN sellerDeleted = 1 AND sellerQid = ? THEN 0 ELSE sellerDeleted END
+      WHERE roomId = ?`;
+    
+    const [updateResult] = await db.query(updateQuery, [receiverQid, receiverQid, roomId]);
 
-    console.log("✅ Soft-delete flags updated:", updateRes);
+    console.log("✅ Soft-delete flags updated:", updateResult);
 
     // 💬 Insert the new message
     const [result] = await db.query(
@@ -252,8 +252,6 @@ const saveChatMessage = async (roomId, senderQid, message) => {
       [roomId, senderQid, receiverQid, message]
     );
 
-    console.log("✅ Message saved with ID:", result.insertId);
-
     return {
       messageId: result.insertId,
       roomId,
@@ -261,13 +259,14 @@ const saveChatMessage = async (roomId, senderQid, message) => {
       receiverQid,
       message,
       status: "sent",
-      created_at: new Date()
+      created_at: new Date(),
     };
   } catch (err) {
-    console.error("❌ Error in saveChatMessage:", err);
+    console.error("❌ Error saving chat message:", err);
     return null;
   }
 };
+
 
 
 
