@@ -442,7 +442,7 @@ const getUserChatRooms = async (req, res) => {
 
 
 // PUT /api/chat/archive/:roomId
-export const archiveRoom = async (req, res) => {
+ const archiveRoom = async (req, res) => {
   try {
     const { roomId } = req.params;
     const memberQid = req.user.memberQid;
@@ -476,7 +476,7 @@ export const archiveRoom = async (req, res) => {
 
 
 // PUT /api/chat/unarchive/:roomId
-export const unarchiveRoom = async (req, res) => {
+ const unarchiveRoom = async (req, res) => {
   try {
     const { roomId } = req.params;
     const memberQid = req.user.memberQid;
