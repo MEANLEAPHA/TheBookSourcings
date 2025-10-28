@@ -233,7 +233,7 @@ const saveChatMessage = async (roomId, senderQid, message, senderName = "Someone
 
     const room = roomRows[0];
     const { buyerQid, sellerQid, buyerDeleted, sellerDeleted } = room;
-    const receiverQid = senderQid === buyerQid ? sellerQid : buyerQq;
+    const receiverQid = senderQid === buyerQid ? sellerQid : buyerQid;
 
     console.log("🔹 Sending message in room:", roomId, { senderQid, receiverQid });
 
