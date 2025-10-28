@@ -211,9 +211,18 @@
 //   markAllMessagesSeen
 // };
 const db = require("../../../config/db");
+const { sendPushToMember } = require("../../service/pushController");
+
+// Helper: check if user is online via global.io
+const isUserOnline = (memberQid) => {
+  for (const [id, socket] of global.io.of('/').sockets) {
+    if (socket.user && socket.user.memberQid === memberQid) return true;
+  }
+  return false;
+};
 
 // ✅ Save a message
-const saveChatMessage = async (roomId, senderQid, message) => {
+const saveChatMessage = async (roomId, senderQid, message, senderName = "Someone") => {
   try {
     const [roomRows] = await db.query(
       "SELECT buyerQid, sellerQid, buyerDeleted, sellerDeleted FROM chatRooms WHERE roomId = ?",
@@ -224,25 +233,18 @@ const saveChatMessage = async (roomId, senderQid, message) => {
 
     const room = roomRows[0];
     const { buyerQid, sellerQid, buyerDeleted, sellerDeleted } = room;
-    const receiverQid = senderQid === buyerQid ? sellerQid : buyerQid;
+    const receiverQid = senderQid === buyerQid ? sellerQid : buyerQq;
 
-    console.log("🔹 Sending message in room:", roomId);
-    console.log({
-      senderQid,
-      receiverQid,
-      buyerDeleted,
-      sellerDeleted,
-    });
+    console.log("🔹 Sending message in room:", roomId, { senderQid, receiverQid });
 
     // 🧠 Restore soft-deleted room for the receiver if needed
-    let updateQuery = `
-      UPDATE chatRooms SET 
-        buyerDeleted = CASE WHEN buyerDeleted = 1 AND buyerQid = ? THEN 0 ELSE buyerDeleted END,
-        sellerDeleted = CASE WHEN sellerDeleted = 1 AND sellerQid = ? THEN 0 ELSE sellerDeleted END
-      WHERE roomId = ?`;
-    
-    const [updateResult] = await db.query(updateQuery, [receiverQid, receiverQid, roomId]);
-
+    const [updateResult] = await db.query(
+      `UPDATE chatRooms SET 
+         buyerDeleted = CASE WHEN buyerDeleted = 1 AND buyerQid = ? THEN 0 ELSE buyerDeleted END,
+         sellerDeleted = CASE WHEN sellerDeleted = 1 AND sellerQid = ? THEN 0 ELSE sellerDeleted END
+       WHERE roomId = ?`,
+      [receiverQid, receiverQid, roomId]
+    );
     console.log("✅ Soft-delete flags updated:", updateResult);
 
     // 💬 Insert the new message
@@ -252,7 +254,7 @@ const saveChatMessage = async (roomId, senderQid, message) => {
       [roomId, senderQid, receiverQid, message]
     );
 
-    return {
+    const savedMessage = {
       messageId: result.insertId,
       roomId,
       senderQid,
@@ -261,11 +263,77 @@ const saveChatMessage = async (roomId, senderQid, message) => {
       status: "sent",
       created_at: new Date(),
     };
+
+    // 🔔 Push notification if receiver is offline
+    if (!isUserOnline(receiverQid)) {
+      const payload = {
+        title: `New message from ${senderName}`,
+        body: message.slice(0, 120),
+        url: `/chat/${roomId}`, // adjust to your frontend route
+      };
+      const pushResults = await sendPushToMember(receiverQid, payload);
+      console.log("🔔 Push notification results:", pushResults);
+    }
+
+    return savedMessage;
   } catch (err) {
     console.error("❌ Error saving chat message:", err);
     return null;
   }
 };
+// const saveChatMessage = async (roomId, senderQid, message) => {
+//   try {
+//     const [roomRows] = await db.query(
+//       "SELECT buyerQid, sellerQid, buyerDeleted, sellerDeleted FROM chatRooms WHERE roomId = ?",
+//       [roomId]
+//     );
+
+//     if (!roomRows.length) throw new Error("Room not found");
+
+//     const room = roomRows[0];
+//     const { buyerQid, sellerQid, buyerDeleted, sellerDeleted } = room;
+//     const receiverQid = senderQid === buyerQid ? sellerQid : buyerQid;
+
+//     console.log("🔹 Sending message in room:", roomId);
+//     console.log({
+//       senderQid,
+//       receiverQid,
+//       buyerDeleted,
+//       sellerDeleted,
+//     });
+
+//     // 🧠 Restore soft-deleted room for the receiver if needed
+//     let updateQuery = `
+//       UPDATE chatRooms SET 
+//         buyerDeleted = CASE WHEN buyerDeleted = 1 AND buyerQid = ? THEN 0 ELSE buyerDeleted END,
+//         sellerDeleted = CASE WHEN sellerDeleted = 1 AND sellerQid = ? THEN 0 ELSE sellerDeleted END
+//       WHERE roomId = ?`;
+    
+//     const [updateResult] = await db.query(updateQuery, [receiverQid, receiverQid, roomId]);
+
+//     console.log("✅ Soft-delete flags updated:", updateResult);
+
+//     // 💬 Insert the new message
+//     const [result] = await db.query(
+//       `INSERT INTO messages (roomId, senderQid, receiverQid, message, status, created_at)
+//        VALUES (?, ?, ?, ?, 'sent', NOW())`,
+//       [roomId, senderQid, receiverQid, message]
+//     );
+
+//     return {
+//       messageId: result.insertId,
+//       roomId,
+//       senderQid,
+//       receiverQid,
+//       message,
+//       status: "sent",
+//       created_at: new Date(),
+//     };
+//   } catch (err) {
+//     console.error("❌ Error saving chat message:", err);
+//     return null;
+//   }
+// };
 
 
 
