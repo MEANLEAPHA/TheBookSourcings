@@ -64,7 +64,7 @@ const roomChat = require("./routes/chat/room/chatRoutes");
 
 
 // push nootification
-const pushNotification = require('./routes/service/pushRoute');
+// const pushNotification = require('./routes/service/pushRoute');
 
 
 // Initialize Routes
