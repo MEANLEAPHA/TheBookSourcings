@@ -675,5 +675,6 @@ module.exports = {
   markAllMessagesSeen,
   archiveRoom,
   unarchiveRoom,
-  softDeleteRoom
+  softDeleteRoom,
+  isUserOnline
 };

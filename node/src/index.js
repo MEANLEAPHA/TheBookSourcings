@@ -106,6 +106,7 @@ app.use("/api/chat", roomChat);
 
 
 // push nootification
+const { isUserOnline } = require("./controller/chat/room/chatController"); // adjust path
 const pushNotification = require('./routes/service/pushRoute');
 const pushController = require("./controller/service/pushController")
 app.use("/api/notification", pushNotification);
