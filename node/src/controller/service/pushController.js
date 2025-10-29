@@ -53,34 +53,75 @@ const unsubscribe = async (req, res) => {
 };
 
 // send notifications to all subscriptions for a specific memberQid
-const sendPushToMember = async (memberQid, payloadObj) => {
-  try {
-    const [rows] = await db.query(`SELECT endpoint, p256dh, auth FROM push_subscriptions WHERE memberQid = ?`, [memberQid]);
-    if (!rows.length) return [];
+async function sendPushToMember(memberQid, payload) {
+  const [subs] = await db.query(
+    "SELECT * FROM push_subscriptions WHERE memberQid = ?",
+    [memberQid]
+  );
 
-    const results = [];
-    for (const row of rows) {
-      const sub = {
-        endpoint: row.endpoint,
-        keys: { p256dh: row.p256dh, auth: row.auth }
-      };
-      try {
-        await webpush.sendNotification(sub, JSON.stringify(payloadObj));
-        results.push({ endpoint: row.endpoint, ok: true });
-      } catch (err) {
-        console.error('Push send fail for', row.endpoint, err);
-        // If subscription invalid (410, 404) remove it
-        if (err.statusCode === 410 || err.statusCode === 404) {
-          await db.query('DELETE FROM push_subscriptions WHERE endpoint = ?', [row.endpoint]);
-        }
-        results.push({ endpoint: row.endpoint, ok: false, error: err.message });
+  if (!subs.length) return [];
+
+  const results = [];
+
+  for (const sub of subs) {
+    const pushSub = {
+      endpoint: sub.endpoint,
+      keys: {
+        p256dh: sub.p256dh,
+        auth: sub.auth,
+      },
+    };
+
+    try {
+      await webpush.sendNotification(pushSub, JSON.stringify(payload));
+      results.push({ endpoint: sub.endpoint, ok: true });
+    } catch (err) {
+      console.error("❌ Push send fail for", sub.endpoint, err);
+
+      // 🔥 If subscription expired or invalid -> delete it
+      if (err.statusCode === 410 || err.statusCode === 404) {
+        await db.query("DELETE FROM push_subscriptions WHERE endpoint = ?", [sub.endpoint]);
+        console.log("🗑️ Removed expired subscription:", sub.endpoint);
       }
+
+      results.push({
+        endpoint: sub.endpoint,
+        ok: false,
+        error: err.body || err.message,
+      });
     }
-    return results;
-  } catch (err) {
-    console.error('sendPushToMember error', err);
-    return [];
   }
-};
+
+  return results;
+}
+// const sendPushToMember = async (memberQid, payloadObj) => {
+//   try {
+//     const [rows] = await db.query(`SELECT endpoint, p256dh, auth FROM push_subscriptions WHERE memberQid = ?`, [memberQid]);
+//     if (!rows.length) return [];
+
+//     const results = [];
+//     for (const row of rows) {
+//       const sub = {
+//         endpoint: row.endpoint,
+//         keys: { p256dh: row.p256dh, auth: row.auth }
+//       };
+//       try {
+//         await webpush.sendNotification(sub, JSON.stringify(payloadObj));
+//         results.push({ endpoint: row.endpoint, ok: true });
+//       } catch (err) {
+//         console.error('Push send fail for', row.endpoint, err);
+//         // If subscription invalid (410, 404) remove it
+//         if (err.statusCode === 410 || err.statusCode === 404) {
+//           await db.query('DELETE FROM push_subscriptions WHERE endpoint = ?', [row.endpoint]);
+//         }
+//         results.push({ endpoint: row.endpoint, ok: false, error: err.message });
+//       }
+//     }
+//     return results;
+//   } catch (err) {
+//     console.error('sendPushToMember error', err);
+//     return [];
+//   }
+// };
 
 module.exports = { subscribe, unsubscribe, sendPushToMember };
