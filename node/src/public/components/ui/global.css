@@ -1,13 +1,13 @@
 
 :root{
     --background-color:white;
-    --primary-color:#275791;
+    --primary-color:#fd7648;
     --secondary-color: gainsboro;
     --font-color:rgb(65, 65, 65);
 }
 .dark-theme{
     --background-color:rgb(32, 32, 32);
-    --primary-color:#275791;
+    --primary-color:#fd7648;
     --secondary-color: rgba(220, 220, 220, 0.318);
     --font-color:rgb(255, 255, 255);
 }
@@ -456,6 +456,11 @@ li:hover{
     
  
 }
+li a:hover{
+    color: var(--primary-color);
+    
+ 
+}
 #u1 li:last-child{
     border-bottom: 0.3px solid  var(--secondary-color);
 }
@@ -533,11 +538,20 @@ font-size: 13px;
   font-size: 13px;
     color: var(--font-color);
 }
-#uLast2 li a:hover{
-    background-color:transparent;
+#uLast2 li:hover{
+    background:none;
     border-radius: 0px;
 /* padding: 20px 0px 5px 0px; */
     cursor: auto;
+    color:var(--primary-color);  
+
+}
+#uLast2 li a:hover{
+    background:none;
+    border-radius: 0px;
+/* padding: 20px 0px 5px 0px; */
+    cursor: auto;
+    color:var(--primary-color);  
 
 }
 #u5 li:first-child{
