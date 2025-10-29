@@ -19,12 +19,6 @@ const subscribe = async (req, res) => {
       return res.status(400).json({ message: 'Invalid subscription payload' });
     }
 
-    console.log("📩 Received subscription:", {
-      memberQid,
-      endpoint,
-      keys
-    });
-
     // ✅ Insert new or update existing (no duplicates)
     await db.query(
       `INSERT INTO push_subscriptions (memberQid, endpoint, p256dh, auth)

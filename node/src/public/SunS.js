@@ -105,6 +105,57 @@ const VAPID_PUBLIC_KEY_URL = "/api/notification/vapidPublicKey";
 const SUBSCRIBE_URL = "/api/notification/subscribe";
 const UNSUBSCRIBE_URL = "/api/notification/unsubscribe";
 
+// async function registerServiceWorkerAndSubscribe() {
+//   if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+//     console.warn("Push not supported in this browser.");
+//     return null;
+//   }
+
+//   try {
+//     // Register Service Worker once
+//     const reg = await navigator.serviceWorker.register("/service-worker.js");
+//     console.log("✅ Service Worker registered:", reg);
+
+//     // Ask user for permission
+//     const permission = await Notification.requestPermission();
+//     if (permission !== "granted") {
+//       console.warn("Notification permission not granted");
+//       return null;
+//     }
+
+//     // Get VAPID key from backend
+//     const res = await fetch(VAPID_PUBLIC_KEY_URL, {
+//       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+//     });
+//     const { publicKey } = await res.json();
+//     const applicationServerKey = urlBase64ToUint8Array(publicKey);
+
+//     // Subscribe for push 
+//     const subscription = await reg.pushManager.subscribe({
+//       userVisibleOnly: true,
+//       applicationServerKey,
+//     });
+
+//     // Send subscription to backend
+//     await fetch(SUBSCRIBE_URL, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//         "Authorization": `Bearer ${localStorage.getItem("token")}`,
+//       },
+//       body: JSON.stringify({
+//         endpoint: subscription.endpoint,
+//         keys: subscription.toJSON().keys,
+//       }),
+//     });
+
+//     console.log("✅ Subscribed for push:", subscription.endpoint);
+//     return subscription;
+//   } catch (err) {
+//     console.error("Subscribe failed:", err);
+//     return null;
+//   }
+// }
 async function registerServiceWorkerAndSubscribe() {
   if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
     console.warn("Push not supported in this browser.");
@@ -156,7 +207,6 @@ async function registerServiceWorkerAndSubscribe() {
     return null;
   }
 }
-
 async function unsubscribePush() {
   try {
     const reg = await navigator.serviceWorker.ready;
@@ -197,3 +247,6 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.addEventListener("click", registerServiceWorkerAndSubscribe);
   }
 });
+
+
+
