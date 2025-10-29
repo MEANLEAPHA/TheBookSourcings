@@ -13,26 +13,30 @@ webpush.setVapidDetails(
 const subscribe = async (req, res) => {
   try {
     const memberQid = req.user.memberQid;
-    const { endpoint, keys } = req.body; // body: { endpoint, keys: { p256dh, auth } }
+    const { endpoint, keys } = req.body;
 
     if (!endpoint || !keys || !keys.p256dh || !keys.auth) {
       return res.status(400).json({ message: 'Invalid subscription payload' });
     }
 
-    // Upsert: avoid duplicates
+    // ✅ Insert new or update existing (no duplicates)
     await db.query(
       `INSERT INTO push_subscriptions (memberQid, endpoint, p256dh, auth)
        VALUES (?, ?, ?, ?)
-       ON DUPLICATE KEY UPDATE p256dh = VALUES(p256dh), auth = VALUES(auth), created_at = NOW()`,
+       ON DUPLICATE KEY UPDATE 
+         p256dh = VALUES(p256dh), 
+         auth = VALUES(auth), 
+         updated_at = NOW()`,
       [memberQid, endpoint, keys.p256dh, keys.auth]
     );
 
-    res.json({ message: 'Subscribed' });
+    res.json({ message: 'Subscribed successfully' });
   } catch (err) {
-    console.error('Subscribe error', err);
+    console.error('❌ Subscribe error:', err);
     res.status(500).json({ message: 'Server error' });
   }
 };
+
 
 const unsubscribe = async (req, res) => {
   try {

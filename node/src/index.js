@@ -312,14 +312,17 @@ socket.on("sendMessage", async ({ roomId, message, tempId }) => {
     const receiverQid = senderQid === room.buyerQid ? room.sellerQid : room.buyerQid;
 
     // 5️⃣ Send push only if offline
-    if (!isUserOnline(receiverQid)) {
+
+     if (receiverQid && receiverQid !== senderQid && !isUserOnline(receiverQid)) {
       const payload = {
         title: `New message from ${socket.user.username || "Someone"}`,
         body: message,
-        url: `/chat/${roomId}` // frontend route when user clicks notification
+        url: `/chat/${roomId}`
       };
+
+      // Prevent duplicates
       const results = await pushController.sendPushToMember(receiverQid, payload);
-      console.log("🔔 Push notification results:", results);
+      console.log("🔔 Push sent to receiver only:", results);
     }
 
   } catch (err) {
