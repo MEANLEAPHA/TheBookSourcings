@@ -289,7 +289,7 @@ socket.on("sendMessage", async ({ roomId, message, tempId }) => {
   try {
     console.log(`🔹 Sending message in room: ${roomId}`, { senderQid, message });
 
-    // 1️⃣ Save the chat message
+    // 1️⃣ Save message
     const saved = await chatController.saveChatMessage(roomId, senderQid, message);
     if (!saved) return console.error("❌ Message not saved.");
 
@@ -298,10 +298,10 @@ socket.on("sendMessage", async ({ roomId, message, tempId }) => {
     // 2️⃣ Emit to sender
     socket.emit("messageSent", { ...saved, tempId });
 
-    // 3️⃣ Broadcast to others in room
+    // 3️⃣ Emit to others (receiver)
     socket.to(roomId).emit("receiveMessage", saved);
 
-    // 4️⃣ Determine receiver
+    // 4️⃣ Find receiver
     const [roomRows] = await db.query(
       "SELECT buyerQid, sellerQid FROM chatRooms WHERE roomId = ?",
       [roomId]
@@ -311,16 +311,14 @@ socket.on("sendMessage", async ({ roomId, message, tempId }) => {
     const room = roomRows[0];
     const receiverQid = senderQid === room.buyerQid ? room.sellerQid : room.buyerQid;
 
-    // 5️⃣ Send push only if offline
-
-     if (receiverQid && receiverQid !== senderQid && !isUserOnline(receiverQid)) {
+    // 5️⃣ Push notification to receiver ONLY (if offline)
+    if (receiverQid && receiverQid !== senderQid && !isUserOnline(receiverQid)) {
       const payload = {
         title: `New message from ${socket.user.username || "Someone"}`,
         body: message,
-        url: `/chat/${roomId}`
+        url: `/chat/${roomId}`,
       };
 
-      // Prevent duplicates
       const results = await pushController.sendPushToMember(receiverQid, payload);
       console.log("🔔 Push sent to receiver only:", results);
     }
@@ -329,6 +327,7 @@ socket.on("sendMessage", async ({ roomId, message, tempId }) => {
     console.error("❌ Error in sendMessage listener:", err);
   }
 });
+
 
  
 

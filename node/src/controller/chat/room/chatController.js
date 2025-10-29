@@ -266,15 +266,15 @@ const saveChatMessage = async (roomId, senderQid, message, senderName = "Someone
     };
 
     // 🔔 Push notification if receiver is offline
-    if (!isUserOnline(receiverQid)) {
-      const payload = {
-        title: `New message from ${senderName}`,
-        body: message.slice(0, 120),
-        url: `/chat/${roomId}`, // adjust to your frontend route
-      };
-      const pushResults = await sendPushToMember(receiverQid, payload);
-      console.log("🔔 Push notification results:", pushResults);
-    }
+    // if (!isUserOnline(receiverQid)) {
+    //   const payload = {
+    //     title: `New message from ${senderName}`,
+    //     body: message.slice(0, 120),
+    //     url: `/chat/${roomId}`, // adjust to your frontend route
+    //   };
+    //   const pushResults = await sendPushToMember(receiverQid, payload);
+    //   console.log("🔔 Push notification results:", pushResults);
+    // }
 
     return savedMessage;
   } catch (err) {
