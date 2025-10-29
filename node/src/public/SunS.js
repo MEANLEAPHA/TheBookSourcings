@@ -107,65 +107,41 @@ const UNSUBSCRIBE_URL = "/api/notification/unsubscribe";
 
 async function registerServiceWorkerAndSubscribe() {
   if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
-    console.warn("❌ Push not supported in this browser.");
+    console.warn("Push not supported in this browser.");
     return null;
   }
 
   try {
-    // ✅ Register service worker
+    // Register Service Worker once
     const reg = await navigator.serviceWorker.register("/service-worker.js");
     console.log("✅ Service Worker registered:", reg);
 
-    // ✅ Handle permission (for iOS and others)
-    let permission = Notification.permission;
-    if ("Notification" in window && permission === "default") {
-      permission = await Notification.requestPermission();
-      console.log("📱 iOS permission:", permission);
-    }
-
+    // Ask user for permission
+    const permission = await Notification.requestPermission();
     if (permission !== "granted") {
-      console.warn("❌ Notification permission not granted");
+      console.warn("Notification permission not granted");
       return null;
     }
 
-    // ✅ Fetch VAPID public key from backend
+    // Get VAPID key from backend
     const res = await fetch(VAPID_PUBLIC_KEY_URL, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
     const { publicKey } = await res.json();
     const applicationServerKey = urlBase64ToUint8Array(publicKey);
 
-    // ✅ Check for existing subscription
-    let subscription = await reg.pushManager.getSubscription();
-
-    if (subscription) {
-      console.log("🔎 Found existing subscription:", subscription.endpoint);
-
-      // 🧹 Test if old subscription still valid (optional: skip network check)
-      try {
-        // Try sending a test message from backend (optional) OR re-subscribe always:
-        console.log("🗑️ Unsubscribing old subscription...");
-        await subscription.unsubscribe();
-        subscription = null;
-      } catch (err) {
-        console.warn("⚠️ Failed to unsubscribe old one:", err);
-      }
-    }
-
-    // ✅ Create a new subscription
-    subscription = await reg.pushManager.subscribe({
+    // Subscribe for push
+    const subscription = await reg.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey,
     });
 
-    console.log("✅ New subscription:", subscription.endpoint);
-
-    // ✅ Send subscription to backend
-    const response = await fetch(SUBSCRIBE_URL, {
+    // Send subscription to backend
+    await fetch(SUBSCRIBE_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Authorization": `Bearer ${localStorage.getItem("token")}`,
       },
       body: JSON.stringify({
         endpoint: subscription.endpoint,
@@ -173,16 +149,13 @@ async function registerServiceWorkerAndSubscribe() {
       }),
     });
 
-    if (!response.ok) throw new Error("Failed to store subscription on backend");
-
-    console.log("📤 Subscription sent to backend successfully!");
+    console.log("✅ Subscribed for push:", subscription.endpoint);
     return subscription;
   } catch (err) {
-    console.error("❌ Subscription failed:", err);
+    console.error("Subscribe failed:", err);
     return null;
   }
 }
-
 
 async function unsubscribePush() {
   try {
