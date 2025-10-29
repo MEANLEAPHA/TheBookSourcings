@@ -70,7 +70,7 @@ self.addEventListener("activate", (event) => {
   console.log("[Service Worker] Activated");
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(keys.filter((key) => key !== "jouys-cache-v1").map((key) => caches.delete(key)))
+      Promise.all(keys.filter((key) => key !== "otthor-cache-v1").map((key) => caches.delete(key)))
     )
   );
   self.clients.claim(); // take control of open pages

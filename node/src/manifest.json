@@ -1,6 +1,6 @@
 {
-  "name": "OTTHOR",
-  "short_name": "OTTHOR",
+  "name": "Otthor",
+  "short_name": "Otthor",
   "description": "The book community enjoyment platform",
   "start_url": "/index.html",
   "display": "standalone",

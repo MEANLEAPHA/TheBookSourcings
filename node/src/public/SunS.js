@@ -112,18 +112,22 @@ async function registerServiceWorkerAndSubscribe() {
   }
 
   try {
-    // Register Service Worker once
     const reg = await navigator.serviceWorker.register("/service-worker.js");
     console.log("✅ Service Worker registered:", reg);
 
-    // Ask user for permission
-    const permission = await Notification.requestPermission();
+    // ✅ Ask permission correctly (for iOS + others)
+    let permission = Notification.permission;
+    if ("Notification" in window && permission === "default") {
+      permission = await Notification.requestPermission();
+      console.log("📱 iOS permission:", permission);
+    }
+
     if (permission !== "granted") {
       console.warn("Notification permission not granted");
       return null;
     }
 
-    // Get VAPID key from backend
+    // Fetch VAPID public key
     const res = await fetch(VAPID_PUBLIC_KEY_URL, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
@@ -141,7 +145,7 @@ async function registerServiceWorkerAndSubscribe() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       body: JSON.stringify({
         endpoint: subscription.endpoint,
@@ -156,6 +160,7 @@ async function registerServiceWorkerAndSubscribe() {
     return null;
   }
 }
+
 
 async function unsubscribePush() {
   try {
