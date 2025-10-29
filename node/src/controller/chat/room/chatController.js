@@ -214,7 +214,7 @@ const db = require("../../../config/db");
 const { sendPushToMember } = require("../../service/pushController");
 
 // Helper: check if user is online via global.io
-if (receiverQid === senderQid) return; // never push to self
+
 const isUserOnline = (memberQid) => {
   for (const [id, socket] of global.io.of('/').sockets) {
     if (socket.user && socket.user.memberQid === memberQid) return true;
