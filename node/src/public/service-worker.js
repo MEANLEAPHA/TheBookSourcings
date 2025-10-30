@@ -38,17 +38,19 @@
 self.addEventListener("install", (event) => {
   console.log("[Service Worker] Installed");
   event.waitUntil(
-    caches.open("otthor-cache-v1").then((cache) => {
-      return cache.addAll([
-        "/",
-        "/index.html",
-        "/manifest.json",
-        "/icons/OTTHORicon.png"
-      ]);
-    })
+    caches.open("otthor-cache-v1")
+      .then(cache => 
+        Promise.allSettled([
+          cache.add("/"),
+          cache.add("/manifest.json").catch(() => console.warn("manifest.json missing")),
+          cache.add("/icons/OTTHORicon.png").catch(() => console.warn("icon missing")),
+        ])
+      )
+      .catch(err => console.error("[SW] Cache addAll failed:", err))
   );
-  self.skipWaiting(); // activate immediately
+  self.skipWaiting();
 });
+
 
 self.addEventListener("activate", (event) => {
   console.log("[Service Worker] Activated");

@@ -163,8 +163,21 @@ async function registerServiceWorkerAndSubscribe() {
   }
 
   try {
+    // const reg = await navigator.serviceWorker.register("/service-worker.js");
+    // console.log("✅ Service Worker registered:", reg);
     const reg = await navigator.serviceWorker.register("/service-worker.js");
-    console.log("✅ Service Worker registered:", reg);
+console.log("✅ Service Worker registered:", reg);
+
+    // 🕒 Wait for it to activate
+    const readyReg = await navigator.serviceWorker.ready;
+    console.log("🟢 Service Worker ready:", readyReg);
+
+    // Use this one instead of `reg`
+    // const subscription = await readyReg.pushManager.subscribe({
+    //   userVisibleOnly: true,
+    //   applicationServerKey,
+    // });
+
 
     const permission = await Notification.requestPermission();
     if (permission !== "granted") {
