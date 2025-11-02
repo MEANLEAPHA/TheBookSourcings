@@ -553,6 +553,7 @@ socket.on("receiveMessage", (msg) => {
   //   if (msgDiv) msgDiv.remove();
   // });
   socket.on("messageEdited", (data) => {
+      console.log("✅ messageEdited RECEIVED:", data); // Add here
   const msgDiv = document.querySelector(`[data-message-id="${data.messageId}"]`);
   if (msgDiv) msgDiv.querySelector(".message-text").textContent = data.newMessage;
 
@@ -574,6 +575,7 @@ socket.on("receiveMessage", (msg) => {
 });
 
   socket.on("messageDeleted", (data) => {
+    console.log("✅ messageDeleted RECEIVED:", data); // Add here
   const msgDiv = document.querySelector(`[data-message-id="${data.messageId}"]`);
   if (msgDiv) {
     // Check if this was the last message in the chat
@@ -669,6 +671,7 @@ socket.on("receiveMessage", (msg) => {
     submit.onclick = () => {
       const newMessage = input.value.trim();
       if (!newMessage) return;
+      console.log("🧩 EDIT EMIT:", { roomId: activeRoomId, messageId, newMessage }); // ✅ Add this line
       socket.emit("editMessage", { roomId: activeRoomId, messageId, newMessage });
       toast.style.display = "none";
     };
@@ -683,6 +686,7 @@ socket.on("receiveMessage", (msg) => {
 
     toast.style.display = "block";
     confirm.onclick = () => {
+       console.log("🧩 DELETE EMIT:", { roomId: activeRoomId, messageId }); // ✅ Add this line
       socket.emit("deleteMessage", { roomId: activeRoomId, messageId });
       toast.style.display = "none";
     };

@@ -264,24 +264,7 @@ socket.on("messageDelivered", async ({ messageId, roomId }) => {
   }
 });
 
-// socket.on("sendMessage", async ({ roomId, message, tempId }) => {
-//     if (!socket.user) return;
-//     const senderQid = socket.user.memberQid;
 
-//     try {
-//       const saved = await chatController.saveChatMessage(roomId, senderQid, message);
-//       if (!saved) return;
-
-//       // 1) Confirm to sender including tempId so client replaces exact element
-//       socket.emit("messageSent", { ...saved, tempId });
-
-//       // 2) Broadcast to other participants in room
-//       socket.to(roomId).emit("receiveMessage", saved);
-
-//     } catch (err) {
-//       console.error("❌ Error saving chat message:", err);
-//     }
-//   });
 socket.on("sendMessage", async ({ roomId, message, tempId }) => {
   if (!socket.user) return;
   const senderQid = socket.user.memberQid;
