@@ -392,6 +392,7 @@ socket.on("markRoomSeen", async ({ roomId }) => {
   //   }
   // });
   // Edit message
+// === EDIT MESSAGE ===
 socket.on("editMessage", async ({ messageId, newMessage, roomId }) => {
   if (!socket.user || !messageId || !roomId) return;
   const senderQid = socket.user.memberQid;
@@ -400,10 +401,10 @@ socket.on("editMessage", async ({ messageId, newMessage, roomId }) => {
     const updated = await chatController.updateChatMessage(messageId, senderQid, newMessage);
     if (!updated) return;
 
-    // 1️⃣ Emit edit to all clients in room
+    // Emit edited message to room
     io.to(roomId).emit("messageEdited", { messageId, newMessage });
 
-    // 2️⃣ Update last message for room list
+    // Update last message in room
     const lastMsg = await chatController.getLastMessage(roomId);
     if (lastMsg) {
       io.to(roomId).emit("roomUpdated", {
@@ -417,7 +418,7 @@ socket.on("editMessage", async ({ messageId, newMessage, roomId }) => {
   }
 });
 
-// Delete message
+// === DELETE MESSAGE ===
 socket.on("deleteMessage", async ({ messageId, roomId }) => {
   if (!socket.user || !messageId || !roomId) return;
   const senderQid = socket.user.memberQid;
@@ -426,18 +427,15 @@ socket.on("deleteMessage", async ({ messageId, roomId }) => {
     const deleted = await chatController.deleteChatMessage(messageId, senderQid);
     if (!deleted) return;
 
-    // 1️⃣ Emit deletion to all clients in room
+    // Emit deletion
     io.to(roomId).emit("messageDeleted", { messageId });
 
-    // 2️⃣ Update last message for room list
+    // Update last message in room
     const lastMsg = await chatController.getLastMessage(roomId);
-    const lastMessageText = lastMsg ? lastMsg.message : "No messages yet";
-    const lastSenderQid = lastMsg ? lastMsg.senderQid : null;
-
     io.to(roomId).emit("roomUpdated", {
       roomId,
-      lastMessage: lastMessageText,
-      senderQid: lastSenderQid,
+      lastMessage: lastMsg ? lastMsg.message : "No messages yet",
+      senderQid: lastMsg ? lastMsg.senderQid : null,
     });
   } catch (err) {
     console.error("❌ Error deleting message:", err);
