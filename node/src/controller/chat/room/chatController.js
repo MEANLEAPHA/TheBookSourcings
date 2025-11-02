@@ -471,6 +471,34 @@ const getChatMessages = async (req, res) => {
     return res.status(500).json({ message: "Failed to load chat messages" });
   }
 };
+const getLastMessage = async (roomId) => {
+  if (!roomId) return null;
+
+  try {
+    const [rows] = await db.query(
+      `SELECT 
+         m.messageId,
+         m.roomId,
+         m.senderQid,
+         m.receiverQid,
+         m.message,
+         m.status,
+         m.created_at,
+         u.username AS senderName
+       FROM messages m
+       LEFT JOIN users u ON m.senderQid = u.memberQid
+       WHERE m.roomId = ?
+       ORDER BY m.created_at DESC
+       LIMIT 1`,
+      [roomId]
+    );
+
+    return rows[0] || null;
+  } catch (err) {
+    console.error("❌ Error fetching last message:", err);
+    return null;
+  }
+};
 
 // ✅ Update message
 const updateChatMessage = async (messageId, senderQid, newMessage) => {
@@ -677,5 +705,6 @@ module.exports = {
   archiveRoom,
   unarchiveRoom,
   softDeleteRoom,
-  isUserOnline
+  isUserOnline,
+  getLastMessage
 };
