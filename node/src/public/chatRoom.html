@@ -422,6 +422,12 @@ async function loadChatRooms(type = "friend") {
         { messageId: tempId, message: text, senderQid: currentUser, status: "pending" },
         true
       );
+       // ✅ Update room list last message instantly
+      const roomDiv = document.querySelector(`[data-room-id="${roomId}"]`);
+      if (roomDiv) {
+        const lastMsg = roomDiv.querySelector(".room-last");
+        if (lastMsg) lastMsg.textContent = text;
+      }
 
       socket.emit("sendMessage", { roomId, message: text, tempId });
       messageInput.value = "";
@@ -558,20 +564,18 @@ socket.on("receiveMessage", (msg) => {
     }
   });
 
-  socket.on("roomUpdated", ({ roomId, lastMessage, senderQid }) => {
-  const roomEl = document.querySelector(`.room-item[data-roomid="${roomId}"]`);
-  if (!roomEl) return; // not in the visible list
+ socket.on("roomUpdated", ({ roomId, lastMessage, senderQid }) => {
+  const roomEl = document.querySelector(`.room-item[data-room-id="${roomId}"]`);
+  if (!roomEl) return;
 
   const lastTextEl = roomEl.querySelector(".room-last");
-  if (lastTextEl) {
-    lastTextEl.textContent = lastMessage;
-  }
+  if (lastTextEl) lastTextEl.textContent = lastMessage;
 
-  // if user is NOT currently viewing that chat, show unread
-  if (roomId !== currentRoomId && senderQid !== myQid) {
+  if (roomId !== activeRoomId && senderQid !== currentUser) {
     roomEl.classList.add("unread");
   }
 });
+
 
 
   // === TOAST HANDLERS ===
@@ -596,23 +600,43 @@ socket.on("receiveMessage", (msg) => {
     };
   }
 
-  function showEditMessageToast(msgDiv, messageId) {
-    const toast = document.getElementById("editMessageToast");
-    const input = toast.querySelector("#editInput");
-    const submit = toast.querySelector("#submitEdit");
-    const cancel = toast.querySelector("#cancelEdit");
+  // function showEditMessageToast(msgDiv, messageId) {
+  //   const toast = document.getElementById("editMessageToast");
+  //   const input = toast.querySelector("#editInput");
+  //   const submit = toast.querySelector("#submitEdit");
+  //   const cancel = toast.querySelector("#cancelEdit");
 
-    input.value = msgDiv.querySelector(".message-text").textContent;
-    toast.style.display = "block";
+  //   input.value = msgDiv.querySelector(".message-text").textContent;
+  //   toast.style.display = "block";
 
-    submit.onclick = () => {
-      const newMessage = input.value.trim();
-      if (!newMessage) return;
-      socket.emit("editMessage", { roomId: activeRoomId, messageId, newMessage });
-      toast.style.display = "none";
-    };
-    cancel.onclick = () => (toast.style.display = "none");
+  //   submit.onclick = () => {
+  //     const newMessage = input.value.trim();
+  //     if (!newMessage) return;
+  //     socket.emit("editMessage", { roomId: activeRoomId, messageId, newMessage });
+  //     toast.style.display = "none";
+  //   };
+  //   cancel.onclick = () => (toast.style.display = "none");
+  // }
+socket.on("messageEdited", (data) => {
+  const msgDiv = document.querySelector(`[data-message-id="${data.messageId}"]`);
+  if (msgDiv) msgDiv.querySelector(".message-text").textContent = data.newMessage;
+
+  // Update room-last only if this message is the latest in that room
+  const roomEl = document.querySelector(`.room-item[data-room-id="${data.roomId}"]`);
+  if (!roomEl) return;
+
+  const chatBox = document.getElementById("chatBox");
+  if (!chatBox) return;
+
+  // Find the last message in this room
+  const messagesInRoom = Array.from(chatBox.querySelectorAll(".message"));
+  const lastMsgInRoom = messagesInRoom[messagesInRoom.length - 1];
+
+  if (lastMsgInRoom && lastMsgInRoom.dataset.messageId === data.messageId) {
+    const lastTextEl = roomEl.querySelector(".room-last");
+    if (lastTextEl) lastTextEl.textContent = data.newMessage;
   }
+});
 
   function showDeleteMessageToast(messageId) {
     const toast = document.getElementById("deleteMessageToast");
