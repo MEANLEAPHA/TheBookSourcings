@@ -443,9 +443,9 @@ const markMessageSeen = async (messageId, viewerQid) => {
 };
 
 // ✅ Get messages in a room
-const getChatMessages = async (req, res) => {
+const getChatMessages = async (roomId) => {
   try {
-    const { roomId } = req.params;
+  
     if (!roomId) return res.status(400).json({ message: "Missing roomId" });
 
     const [rows] = await db.query(
