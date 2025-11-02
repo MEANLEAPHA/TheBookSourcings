@@ -470,13 +470,13 @@ async function loadChatRooms(type = "friend") {
   //   chatBox.appendChild(msgDiv);
   //   chatBox.scrollTop = chatBox.scrollHeight;
   // }
-  function appendMessage(msg, isMe = false) {
+function appendMessage(msg, isMe = false) {
   const chatBox = document.getElementById("chatBox");
   if (!chatBox) return;
 
   const msgDiv = document.createElement("div");
   msgDiv.className = isMe ? "message me" : "message other";
-  msgDiv.dataset.messageId = msg.messageId;
+  msgDiv.dataset.messageId = msg.messageId; // tempId initially
 
   const textSpan = document.createElement("span");
   textSpan.className = "message-text";
@@ -501,7 +501,8 @@ async function loadChatRooms(type = "friend") {
     threeDots.className = "three-dots";
 
     threeDots.addEventListener("click", () => {
-      showEditDeleteToast(msgDiv, msg.messageId, msg.status === "pending");
+      // Always allow user to click, store tempId if needed
+      showEditDeleteToast(msgDiv, msg.messageId);
     });
 
     msgDiv.appendChild(threeDots);
@@ -510,6 +511,7 @@ async function loadChatRooms(type = "friend") {
   chatBox.appendChild(msgDiv);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
+
 
   // === UPDATE MESSAGE STATUS ICON ===
   function updateMessageStatus(messageId, status) {
@@ -564,19 +566,38 @@ socket.on("receiveMessage", (msg) => {
 
 
 
+  // socket.on("messageSent", (msg) => {
+  //   const { tempId } = msg || {};
+  //   if (tempId) {
+  //     const tempMsg = document.querySelector(`[data-message-id="${tempId}"]`);
+  //     if (tempMsg) {
+  //       tempMsg.dataset.messageId = msg.messageId;
+  //       const statusEl = tempMsg.querySelector(".status");
+  //       if (statusEl) statusEl.innerHTML = `<i class="fa-solid fa-check"></i>`;
+  //       return;
+  //     }
+  //   }
+  //   appendMessage(msg, msg.senderQid === currentUser);
+  // });
+
   socket.on("messageSent", (msg) => {
-    const { tempId } = msg || {};
-    if (tempId) {
-      const tempMsg = document.querySelector(`[data-message-id="${tempId}"]`);
-      if (tempMsg) {
-        tempMsg.dataset.messageId = msg.messageId;
-        const statusEl = tempMsg.querySelector(".status");
-        if (statusEl) statusEl.innerHTML = `<i class="fa-solid fa-check"></i>`;
-        return;
-      }
+  const { tempId } = msg || {};
+  if (tempId) {
+    const tempMsg = document.querySelector(`[data-message-id="${tempId}"]`);
+    if (tempMsg) {
+      // 1️⃣ Replace tempId with real messageId
+      tempMsg.dataset.messageId = msg.messageId;
+
+      // 2️⃣ Update status icon
+      const statusEl = tempMsg.querySelector(".status");
+      if (statusEl) statusEl.innerHTML = `<i class="fa-solid fa-check"></i>`;
+
+      return; // do not append again
     }
-    appendMessage(msg, msg.senderQid === currentUser);
-  });
+  }
+
+  appendMessage(msg, msg.senderQid === currentUser);
+});
 
   socket.on("messageDelivered", ({ messageIds }) => {
     if (!Array.isArray(messageIds)) return;
