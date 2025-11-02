@@ -543,49 +543,49 @@ socket.on("receiveMessage", (msg) => {
     messageIds.forEach((id) => updateMessageStatus(id, "delivered"));
   });
 
-  // socket.on("messageEdited", (data) => {
-  //   const msgDiv = document.querySelector(`[data-message-id="${data.messageId}"]`);
-  //   if (msgDiv) msgDiv.querySelector(".message-text").textContent = data.newMessage;
-  // });
+  socket.on("messageEdited", (data) => {
+    const msgDiv = document.querySelector(`[data-message-id="${data.messageId}"]`);
+    if (msgDiv) msgDiv.querySelector(".message-text").textContent = data.newMessage;
+  });
 
-  // socket.on("messageDeleted", (data) => {
-  //   const msgDiv = document.querySelector(`[data-message-id="${data.messageId}"]`);
-  //   if (msgDiv) msgDiv.remove();
-  // });
   socket.on("messageDeleted", (data) => {
-  const msgDiv = document.querySelector(`[data-message-id="${data.messageId}"]`);
-  if (msgDiv) {
-    // Check if this was the last message in the chat
-    const chatBox = document.getElementById("chatBox");
-    const messagesInRoom = chatBox ? Array.from(chatBox.querySelectorAll(".message")) : [];
-    const lastMsgDiv = messagesInRoom[messagesInRoom.length - 1];
+    const msgDiv = document.querySelector(`[data-message-id="${data.messageId}"]`);
+    if (msgDiv) msgDiv.remove();
+  });
+//   socket.on("messageDeleted", (data) => {
+//   const msgDiv = document.querySelector(`[data-message-id="${data.messageId}"]`);
+//   if (msgDiv) {
+//     // Check if this was the last message in the chat
+//     const chatBox = document.getElementById("chatBox");
+//     const messagesInRoom = chatBox ? Array.from(chatBox.querySelectorAll(".message")) : [];
+//     const lastMsgDiv = messagesInRoom[messagesInRoom.length - 1];
 
-    // Remove the message from chat
-    msgDiv.remove();
+//     // Remove the message from chat
+//     msgDiv.remove();
 
-    const roomEl = document.querySelector(`.room-item[data-room-id="${data.roomId}"]`);
-    if (!roomEl) return;
+//     const roomEl = document.querySelector(`.room-item[data-room-id="${data.roomId}"]`);
+//     if (!roomEl) return;
 
-    const lastTextEl = roomEl.querySelector(".room-last");
+//     const lastTextEl = roomEl.querySelector(".room-last");
 
-    if (lastMsgDiv && lastMsgDiv.dataset.messageId === data.messageId) {
-      // Deleted message was the last one → update room-last
-      if (messagesInRoom.length > 1) {
-        const newLastMsg = messagesInRoom[messagesInRoom.length - 2]; // new last message
-        if (newLastMsg) {
-          lastTextEl.textContent = newLastMsg.querySelector(".message-text").textContent;
-        } else {
-          lastTextEl.textContent = "No messages yet";
-        }
-      } else {
-        lastTextEl.textContent = "No messages yet";
-      }
+//     if (lastMsgDiv && lastMsgDiv.dataset.messageId === data.messageId) {
+//       // Deleted message was the last one → update room-last
+//       if (messagesInRoom.length > 1) {
+//         const newLastMsg = messagesInRoom[messagesInRoom.length - 2]; // new last message
+//         if (newLastMsg) {
+//           lastTextEl.textContent = newLastMsg.querySelector(".message-text").textContent;
+//         } else {
+//           lastTextEl.textContent = "No messages yet";
+//         }
+//       } else {
+//         lastTextEl.textContent = "No messages yet";
+//       }
 
-      // Remove unread if needed
-      roomEl.classList.remove("unread");
-    }
-  }
-});
+//       // Remove unread if needed
+//       roomEl.classList.remove("unread");
+//     }
+//   }
+// });
 
 
   socket.on("roomMessagesSeen", ({ messageIds }) => {
@@ -652,26 +652,26 @@ socket.on("receiveMessage", (msg) => {
     };
     cancel.onclick = () => (toast.style.display = "none");
   }
-socket.on("messageEdited", (data) => {
-  const msgDiv = document.querySelector(`[data-message-id="${data.messageId}"]`);
-  if (msgDiv) msgDiv.querySelector(".message-text").textContent = data.newMessage;
+// socket.on("messageEdited", (data) => {
+//   const msgDiv = document.querySelector(`[data-message-id="${data.messageId}"]`);
+//   if (msgDiv) msgDiv.querySelector(".message-text").textContent = data.newMessage;
 
-  // Update room-last only if this message is the latest in that room
-  const roomEl = document.querySelector(`.room-item[data-room-id="${data.roomId}"]`);
-  if (!roomEl) return;
+//   // Update room-last only if this message is the latest in that room
+//   const roomEl = document.querySelector(`.room-item[data-room-id="${data.roomId}"]`);
+//   if (!roomEl) return;
 
-  const chatBox = document.getElementById("chatBox");
-  if (!chatBox) return;
+//   const chatBox = document.getElementById("chatBox");
+//   if (!chatBox) return;
 
-  // Find the last message in this room
-  const messagesInRoom = Array.from(chatBox.querySelectorAll(".message"));
-  const lastMsgInRoom = messagesInRoom[messagesInRoom.length - 1];
+//   // Find the last message in this room
+//   const messagesInRoom = Array.from(chatBox.querySelectorAll(".message"));
+//   const lastMsgInRoom = messagesInRoom[messagesInRoom.length - 1];
 
-  if (lastMsgInRoom && lastMsgInRoom.dataset.messageId === data.messageId) {
-    const lastTextEl = roomEl.querySelector(".room-last");
-    if (lastTextEl) lastTextEl.textContent = data.newMessage;
-  }
-});
+//   if (lastMsgInRoom && lastMsgInRoom.dataset.messageId === data.messageId) {
+//     const lastTextEl = roomEl.querySelector(".room-last");
+//     if (lastTextEl) lastTextEl.textContent = data.newMessage;
+//   }
+// });
 
   function showDeleteMessageToast(messageId) {
     const toast = document.getElementById("deleteMessageToast");
