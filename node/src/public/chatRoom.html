@@ -524,19 +524,40 @@ socket.on("receiveMessage", (msg) => {
 
 
 
-  socket.on("messageSent", (msg) => {
-    const { tempId } = msg || {};
-    if (tempId) {
-      const tempMsg = document.querySelector(`[data-message-id="${tempId}"]`);
-      if (tempMsg) {
-        tempMsg.dataset.messageId = msg.messageId;
-        const statusEl = tempMsg.querySelector(".status");
-        if (statusEl) statusEl.innerHTML = `<i class="fa-solid fa-check"></i>`;
-        return;
-      }
+  // socket.on("messageSent", (msg) => {
+  //   const { tempId } = msg || {};
+  //   if (tempId) {
+  //     const tempMsg = document.querySelector(`[data-message-id="${tempId}"]`);
+  //     if (tempMsg) {
+  //       tempMsg.dataset.messageId = msg.messageId;
+  //       const statusEl = tempMsg.querySelector(".status");
+  //       if (statusEl) statusEl.innerHTML = `<i class="fa-solid fa-check"></i>`;
+  //       return;
+  //     }
+  //   }
+  //   appendMessage(msg, msg.senderQid === currentUser);
+  // });
+  // Store a mapping from tempId → realId
+const tempIdMap = {};
+
+socket.on("messageSent", (msg) => {
+  const { tempId, messageId } = msg;
+  if (tempId) {
+    const tempMsg = document.querySelector(`[data-message-id="${tempId}"]`);
+    if (tempMsg) {
+      tempMsg.dataset.messageId = String(messageId); // replace tempId
+      tempIdMap[tempId] = messageId; // store mapping
+      const statusEl = tempMsg.querySelector(".status");
+      if (statusEl) statusEl.innerHTML = `<i class="fa-solid fa-check"></i>`;
+      return;
     }
-    appendMessage(msg, msg.senderQid === currentUser);
-  });
+  }
+  appendMessage(msg, msg.senderQid === currentUser);
+});
+// When editing/deleting, normalize messageId
+function getRealMessageId(msgId) {
+  return tempIdMap[msgId] || msgId; // use DB id if exists
+}
 
   socket.on("messageDelivered", ({ messageIds }) => {
     if (!Array.isArray(messageIds)) return;
@@ -668,11 +689,9 @@ socket.on("messageDeleted", (data) => {
 submit.onclick = () => {
   const newMessage = input.value.trim();
   if (!newMessage) return;
-
-  const msgIdStr = String(messageId); // <- convert
-  console.log("[EDIT] Submitting edit:", { msgIdStr, newMessage, activeRoomId });
-
-  socket.emit("editMessage", { roomId: activeRoomId, messageId: msgIdStr, newMessage });
+  const realId = getRealMessageId(messageId);
+  console.log("[EDIT] Submitting edit:", { messageId: realId, newMessage, activeRoomId });
+  socket.emit("editMessage", { roomId: activeRoomId, messageId: realId, newMessage });
   toast.style.display = "none";
 };
 
@@ -688,10 +707,9 @@ function showDeleteMessageToast(messageId) {
 
   toast.style.display = "block";
 confirm.onclick = () => {
-  const msgIdStr = String(messageId);
-  console.log("[DELETE] Deleting message:", { msgIdStr, activeRoomId });
-
-  socket.emit("deleteMessage", { roomId: activeRoomId, messageId: msgIdStr });
+  const realId = getRealMessageId(messageId);
+  console.log("[DELETE] Deleting message:", { messageId: realId, activeRoomId });
+  socket.emit("deleteMessage", { roomId: activeRoomId, messageId: realId });
   toast.style.display = "none";
 };
   cancel.onclick = () => (toast.style.display = "none");
