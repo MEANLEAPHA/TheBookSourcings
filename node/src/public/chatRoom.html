@@ -554,6 +554,7 @@ socket.on("receiveMessage", (msg) => {
   // });
 // ✅ When a message is edited
 socket.on("messageEdited", ({ messageId, newMessage, roomId }) => {
+    console.log("[SOCKET] messageEdited received:", data);
   const msgDiv = document.querySelector(`[data-message-id="${messageId}"]`);
   if (msgDiv) {
     const msgTextEl = msgDiv.querySelector(".message-text");
@@ -578,6 +579,7 @@ socket.on("messageEdited", ({ messageId, newMessage, roomId }) => {
 
 // ✅ When a message is deleted
 socket.on("messageDeleted", ({ messageId, roomId }) => {
+  console.log("[SOCKET] messageDeleted received:", data);
   const msgDiv = document.querySelector(`[data-message-id="${messageId}"]`);
   if (msgDiv) msgDiv.remove();
 
@@ -696,7 +698,7 @@ socket.on("messageDeleted", ({ messageId, roomId }) => {
   submit.onclick = () => {
   const newMessage = input.value.trim();
   if (!newMessage) return;
-
+  console.log("[EDIT] Submitting edit:", { messageId, newMessage, activeRoomId });
   socket.emit("editMessage", { roomId: activeRoomId, messageId, newMessage });
   toast.style.display = "none";
 };
@@ -713,6 +715,7 @@ function showDeleteMessageToast(messageId) {
 
   toast.style.display = "block";
 confirm.onclick = () => {
+  console.log("[DELETE] Deleting message:", { messageId, activeRoomId });
   socket.emit("deleteMessage", { roomId: activeRoomId, messageId });
   toast.style.display = "none";
 };

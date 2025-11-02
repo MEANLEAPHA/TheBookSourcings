@@ -411,6 +411,7 @@ socket.on("markRoomSeen", async ({ roomId }) => {
   // Edit message
 // ✅ Edit message
 socket.on("editMessage", async ({ messageId, newMessage, roomId }) => {
+  console.log("[SERVER] editMessage received:", { messageId, newMessage, roomId, user: socket.user?.memberQid });
   if (!socket.user || !messageId || !roomId) return;
   const senderQid = socket.user.memberQid;
 
@@ -437,6 +438,7 @@ socket.on("editMessage", async ({ messageId, newMessage, roomId }) => {
 
 // ✅ Delete message
 socket.on("deleteMessage", async ({ messageId, roomId }) => {
+   console.log("[SERVER] deleteMessage received:", { messageId, roomId, user: socket.user?.memberQid });
   if (!socket.user || !messageId || !roomId) return;
   const senderQid = socket.user.memberQid;
 

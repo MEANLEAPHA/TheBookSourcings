@@ -521,7 +521,7 @@ const deleteChatMessage = async (messageId, senderQid) => {
     );
     return result.affectedRows;
   } catch (err) {
-    console.error("❌ Error deleting message:", err);
+    console.error("❌ Error deleting message:", err); 
   }
 };
 
