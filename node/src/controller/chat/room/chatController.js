@@ -705,5 +705,5 @@ module.exports = {
   unarchiveRoom,
   softDeleteRoom,
   isUserOnline,
-  getLastMessage
+ getLastMessage
 };

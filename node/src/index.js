@@ -306,7 +306,7 @@ socket.on("sendMessage", async ({ roomId, message, tempId }) => {
         roomId,
         lastMessage: saved.message,
         senderQid,
-        createdAt: saved.createdAt || new Date(),
+        createdAt: saved.created_at || new Date(),
       });
 
     // 4️⃣ Find receiver

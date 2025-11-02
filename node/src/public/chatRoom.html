@@ -552,6 +552,27 @@ socket.on("receiveMessage", (msg) => {
   //   const msgDiv = document.querySelector(`[data-message-id="${data.messageId}"]`);
   //   if (msgDiv) msgDiv.remove();
   // });
+  socket.on("messageEdited", (data) => {
+  const msgDiv = document.querySelector(`[data-message-id="${data.messageId}"]`);
+  if (msgDiv) msgDiv.querySelector(".message-text").textContent = data.newMessage;
+
+  // Update room-last only if this message is the latest in that room
+  const roomEl = document.querySelector(`.room-item[data-room-id="${data.roomId}"]`);
+  if (!roomEl) return;
+
+  const chatBox = document.getElementById("chatBox");
+  if (!chatBox) return;
+
+  // Find the last message in this room
+  const messagesInRoom = Array.from(chatBox.querySelectorAll(".message"));
+  const lastMsgInRoom = messagesInRoom[messagesInRoom.length - 1];
+
+  if (lastMsgInRoom && lastMsgInRoom.dataset.messageId === data.messageId) {
+    const lastTextEl = roomEl.querySelector(".room-last");
+    if (lastTextEl) lastTextEl.textContent = data.newMessage;
+  }
+});
+
   socket.on("messageDeleted", (data) => {
   const msgDiv = document.querySelector(`[data-message-id="${data.messageId}"]`);
   if (msgDiv) {
@@ -586,26 +607,7 @@ socket.on("receiveMessage", (msg) => {
     }
   }
 });
-socket.on("messageEdited", (data) => {
-  const msgDiv = document.querySelector(`[data-message-id="${data.messageId}"]`);
-  if (msgDiv) msgDiv.querySelector(".message-text").textContent = data.newMessage;
 
-  // Update room-last only if this message is the latest in that room
-  const roomEl = document.querySelector(`.room-item[data-room-id="${data.roomId}"]`);
-  if (!roomEl) return;
-
-  const chatBox = document.getElementById("chatBox");
-  if (!chatBox) return;
-
-  // Find the last message in this room
-  const messagesInRoom = Array.from(chatBox.querySelectorAll(".message"));
-  const lastMsgInRoom = messagesInRoom[messagesInRoom.length - 1];
-
-  if (lastMsgInRoom && lastMsgInRoom.dataset.messageId === data.messageId) {
-    const lastTextEl = roomEl.querySelector(".room-last");
-    if (lastTextEl) lastTextEl.textContent = data.newMessage;
-  }
-});
 
 
   socket.on("roomMessagesSeen", ({ messageIds }) => {
