@@ -553,58 +553,28 @@ socket.on("receiveMessage", (msg) => {
   //   if (msgDiv) msgDiv.remove();
   // });
 // ✅ When a message is edited
-socket.on("messageEdited", ({ messageId, newMessage, roomId }) => {
-    console.log("[SOCKET] messageEdited received:", data);
-  const msgDiv = document.querySelector(`[data-message-id="${messageId}"]`);
+socket.on("messageEdited", (data) => {
+  console.log("[SOCKET] messageEdited received:", data);
+
+  const msgIdStr = String(data.messageId); // <- convert to string
+  const msgDiv = document.querySelector(`[data-message-id="${msgIdStr}"]`);
+  if (!msgDiv) console.warn("[SOCKET] messageEdited: msgDiv not found for", msgIdStr);
+
   if (msgDiv) {
-    const msgTextEl = msgDiv.querySelector(".message-text");
-    if (msgTextEl) msgTextEl.textContent = newMessage;
-  }
-
-  // Update sidebar last message if this edited message is the latest one
-  const roomEl = document.querySelector(`.room-item[data-room-id="${roomId}"]`);
-  if (roomEl) {
-    const chatBox = document.getElementById("chatBox");
-    if (chatBox) {
-      const messagesInRoom = Array.from(chatBox.querySelectorAll(".message"));
-      const lastMsg = messagesInRoom[messagesInRoom.length - 1];
-      if (lastMsg && lastMsg.dataset.messageId === messageId) {
-        const lastTextEl = roomEl.querySelector(".room-last");
-        if (lastTextEl) lastTextEl.textContent = newMessage;
-      }
-    }
+    msgDiv.querySelector(".message-text").textContent = data.newMessage;
   }
 });
 
-
-// ✅ When a message is deleted
-socket.on("messageDeleted", ({ messageId, roomId }) => {
+socket.on("messageDeleted", (data) => {
   console.log("[SOCKET] messageDeleted received:", data);
-  const msgDiv = document.querySelector(`[data-message-id="${messageId}"]`);
+
+  const msgIdStr = String(data.messageId);
+  const msgDiv = document.querySelector(`[data-message-id="${msgIdStr}"]`);
+  if (!msgDiv) console.warn("[SOCKET] messageDeleted: msgDiv not found for", msgIdStr);
+
   if (msgDiv) msgDiv.remove();
-
-  // Update sidebar if this message was the last one
-  const roomEl = document.querySelector(`.room-item[data-room-id="${roomId}"]`);
-  if (!roomEl) return;
-
-  const lastTextEl = roomEl.querySelector(".room-last");
-  const chatBox = document.getElementById("chatBox");
-  if (!chatBox) return;
-
-  const messagesInRoom = Array.from(chatBox.querySelectorAll(".message"));
-  if (!messagesInRoom.length) {
-    lastTextEl.textContent = "No messages yet";
-    roomEl.classList.remove("unread");
-    return;
-  }
-
-  const lastMsg = messagesInRoom[messagesInRoom.length - 1];
-  const newLastText = lastMsg.querySelector(".message-text").textContent;
-  lastTextEl.textContent = newLastText;
-
-  // Optional: remove unread dot if deleting last unread message
-  roomEl.classList.remove("unread");
 });
+
 
 
   socket.on("roomMessagesSeen", ({ messageIds }) => {
@@ -695,11 +665,14 @@ socket.on("messageDeleted", ({ messageId, roomId }) => {
   input.value = msgDiv.querySelector(".message-text").textContent;
   toast.style.display = "block";
 
-  submit.onclick = () => {
+submit.onclick = () => {
   const newMessage = input.value.trim();
   if (!newMessage) return;
-  console.log("[EDIT] Submitting edit:", { messageId, newMessage, activeRoomId });
-  socket.emit("editMessage", { roomId: activeRoomId, messageId, newMessage });
+
+  const msgIdStr = String(messageId); // <- convert
+  console.log("[EDIT] Submitting edit:", { msgIdStr, newMessage, activeRoomId });
+
+  socket.emit("editMessage", { roomId: activeRoomId, messageId: msgIdStr, newMessage });
   toast.style.display = "none";
 };
 
@@ -715,11 +688,12 @@ function showDeleteMessageToast(messageId) {
 
   toast.style.display = "block";
 confirm.onclick = () => {
-  console.log("[DELETE] Deleting message:", { messageId, activeRoomId });
-  socket.emit("deleteMessage", { roomId: activeRoomId, messageId });
+  const msgIdStr = String(messageId);
+  console.log("[DELETE] Deleting message:", { msgIdStr, activeRoomId });
+
+  socket.emit("deleteMessage", { roomId: activeRoomId, messageId: msgIdStr });
   toast.style.display = "none";
 };
-
   cancel.onclick = () => (toast.style.display = "none");
 }
   // function showDeleteMessageToast(messageId) {
