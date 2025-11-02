@@ -264,7 +264,24 @@ socket.on("messageDelivered", async ({ messageId, roomId }) => {
   }
 });
 
+// socket.on("sendMessage", async ({ roomId, message, tempId }) => {
+//     if (!socket.user) return;
+//     const senderQid = socket.user.memberQid;
 
+//     try {
+//       const saved = await chatController.saveChatMessage(roomId, senderQid, message);
+//       if (!saved) return;
+
+//       // 1) Confirm to sender including tempId so client replaces exact element
+//       socket.emit("messageSent", { ...saved, tempId });
+
+//       // 2) Broadcast to other participants in room
+//       socket.to(roomId).emit("receiveMessage", saved);
+
+//     } catch (err) {
+//       console.error("❌ Error saving chat message:", err);
+//     }
+//   });
 socket.on("sendMessage", async ({ roomId, message, tempId }) => {
   if (!socket.user) return;
   const senderQid = socket.user.memberQid;
@@ -289,7 +306,7 @@ socket.on("sendMessage", async ({ roomId, message, tempId }) => {
         roomId,
         lastMessage: saved.message,
         senderQid,
-        createdAt: saved.created_at || new Date(),
+        createdAt: saved.createdAt || new Date(),
       });
 
     // 4️⃣ Find receiver
@@ -362,85 +379,87 @@ socket.on("markRoomSeen", async ({ roomId }) => {
   }
 });
 
-  // // ✅ Edit message logic
-  // socket.on("editMessage", async ({ messageId, newMessage, roomId }) => {
-  //   if (!socket.user || !messageId || !roomId) return;
-  //   const senderQid = socket.user.memberQid;
+  // ✅ Edit message logic
+  socket.on("editMessage", async ({ messageId, newMessage, roomId }) => {
+    if (!socket.user || !messageId || !roomId) return;
+    const senderQid = socket.user.memberQid;
 
-  //   try {
-  //     const updated = await chatController.updateChatMessage(messageId, senderQid, newMessage);
-  //     if (updated) {
-  //       io.to(roomId).emit("messageEdited", { messageId, newMessage });
-  //     }
-  //   } catch (err) {
-  //     console.error("❌ Error editing message:", err);
-  //   }
-  // });
-
-  // // ✅ Delete message logic
-  // socket.on("deleteMessage", async ({ messageId, roomId }) => {
-  //   if (!socket.user || !messageId || !roomId) return;
-  //   const senderQid = socket.user.memberQid;
-
-  //   try {
-  //     const deleted = await chatController.deleteChatMessage(messageId, senderQid);
-  //     if (deleted) {
-  //       io.to(roomId).emit("messageDeleted", { messageId });
-  //     }
-  //   } catch (err) {
-  //     console.error("❌ Error deleting message:", err);
-  //   }
-  // });
-  // Edit message
-// === EDIT MESSAGE ===
-socket.on("editMessage", async ({ messageId, newMessage, roomId }) => {
-  if (!socket.user || !messageId || !roomId) return;
-  const senderQid = socket.user.memberQid;
-
-  try {
-    const updated = await chatController.updateChatMessage(messageId, senderQid, newMessage);
-    if (!updated) return;
-
-    // Emit edited message to room
-    io.to(roomId).emit("messageEdited", { messageId, newMessage });
-
-    // Update last message in room
-    const lastMsg = await chatController.getLastMessage(roomId);
-    if (lastMsg) {
-      io.to(roomId).emit("roomUpdated", {
-        roomId,
-        lastMessage: lastMsg.message,
-        senderQid: lastMsg.senderQid,
-      });
+    try {
+      const updated = await chatController.updateChatMessage(messageId, senderQid, newMessage);
+      if (updated) {
+        io.to(roomId).emit("messageEdited", { messageId, newMessage });
+      }
+    } catch (err) {
+      console.error("❌ Error editing message:", err);
     }
-  } catch (err) {
-    console.error("❌ Error editing message:", err);
-  }
-});
+  });
 
-// === DELETE MESSAGE ===
-socket.on("deleteMessage", async ({ messageId, roomId }) => {
-  if (!socket.user || !messageId || !roomId) return;
-  const senderQid = socket.user.memberQid;
+  // ✅ Delete message logic
+  socket.on("deleteMessage", async ({ messageId, roomId }) => {
+    if (!socket.user || !messageId || !roomId) return;
+    const senderQid = socket.user.memberQid;
 
-  try {
-    const deleted = await chatController.deleteChatMessage(messageId, senderQid);
-    if (!deleted) return;
+    try {
+      const deleted = await chatController.deleteChatMessage(messageId, senderQid);
+      if (deleted) {
+        io.to(roomId).emit("messageDeleted", { messageId });
+      }
+    } catch (err) {
+      console.error("❌ Error deleting message:", err);
+    }
+  });
+  // Edit message
+// socket.on("editMessage", async ({ messageId, newMessage, roomId }) => {
+//   if (!socket.user || !messageId || !roomId) return;
+//   const senderQid = socket.user.memberQid;
 
-    // Emit deletion
-    io.to(roomId).emit("messageDeleted", { messageId });
+//   try {
+//     const updated = await chatController.updateChatMessage(messageId, senderQid, newMessage);
+//     if (!updated) return;
 
-    // Update last message in room
-    const lastMsg = await chatController.getLastMessage(roomId);
-    io.to(roomId).emit("roomUpdated", {
-      roomId,
-      lastMessage: lastMsg ? lastMsg.message : "No messages yet",
-      senderQid: lastMsg ? lastMsg.senderQid : null,
-    });
-  } catch (err) {
-    console.error("❌ Error deleting message:", err);
-  }
-});
+//     // 1️⃣ Emit edit to all clients in room
+//     io.to(roomId).emit("messageEdited", { messageId, newMessage });
+
+//     // 2️⃣ Update last message for room list
+//     const lastMsg = await chatController.getLastMessage(roomId);
+//     if (lastMsg) {
+//       io.to(roomId).emit("roomUpdated", {
+//         roomId,
+//         lastMessage: lastMsg.message,
+//         senderQid: lastMsg.senderQid,
+//       });
+//     }
+//   } catch (err) {
+//     console.error("❌ Error editing message:", err);
+//   }
+// });
+
+// // Delete message
+// socket.on("deleteMessage", async ({ messageId, roomId }) => {
+//   if (!socket.user || !messageId || !roomId) return;
+//   const senderQid = socket.user.memberQid;
+
+//   try {
+//     const deleted = await chatController.deleteChatMessage(messageId, senderQid);
+//     if (!deleted) return;
+
+//     // 1️⃣ Emit deletion to all clients in room
+//     io.to(roomId).emit("messageDeleted", { messageId });
+
+//     // 2️⃣ Update last message for room list
+//     const lastMsg = await chatController.getLastMessage(roomId);
+//     const lastMessageText = lastMsg ? lastMsg.message : "No messages yet";
+//     const lastSenderQid = lastMsg ? lastMsg.senderQid : null;
+
+//     io.to(roomId).emit("roomUpdated", {
+//       roomId,
+//       lastMessage: lastMessageText,
+//       senderQid: lastSenderQid,
+//     });
+//   } catch (err) {
+//     console.error("❌ Error deleting message:", err);
+//   }
+// });
 
 
   // disconnect for status in future online || offine

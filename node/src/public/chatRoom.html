@@ -435,83 +435,41 @@ async function loadChatRooms(type = "friend") {
   }
 
   // === APPEND MESSAGE ===
-  // function appendMessage(msg, isMe = false) {
-  //   const chatBox = document.getElementById("chatBox");
-  //   if (!chatBox) return;
+  function appendMessage(msg, isMe = false) {
+    const chatBox = document.getElementById("chatBox");
+    if (!chatBox) return;
 
-  //   const msgDiv = document.createElement("div");
-  //   msgDiv.className = isMe ? "message me" : "message other";
-  //   msgDiv.dataset.messageId = msg.messageId;
+    const msgDiv = document.createElement("div");
+    msgDiv.className = isMe ? "message me" : "message other";
+    msgDiv.dataset.messageId = msg.messageId;
 
-  //   const textSpan = document.createElement("span");
-  //   textSpan.className = "message-text";
-  //   textSpan.textContent = msg.message;
-  //   msgDiv.appendChild(textSpan);
+    const textSpan = document.createElement("span");
+    textSpan.className = "message-text";
+    textSpan.textContent = msg.message;
+    msgDiv.appendChild(textSpan);
 
-  //   // status icon (only show for self)
-  //   if (isMe) {
-  //     const status = document.createElement("span");
-  //     status.className = "status";
-  //     status.style.marginLeft = "6px";
-  //     if (msg.status === "pending") status.innerHTML = `<i class="fa-solid fa-clock"></i>`;
-  //     else if (msg.status === "sent") status.innerHTML = `<i class="fa-solid fa-check"></i>`;
-  //     else if (msg.status === "delivered") status.innerHTML = `<i class="fa-solid fa-check-double"></i>`;
-  //     else if (msg.status === "seen")
-  //       status.innerHTML = `<i class="fa-solid fa-check-double" style="color:#0d6efd"></i>`;
-  //     msgDiv.appendChild(status);
+    // status icon (only show for self)
+    if (isMe) {
+      const status = document.createElement("span");
+      status.className = "status";
+      status.style.marginLeft = "6px";
+      if (msg.status === "pending") status.innerHTML = `<i class="fa-solid fa-clock"></i>`;
+      else if (msg.status === "sent") status.innerHTML = `<i class="fa-solid fa-check"></i>`;
+      else if (msg.status === "delivered") status.innerHTML = `<i class="fa-solid fa-check-double"></i>`;
+      else if (msg.status === "seen")
+        status.innerHTML = `<i class="fa-solid fa-check-double" style="color:#0d6efd"></i>`;
+      msgDiv.appendChild(status);
 
-  //     const threeDots = document.createElement("span");
-  //     threeDots.textContent = "⋮";
-  //     threeDots.className = "three-dots";
-  //     msgDiv.appendChild(threeDots);
-  //     threeDots.addEventListener("click", () => showEditDeleteToast(msgDiv, msg.messageId));
-  //   }
+      const threeDots = document.createElement("span");
+      threeDots.textContent = "⋮";
+      threeDots.className = "three-dots";
+      msgDiv.appendChild(threeDots);
+      threeDots.addEventListener("click", () => showEditDeleteToast(msgDiv, msg.messageId));
+    }
 
-  //   chatBox.appendChild(msgDiv);
-  //   chatBox.scrollTop = chatBox.scrollHeight;
-  // }
-function appendMessage(msg, isMe = false) {
-  const chatBox = document.getElementById("chatBox");
-  if (!chatBox) return;
-
-  const msgDiv = document.createElement("div");
-  msgDiv.className = isMe ? "message me" : "message other";
-  msgDiv.dataset.messageId = msg.messageId; // tempId initially
-
-  const textSpan = document.createElement("span");
-  textSpan.className = "message-text";
-  textSpan.textContent = msg.message;
-  msgDiv.appendChild(textSpan);
-
-  if (isMe) {
-    const status = document.createElement("span");
-    status.className = "status";
-    status.style.marginLeft = "6px";
-
-    if (msg.status === "pending") status.innerHTML = `<i class="fa-solid fa-clock"></i>`;
-    else if (msg.status === "sent") status.innerHTML = `<i class="fa-solid fa-check"></i>`;
-    else if (msg.status === "delivered") status.innerHTML = `<i class="fa-solid fa-check-double"></i>`;
-    else if (msg.status === "seen")
-      status.innerHTML = `<i class="fa-solid fa-check-double" style="color:#0d6efd"></i>`;
-
-    msgDiv.appendChild(status);
-
-    const threeDots = document.createElement("span");
-    threeDots.textContent = "⋮";
-    threeDots.className = "three-dots";
-
-    threeDots.addEventListener("click", () => {
-      // Always allow user to click, store tempId if needed
-      showEditDeleteToast(msgDiv, msg.messageId);
-    });
-
-    msgDiv.appendChild(threeDots);
+    chatBox.appendChild(msgDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
   }
-
-  chatBox.appendChild(msgDiv);
-  chatBox.scrollTop = chatBox.scrollHeight;
-}
-
 
   // === UPDATE MESSAGE STATUS ICON ===
   function updateMessageStatus(messageId, status) {
@@ -566,101 +524,68 @@ socket.on("receiveMessage", (msg) => {
 
 
 
-  // socket.on("messageSent", (msg) => {
-  //   const { tempId } = msg || {};
-  //   if (tempId) {
-  //     const tempMsg = document.querySelector(`[data-message-id="${tempId}"]`);
-  //     if (tempMsg) {
-  //       tempMsg.dataset.messageId = msg.messageId;
-  //       const statusEl = tempMsg.querySelector(".status");
-  //       if (statusEl) statusEl.innerHTML = `<i class="fa-solid fa-check"></i>`;
-  //       return;
-  //     }
-  //   }
-  //   appendMessage(msg, msg.senderQid === currentUser);
-  // });
-
   socket.on("messageSent", (msg) => {
-  const { tempId } = msg || {};
-  if (tempId) {
-    const tempMsg = document.querySelector(`[data-message-id="${tempId}"]`);
-    if (tempMsg) {
-      // 1️⃣ Replace tempId with real messageId
-      tempMsg.dataset.messageId = msg.messageId;
-
-      // 2️⃣ Update status icon
-      const statusEl = tempMsg.querySelector(".status");
-      if (statusEl) statusEl.innerHTML = `<i class="fa-solid fa-check"></i>`;
-
-      return; // do not append again
+    const { tempId } = msg || {};
+    if (tempId) {
+      const tempMsg = document.querySelector(`[data-message-id="${tempId}"]`);
+      if (tempMsg) {
+        tempMsg.dataset.messageId = msg.messageId;
+        const statusEl = tempMsg.querySelector(".status");
+        if (statusEl) statusEl.innerHTML = `<i class="fa-solid fa-check"></i>`;
+        return;
+      }
     }
-  }
-
-  appendMessage(msg, msg.senderQid === currentUser);
-});
+    appendMessage(msg, msg.senderQid === currentUser);
+  });
 
   socket.on("messageDelivered", ({ messageIds }) => {
     if (!Array.isArray(messageIds)) return;
     messageIds.forEach((id) => updateMessageStatus(id, "delivered"));
   });
 
-  // socket.on("messageEdited", (data) => {
-  //   const msgDiv = document.querySelector(`[data-message-id="${data.messageId}"]`);
-  //   if (msgDiv) msgDiv.querySelector(".message-text").textContent = data.newMessage;
-  // });
+  socket.on("messageEdited", (data) => {
+    const msgDiv = document.querySelector(`[data-message-id="${data.messageId}"]`);
+    if (msgDiv) msgDiv.querySelector(".message-text").textContent = data.newMessage;
+  });
 
-  // socket.on("messageDeleted", (data) => {
-  //   const msgDiv = document.querySelector(`[data-message-id="${data.messageId}"]`);
-  //   if (msgDiv) msgDiv.remove();
-  // });
-// === MESSAGE EDITED ===
-socket.on("messageEdited", (data) => {
-  const msgDiv = document.querySelector(`[data-message-id="${data.messageId}"]`);
-  if (msgDiv) msgDiv.querySelector(".message-text").textContent = data.newMessage;
+  socket.on("messageDeleted", (data) => {
+    const msgDiv = document.querySelector(`[data-message-id="${data.messageId}"]`);
+    if (msgDiv) msgDiv.remove();
+  });
+//   socket.on("messageDeleted", (data) => {
+//   const msgDiv = document.querySelector(`[data-message-id="${data.messageId}"]`);
+//   if (msgDiv) {
+//     // Check if this was the last message in the chat
+//     const chatBox = document.getElementById("chatBox");
+//     const messagesInRoom = chatBox ? Array.from(chatBox.querySelectorAll(".message")) : [];
+//     const lastMsgDiv = messagesInRoom[messagesInRoom.length - 1];
 
-  // Update room-last if this is the last message
-  const roomEl = document.querySelector(`.room-item[data-room-id="${data.roomId}"]`);
-  if (!roomEl) return;
+//     // Remove the message from chat
+//     msgDiv.remove();
 
-  const chatBox = document.getElementById("chatBox");
-  if (!chatBox) return;
+//     const roomEl = document.querySelector(`.room-item[data-room-id="${data.roomId}"]`);
+//     if (!roomEl) return;
 
-  const messagesInRoom = Array.from(chatBox.querySelectorAll(".message"));
-  const lastMsgInRoom = messagesInRoom[messagesInRoom.length - 1];
+//     const lastTextEl = roomEl.querySelector(".room-last");
 
-  if (lastMsgInRoom && lastMsgInRoom.dataset.messageId === data.messageId) {
-    const lastTextEl = roomEl.querySelector(".room-last");
-    if (lastTextEl) lastTextEl.textContent = data.newMessage;
-  }
-});
+//     if (lastMsgDiv && lastMsgDiv.dataset.messageId === data.messageId) {
+//       // Deleted message was the last one → update room-last
+//       if (messagesInRoom.length > 1) {
+//         const newLastMsg = messagesInRoom[messagesInRoom.length - 2]; // new last message
+//         if (newLastMsg) {
+//           lastTextEl.textContent = newLastMsg.querySelector(".message-text").textContent;
+//         } else {
+//           lastTextEl.textContent = "No messages yet";
+//         }
+//       } else {
+//         lastTextEl.textContent = "No messages yet";
+//       }
 
-// === MESSAGE DELETED ===
-socket.on("messageDeleted", (data) => {
-  const msgDiv = document.querySelector(`[data-message-id="${data.messageId}"]`);
-  if (!msgDiv) return;
-
-  const chatBox = document.getElementById("chatBox");
-  const messagesInRoom = chatBox ? Array.from(chatBox.querySelectorAll(".message")) : [];
-  const lastMsgDiv = messagesInRoom[messagesInRoom.length - 1];
-
-  msgDiv.remove();
-
-  const roomEl = document.querySelector(`.room-item[data-room-id="${data.roomId}"]`);
-  if (!roomEl) return;
-  const lastTextEl = roomEl.querySelector(".room-last");
-
-  if (lastMsgDiv && lastMsgDiv.dataset.messageId === data.messageId) {
-    // Update last message
-    const newLastMsg = messagesInRoom.length > 1 ? messagesInRoom[messagesInRoom.length - 2] : null;
-    lastTextEl.textContent = newLastMsg
-      ? newLastMsg.querySelector(".message-text").textContent
-      : "No messages yet";
-
-    roomEl.classList.remove("unread");
-  }
-});
-
-
+//       // Remove unread if needed
+//       roomEl.classList.remove("unread");
+//     }
+//   }
+// });
 
 
   socket.on("roomMessagesSeen", ({ messageIds }) => {
@@ -689,113 +614,79 @@ socket.on("messageDeleted", (data) => {
 
 
   // === TOAST HANDLERS ===
-  // function showEditDeleteToast(msgDiv, messageId) {
-  //   const toast = document.getElementById("editDeleteToast");
-  //   toast.style.display = "block";
+  function showEditDeleteToast(msgDiv, messageId) {
+    const toast = document.getElementById("editDeleteToast");
+    toast.style.display = "block";
 
-  //   const editBtn = toast.querySelector("#editBtn");
-  //   const deleteBtn = toast.querySelector("#deleteBtn");
-  //   const closeBtn = toast.querySelector("#closeToast");
+    const editBtn = toast.querySelector("#editBtn");
+    const deleteBtn = toast.querySelector("#deleteBtn");
+    const closeBtn = toast.querySelector("#closeToast");
 
-  //   editBtn.onclick = () => {
-  //     toast.style.display = "none";
-  //     showEditMessageToast(msgDiv, messageId);
-  //   };
-  //   deleteBtn.onclick = () => {
-  //     toast.style.display = "none";
-  //     showDeleteMessageToast(messageId);
-  //   };
-  //   closeBtn.onclick = () => {
-  //     toast.style.display = "none";
-  //   };
-  // }
-  function showEditDeleteToast(msgDiv, messageId, isPending = false) {
-  if (isPending) {
-    alert("You can only edit/delete after the message is sent.");
-    return;
+    editBtn.onclick = () => {
+      toast.style.display = "none";
+      showEditMessageToast(msgDiv, messageId);
+    };
+    deleteBtn.onclick = () => {
+      toast.style.display = "none";
+      showDeleteMessageToast(messageId);
+    };
+    closeBtn.onclick = () => {
+      toast.style.display = "none";
+    };
   }
 
-  const toast = document.getElementById("editDeleteToast");
-  toast.style.display = "block";
+  function showEditMessageToast(msgDiv, messageId) {
+    const toast = document.getElementById("editMessageToast");
+    const input = toast.querySelector("#editInput");
+    const submit = toast.querySelector("#submitEdit");
+    const cancel = toast.querySelector("#cancelEdit");
 
-  const editBtn = toast.querySelector("#editBtn");
-  const deleteBtn = toast.querySelector("#deleteBtn");
-  const closeBtn = toast.querySelector("#closeToast");
+    input.value = msgDiv.querySelector(".message-text").textContent;
+    toast.style.display = "block";
 
-  editBtn.onclick = () => {
-    toast.style.display = "none";
-    showEditMessageToast(msgDiv, messageId);
-  };
-  deleteBtn.onclick = () => {
-    toast.style.display = "none";
-    showDeleteMessageToast(messageId);
-  };
-  closeBtn.onclick = () => (toast.style.display = "none");
-}
+    submit.onclick = () => {
+      const newMessage = input.value.trim();
+      if (!newMessage) return;
+      socket.emit("editMessage", { roomId: activeRoomId, messageId, newMessage });
+      toast.style.display = "none";
+    };
+    cancel.onclick = () => (toast.style.display = "none");
+  }
+// socket.on("messageEdited", (data) => {
+//   const msgDiv = document.querySelector(`[data-message-id="${data.messageId}"]`);
+//   if (msgDiv) msgDiv.querySelector(".message-text").textContent = data.newMessage;
 
-  // function showEditMessageToast(msgDiv, messageId) {
-  //   const toast = document.getElementById("editMessageToast");
-  //   const input = toast.querySelector("#editInput");
-  //   const submit = toast.querySelector("#submitEdit");
-  //   const cancel = toast.querySelector("#cancelEdit");
+//   // Update room-last only if this message is the latest in that room
+//   const roomEl = document.querySelector(`.room-item[data-room-id="${data.roomId}"]`);
+//   if (!roomEl) return;
 
-  //   input.value = msgDiv.querySelector(".message-text").textContent;
-  //   toast.style.display = "block";
+//   const chatBox = document.getElementById("chatBox");
+//   if (!chatBox) return;
 
-  //   submit.onclick = () => {
-  //     const newMessage = input.value.trim();
-  //     if (!newMessage) return;
-  //     console.log("🧩 EDIT EMIT:", { roomId: activeRoomId, messageId, newMessage }); // ✅ Add this line
-  //     socket.emit("editMessage", { roomId: activeRoomId, messageId, newMessage });
-  //     toast.style.display = "none";
-  //   };
-  //   cancel.onclick = () => (toast.style.display = "none");
-  // }
-function showEditMessageToast(msgDiv, messageId) {
-  const toast = document.getElementById("editMessageToast");
-  const input = toast.querySelector("#editInput");
-  const submit = toast.querySelector("#submitEdit");
-  const cancel = toast.querySelector("#cancelEdit");
+//   // Find the last message in this room
+//   const messagesInRoom = Array.from(chatBox.querySelectorAll(".message"));
+//   const lastMsgInRoom = messagesInRoom[messagesInRoom.length - 1];
 
-  input.value = msgDiv.querySelector(".message-text").textContent;
-  toast.style.display = "block";
+//   if (lastMsgInRoom && lastMsgInRoom.dataset.messageId === data.messageId) {
+//     const lastTextEl = roomEl.querySelector(".room-last");
+//     if (lastTextEl) lastTextEl.textContent = data.newMessage;
+//   }
+// });
 
-  submit.onclick = () => {
-    const newMessage = input.value.trim();
-    if (!newMessage) return;
+  function showDeleteMessageToast(messageId) {
+    const toast = document.getElementById("deleteMessageToast");
+    const confirm = toast.querySelector("#confirmDelete");
+    const cancel = toast.querySelector("#cancelDelete");
 
-    socket.emit("editMessage", { roomId: activeRoomId, messageId, newMessage });
-    toast.style.display = "none";
-  };
-  cancel.onclick = () => (toast.style.display = "none");
-}
+    toast.style.display = "block";
+    confirm.onclick = () => {
+      socket.emit("deleteMessage", { roomId: activeRoomId, messageId });
+      toast.style.display = "none";
+    };
+    cancel.onclick = () => (toast.style.display = "none");
+  }
 
-  // function showDeleteMessageToast(messageId) {
-  //   const toast = document.getElementById("deleteMessageToast");
-  //   const confirm = toast.querySelector("#confirmDelete");
-  //   const cancel = toast.querySelector("#cancelDelete");
-
-  //   toast.style.display = "block";
-  //   confirm.onclick = () => {
-  //      console.log("🧩 DELETE EMIT:", { roomId: activeRoomId, messageId }); // ✅ Add this line
-  //     socket.emit("deleteMessage", { roomId: activeRoomId, messageId });
-  //     toast.style.display = "none";
-  //   };
-  //   cancel.onclick = () => (toast.style.display = "none");
-  // }
-function showDeleteMessageToast(messageId) {
-  const toast = document.getElementById("deleteMessageToast");
-  const confirm = toast.querySelector("#confirmDelete");
-  const cancel = toast.querySelector("#cancelDelete");
-
-  toast.style.display = "block";
-  confirm.onclick = () => {
-    socket.emit("deleteMessage", { roomId: activeRoomId, messageId });
-    toast.style.display = "none";
-  };
-  cancel.onclick = () => (toast.style.display = "none");
-}
-
+  // === INITIAL LOAD ===
 // === INITIAL LOAD ===
 loadChatRooms(activeType);
 
