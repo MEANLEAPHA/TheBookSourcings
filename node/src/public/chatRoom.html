@@ -180,6 +180,30 @@
 }
 
     .toast button { margin: 5px; }
+  /* Highlight unread messages (bold text) */
+.room-item.unread .room-last {
+  font-weight: 700;
+  color: #000;
+}
+
+/* Blue dot for unread chats (Messenger style) */
+.room-item {
+  position: relative; /* Needed for the ::after positioning */
+}
+
+.room-item.unread::after {
+  content: "";
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #0d6efd;
+}
+
+
            
         </style>
     </head>
@@ -205,7 +229,6 @@
                             </div>
                         </div>
                         <div id="roomList">
-dd
                         </div>
                 </div>
                 <div id="chatContent">
@@ -355,6 +378,11 @@ async function loadChatRooms(type = "friend") {
   // === OPEN CHAT ROOM ===
   async function openRoom(roomId) {
     activeRoomId = roomId;
+    // ✅ Remove unread highlight when user opens this room
+
+    const currentRoomDiv = document.querySelector(`[data-room-id="${roomId}"]`);
+    if (currentRoomDiv) currentRoomDiv.classList.remove("unread");
+
     chatContent.innerHTML = `
       <div id="chatBox" class="chat-box"></div>
       <div class="chat-input">
@@ -451,17 +479,44 @@ async function loadChatRooms(type = "friend") {
   }
 
   // === SOCKET EVENTS ===
-  socket.on("receiveMessage", (msg) => {
-    const isMe = msg.senderQid === currentUser;
-    appendMessage(msg, isMe);
+  // socket.on("receiveMessage", (msg) => {
+  //   const isMe = msg.senderQid === currentUser;
+  //   appendMessage(msg, isMe);
 
-    if (!isMe) {
-      socket.emit("messageDelivered", { messageId: msg.messageId, roomId: msg.roomId });
-      if (activeRoomId === msg.roomId && document.visibilityState === "visible") {
-        socket.emit("markRoomSeen", { roomId: msg.roomId });
+  //   if (!isMe) {
+  //     socket.emit("messageDelivered", { messageId: msg.messageId, roomId: msg.roomId });
+  //     if (activeRoomId === msg.roomId && document.visibilityState === "visible") {
+  //       socket.emit("markRoomSeen", { roomId: msg.roomId });
+  //     }
+  //   }
+  // });
+socket.on("receiveMessage", (msg) => {
+  const isMe = msg.senderQid === currentUser;
+  appendMessage(msg, isMe);
+
+  if (!isMe) {
+    socket.emit("messageDelivered", { messageId: msg.messageId, roomId: msg.roomId });
+
+    // ✅ If not currently viewing this room, mark as unread
+    if (activeRoomId !== msg.roomId) {
+      const roomDiv = document.querySelector(`[data-room-id="${msg.roomId}"]`);
+      if (roomDiv) {
+        roomDiv.classList.add("unread");
+
+        // Update last message text
+        const lastMsg = roomDiv.querySelector(".room-last");
+        if (lastMsg) lastMsg.textContent = msg.message;
       }
     }
-  });
+
+    // ✅ If user is viewing same room & tab is active → mark seen
+    if (activeRoomId === msg.roomId && document.visibilityState === "visible") {
+      socket.emit("markRoomSeen", { roomId: msg.roomId });
+    }
+  }
+});
+
+
 
   socket.on("messageSent", (msg) => {
     const { tempId } = msg || {};
