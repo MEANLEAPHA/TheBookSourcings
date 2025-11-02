@@ -694,18 +694,13 @@ socket.on("messageDeleted", ({ messageId, roomId }) => {
   toast.style.display = "block";
 
   submit.onclick = () => {
-    const newMessage = input.value.trim();
-    if (!newMessage) return;
+  const newMessage = input.value.trim();
+  if (!newMessage) return;
 
-    // prevent editing before DB confirmation
-    if (messageId.startsWith("temp_")) {
-      console.warn("⏳ Message not yet saved, wait until it’s confirmed by server");
-      return;
-    }
+  socket.emit("editMessage", { roomId: activeRoomId, messageId, newMessage });
+  toast.style.display = "none";
+};
 
-    socket.emit("editMessage", { roomId: activeRoomId, messageId, newMessage });
-    toast.style.display = "none";
-  };
 
   cancel.onclick = () => (toast.style.display = "none");
 }
@@ -717,14 +712,11 @@ function showDeleteMessageToast(messageId) {
   const cancel = toast.querySelector("#cancelDelete");
 
   toast.style.display = "block";
-  confirm.onclick = () => {
-    if (messageId.startsWith("temp_")) {
-      console.warn("⏳ Message not yet saved, wait until it’s confirmed by server");
-      return;
-    }
-    socket.emit("deleteMessage", { roomId: activeRoomId, messageId });
-    toast.style.display = "none";
-  };
+confirm.onclick = () => {
+  socket.emit("deleteMessage", { roomId: activeRoomId, messageId });
+  toast.style.display = "none";
+};
+
   cancel.onclick = () => (toast.style.display = "none");
 }
   // function showDeleteMessageToast(messageId) {
