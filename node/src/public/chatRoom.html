@@ -558,6 +558,22 @@ socket.on("receiveMessage", (msg) => {
     }
   });
 
+  socket.on("roomUpdated", ({ roomId, lastMessage, senderQid }) => {
+  const roomEl = document.querySelector(`.room-item[data-roomid="${roomId}"]`);
+  if (!roomEl) return; // not in the visible list
+
+  const lastTextEl = roomEl.querySelector(".room-last");
+  if (lastTextEl) {
+    lastTextEl.textContent = lastMessage;
+  }
+
+  // if user is NOT currently viewing that chat, show unread
+  if (roomId !== currentRoomId && senderQid !== myQid) {
+    roomEl.classList.add("unread");
+  }
+});
+
+
   // === TOAST HANDLERS ===
   function showEditDeleteToast(msgDiv, messageId) {
     const toast = document.getElementById("editDeleteToast");

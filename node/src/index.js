@@ -301,6 +301,14 @@ socket.on("sendMessage", async ({ roomId, message, tempId }) => {
     // 3️⃣ Emit to others (receiver)
     socket.to(roomId).emit("receiveMessage", saved);
 
+    // 3.5️⃣ Update room list for both participants
+      io.emit("roomUpdated", {
+        roomId,
+        lastMessage: saved.message,
+        senderQid,
+        createdAt: saved.createdAt || new Date(),
+      });
+
     // 4️⃣ Find receiver
     const [roomRows] = await db.query(
       "SELECT buyerQid, sellerQid FROM chatRooms WHERE roomId = ?",
