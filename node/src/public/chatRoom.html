@@ -639,208 +639,101 @@ socket.on("messageDeleted", ({ messageId, roomId }) => {
 //     roomEl.classList.remove("unread");
 //   }
 // });
-
 socket.on("roomLastMessageUpdated", ({ roomId, lastMessage, type, senderQid, deletedMessageId }) => {
-  console.log("[SOCKET] roomLastMessageUpdated received:", { roomId, type, senderQid, deletedMessageId, lastMessage });
-
-  // 1️⃣ Select room item
+  // Find room item and last message div
   const roomItem = document.querySelector(`.room-item[data-room-id="${roomId}"]`);
-  if (!roomItem) {
-    console.warn("[DEBUG] roomItem not found for roomId:", roomId);
-    return;
-  } else {
-    console.log("[DEBUG] roomItem found for roomId:", roomId);
-  }
+  if (!roomItem || !lastMessage) return;
 
-  // 2️⃣ Select last message div
   const lastMsgDiv = roomItem.querySelector(".room-last");
-  if (!lastMsgDiv) {
-    console.warn("[DEBUG] lastMsgDiv not found for roomId:", roomId);
-    return;
-  } else {
-    console.log("[DEBUG] lastMsgDiv found, current text:", lastMsgDiv.textContent.trim());
-  }
+  if (!lastMsgDiv) return;
 
-  const isOwnMessage = String(senderQid) === String(currentUser);
-  const isActiveRoom = activeRoomId === roomId;
+  // Track previous last message ID
+  const prevLastMsgId = lastMsgDiv.dataset.lastMessageId || null;
+  lastMsgDiv.dataset.lastMessageId = lastMessage.messageId ?? "deleted";
 
-  // 3️⃣ Update last message text directly from backend
+  // Update sidebar text (show deleted placeholder if needed)
   lastMsgDiv.textContent = lastMessage.message || "Message deleted";
-  console.log("[DEBUG] room-last updated to:", lastMsgDiv.textContent);
 
-  // 4️⃣ Unread logic (keep same as before)
-  if (type === "new") {
+  // Unread logic: only apply for NEW or EDIT messages with real content
+  if ((type === "new" || type === "edit") && lastMessage.messageId) {
+    const isOwnMessage = String(senderQid) === String(currentUser);
+    const isActiveRoom = activeRoomId === roomId;
+
     if (!isOwnMessage && !isActiveRoom) {
       roomItem.classList.add("unread");
-      console.log("[DEBUG] marked unread (new) for room:", roomId);
     } else {
       roomItem.classList.remove("unread");
-      console.log("[DEBUG] cleared unread (new) for room:", roomId);
-    }
-  } else if (type === "edit") {
-    if (!isOwnMessage && !isActiveRoom) {
-      roomItem.classList.add("unread");
-      console.log("[DEBUG] marked unread (edit) for room:", roomId);
-    }
-  } else if (type === "delete") {
-    if (!isOwnMessage && !isActiveRoom) {
-      roomItem.classList.add("unread");
-      console.log("[DEBUG] marked unread (delete) for room:", roomId);
-    } else {
-      roomItem.classList.remove("unread");
-      console.log("[DEBUG] cleared unread (delete) for room:", roomId);
     }
   }
 
-  console.log("[DEBUG] roomLastMessageUpdated processing finished for room:", roomId);
+  // Optional: debugging
+  console.log("[SOCKET] roomLastMessageUpdated processed:", {
+    roomId,
+    type,
+    senderQid,
+    deletedMessageId,
+    lastMessageId: lastMessage.messageId,
+    prevLastMsgId,
+    text: lastMsgDiv.textContent
+  });
 });
 
-
 // socket.on("roomLastMessageUpdated", ({ roomId, lastMessage, type, senderQid, deletedMessageId }) => {
-//   console.log("[SOCKET] roomLastMessageUpdated:", { roomId, type, senderQid, deletedMessageId, lastMessage });
+//   console.log("[SOCKET] roomLastMessageUpdated received:", { roomId, type, senderQid, deletedMessageId, lastMessage });
 
+//   // 1️⃣ Select room item
 //   const roomItem = document.querySelector(`.room-item[data-room-id="${roomId}"]`);
-//   if (!roomItem || !lastMessage) {
-//     console.warn("[SOCKET] roomLastMessageUpdated: roomItem or lastMessage missing", roomId);
+//   if (!roomItem) {
+//     console.warn("[DEBUG] roomItem not found for roomId:", roomId);
 //     return;
+//   } else {
+//     console.log("[DEBUG] roomItem found for roomId:", roomId);
 //   }
 
+//   // 2️⃣ Select last message div
 //   const lastMsgDiv = roomItem.querySelector(".room-last");
 //   if (!lastMsgDiv) {
-//     console.warn("[SOCKET] roomLastMessageUpdated: lastMsgDiv missing for room", roomId);
+//     console.warn("[DEBUG] lastMsgDiv not found for roomId:", roomId);
 //     return;
+//   } else {
+//     console.log("[DEBUG] lastMsgDiv found, current text:", lastMsgDiv.textContent.trim());
 //   }
 
-//   const isOwnMessage = String(senderQid) === String(currentUser); // safe compare
+//   const isOwnMessage = String(senderQid) === String(currentUser);
 //   const isActiveRoom = activeRoomId === roomId;
 
-//   // current last text in sidebar (used to detect whether this update corresponds to the actual last message)
-//   const currentLastMessageText = lastMsgDiv.textContent?.trim() || "";
-
-//   // If server sends prevMessage use it; otherwise fallback to comparing text
-//   const prevMessageText = lastMessage.prevMessage ?? "";
-
-//   // Consider update as "last-message update" when:
-//   // - it's marked "new"
-//   // - OR our sidebar currently shows the prevMessage (meaning the edit/delete was for the last message)
-//   const isLastMessageUpdate = (type === "new") || (prevMessageText && currentLastMessageText === prevMessageText);
-
-//   // If this is an old-message edit/delete (not the last one) — update text only, don't touch unread.
-//   if (!isLastMessageUpdate && type !== "new") {
-//     if (type === "edit") {
-//       lastMsgDiv.textContent = lastMessage.message;
-//       console.log("[SOCKET] roomLastMessageUpdated: updated old message text only", roomId);
-//     }
-//     return;
-//   }
-
-//   // ------------ This is the actual last-message branch ------------
-//   // Update the sidebar text for the last message (or "Message deleted")
+//   // 3️⃣ Update last message text directly from backend
 //   lastMsgDiv.textContent = lastMessage.message || "Message deleted";
+//   console.log("[DEBUG] room-last updated to:", lastMsgDiv.textContent);
 
-//   // Unread logic:
-//   // - NEW: if someone else sent it and user not in that room -> show unread
-//   // - EDIT: if someone else edited the last msg and user not in room -> keep unread
-//   // - DELETE:
-//   //    * If someone else deleted the last message and user not in that room -> show unread (Message deleted)
-//   //    * If sender deleted it (you deleted) OR you're in the active room -> clear unread
+//   // 4️⃣ Unread logic (keep same as before)
 //   if (type === "new") {
 //     if (!isOwnMessage && !isActiveRoom) {
 //       roomItem.classList.add("unread");
+//       console.log("[DEBUG] marked unread (new) for room:", roomId);
 //     } else {
 //       roomItem.classList.remove("unread");
+//       console.log("[DEBUG] cleared unread (new) for room:", roomId);
 //     }
 //   } else if (type === "edit") {
-//     // Only mark unread if edited by other person and the user is not viewing the room
 //     if (!isOwnMessage && !isActiveRoom) {
 //       roomItem.classList.add("unread");
-//     } // otherwise leave unchanged (or you can explicitly remove if you prefer)
+//       console.log("[DEBUG] marked unread (edit) for room:", roomId);
+//     }
 //   } else if (type === "delete") {
-//     // If the deleted message was the last message, server included deletedMessageId and lastMessage.messageId
-//     // For other participants (not the deleter) and not viewing the room -> show blue dot
 //     if (!isOwnMessage && !isActiveRoom) {
 //       roomItem.classList.add("unread");
+//       console.log("[DEBUG] marked unread (delete) for room:", roomId);
 //     } else {
-//       // deleter or viewer -> remove unread since they already know state
 //       roomItem.classList.remove("unread");
+//       console.log("[DEBUG] cleared unread (delete) for room:", roomId);
 //     }
 //   }
 
-//   console.log("[SOCKET] roomLastMessageUpdated processed:", { roomId, type, isOwnMessage, isActiveRoom });
-// });
-
-// socket.on("roomLastMessageUpdated", ({ roomId, lastMessage, type, senderQid, deletedMessageId }) => {
-//   const roomItem = document.querySelector(`.room-item[data-room-id="${roomId}"]`);
-//   if (!roomItem || !lastMessage) return;
-
-//   const lastMsgDiv = roomItem.querySelector(".room-last");
-//   if (!lastMsgDiv) return;
-
-//   const isOwnMessage = senderQid === currentUser;
-//   const isActiveRoom = activeRoomId === roomId;
-
-//   const currentLastMessageText = lastMsgDiv.textContent;
-//   const isLastMessageUpdate = type === "new" || currentLastMessageText === lastMessage.prevMessage;
-
-//   if (!isLastMessageUpdate && type !== "new") {
-//     // Old message edited/deleted — update text only if needed, do NOT touch unread
-//     if (type === "edit") lastMsgDiv.textContent = lastMessage.message;
-//     return;
-//   }
-
-//   // Update last message text
-//   lastMsgDiv.textContent = lastMessage.message || "Message deleted";
-
-//   // 🔹 Unread logic
-//   if (type === "new" && !isOwnMessage && !isActiveRoom) {
-//     roomItem.classList.add("unread");
-//   } else if (type === "edit" && !isOwnMessage && !isActiveRoom) {
-//     // Keep unread dot if last message edited by others
-//     roomItem.classList.add("unread");
-//   }else if (type === "delete") {
- 
-//   if (isOwnMessage || isActiveRoom || (deletedMessageId && deletedMessageId === lastMessage.messageId)) {
-//     roomItem.classList.remove("unread");
-//   }
-// }
+//   console.log("[DEBUG] roomLastMessageUpdated processing finished for room:", roomId);
 // });
 
 
-
-// socket.on("roomLastMessageUpdated", ({ roomId, lastMessage, type, senderQid }) => {
-//   const roomItem = document.querySelector(`.room-item[data-room-id="${roomId}"]`);
-//   if (!roomItem || !lastMessage) return;
-
-//   const lastMsgDiv = roomItem.querySelector(".room-last");
-//   if (lastMsgDiv) {
-//     lastMsgDiv.textContent = lastMessage.message || "Message deleted";
-//   }
-
-//   const isOwnMessage = senderQid === currentUser;
-//   const isActiveRoom = activeRoomId === roomId;
-
-//   // Only apply unread logic for the last message
-//   if (type === "new" && !isOwnMessage && !isActiveRoom) {
-//     // New last message from someone else → show blue dot
-//     roomItem.classList.add("unread");
-//   } 
-//   else if (type === "edit") {
-//     // If the edited message is the last message
-//     if (!isOwnMessage && !isActiveRoom) {
-//       // keep dot because user hasn’t opened the room
-//       roomItem.classList.add("unread");
-//     } else {
-//       // sender editing or user inside room → remove dot
-//       roomItem.classList.remove("unread");
-//     }
-//   } 
-//   else if (type === "delete") {
-//     // remove dot only if inside the room or sender deleted
-//     if (isOwnMessage || isActiveRoom) {
-//       roomItem.classList.remove("unread");
-//     }
-//   }
-// });
 
 
 
