@@ -494,28 +494,36 @@ socket.on("deleteMessage", async ({ messageId, roomId }) => {
     const deleted = await chatController.deleteChatMessage(messageId, senderQid);
     if (!deleted) return;
 
-    // 1️⃣ Remove from chat window only for people in this room
+    // 1️⃣ Remove from chat window for people in this room
     io.to(roomId).emit("messageDeleted", { messageId, roomId });
 
-    // 2️⃣ Update the room-last for sidebar (everyone)
-    const lastMsg = await chatController.getLastMessage(roomId);
+    // 2️⃣ Check last message BEFORE deletion to see if this was the last message
+    const lastMsgBefore = await chatController.getLastMessage(roomId, { includeDeleted: true });
 
-    const lastMessageObj = {
-      message: lastMsg ? lastMsg.message : "Message deleted",
-      prevMessage: lastMsg ? lastMsg.message : "",
-      messageId: lastMsg ? lastMsg.messageId : null
-    };
-
-    // Only emit lastMessage update if deleted message was the last one
-    if (!lastMsg || lastMsg.messageId === messageId) {
-      io.emit("roomLastMessageUpdated", {
-        roomId,
-        lastMessage: lastMessageObj,
-        type: "delete",
-        senderQid,
-        deletedMessageId: messageId // frontend can use this if needed
-      });
+    // If the deleted message was the last message, emit "Message deleted"
+    let lastMessageObj;
+    if (lastMsgBefore && lastMsgBefore.messageId === messageId) {
+      lastMessageObj = {
+        message: "Message deleted",
+        prevMessage: lastMsgBefore.message,
+        messageId: messageId
+      };
+    } else {
+      const lastMsgNow = await chatController.getLastMessage(roomId);
+      lastMessageObj = {
+        message: lastMsgNow ? lastMsgNow.message : "Message deleted",
+        prevMessage: lastMsgNow ? lastMsgNow.message : "",
+        messageId: lastMsgNow ? lastMsgNow.messageId : null
+      };
     }
+
+    io.emit("roomLastMessageUpdated", {
+      roomId,
+      lastMessage: lastMessageObj,
+      type: "delete",
+      senderQid,
+      deletedMessageId: messageId
+    });
 
   } catch (err) {
     console.error("❌ Error deleting message:", err);
