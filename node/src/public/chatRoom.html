@@ -630,21 +630,22 @@ socket.on("messageDeleted", ({ messageId, roomId }) => {
   }
 
   // Capture text before removing (for sidebar update)
-  const deletedText = msgDiv.querySelector(".message-text")?.textContent?.trim() || "";
-  console.log("[SOCKET] messageDeleted: Found and removing:", msgIdStr, deletedText);
+  
+  // const deletedText = msgDiv.querySelector(".message-text")?.textContent?.trim() || "";
+  // console.log("[SOCKET] messageDeleted: Found and removing:", msgIdStr, deletedText);
 
-  msgDiv.remove();
+  // msgDiv.remove();
 
-  // 🔹 Also update sidebar if this was the last message
-  const roomItem = document.querySelector(`.room-item[data-room-id="${roomId}"]`);
-  if (roomItem) {
-    const lastMsgEl = roomItem.querySelector(".room-last");
-    if (lastMsgEl && lastMsgEl.textContent.trim() === deletedText) {
-      console.log("[SOCKET] Sidebar last message matched — updating to 'Message deleted'");
-      lastMsgEl.textContent = "Message deleted";
-      roomItem.classList.remove("unread"); // make sure no blue dot remains
-    }
-  }
+  // // 🔹 Also update sidebar if this was the last message
+  // const roomItem = document.querySelector(`.room-item[data-room-id="${roomId}"]`);
+  // if (roomItem) {
+  //   const lastMsgEl = roomItem.querySelector(".room-last");
+  //   if (lastMsgEl && lastMsgEl.textContent.trim() === deletedText) {
+  //     console.log("[SOCKET] Sidebar last message matched — updating to 'Message deleted'");
+  //     lastMsgEl.textContent = "Message deleted";
+  //     roomItem.classList.remove("unread"); // make sure no blue dot remains
+  //   }
+  // }
 });
 
 

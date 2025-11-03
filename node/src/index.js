@@ -493,7 +493,7 @@ socket.on("deleteMessage", async ({ messageId, roomId }) => {
     const deleted = await chatController.deleteChatMessage(messageId, senderQid);
     if (deleted) {
       // Notify everyone in the room to remove the message from chat window
-      io.to(roomId).emit("messageDeleted", { messageId, roomId });
+      io.emit("messageDeleted", { messageId, roomId });
 
       const lastMsg = await chatController.getLastMessage(roomId);
 
