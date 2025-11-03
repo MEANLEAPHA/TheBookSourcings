@@ -502,22 +502,15 @@ socket.on("deleteMessage", async ({ messageId, roomId }) => {
 
     let lastMessageObj;
 
-    if (!lastMsg) {
-      // No messages left → show placeholder
+    if (!lastMsg || lastMsg.messageId === messageId) {
+      // No messages left OR deleted message was the last one → show placeholder
       lastMessageObj = {
         message: "Message deleted",
-        prevMessage: "",
-        messageId: null
-      };
-    } else if (lastMsg.messageId === messageId) {
-      // Deleted message was the last one → show placeholder
-      lastMessageObj = {
-        message: "Message deleted",
-        prevMessage: lastMsg.message,
+        prevMessage: lastMsg ? lastMsg.message : "",
         messageId: null
       };
     } else {
-      // There is a new last message (older one) → do not mark unread, just update text
+      // There is a new last message (older one)
       lastMessageObj = {
         message: lastMsg.message,
         prevMessage: lastMsg.message,

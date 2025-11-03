@@ -652,9 +652,9 @@ socket.on("roomLastMessageUpdated", ({ roomId, lastMessage, type, senderQid, del
   lastMsgDiv.dataset.lastMessageId = lastMessage.messageId ?? "deleted";
 
   // Update sidebar text (show deleted placeholder if needed)
-  lastMsgDiv.textContent = lastMessage.message || "Message deleted";
+  lastMsgDiv.textContent = lastMessage.message ?? "Message deleted";
 
-  // Unread logic: only apply for NEW or EDIT messages with real content
+  // ✅ Unread logic: only for NEW or EDIT messages with real content
   if ((type === "new" || type === "edit") && lastMessage.messageId) {
     const isOwnMessage = String(senderQid) === String(currentUser);
     const isActiveRoom = activeRoomId === roomId;
@@ -666,7 +666,6 @@ socket.on("roomLastMessageUpdated", ({ roomId, lastMessage, type, senderQid, del
     }
   }
 
-  // Optional: debugging
   console.log("[SOCKET] roomLastMessageUpdated processed:", {
     roomId,
     type,
@@ -677,6 +676,7 @@ socket.on("roomLastMessageUpdated", ({ roomId, lastMessage, type, senderQid, del
     text: lastMsgDiv.textContent
   });
 });
+
 
 // socket.on("roomLastMessageUpdated", ({ roomId, lastMessage, type, senderQid, deletedMessageId }) => {
 //   console.log("[SOCKET] roomLastMessageUpdated received:", { roomId, type, senderQid, deletedMessageId, lastMessage });
