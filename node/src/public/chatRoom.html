@@ -603,18 +603,14 @@ socket.on("messageDeleted", ({ messageId, roomId }) => {
   const chatWindow = document.querySelector(`.chat-window[data-room-id="${roomId}"]`);
   if (!chatWindow) return;
 
-  // Convert messageId to string to match DOM attribute
   const msgIdStr = String(messageId);
   const msgDiv = chatWindow.querySelector(`[data-message-id="${msgIdStr}"]`);
-  
-  if (!msgDiv) {
-    console.warn("[SOCKET] messageDeleted: msgDiv not found for", msgIdStr);
-    return;
-  }
 
-  // Remove the message from DOM instantly
+  if (!msgDiv) return console.warn("[SOCKET] messageDeleted: msgDiv not found for", msgIdStr);
+
   msgDiv.remove();
 });
+
 
   socket.on("roomMessagesSeen", ({ messageIds }) => {
     if (!Array.isArray(messageIds)) return;
@@ -669,12 +665,13 @@ socket.on("roomLastMessageUpdated", ({ roomId, lastMessage, type, senderQid, del
   } else if (type === "edit" && !isOwnMessage && !isActiveRoom) {
     // Keep unread dot if last message edited by others
     roomItem.classList.add("unread");
-  } else if (type === "delete") {
-    // Remove unread if message deleted by self, currently active room, or deletedMessageId matches lastMessage
-    if (isOwnMessage || isActiveRoom || (deletedMessageId && deletedMessageId === lastMessage.messageId)) {
-      roomItem.classList.remove("unread");
-    }
+  }else if (type === "delete") {
+  // Remove unread if message deleted by self, currently active room, 
+  // or if the deleted message was the last message
+  if (isOwnMessage || isActiveRoom || (deletedMessageId && deletedMessageId === lastMessage.messageId)) {
+    roomItem.classList.remove("unread");
   }
+}
 });
 
 

@@ -492,16 +492,19 @@ socket.on("deleteMessage", async ({ messageId, roomId }) => {
   try {
     const deleted = await chatController.deleteChatMessage(messageId, senderQid);
     if (deleted) {
+      // Notify everyone in the room to remove the message from chat window
       io.to(roomId).emit("messageDeleted", { messageId, roomId });
 
       const lastMsg = await chatController.getLastMessage(roomId);
 
-      // Only emit lastMessage update if deleted message was the last one
+      // Include messageId for the last message so frontend can compare
       const lastMessageObj = {
         message: lastMsg ? lastMsg.message : "Message deleted",
-        prevMessage: lastMsg ? lastMsg.message : ""
+        prevMessage: lastMsg ? lastMsg.message : "",
+        messageId: lastMsg ? lastMsg.messageId : null
       };
 
+      // Only emit lastMessage update if deleted message was the last one
       if (!lastMsg || lastMsg.messageId === messageId) {
         io.emit("roomLastMessageUpdated", {
           roomId,
@@ -516,6 +519,7 @@ socket.on("deleteMessage", async ({ messageId, roomId }) => {
     console.error("❌ Error deleting message:", err);
   }
 });
+
 
 
 // socket.on("deleteMessage", async ({ messageId, roomId }) => {
