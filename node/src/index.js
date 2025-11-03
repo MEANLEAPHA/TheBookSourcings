@@ -306,7 +306,7 @@ socket.on("sendMessage", async ({ roomId, message, tempId }) => {
       roomId,
       lastMessage: saved,
       type: "new",
-      senderQid // 👈 tell frontend this is a *new* message
+      senderQid: senderQid // 👈 tell frontend this is a *new* message
     });
 
     // 5️⃣ Find receiver for push notifications
