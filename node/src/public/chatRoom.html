@@ -586,17 +586,35 @@ socket.on("messageEdited", (data) => {
   }
 });
 
-socket.on("messageDeleted", (data) => {
-  console.log("[SOCKET] messageDeleted received:", data);
+// socket.on("messageDeleted", (data) => {
+//   console.log("[SOCKET] messageDeleted received:", data);
 
-  const msgIdStr = String(data.messageId);
-  const msgDiv = document.querySelector(`[data-message-id="${msgIdStr}"]`);
-  if (!msgDiv) console.warn("[SOCKET] messageDeleted: msgDiv not found for", msgIdStr);
+//   const msgIdStr = String(data.messageId);
+//   const msgDiv = document.querySelector(`[data-message-id="${msgIdStr}"]`);
+//   if (!msgDiv) console.warn("[SOCKET] messageDeleted: msgDiv not found for", msgIdStr);
 
-  if (msgDiv) msgDiv.remove();
+//   if (msgDiv) msgDiv.remove();
+// });
+
+
+socket.on("messageDeleted", ({ messageId, roomId }) => {
+  console.log("[SOCKET] messageDeleted received:", { messageId, roomId });
+
+  const chatWindow = document.querySelector(`.chat-window[data-room-id="${roomId}"]`);
+  if (!chatWindow) return;
+
+  // Convert messageId to string to match DOM attribute
+  const msgIdStr = String(messageId);
+  const msgDiv = chatWindow.querySelector(`[data-message-id="${msgIdStr}"]`);
+  
+  if (!msgDiv) {
+    console.warn("[SOCKET] messageDeleted: msgDiv not found for", msgIdStr);
+    return;
+  }
+
+  // Remove the message from DOM instantly
+  msgDiv.remove();
 });
-
-
 
   socket.on("roomMessagesSeen", ({ messageIds }) => {
     if (!Array.isArray(messageIds)) return;
@@ -652,12 +670,13 @@ socket.on("roomLastMessageUpdated", ({ roomId, lastMessage, type, senderQid, del
     // Keep unread dot if last message edited by others
     roomItem.classList.add("unread");
   } else if (type === "delete") {
-    // Remove unread if message deleted by self or currently active room
-    if (isOwnMessage || isActiveRoom || deletedMessageId) {
+    // Remove unread if message deleted by self, currently active room, or deletedMessageId matches lastMessage
+    if (isOwnMessage || isActiveRoom || (deletedMessageId && deletedMessageId === lastMessage.messageId)) {
       roomItem.classList.remove("unread");
     }
   }
 });
+
 
 
 // socket.on("roomLastMessageUpdated", ({ roomId, lastMessage, type, senderQid }) => {
