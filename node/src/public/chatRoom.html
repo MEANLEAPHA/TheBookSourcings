@@ -639,42 +639,62 @@ socket.on("messageDeleted", ({ messageId, roomId }) => {
 //     roomEl.classList.remove("unread");
 //   }
 // });
+
 socket.on("roomLastMessageUpdated", ({ roomId, lastMessage, type, senderQid, deletedMessageId }) => {
-  console.log("[SOCKET] roomLastMessageUpdated:", { roomId, type, senderQid, deletedMessageId, lastMessage });
+  console.log("[SOCKET] roomLastMessageUpdated received:", { roomId, type, senderQid, deletedMessageId, lastMessage });
 
+  // 1️⃣ Select room item
   const roomItem = document.querySelector(`.room-item[data-room-id="${roomId}"]`);
-  if (!roomItem || !lastMessage) return;
+  if (!roomItem) {
+    console.warn("[DEBUG] roomItem not found for roomId:", roomId);
+    return;
+  } else {
+    console.log("[DEBUG] roomItem found for roomId:", roomId);
+  }
 
+  // 2️⃣ Select last message div
   const lastMsgDiv = roomItem.querySelector(".room-last");
-  if (!lastMsgDiv) return;
+  if (!lastMsgDiv) {
+    console.warn("[DEBUG] lastMsgDiv not found for roomId:", roomId);
+    return;
+  } else {
+    console.log("[DEBUG] lastMsgDiv found, current text:", lastMsgDiv.textContent.trim());
+  }
 
   const isOwnMessage = String(senderQid) === String(currentUser);
   const isActiveRoom = activeRoomId === roomId;
 
-  // ------------ Update last message text directly from backend ------------
+  // 3️⃣ Update last message text directly from backend
   lastMsgDiv.textContent = lastMessage.message || "Message deleted";
+  console.log("[DEBUG] room-last updated to:", lastMsgDiv.textContent);
 
-  // -------------------- Keep unread logic intact --------------------
+  // 4️⃣ Unread logic (keep same as before)
   if (type === "new") {
     if (!isOwnMessage && !isActiveRoom) {
       roomItem.classList.add("unread");
+      console.log("[DEBUG] marked unread (new) for room:", roomId);
     } else {
       roomItem.classList.remove("unread");
+      console.log("[DEBUG] cleared unread (new) for room:", roomId);
     }
   } else if (type === "edit") {
     if (!isOwnMessage && !isActiveRoom) {
       roomItem.classList.add("unread");
+      console.log("[DEBUG] marked unread (edit) for room:", roomId);
     }
   } else if (type === "delete") {
     if (!isOwnMessage && !isActiveRoom) {
       roomItem.classList.add("unread");
+      console.log("[DEBUG] marked unread (delete) for room:", roomId);
     } else {
       roomItem.classList.remove("unread");
+      console.log("[DEBUG] cleared unread (delete) for room:", roomId);
     }
   }
 
-  console.log("[SOCKET] roomLastMessageUpdated processed:", { roomId, type, isOwnMessage, isActiveRoom });
+  console.log("[DEBUG] roomLastMessageUpdated processing finished for room:", roomId);
 });
+
 
 // socket.on("roomLastMessageUpdated", ({ roomId, lastMessage, type, senderQid, deletedMessageId }) => {
 //   console.log("[SOCKET] roomLastMessageUpdated:", { roomId, type, senderQid, deletedMessageId, lastMessage });
