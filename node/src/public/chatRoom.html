@@ -627,21 +627,21 @@ socket.on("roomLastMessageUpdated", ({ roomId, lastMessage, type, senderQid }) =
   const roomItem = document.querySelector(`.room-item[data-room-id="${roomId}"]`);
   if (!roomItem || !lastMessage) return;
 
-  // Update last message text
+  // ✅ Update the last message text in the room list
   const lastMsgDiv = roomItem.querySelector(".room-last");
   if (lastMsgDiv) {
     lastMsgDiv.textContent = lastMessage.message || "Message deleted";
   }
 
   // 🧠 Blue dot (unread) logic
-  const isOwnMessage = senderQid === currentUserQid;
+  const isOwnMessage = senderQid === currentUser; // <-- FIXED
 
   if (type === "new" && !isOwnMessage && activeRoomId !== roomId) {
-    // Message from someone else in another room
+    // Message from another user in a different room
     roomItem.classList.add("unread");
   } 
   else if (type === "edit" || type === "delete" || isOwnMessage) {
-    // Remove unread if it's your message or just an edit/delete
+    // Remove unread if it's your message or just edit/delete
     roomItem.classList.remove("unread");
   }
 });
