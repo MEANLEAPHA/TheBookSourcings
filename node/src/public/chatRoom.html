@@ -623,6 +623,21 @@ socket.on("messageDeleted", (data) => {
     roomEl.classList.remove("unread");
   }
 });
+socket.on("roomLastMessageUpdated", ({ roomId, lastMessage }) => {
+  const roomItem = document.querySelector(`.room-item[data-room-id="${roomId}"]`);
+  if (!roomItem || !lastMessage) return;
+
+  // Update last message text
+  const lastMsgDiv = roomItem.querySelector(".room-last");
+  if (lastMsgDiv) {
+    lastMsgDiv.textContent = lastMessage.message || "Message deleted";
+  }
+
+  // 🟢 Optional: If user is not in this room, show blue dot
+  if (activeRoomId !== roomId) {
+    roomItem.classList.add("unread");
+  }
+});
 
 //  socket.on("roomUpdated", ({ roomId, lastMessage, senderQid }) => {
 //   const roomEl = document.querySelector(`.room-item[data-room-id="${roomId}"]`);
