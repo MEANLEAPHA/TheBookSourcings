@@ -600,52 +600,16 @@ socket.on("messageEdited", (data) => {
 socket.on("messageDeleted", ({ messageId, roomId }) => {
   console.log("[SOCKET] messageDeleted received:", { messageId, roomId });
 
-  // Only act if this room is currently open
-  if (activeRoomId !== roomId) {
-    console.log("[SOCKET] messageDeleted ignored — not active room");
-    return;
-  }
+  // Only remove messages if this room is currently open
+  if (activeRoomId !== roomId) return;
 
-  // Find chat box
   const chatBox = document.getElementById("chatBox");
-  if (!chatBox) {
-    console.warn("[SOCKET] messageDeleted: chatBox not found for room", roomId);
-    return;
-  }
+  if (!chatBox) return;
 
-  // Debug current DOM
-  const allMsgs = chatBox.querySelectorAll("[data-message-id]");
-  console.log(
-    "[SOCKET] Messages currently in DOM:",
-    Array.from(allMsgs).map(el => el.dataset.messageId)
-  );
+  const msgDiv = chatBox.querySelector(`[data-message-id="${messageId}"]`);
+  if (!msgDiv) return;
 
-  // Find and remove message
-  const msgIdStr = String(messageId);
-  const msgDiv = chatBox.querySelector(`[data-message-id="${msgIdStr}"]`);
-
-  if (!msgDiv) {
-    console.warn(`[SOCKET] messageDeleted: No element found for messageId ${msgIdStr}`);
-    return;
-  }
-
-  // Capture text before removing (for sidebar update)
-  
-  // const deletedText = msgDiv.querySelector(".message-text")?.textContent?.trim() || "";
-  // console.log("[SOCKET] messageDeleted: Found and removing:", msgIdStr, deletedText);
-
-  // msgDiv.remove();
-
-  // // 🔹 Also update sidebar if this was the last message
-  // const roomItem = document.querySelector(`.room-item[data-room-id="${roomId}"]`);
-  // if (roomItem) {
-  //   const lastMsgEl = roomItem.querySelector(".room-last");
-  //   if (lastMsgEl && lastMsgEl.textContent.trim() === deletedText) {
-  //     console.log("[SOCKET] Sidebar last message matched — updating to 'Message deleted'");
-  //     lastMsgEl.textContent = "Message deleted";
-  //     roomItem.classList.remove("unread"); // make sure no blue dot remains
-  //   }
-  // }
+  msgDiv.remove();
 });
 
 
