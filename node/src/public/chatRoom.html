@@ -623,21 +623,26 @@ socket.on("messageDeleted", (data) => {
 //     roomEl.classList.remove("unread");
 //   }
 // });
-socket.on("roomLastMessageUpdated", ({ roomId, lastMessage, type }) => {
+socket.on("roomLastMessageUpdated", ({ roomId, lastMessage, type, senderQid }) => {
   const roomItem = document.querySelector(`.room-item[data-room-id="${roomId}"]`);
   if (!roomItem || !lastMessage) return;
 
-  // Update text
+  // Update last message text
   const lastMsgDiv = roomItem.querySelector(".room-last");
   if (lastMsgDiv) {
     lastMsgDiv.textContent = lastMessage.message || "Message deleted";
   }
 
-  // 🧠 Only mark unread if this is a *new* message, not edit/delete
-  if (type === "new" && activeRoomId !== roomId) {
+  // 🧠 Blue dot (unread) logic
+  const isOwnMessage = senderQid === currentUserQid;
+
+  if (type === "new" && !isOwnMessage && activeRoomId !== roomId) {
+    // Message from someone else in another room
     roomItem.classList.add("unread");
-  } else if (type === "edit" || type === "delete") {
-    roomItem.classList.remove("unread"); // clear any false blue dot
+  } 
+  else if (type === "edit" || type === "delete" || isOwnMessage) {
+    // Remove unread if it's your message or just an edit/delete
+    roomItem.classList.remove("unread");
   }
 });
 

@@ -305,7 +305,8 @@ socket.on("sendMessage", async ({ roomId, message, tempId }) => {
     io.to(roomId).emit("roomLastMessageUpdated", {
       roomId,
       lastMessage: saved,
-      type: "new", // 👈 tell frontend this is a *new* message
+      type: "new",
+      senderQid // 👈 tell frontend this is a *new* message
     });
 
     // 5️⃣ Find receiver for push notifications
@@ -449,7 +450,8 @@ socket.on("editMessage", async ({ messageId, roomId, newMessage }) => {
       io.to(roomId).emit("roomLastMessageUpdated", {
         roomId,
         lastMessage: { message: newMessage },
-        type: "edit", // 👈 added
+        type: "edit",
+        senderQid // 👈 added
       });
     }
   } catch (err) {
@@ -472,7 +474,8 @@ socket.on("deleteMessage", async ({ messageId, roomId }) => {
       io.to(roomId).emit("roomLastMessageUpdated", {
         roomId,
         lastMessage: { message: "Message deleted" },
-        type: "delete", // 👈 added
+        type: "delete",
+        senderQid // 👈 added
       });
     }
   } catch (err) {
