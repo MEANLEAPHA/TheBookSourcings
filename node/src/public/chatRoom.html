@@ -574,17 +574,6 @@ function getRealMessageId(msgId) {
   //   if (msgDiv) msgDiv.remove();
   // });
 // ✅ When a message is edited
-socket.on("messageEdited", (data) => {
-  console.log("[SOCKET] messageEdited received:", data);
-
-  const msgIdStr = String(data.messageId); // <- convert to string
-  const msgDiv = document.querySelector(`[data-message-id="${msgIdStr}"]`);
-  if (!msgDiv) console.warn("[SOCKET] messageEdited: msgDiv not found for", msgIdStr);
-
-  if (msgDiv) {
-    msgDiv.querySelector(".message-text").textContent = data.newMessage;
-  }
-});
 
 // socket.on("messageDeleted", (data) => {
 //   console.log("[SOCKET] messageDeleted received:", data);
@@ -596,6 +585,17 @@ socket.on("messageEdited", (data) => {
 //   if (msgDiv) msgDiv.remove();
 // });
 
+socket.on("messageEdited", (data) => {
+  console.log("[SOCKET] messageEdited received:", data);
+
+  const msgIdStr = String(data.messageId); // <- convert to string
+  const msgDiv = document.querySelector(`[data-message-id="${msgIdStr}"]`);
+  if (!msgDiv) console.warn("[SOCKET] messageEdited: msgDiv not found for", msgIdStr);
+
+  if (msgDiv) {
+    msgDiv.querySelector(".message-text").textContent = data.newMessage;
+  }
+});
 
 socket.on("messageDeleted", ({ messageId, roomId }) => {
   console.log("[SOCKET] messageDeleted received:", { messageId, roomId });

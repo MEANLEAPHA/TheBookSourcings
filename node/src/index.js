@@ -492,26 +492,26 @@ socket.on("deleteMessage", async ({ messageId, roomId }) => {
   try {
     const deleted = await chatController.deleteChatMessage(messageId, senderQid);
     if (deleted) {
-      // Notify everyone in the room to remove the message from chat window
+      // Notify everyone in that room to remove the message
       io.to(roomId).emit("messageDeleted", { messageId, roomId });
 
       const lastMsg = await chatController.getLastMessage(roomId);
 
-      // Include messageId for the last message so frontend can compare
+      // Build a proper last message object
       const lastMessageObj = {
         message: lastMsg ? lastMsg.message : "Message deleted",
         prevMessage: lastMsg ? lastMsg.message : "",
         messageId: lastMsg ? lastMsg.messageId : null
       };
 
-      // Only emit lastMessage update if deleted message was the last one
+      // ✅ Only update last message *to users in that room* (not global)
       if (!lastMsg || lastMsg.messageId === messageId) {
-        io.emit("roomLastMessageUpdated", {
+        io.to(roomId).emit("roomLastMessageUpdated", {
           roomId,
           lastMessage: lastMessageObj,
           type: "delete",
           senderQid,
-          deletedMessageId: messageId // flag for frontend to clear unread dot
+          deletedMessageId: messageId
         });
       }
     }
