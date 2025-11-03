@@ -302,7 +302,7 @@ socket.on("sendMessage", async ({ roomId, message, tempId }) => {
     socket.to(roomId).emit("receiveMessage", saved);
 
     // 4️⃣ Update room list for both participants
-    io.to(roomId).emit("roomLastMessageUpdated", {
+    io.emit("roomLastMessageUpdated", {
       roomId,
       lastMessage: saved,
       type: "new",
