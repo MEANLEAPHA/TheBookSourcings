@@ -447,7 +447,7 @@ socket.on("editMessage", async ({ messageId, roomId, newMessage }) => {
 
       // 🟢 Broadcast to update last message preview for all users in that room list
       const lastMsg = await chatController.getLastMessage(roomId);
-      io.to(roomId).emit("roomLastMessageUpdated", {
+      io.emit("roomLastMessageUpdated", {
         roomId,
         lastMessage: { message: newMessage },
         type: "edit",
@@ -471,7 +471,7 @@ socket.on("deleteMessage", async ({ messageId, roomId }) => {
 
       // 🟢 Also broadcast new last message after delete
       const lastMsg = await chatController.getLastMessage(roomId);
-      io.to(roomId).emit("roomLastMessageUpdated", {
+      io.emit("roomLastMessageUpdated", {
         roomId,
         lastMessage: { message: "Message deleted" },
         type: "delete",
