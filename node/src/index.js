@@ -496,13 +496,19 @@ socket.on("deleteMessage", async ({ messageId, roomId }) => {
 
       const lastMsg = await chatController.getLastMessage(roomId);
 
-      // Only emit lastMessage if deleted message was the last one
+      // Only emit lastMessage update if deleted message was the last one
+      const lastMessageObj = {
+        message: lastMsg ? lastMsg.message : "Message deleted",
+        prevMessage: lastMsg ? lastMsg.message : ""
+      };
+
       if (!lastMsg || lastMsg.messageId === messageId) {
         io.emit("roomLastMessageUpdated", {
           roomId,
-          lastMessage: { message: lastMsg ? lastMsg.message : "Message deleted", prevMessage: lastMsg ? lastMsg.message : "" },
+          lastMessage: lastMessageObj,
           type: "delete",
-          senderQid
+          senderQid,
+          deletedMessageId: messageId // flag for frontend to clear unread dot
         });
       }
     }
@@ -510,6 +516,7 @@ socket.on("deleteMessage", async ({ messageId, roomId }) => {
     console.error("❌ Error deleting message:", err);
   }
 });
+
 
 // socket.on("deleteMessage", async ({ messageId, roomId }) => {
 //   if (!socket.user || !messageId || !roomId) return;

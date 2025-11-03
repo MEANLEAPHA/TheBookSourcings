@@ -623,7 +623,7 @@ socket.on("messageDeleted", (data) => {
 //     roomEl.classList.remove("unread");
 //   }
 // });
-socket.on("roomLastMessageUpdated", ({ roomId, lastMessage, type, senderQid }) => {
+socket.on("roomLastMessageUpdated", ({ roomId, lastMessage, type, senderQid, deletedMessageId }) => {
   const roomItem = document.querySelector(`.room-item[data-room-id="${roomId}"]`);
   if (!roomItem || !lastMessage) return;
 
@@ -633,7 +633,6 @@ socket.on("roomLastMessageUpdated", ({ roomId, lastMessage, type, senderQid }) =
   const isOwnMessage = senderQid === currentUser;
   const isActiveRoom = activeRoomId === roomId;
 
-  // Only update the text for the actual last message in the room
   const currentLastMessageText = lastMsgDiv.textContent;
   const isLastMessageUpdate = type === "new" || currentLastMessageText === lastMessage.prevMessage;
 
@@ -646,7 +645,7 @@ socket.on("roomLastMessageUpdated", ({ roomId, lastMessage, type, senderQid }) =
   // Update last message text
   lastMsgDiv.textContent = lastMessage.message || "Message deleted";
 
-  // Unread logic: only for new messages or last message edits from others
+  // 🔹 Unread logic
   if (type === "new" && !isOwnMessage && !isActiveRoom) {
     roomItem.classList.add("unread");
   } else if (type === "edit" && !isOwnMessage && !isActiveRoom) {
@@ -654,7 +653,7 @@ socket.on("roomLastMessageUpdated", ({ roomId, lastMessage, type, senderQid }) =
     roomItem.classList.add("unread");
   } else if (type === "delete") {
     // Remove unread if message deleted by self or currently active room
-    if (isOwnMessage || isActiveRoom) {
+    if (isOwnMessage || isActiveRoom || deletedMessageId) {
       roomItem.classList.remove("unread");
     }
   }
