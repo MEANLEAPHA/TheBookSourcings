@@ -449,7 +449,7 @@ socket.on("editMessage", async ({ messageId, roomId, newMessage }) => {
       const lastMsg = await chatController.getLastMessage(roomId);
       io.emit("roomLastMessageUpdated", {
         roomId,
-        lastMessage: { message: newMessage },
+        lastMessage: { message: newMessage, prevMessage: lastMsg.message },
         type: "edit",
         senderQid // 👈 added
       });
@@ -473,7 +473,7 @@ socket.on("deleteMessage", async ({ messageId, roomId }) => {
       const lastMsg = await chatController.getLastMessage(roomId);
       io.emit("roomLastMessageUpdated", {
         roomId,
-        lastMessage: { message: "Message deleted" },
+        lastMessage: { message: "Message deleted", prevMessage: lastMsg.message  },
         type: "delete",
         senderQid // 👈 added
       });
