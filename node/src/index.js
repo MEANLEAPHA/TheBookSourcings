@@ -289,7 +289,7 @@ socket.on("sendMessage", async ({ roomId, message, tempId }) => {
   try {
     console.log(`🔹 Sending message in room: ${roomId}`, { senderQid, message });
 
-    // 1️⃣ Save message
+    // 1️⃣ Save message in DB
     const saved = await chatController.saveChatMessage(roomId, senderQid, message);
     if (!saved) return console.error("❌ Message not saved.");
 
@@ -298,18 +298,17 @@ socket.on("sendMessage", async ({ roomId, message, tempId }) => {
     // 2️⃣ Emit to sender
     socket.emit("messageSent", { ...saved, tempId });
 
-    // 3️⃣ Emit to others (receiver)
+    // 3️⃣ Emit to other users in room (receiver)
     socket.to(roomId).emit("receiveMessage", saved);
 
-    // 3.5️⃣ Update room list for both participants
-      io.emit("roomUpdated", {
-        roomId,
-        lastMessage: saved.message,
-        senderQid,
-        createdAt: saved.createdAt || new Date(),
-      });
+    // 4️⃣ Update room list for both participants
+    io.to(roomId).emit("roomLastMessageUpdated", {
+      roomId,
+      lastMessage: saved,
+      type: "new", // 👈 tell frontend this is a *new* message
+    });
 
-    // 4️⃣ Find receiver
+    // 5️⃣ Find receiver for push notifications
     const [roomRows] = await db.query(
       "SELECT buyerQid, sellerQid FROM chatRooms WHERE roomId = ?",
       [roomId]
@@ -319,7 +318,7 @@ socket.on("sendMessage", async ({ roomId, message, tempId }) => {
     const room = roomRows[0];
     const receiverQid = senderQid === room.buyerQid ? room.sellerQid : room.buyerQid;
 
-    // 5️⃣ Push notification to receiver ONLY (if offline)
+    // 6️⃣ Push notification to receiver ONLY (if offline)
     if (receiverQid && receiverQid !== senderQid && !isUserOnline(receiverQid)) {
       const payload = {
         title: `New message from ${socket.user.username || "Someone"}`,
@@ -335,6 +334,60 @@ socket.on("sendMessage", async ({ roomId, message, tempId }) => {
     console.error("❌ Error in sendMessage listener:", err);
   }
 });
+
+// socket.on("sendMessage", async ({ roomId, message, tempId }) => {
+//   if (!socket.user) return;
+//   const senderQid = socket.user.memberQid;
+
+//   try {
+//     console.log(`🔹 Sending message in room: ${roomId}`, { senderQid, message });
+
+//     // 1️⃣ Save message
+//     const saved = await chatController.saveChatMessage(roomId, senderQid, message);
+//     if (!saved) return console.error("❌ Message not saved.");
+
+//     console.log("✅ Message saved:", saved);
+
+//     // 2️⃣ Emit to sender
+//     socket.emit("messageSent", { ...saved, tempId });
+
+//     // 3️⃣ Emit to others (receiver)
+//     socket.to(roomId).emit("receiveMessage", saved);
+
+//     // 3.5️⃣ Update room list for both participants
+//       io.emit("roomUpdated", {
+//         roomId,
+//         lastMessage: saved.message,
+//         senderQid,
+//         createdAt: saved.createdAt || new Date(),
+//       });
+
+//     // 4️⃣ Find receiver
+//     const [roomRows] = await db.query(
+//       "SELECT buyerQid, sellerQid FROM chatRooms WHERE roomId = ?",
+//       [roomId]
+//     );
+//     if (!roomRows.length) return console.error("❌ Room not found for push notification");
+
+//     const room = roomRows[0];
+//     const receiverQid = senderQid === room.buyerQid ? room.sellerQid : room.buyerQid;
+
+//     // 5️⃣ Push notification to receiver ONLY (if offline)
+//     if (receiverQid && receiverQid !== senderQid && !isUserOnline(receiverQid)) {
+//       const payload = {
+//         title: `New message from ${socket.user.username || "Someone"}`,
+//         body: message,
+//         url: `/chat/${roomId}`,
+//       };
+
+//       const results = await pushController.sendPushToMember(receiverQid, payload);
+//       console.log("🔔 Push sent to receiver only:", results);
+//     }
+
+//   } catch (err) {
+//     console.error("❌ Error in sendMessage listener:", err);
+//   }
+// });
 
 
  
@@ -393,7 +446,11 @@ socket.on("editMessage", async ({ messageId, roomId, newMessage }) => {
 
       // 🟢 Broadcast to update last message preview for all users in that room list
       const lastMsg = await chatController.getLastMessage(roomId);
-      io.emit("roomLastMessageUpdated", { roomId, lastMessage: lastMsg });
+      io.to(roomId).emit("roomLastMessageUpdated", {
+        roomId,
+        lastMessage: { message: newMessage },
+        type: "edit", // 👈 added
+      });
     }
   } catch (err) {
     console.error("❌ Error editing message:", err);
@@ -412,7 +469,11 @@ socket.on("deleteMessage", async ({ messageId, roomId }) => {
 
       // 🟢 Also broadcast new last message after delete
       const lastMsg = await chatController.getLastMessage(roomId);
-      io.emit("roomLastMessageUpdated", { roomId, lastMessage: lastMsg });
+      io.to(roomId).emit("roomLastMessageUpdated", {
+        roomId,
+        lastMessage: { message: "Message deleted" },
+        type: "delete", // 👈 added
+      });
     }
   } catch (err) {
     console.error("❌ Error deleting message:", err);

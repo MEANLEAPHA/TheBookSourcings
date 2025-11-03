@@ -609,35 +609,38 @@ socket.on("messageDeleted", (data) => {
     }
   });
 
-  socket.on("roomUpdated", ({ roomId, lastMessage, senderQid }) => {
-  const roomEl = document.querySelector(`.room-item[data-room-id="${roomId}"]`);
-  if (!roomEl) return;
+//   socket.on("roomUpdated", ({ roomId, lastMessage, senderQid }) => {
+//   const roomEl = document.querySelector(`.room-item[data-room-id="${roomId}"]`);
+//   if (!roomEl) return;
 
-  const lastTextEl = roomEl.querySelector(".room-last");
-  if (lastTextEl) lastTextEl.textContent = lastMessage;
+//   const lastTextEl = roomEl.querySelector(".room-last");
+//   if (lastTextEl) lastTextEl.textContent = lastMessage;
 
-  // Add unread blue dot if this update came from another user
-  if (roomId !== activeRoomId && senderQid !== currentUser) {
-    roomEl.classList.add("unread");
-  } else {
-    roomEl.classList.remove("unread");
-  }
-});
-socket.on("roomLastMessageUpdated", ({ roomId, lastMessage }) => {
+//   // Add unread blue dot if this update came from another user
+//   if (roomId !== activeRoomId && senderQid !== currentUser) {
+//     roomEl.classList.add("unread");
+//   } else {
+//     roomEl.classList.remove("unread");
+//   }
+// });
+socket.on("roomLastMessageUpdated", ({ roomId, lastMessage, type }) => {
   const roomItem = document.querySelector(`.room-item[data-room-id="${roomId}"]`);
   if (!roomItem || !lastMessage) return;
 
-  // Update last message text
+  // Update text
   const lastMsgDiv = roomItem.querySelector(".room-last");
   if (lastMsgDiv) {
     lastMsgDiv.textContent = lastMessage.message || "Message deleted";
   }
 
-  // 🟢 Optional: If user is not in this room, show blue dot
-  if (activeRoomId !== roomId) {
+  // 🧠 Only mark unread if this is a *new* message, not edit/delete
+  if (type === "new" && activeRoomId !== roomId) {
     roomItem.classList.add("unread");
+  } else if (type === "edit" || type === "delete") {
+    roomItem.classList.remove("unread"); // clear any false blue dot
   }
 });
+
 
 //  socket.on("roomUpdated", ({ roomId, lastMessage, senderQid }) => {
 //   const roomEl = document.querySelector(`.room-item[data-room-id="${roomId}"]`);
