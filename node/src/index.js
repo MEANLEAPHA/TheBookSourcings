@@ -264,24 +264,7 @@ socket.on("messageDelivered", async ({ messageId, roomId }) => {
   }
 });
 
-// socket.on("sendMessage", async ({ roomId, message, tempId }) => {
-//     if (!socket.user) return;
-//     const senderQid = socket.user.memberQid;
 
-//     try {
-//       const saved = await chatController.saveChatMessage(roomId, senderQid, message);
-//       if (!saved) return;
-
-//       // 1) Confirm to sender including tempId so client replaces exact element
-//       socket.emit("messageSent", { ...saved, tempId });
-
-//       // 2) Broadcast to other participants in room
-//       socket.to(roomId).emit("receiveMessage", saved);
-
-//     } catch (err) {
-//       console.error("❌ Error saving chat message:", err);
-//     }
-//   });
 socket.on("sendMessage", async ({ roomId, message, tempId }) => {
   if (!socket.user) return;
   const senderQid = socket.user.memberQid;
@@ -295,6 +278,19 @@ socket.on("sendMessage", async ({ roomId, message, tempId }) => {
 
     console.log("✅ Message saved:", saved);
 
+    const [roomRows] = await db.query(
+      "SELECT buyerQid, sellerQid FROM chatRooms WHERE roomId = ?",
+      [roomId]
+    );
+    if (!roomRows.length) return console.error("❌ Room not found for push notification");
+
+    const room = roomRows[0];
+    const receiverQid = senderQid === room.buyerQid ? room.sellerQid : room.buyerQid;
+    // increment unread for receiver (DB truth)
+    if (receiverQid && receiverQid !== senderQid) {
+      await chatController.incrementUnreadForReceiver(roomId, receiverQid, saved.messageId);
+    }
+
     // 2️⃣ Emit to sender
     socket.emit("messageSent", { ...saved, tempId });
 
@@ -304,20 +300,13 @@ socket.on("sendMessage", async ({ roomId, message, tempId }) => {
     // 4️⃣ Update room list for both participants
     io.emit("roomLastMessageUpdated", {
       roomId,
-      lastMessage: saved,
+      // lastMessage: saved,
+      lastMessage: { message: saved.message, messageId: saved.messageId },
       type: "new",
       senderQid: senderQid // 👈 tell frontend this is a *new* message
     });
 
-    // 5️⃣ Find receiver for push notifications
-    const [roomRows] = await db.query(
-      "SELECT buyerQid, sellerQid FROM chatRooms WHERE roomId = ?",
-      [roomId]
-    );
-    if (!roomRows.length) return console.error("❌ Room not found for push notification");
 
-    const room = roomRows[0];
-    const receiverQid = senderQid === room.buyerQid ? room.sellerQid : room.buyerQid;
 
     // 6️⃣ Push notification to receiver ONLY (if offline)
     if (receiverQid && receiverQid !== senderQid && !isUserOnline(receiverQid)) {
@@ -336,63 +325,6 @@ socket.on("sendMessage", async ({ roomId, message, tempId }) => {
   }
 });
 
-// socket.on("sendMessage", async ({ roomId, message, tempId }) => {
-//   if (!socket.user) return;
-//   const senderQid = socket.user.memberQid;
-
-//   try {
-//     console.log(`🔹 Sending message in room: ${roomId}`, { senderQid, message });
-
-//     // 1️⃣ Save message
-//     const saved = await chatController.saveChatMessage(roomId, senderQid, message);
-//     if (!saved) return console.error("❌ Message not saved.");
-
-//     console.log("✅ Message saved:", saved);
-
-//     // 2️⃣ Emit to sender
-//     socket.emit("messageSent", { ...saved, tempId });
-
-//     // 3️⃣ Emit to others (receiver)
-//     socket.to(roomId).emit("receiveMessage", saved);
-
-//     // 3.5️⃣ Update room list for both participants
-//       io.emit("roomUpdated", {
-//         roomId,
-//         lastMessage: saved.message,
-//         senderQid,
-//         createdAt: saved.createdAt || new Date(),
-//       });
-
-//     // 4️⃣ Find receiver
-//     const [roomRows] = await db.query(
-//       "SELECT buyerQid, sellerQid FROM chatRooms WHERE roomId = ?",
-//       [roomId]
-//     );
-//     if (!roomRows.length) return console.error("❌ Room not found for push notification");
-
-//     const room = roomRows[0];
-//     const receiverQid = senderQid === room.buyerQid ? room.sellerQid : room.buyerQid;
-
-//     // 5️⃣ Push notification to receiver ONLY (if offline)
-//     if (receiverQid && receiverQid !== senderQid && !isUserOnline(receiverQid)) {
-//       const payload = {
-//         title: `New message from ${socket.user.username || "Someone"}`,
-//         body: message,
-//         url: `/chat/${roomId}`,
-//       };
-
-//       const results = await pushController.sendPushToMember(receiverQid, payload);
-//       console.log("🔔 Push sent to receiver only:", results);
-//     }
-
-//   } catch (err) {
-//     console.error("❌ Error in sendMessage listener:", err);
-//   }
-// });
-
-
- 
-
   // ✅ Seen message logic
 socket.on("markRoomSeen", async ({ roomId }) => {
     if (!socket.user) return;
@@ -409,32 +341,63 @@ socket.on("markRoomSeen", async ({ roomId }) => {
 
 
   // Mark all messages in a room as seen
-  socket.on("markRoomSeen", async ({ roomId }) => {
-    if (!socket.user) return;
-    try {
-      const seenIds = await chatController.markAllMessagesSeen(roomId, socket.user.memberQid);
-      if (seenIds.length) io.to(roomId).emit("roomMessagesSeen", { messageIds: seenIds, roomId });
-    } catch (err) {
-      console.error("❌ Error marking room messages seen:", err);
-    }
-  });
+  // socket.on("markRoomSeen", async ({ roomId }) => {
+  //   if (!socket.user) return;
+  //   try {
+  //     const seenIds = await chatController.markAllMessagesSeen(roomId, socket.user.memberQid);
+  //     if (seenIds.length) io.to(roomId).emit("roomMessagesSeen", { messageIds: seenIds, roomId });
+  //   } catch (err) {
+  //     console.error("❌ Error marking room messages seen:", err);
+  //   }
+  // });
 
-  socket.on("messageSeen", async ({ messageId, roomId }) => {
-  if (!socket.user || !messageId || !roomId) return;
+//   socket.on("messageSeen", async ({ messageId, roomId }) => {
+//   if (!socket.user || !messageId || !roomId) return;
+//   const viewerQid = socket.user.memberQid;
+
+//   try {
+//     const updated = await chatController.markMessageSeen(messageId, viewerQid);
+//     if (updated) {
+//       io.to(roomId).emit("messageSeen", { messageId });
+//     }
+//   } catch (err) {
+//     console.error("❌ Error marking message seen:", err);
+//   }
+// });
+// when a client marks a room as seen (e.g. socket.emit('markRoomSeen', { roomId }))
+socket.on("markRoomSeen", async ({ roomId }) => {
+  if (!socket.user) return;
   const viewerQid = socket.user.memberQid;
 
   try {
-    const updated = await chatController.markMessageSeen(messageId, viewerQid);
-    if (updated) {
-      io.to(roomId).emit("messageSeen", { messageId });
+    // clear DB unread for viewer
+    const cleared = await chatController.clearUnreadForMember(roomId, viewerQid);
+
+    // notify server/room that messages were seen (to update status icons)
+    const seenIds = await chatController.markAllMessagesSeen(roomId, viewerQid); // you already have this
+    if (seenIds && seenIds.length) {
+      io.to(roomId).emit("roomMessagesSeen", { messageIds: seenIds, roomId });
     }
+
+    // also update sidebar for everyone so UI keeps consistent
+    // get last message to update sidebar (if needed)
+    const lastMsg = await chatController.getLastMessage(roomId);
+    const lastMessageObj = lastMsg ? { message: lastMsg.message, messageId: lastMsg.messageId } : { message: "No messages yet", messageId: null };
+    io.emit("roomLastMessageUpdated", {
+      roomId,
+      lastMessage: lastMessageObj,
+      type: "seen",         // new type 'seen' — frontend can ignore or clear dot for viewer
+      senderQid: viewerQid
+    });
+
   } catch (err) {
-    console.error("❌ Error marking message seen:", err);
+    console.error("❌ Error in markRoomSeen:", err);
   }
 });
 
 
-// ✅ Edit message
+
+
 // ✏️ Edit Message
 socket.on("editMessage", async ({ messageId, roomId, newMessage }) => {
   if (!socket.user || !messageId || !roomId) return;
@@ -464,32 +427,42 @@ socket.on("editMessage", async ({ messageId, roomId, newMessage }) => {
 socket.on("deleteMessage", async ({ messageId, roomId }) => {
   if (!socket.user || !messageId || !roomId) return;
   const senderQid = socket.user.memberQid;
-
   try {
-    const deleted = await chatController.deleteChatMessage(messageId, senderQid);
+    const deleted = await chatController.deleteChatMessage(messageId, senderQid); // soft update possible
     if (!deleted) return;
 
+    // remove from open rooms (clients who are in room)
     io.to(roomId).emit("messageDeleted", { messageId, roomId });
 
+    // recompute last message
     const lastMsg = await chatController.getLastMessage(roomId);
 
-    // If the deleted message was the last one → show placeholder
-    if (lastMsg && lastMsg.messageId === messageId) {
-      io.emit("roomLastMessageUpdated", {
-        roomId,
-        lastMessage: { message: "This message was deleted.", prevMessage: lastMsg.message, messageId },
-        type: "delete",
-        senderQid
-      });
+    let lastMessageObj;
+    if (!lastMsg) {
+      lastMessageObj = { message: "Message deleted", messageId: null, prevMessage: "" };
+    } else if (lastMsg.messageId === messageId) {
+      lastMessageObj = { message: "Message deleted", messageId: null, prevMessage: lastMsg.message };
+    } else {
+      lastMessageObj = { message: lastMsg.message, messageId: lastMsg.messageId, prevMessage: lastMsg.message };
     }
+
+    // If last message was deleted we want everyone to see 'Message deleted' as last preview.
+    io.emit("roomLastMessageUpdated", {
+      roomId,
+      lastMessage: lastMessageObj,
+      type: "delete",
+      senderQid,
+      deletedMessageId: messageId
+    });
+
+    // If the deletion affects unread (deleted message was last message and unread counts exist),
+    // we should update chat_unreads rows where lastMessageId == deletedMessageId to point to the new lastMessageId or 0.
+    // implement a helper if you want; optional but recommended.
   } catch (err) {
     console.error("❌ Error deleting message:", err);
   }
 });
 
-
-
-// ✅ Delete message
 // socket.on("deleteMessage", async ({ messageId, roomId }) => {
 //   if (!socket.user || !messageId || !roomId) return;
 //   const senderQid = socket.user.memberQid;
@@ -498,140 +471,17 @@ socket.on("deleteMessage", async ({ messageId, roomId }) => {
 //     const deleted = await chatController.deleteChatMessage(messageId, senderQid);
 //     if (!deleted) return;
 
-//     // 1️⃣ Remove from chat window only for people in this room
 //     io.to(roomId).emit("messageDeleted", { messageId, roomId });
 
-//     // 2️⃣ Update the room-last for sidebar (everyone)
 //     const lastMsg = await chatController.getLastMessage(roomId);
 
-//     let lastMessageObj;
-
-//     if (!lastMsg || lastMsg.messageId === messageId) {
-//       // No messages left OR deleted message was the last one → show placeholder
-//       lastMessageObj = {
-//         message: "Message deleted",
-//         prevMessage: lastMsg ? lastMsg.message : "",
-//         messageId: null
-//       };
-//     } else {
-//       // There is a new last message (older one)
-//       lastMessageObj = {
-//         message: lastMsg.message,
-//         prevMessage: lastMsg.message,
-//         messageId: lastMsg.messageId
-//       };
-//     }
-
-//     io.emit("roomLastMessageUpdated", {
-//       roomId,
-//       lastMessage: lastMessageObj,
-//       type: "delete",
-//       senderQid,
-//       deletedMessageId: messageId
-//     });
-
-//   } catch (err) {
-//     console.error("❌ Error deleting message:", err);
-//   }
-// });
-
-// socket.on("deleteMessage", async ({ messageId, roomId }) => {
-//   if (!socket.user || !messageId || !roomId) return;
-//   const senderQid = socket.user.memberQid;
-
-//   try {
-//     const deleted = await chatController.deleteChatMessage(messageId, senderQid);
-//     if (!deleted) return;
-
-//     // 1️⃣ Remove from chat window for people in this room
-//     io.to(roomId).emit("messageDeleted", { messageId, roomId });
-
-//     // 2️⃣ Check last message BEFORE deletion to see if this was the last message
-//     const lastMsgBefore = await chatController.getLastMessage(roomId, { includeDeleted: true });
-
-//     // If the deleted message was the last message, emit "Message deleted"
-//     let lastMessageObj;
-//     if (lastMsgBefore && lastMsgBefore.messageId === messageId) {
-//       lastMessageObj = {
-//         message: "Message deleted",
-//         prevMessage: lastMsgBefore.message,
-//         messageId: messageId
-//       };
-//     } else {
-//       const lastMsgNow = await chatController.getLastMessage(roomId);
-//       lastMessageObj = {
-//         message: lastMsgNow ? lastMsgNow.message : "Message deleted",
-//         prevMessage: lastMsgNow ? lastMsgNow.message : "",
-//         messageId: lastMsgNow ? lastMsgNow.messageId : null
-//       };
-//     }
-
-//     io.emit("roomLastMessageUpdated", {
-//       roomId,
-//       lastMessage: lastMessageObj,
-//       type: "delete",
-//       senderQid,
-//       deletedMessageId: messageId
-//     });
-
-//   } catch (err) {
-//     console.error("❌ Error deleting message:", err);
-//   }
-// });
-
-// socket.on("deleteMessage", async ({ messageId, roomId }) => {
-//   if (!socket.user || !messageId || !roomId) return;
-//   const senderQid = socket.user.memberQid;
-
-//   try {
-//     const deleted = await chatController.deleteChatMessage(messageId, senderQid);
-//     if (deleted) {
-//       // Notify everyone in the room to remove the message from chat window
-//       io.emit("messageDeleted", { messageId, roomId });
-
-//       const lastMsg = await chatController.getLastMessage(roomId);
-
-//       // Include messageId for the last message so frontend can compare
-//       const lastMessageObj = {
-//         message: lastMsg ? lastMsg.message : "Message deleted",
-//         prevMessage: lastMsg ? lastMsg.message : "",
-//         messageId: lastMsg ? lastMsg.messageId : null
-//       };
-
-//       // Only emit lastMessage update if deleted message was the last one
-//       if (!lastMsg || lastMsg.messageId === messageId) {
-//         io.emit("roomLastMessageUpdated", {
-//           roomId,
-//           lastMessage: lastMessageObj,
-//           type: "delete",
-//           senderQid,
-//           deletedMessageId: messageId // flag for frontend to clear unread dot
-//         });
-//       }
-//     }
-//   } catch (err) {
-//     console.error("❌ Error deleting message:", err);
-//   }
-// });
-
-
-
-// socket.on("deleteMessage", async ({ messageId, roomId }) => {
-//   if (!socket.user || !messageId || !roomId) return;
-//   const senderQid = socket.user.memberQid;
-
-//   try {
-//     const deleted = await chatController.deleteChatMessage(messageId, senderQid);
-//     if (deleted) {
-//       io.to(roomId).emit("messageDeleted", { messageId, roomId });
-
-//       // 🟢 Also broadcast new last message after delete
-//       const lastMsg = await chatController.getLastMessage(roomId);
+//     // If the deleted message was the last one → show placeholder
+//     if (lastMsg && lastMsg.messageId === messageId) {
 //       io.emit("roomLastMessageUpdated", {
 //         roomId,
-//         lastMessage: { message: "Message deleted", prevMessage: lastMsg.message  },
+//         lastMessage: { message: "This message was deleted.", prevMessage: lastMsg.message, messageId },
 //         type: "delete",
-//         senderQid // 👈 added
+//         senderQid
 //       });
 //     }
 //   } catch (err) {
