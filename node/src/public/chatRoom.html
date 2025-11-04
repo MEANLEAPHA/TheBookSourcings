@@ -264,6 +264,28 @@
   const token = localStorage.getItem("token");
   // ---------- Hybrid unread helpers ----------
 const UNREAD_LS_KEY = "unreadRooms_v1";
+async function loadUnreadRooms() {
+  try {
+    const res = await fetch("https://thebooksourcings.onrender.com/api/chat/unreadRooms", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
+    });
+    const data = await res.json();
+    if (!data.ok) return;
+
+    unreadRooms_v1 = data.rooms.map(r => r.roomId);
+
+    console.log("📥 Loaded unread rooms:", unreadRooms_v1);
+
+    unreadRooms_v1.forEach(roomId => {
+      const roomItem = document.querySelector(`.room-item[data-room-id="${roomId}"]`);
+      if (roomItem) roomItem.classList.add("unread");
+    });
+  } catch (err) {
+    console.error("❌ Failed to load unread rooms:", err);
+  }
+}
 function getLSUnread() {
   try {
     return JSON.parse(localStorage.getItem(UNREAD_LS_KEY) || "[]");
@@ -736,62 +758,27 @@ socket.on("messageDeleted", (data) => {
 //   });
 // });
 
-socket.on("roomLastMessageUpdated", ({ roomId, lastMessage, type, senderQid, deletedMessageId }) => {
+socket.on("roomLastMessageUpdated", ({ roomId, lastMessage, type, senderQid }) => {
   const roomItem = document.querySelector(`.room-item[data-room-id="${roomId}"]`);
   if (!roomItem || !lastMessage) return;
+
   const lastMsgDiv = roomItem.querySelector(".room-last");
   if (!lastMsgDiv) return;
 
-  // Always update last message text
+  // Update last message text
   lastMsgDiv.textContent = lastMessage.message || "Message deleted";
   lastMsgDiv.dataset.lastMessageId = lastMessage.messageId ?? "deleted";
 
-  // Only treat unread based on server type:
-  if (type === "new") {
-    // server decided it's a new message → show unread for others
-    const isOwnMessage = String(senderQid) === String(currentUser);
-    if (!isOwnMessage) {
-      // UI
-      roomItem.classList.add("unread");
-      // LS
-      markRoomUnreadLS(roomId);
-    } else {
-      roomItem.classList.remove("unread");
-      clearRoomUnreadLS(roomId);
-    }
-  } else if (type === "delete") {
-    // server tells us deletion happened. It set lastMessage.messageId to null when last deleted
-    // If lastMessage.messageId is null, server wanted a "Message deleted" placeholder — show but treat as read for others?
-    // We'll follow server: do NOT create unread from old messages; only set unread if server explicitly intended (rare)
-    if (lastMessage.messageId == null) {
-      // if server intended others to see placeholder as "new" deleted event, server would set type='delete' and expect unread
-      // We'll respect server: if senderQid !== currentUser and activeRoomId !== roomId -> show unread
-      const isOwnMessage = String(senderQid) === String(currentUser);
-      const isActiveRoom = activeRoomId === roomId;
-      if (!isOwnMessage && !isActiveRoom) {
-        roomItem.classList.add("unread");
-        markRoomUnreadLS(roomId);
-      } else {
-        roomItem.classList.remove("unread");
-        clearRoomUnreadLS(roomId);
-      }
-    } else {
-      // normal case: lastMessage moved to an older message — do NOT mark unread (server told us it's not new)
-      roomItem.classList.remove("unread");
-      clearRoomUnreadLS(roomId);
-    }
-  } else if (type === "edit") {
-    // server indicates the last message was edited. If it's still the last and not yours and you are away -> keep unread.
-    const isOwnMessage = String(senderQid) === String(currentUser);
-    const isActiveRoom = activeRoomId === roomId;
-    if (!isOwnMessage && !isActiveRoom) {
-      roomItem.classList.add("unread");
-      markRoomUnreadLS(roomId);
-    }
-  } else if (type === "seen") {
-    // clear unread for viewer side
+  const isOwnMessage = String(senderQid) === String(currentUser);
+  const isActiveRoom = activeRoomId === roomId;
+
+  // ✅ Unread logic
+  if ((type === "new" || type === "edit") && !isOwnMessage && !isActiveRoom) {
+    roomItem.classList.add("unread");
+    markRoomUnreadLS(roomId);   // store in LS
+  } else if (type === "seen" || isOwnMessage || isActiveRoom) {
     roomItem.classList.remove("unread");
-    clearRoomUnreadLS(roomId);
+    clearRoomUnreadLS(roomId);  // remove from LS
   }
 });
 
@@ -850,6 +837,7 @@ socket.on("roomLastMessageUpdated", ({ roomId, lastMessage, type, senderQid, del
 
 //   console.log("[DEBUG] roomLastMessageUpdated processing finished for room:", roomId);
 // });
+
 
 
 
@@ -945,9 +933,41 @@ confirm.onclick = () => {
   //   cancel.onclick = () => (toast.style.display = "none");
   // }
 
+// async function syncUnreadFromServer() {
+//   try {
+//     const res = await fetch(`https://thebooksourcings.onrender.com/api/chat/unreadRooms`, {
+//       headers: { Authorization: `Bearer ${token}` }
+//     });
+//     const data = await res.json();
+//     const dbRooms = (data && data.rooms) ? data.rooms.map(r => String(r.roomId)) : [];
 
-// === INITIAL LOAD ===
-loadChatRooms(activeType);
+//     // ✅ Update localStorage
+//     setLSUnread(dbRooms);
+
+//     // ✅ Apply unread class to room items
+//     document.querySelectorAll(".room-item").forEach(el => {
+//       const rid = String(el.dataset.roomId);
+//       if (dbRooms.includes(rid)) el.classList.add("unread");
+//       else el.classList.remove("unread");
+//     });
+
+//     console.log("✅ Synced unread from DB:", dbRooms);
+//   } catch (err) {
+//     console.error("❌ Failed to sync unread from server:", err);
+//   }
+// }
+
+
+// === INITIAL LOAD & SYNC UNREADS ===
+(async function init() {
+  // 1️⃣ Load rooms first
+  await loadChatRooms(activeType);
+
+  // 2️⃣ Then fetch unread rooms from DB and apply LS + UI
+  await syncUnreadFromServer();
+})();
+
+// loadChatRooms(activeType);
 
 // === ARCHIVE / UNARCHIVE FUNCTION ===
 async function archiveAction(roomId, isArchive) {
