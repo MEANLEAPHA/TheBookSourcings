@@ -427,12 +427,8 @@ async function loadChatRooms(type = "friend") {
 
       roomList.appendChild(div);
     });
-  } catch (err) {
-    console.error("Failed to load chat rooms:", err);
-    roomList.innerHTML = `<p class='error'>Error loading rooms</p>`;
-  }
-}
-// 1) Apply LS immediately so UI is instant
+     // --- ✅ APPLY UNREAD AFTER ROOMS ARE LOADED ---
+ 
 document.addEventListener("DOMContentLoaded", () => {
   const ls = getLSUnread();
   ls.forEach(rid => {
@@ -440,6 +436,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (roomEl) roomEl.classList.add("unread");
   });
 });
+
+  } catch (err) {
+    console.error("Failed to load chat rooms:", err);
+    roomList.innerHTML = `<p class='error'>Error loading rooms</p>`;
+  }
+}
+
 
 // 2) Fetch database truth and sync localStorage → run after you have token
 // (async function syncUnreadFromServer() {
