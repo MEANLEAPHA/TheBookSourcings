@@ -7,7 +7,7 @@ const searchBar = async (req,res) =>{
         if(!q) return res.json([]);
 
         const [rows] = await db.query(
-            "SELECT username from users WHERE username LIKE ? LIMIT 8",
+            "SELECT * from users WHERE username LIKE ? LIMIT 8",
             [`%${q}%`]
         );
         // if(rows.length===0) return res.status(404).json({message: "No data related found!"});

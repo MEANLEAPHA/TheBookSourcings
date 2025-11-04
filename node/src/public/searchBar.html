@@ -51,7 +51,32 @@ body {
   display: none;
   border-radius: 0 0 6px 6px;
 }
-
+.container-result{
+  display: flex;
+  height: auto;
+  justify-content: start;
+  gap: 10px;
+  padding: 10px;
+  align-items: center;
+}
+.container-result-img{
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  overflow: hidden;
+  object-fit: cover;
+}
+.result-info-name{
+  margin: 0;
+  font-family: monospace;
+  font-size: large;
+}
+.result-info-nickname{
+  margin: 0;
+  font-family: monospace;
+  font-size: small;
+  color: #ccc;
+}
 #suggestions li {
   padding: 10px;
   cursor: pointer;
@@ -96,7 +121,19 @@ searchInput.addEventListener("input", async () => {
     return;
   }
 
-  suggestions.innerHTML = data.map(item => `<li>${item.name}</li>`).join("");
+  suggestions.innerHTML = data.map(item => `
+  <div class="container-result">
+    <img src="${item.pfUrl || "https://i.pinimg.com/736x/9e/83/75/9e837528f01cf3f42119c5aeeed1b336.jpg"}" class="result-cover">
+    <div class="container-result-info">
+      <p class="result-info-name">${item.username}</p>
+      <p class="result-info-nickname">@${item.nickname}</p>
+    </div>
+     
+
+  </div>
+
+  `
+).join("");
   suggestions.style.display = "block";
 });
 
