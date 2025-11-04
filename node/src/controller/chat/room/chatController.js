@@ -500,6 +500,7 @@ const getLastMessage = async (roomId) => {
 };
 
 // ✅ Update message
+// Edit message
 const updateChatMessage = async (messageId, senderQid, newMessage) => {
   try {
     const [result] = await db.query(
@@ -512,18 +513,32 @@ const updateChatMessage = async (messageId, senderQid, newMessage) => {
   }
 };
 
-// ✅ Delete message
+// Soft delete message (replace with placeholder text)
 const deleteChatMessage = async (messageId, senderQid) => {
   try {
     const [result] = await db.query(
-      `DELETE FROM messages WHERE messageId = ? AND senderQid = ?`,
+      `UPDATE messages SET message = "This message was deleted." WHERE messageId = ? AND senderQid = ?`,
       [messageId, senderQid]
     );
     return result.affectedRows;
   } catch (err) {
-    console.error("❌ Error deleting message:", err); 
+    console.error("❌ Error deleting message:", err);
   }
 };
+
+
+// ✅ Delete message
+// const deleteChatMessage = async (messageId, senderQid) => {
+//   try {
+//     const [result] = await db.query(
+//       `DELETE FROM messages WHERE messageId = ? AND senderQid = ?`,
+//       [messageId, senderQid]
+//     );
+//     return result.affectedRows;
+//   } catch (err) {
+//     console.error("❌ Error deleting message:", err); 
+//   }
+// };
 
 // ✅ Get all rooms for a user, filtered by type ('friend', 'order', 'archive')
 const getUserChatRooms = async (req, res) => {

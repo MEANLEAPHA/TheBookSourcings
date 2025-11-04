@@ -588,29 +588,46 @@ function getRealMessageId(msgId) {
 socket.on("messageEdited", (data) => {
   console.log("[SOCKET] messageEdited received:", data);
 
-  const msgIdStr = String(data.messageId); // <- convert to string
+  const msgIdStr = String(data.messageId);
   const msgDiv = document.querySelector(`[data-message-id="${msgIdStr}"]`);
-  if (!msgDiv) console.warn("[SOCKET] messageEdited: msgDiv not found for", msgIdStr);
-
-  if (msgDiv) {
-    msgDiv.querySelector(".message-text").textContent = data.newMessage;
+  if (!msgDiv) {
+    console.warn("[SOCKET] messageEdited: msgDiv not found for", msgIdStr);
+    return;
   }
+
+  msgDiv.querySelector(".message-text").textContent = data.newMessage;
 });
 
-socket.on("messageDeleted", ({ messageId, roomId }) => {
-  console.log("[SOCKET] messageDeleted received:", { messageId, roomId });
+socket.on("messageDeleted", (data) => {
+  console.log("[SOCKET] messageDeleted received:", data);
 
-  // Only remove messages if this room is currently open
-  if (activeRoomId !== roomId) return;
+  const msgIdStr = String(data.messageId);
+  const msgDiv = document.querySelector(`[data-message-id="${msgIdStr}"]`);
+  if (!msgDiv) {
+    console.warn("[SOCKET] messageDeleted: msgDiv not found for", msgIdStr);
+    return;
+  }
 
-  const chatBox = document.getElementById("chatBox");
-  if (!chatBox) return;
-
-  const msgDiv = chatBox.querySelector(`[data-message-id="${messageId}"]`);
-  if (!msgDiv) return;
-
-  msgDiv.remove();
+  msgDiv.querySelector(".message-text").textContent = "This message was deleted.";
 });
+
+
+
+
+// socket.on("messageDeleted", ({ messageId, roomId }) => {
+//   console.log("[SOCKET] messageDeleted received:", { messageId, roomId });
+
+//   // Only remove messages if this room is currently open
+//   if (activeRoomId !== roomId) return;
+
+//   const chatBox = document.getElementById("chatBox");
+//   if (!chatBox) return;
+
+//   const msgDiv = chatBox.querySelector(`[data-message-id="${messageId}"]`);
+//   if (!msgDiv) return;
+
+//   msgDiv.remove();
+// });
 
 
 
@@ -625,36 +642,21 @@ socket.on("messageDeleted", ({ messageId, roomId }) => {
     }
   });
 
-//   socket.on("roomUpdated", ({ roomId, lastMessage, senderQid }) => {
-//   const roomEl = document.querySelector(`.room-item[data-room-id="${roomId}"]`);
-//   if (!roomEl) return;
 
-//   const lastTextEl = roomEl.querySelector(".room-last");
-//   if (lastTextEl) lastTextEl.textContent = lastMessage;
-
-//   // Add unread blue dot if this update came from another user
-//   if (roomId !== activeRoomId && senderQid !== currentUser) {
-//     roomEl.classList.add("unread");
-//   } else {
-//     roomEl.classList.remove("unread");
-//   }
-// });
 socket.on("roomLastMessageUpdated", ({ roomId, lastMessage, type, senderQid, deletedMessageId }) => {
-  // Find room item and last message div
   const roomItem = document.querySelector(`.room-item[data-room-id="${roomId}"]`);
   if (!roomItem || !lastMessage) return;
 
   const lastMsgDiv = roomItem.querySelector(".room-last");
   if (!lastMsgDiv) return;
 
-  // Track previous last message ID
   const prevLastMsgId = lastMsgDiv.dataset.lastMessageId || null;
   lastMsgDiv.dataset.lastMessageId = lastMessage.messageId ?? "deleted";
 
-  // Update sidebar text (show deleted placeholder if needed)
-  lastMsgDiv.textContent = lastMessage.message ?? "Message deleted";
+  // 🧠 Always show message or placeholder
+  lastMsgDiv.textContent = lastMessage.message ?? "This message was deleted.";
 
-  // ✅ Unread logic: only for NEW or EDIT messages with real content
+  // ✅ Only mark unread for NEW or EDIT
   if ((type === "new" || type === "edit") && lastMessage.messageId) {
     const isOwnMessage = String(senderQid) === String(currentUser);
     const isActiveRoom = activeRoomId === roomId;
@@ -676,6 +678,7 @@ socket.on("roomLastMessageUpdated", ({ roomId, lastMessage, type, senderQid, del
     text: lastMsgDiv.textContent
   });
 });
+
 
 
 // socket.on("roomLastMessageUpdated", ({ roomId, lastMessage, type, senderQid, deletedMessageId }) => {
