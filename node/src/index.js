@@ -507,6 +507,22 @@ instrument(io, {
 });
 
 
+app.get("/search", async (req, res) => {
+  const { q } = req.query;
+  if (!q) return res.json([]);
+
+  try {
+    const [rows] = await db.query(
+      "SELECT username FROM users WHERE username LIKE ? LIMIT 5",
+      [`%${q}%`]
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Database query failed" });
+  }
+});
+
 // Start Server
 const port = 3000;
 server.listen(port, () => {
