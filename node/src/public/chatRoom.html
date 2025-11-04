@@ -425,26 +425,26 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // 2) Fetch database truth and sync localStorage → run after you have token
-(async function syncUnreadFromServer() {
-  try {
-    const res = await fetch(`https://thebooksourcings.onrender.com/api/chat/unreadRooms`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    const data = await res.json();
-    const dbRooms = (data && data.rooms) ? data.rooms.map(r => String(r.roomId)) : [];
-    // Overwrite LS with DB truth
-    setLSUnread(dbRooms);
+// (async function syncUnreadFromServer() {
+//   try {
+//     const res = await fetch(`https://thebooksourcings.onrender.com/api/chat/unreadRooms`, {
+//       headers: { Authorization: `Bearer ${token}` }
+//     });
+//     const data = await res.json();
+//     const dbRooms = (data && data.rooms) ? data.rooms.map(r => String(r.roomId)) : [];
+//     // Overwrite LS with DB truth
+//     setLSUnread(dbRooms);
 
-    // Update UI to match DB
-    document.querySelectorAll(".room-item").forEach(el => {
-      const rid = String(el.dataset.roomId);
-      if (dbRooms.includes(rid)) el.classList.add("unread");
-      else el.classList.remove("unread");
-    });
-  } catch (err) {
-    console.error("Failed to sync unread from server:", err);
-  }
-})();
+//     // Update UI to match DB
+//     document.querySelectorAll(".room-item").forEach(el => {
+//       const rid = String(el.dataset.roomId);
+//       if (dbRooms.includes(rid)) el.classList.add("unread");
+//       else el.classList.remove("unread");
+//     });
+//   } catch (err) {
+//     console.error("Failed to sync unread from server:", err);
+//   }
+// })();
 
 
   // === OPEN CHAT ROOM ===
@@ -933,29 +933,29 @@ confirm.onclick = () => {
   //   cancel.onclick = () => (toast.style.display = "none");
   // }
 
-// async function syncUnreadFromServer() {
-//   try {
-//     const res = await fetch(`https://thebooksourcings.onrender.com/api/chat/unreadRooms`, {
-//       headers: { Authorization: `Bearer ${token}` }
-//     });
-//     const data = await res.json();
-//     const dbRooms = (data && data.rooms) ? data.rooms.map(r => String(r.roomId)) : [];
+async function syncUnreadFromServer() {
+  try {
+    const res = await fetch(`https://thebooksourcings.onrender.com/api/chat/unreadRooms`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const data = await res.json();
+    const dbRooms = (data && data.rooms) ? data.rooms.map(r => String(r.roomId)) : [];
 
-//     // ✅ Update localStorage
-//     setLSUnread(dbRooms);
+    // ✅ Update localStorage
+    setLSUnread(dbRooms);
 
-//     // ✅ Apply unread class to room items
-//     document.querySelectorAll(".room-item").forEach(el => {
-//       const rid = String(el.dataset.roomId);
-//       if (dbRooms.includes(rid)) el.classList.add("unread");
-//       else el.classList.remove("unread");
-//     });
+    // ✅ Apply unread class to room items
+    document.querySelectorAll(".room-item").forEach(el => {
+      const rid = String(el.dataset.roomId);
+      if (dbRooms.includes(rid)) el.classList.add("unread");
+      else el.classList.remove("unread");
+    });
 
-//     console.log("✅ Synced unread from DB:", dbRooms);
-//   } catch (err) {
-//     console.error("❌ Failed to sync unread from server:", err);
-//   }
-// }
+    console.log("✅ Synced unread from DB:", dbRooms);
+  } catch (err) {
+    console.error("❌ Failed to sync unread from server:", err);
+  }
+}
 
 
 // === INITIAL LOAD & SYNC UNREADS ===
