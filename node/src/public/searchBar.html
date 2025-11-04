@@ -87,7 +87,7 @@ searchInput.addEventListener("input", async () => {
     return;
   }
 
-  const res = await fetch(`https://thebooksource.onrender.com/api/search?q=${encodeURIComponent(query)}`);
+  const res = await fetch(`https://thebooksourcings.onrender.com/api/search/${encodeURIComponent(query)}`);
   const data = await res.json();
 
   if (data.length === 0) {
