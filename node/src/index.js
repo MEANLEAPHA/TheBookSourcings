@@ -63,6 +63,10 @@ const roomChat = require("./routes/chat/room/chatRoutes");
 
 
 
+// search gobal
+
+const search = require('./routes/components/searchRoutes');
+
 // push nootification
 // const pushNotification = require('./routes/service/pushRoute');
 
@@ -103,6 +107,9 @@ app.use("/api/community", reportCommunityRoute);
 app.use("/api/shop", bookSellerRoutes);
 
 app.use("/api/chat", roomChat);
+
+// search
+app.use('/api', search);
 
 
 // push nootification
@@ -507,21 +514,7 @@ instrument(io, {
 });
 
 
-app.get("/search", async (req, res) => {
-  const { q } = req.query;
-  if (!q) return res.json([]);
 
-  try {
-    const [rows] = await db.query(
-      "SELECT username FROM users WHERE username LIKE ? LIMIT 5",
-      [`%${q}%`]
-    );
-    res.json(rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Database query failed" });
-  }
-});
 
 // Start Server
 const port = 3000;
