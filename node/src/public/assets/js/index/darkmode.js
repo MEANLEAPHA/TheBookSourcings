@@ -28,13 +28,13 @@ const logo = document.querySelector('#logo');
 
 const enableDarkmode = () => {
     document.body.classList.add('dark-theme');
-    logo.src = "../assets/img/otthorD.png"; // dark mode logo
+    logo.src = "https://the-book-sourcing-2025.s3.ap-southeast-1.amazonaws.com/community/1762309977977-otthorD.png"; // dark mode logo
     localStorage.setItem('darkmode', 'active');
 };
 
 const disableDarkmode = () => {
     document.body.classList.remove('dark-theme');
-    logo.src = "../assets/img/otthor.png"; // light mode logo
+    logo.src = "https://the-book-sourcing-2025.s3.ap-southeast-1.amazonaws.com/community/1762309925604-otthor.png"; // light mode logo
     localStorage.setItem('darkmode', null);
 };
 

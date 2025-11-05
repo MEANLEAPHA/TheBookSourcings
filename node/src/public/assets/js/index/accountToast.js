@@ -32,7 +32,7 @@ const toastNotiBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveNotiExam
 if (toastNotiTrigger) {
   toastNotiTrigger.addEventListener('click', () => {
     toastNotiBootstrap.show();
-  });
+  }); 
 }
 
 // Close toast when clicking outside
