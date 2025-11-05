@@ -282,13 +282,7 @@ const getFollowNotifications = async (req, res) => {
     const userQid = req.user.memberQid;
 
     const [rows] = await db.query(
-      `SELECT 
-         ufs.followerQid AS senderQid,
-         u.username AS senderName,
-         ufs.is_mutual
-       FROM user_follow_status ufs
-       JOIN users u ON u.memberQid = ufs.followerQid
-       WHERE ufs.followedQid = ? AND ufs.followed = 1`,
+      `SELECT * FROM notifications WHERE receiverQid = ?`,
       [userQid]
     );
 

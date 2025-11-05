@@ -20,12 +20,18 @@ async function loadFollowNotifications() {
     data.notifications.forEach(noti => {
       const a = document.createElement("a");
 
-      if (noti.is_mutual) {
-        a.textContent = `🎉 You and ${noti.senderName} are now friends! Click to view connection.`;
-        a.href = `/userConnection.html`; // link to connection page
-      } else {
-        a.textContent = `${noti.senderName} followed you. Click to follow back.`;
-        a.href = `/userConnection.html?show=follower`;
+      if (noti.type === 'follow') {
+          const isFollowBack = noti.message.includes('followed you back');
+          a.textContent = noti.message;
+          a.href = isFollowBack ? '/chatRoom.html' : '/userConnection.html';
+      }
+      else if(noti.type === 'order'){
+        a.textContent = noti.message;
+        a.href = `/chatRoom.html`;
+      }
+      else{
+        a.textContent = noti.message;
+        a.href = `/chatRoom.html`; // not yet just test
       }
 
       notiDiv.appendChild(a);
