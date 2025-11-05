@@ -42,5 +42,5 @@ async function loadFollowNotifications() {
 }
 
 // Auto-refresh notifications every 15s
-setInterval(loadFollowNotifications, 15000);
+setInterval(loadFollowNotifications, 20000);
 document.addEventListener("DOMContentLoaded", loadFollowNotifications);
