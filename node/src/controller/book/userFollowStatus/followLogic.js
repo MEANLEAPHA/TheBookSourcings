@@ -277,26 +277,29 @@ const getFollowing = async (req, res) => {
 
 // ===============================
 // 4️⃣ Notification Controller (fetch list of pending follow backs)
-// ===============================
 const getFollowNotifications = async (req, res) => {
   try {
     const userQid = req.user.memberQid;
 
     const [rows] = await db.query(
-      `SELECT ufs.followerQid, u.username AS followerName
+      `SELECT 
+         ufs.followerQid AS senderQid,
+         u.username AS senderName,
+         ufs.is_mutual
        FROM user_follow_status ufs
        JOIN users u ON u.memberQid = ufs.followerQid
-       WHERE ufs.followedQid = ? AND ufs.followed = 1 AND ufs.is_mutual = 0`,
+       WHERE ufs.followedQid = ? AND ufs.followed = 1`,
       [userQid]
     );
 
-    res.json({ pendingFollowBacks: rows });
+    res.json({ notifications: rows });
 
   } catch (err) {
     console.error("Error in getFollowNotifications:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 module.exports = {
   getFollowDetailsWithStatus,

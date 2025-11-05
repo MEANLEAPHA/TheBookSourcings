@@ -3,12 +3,14 @@
     --primary-color:#fd7648;
     --secondary-color: gainsboro;
     --font-color:rgb(65, 65, 65);
+    --back-con:rgb(240, 240, 240);
 }
 .dark-theme{
     --background-color:rgb(32, 32, 32);
     --primary-color:#fd7648;
     --secondary-color: rgba(220, 220, 220, 0.318);
     --font-color:rgb(255, 255, 255);
+     --back-con:rgb(40, 40, 40);
 }
 
 body{
@@ -66,7 +68,14 @@ header{
     font-size: 23px;
     color: var(--font-color);
     }
-
+.fa-bell:hover{
+    transform: scale(0.9);
+    color: var(--primary-color);
+}
+.fa-user:hover{
+    transform: scale(0.9);
+    color: var(--primary-color);
+}
 #logo{
     max-width: 100%;
     height: auto;
@@ -209,12 +218,15 @@ header{
         backdrop-filter: blur(8px);
         color:var(--font-color);
         display: flex;
-       
         justify-content: center;
         padding: 5px 15px 5px 0px;
         align-items: center;
         font-family: sans-serif; 
+        cursor: pointer;
     }
+     #create:hover{
+        color: var(--primary-color);
+     }
     
     .userPf{
         width: 35px;
@@ -1083,7 +1095,7 @@ padding-left: 10px;
         border-radius: 8px;
         margin-bottom: 15px;
         /* border: 1px solid var(--secondary-color); */
-        background-color: var(--secondary-color);
+        background-color: var(--back-con);
         box-shadow: 0px 1px 2px rgb(176, 176, 176);
     }
     .post .post-header{
@@ -1168,7 +1180,7 @@ padding-left: 10px;
         margin: 0;
         font-size: larger;
         text-decoration: none;
-        color: black;
+        color:var(--font-color);
         text-align: start;
     }
     .repost-username{
@@ -1176,26 +1188,26 @@ padding-left: 10px;
         margin: 0;
         font-size: large;
         text-decoration: none;
-        color: black;
+        color: var(--font-color);
         text-align: start;
     }
     .postAt{
-        color: gray;
-        opacity: 0.8;
+        color:var(--font-color);
+        opacity: 0.7;
         font-size: small;
         font-family: monospace;
         margin: 0;
     }
      .repost-time{
-        color: gray;
-        opacity: 0.8;
+        color:var(--font-color);
+        opacity: 0.7;
         font-size: x-small;
         font-family: monospace;
         margin: 0;
     }
     .absolute-top-right{
         font-size: large;
-        color: rgb(0, 0, 0);
+        color:var(--font-color);
         position: absolute;
         top: 5px;
         right: 5px;
@@ -1355,7 +1367,7 @@ padding-left: 10px;
          }
          .media-btn span{
             /* margin-top: 2px; */
-             color:gray;
+             color:var(--font-color);
          }
          .media-btn:hover{
             background-color: gainsboro;
@@ -1419,7 +1431,8 @@ padding-left: 10px;
 #followView{
     width: 100%;
     height: 400px;
-    background-color: var(--secondary-color);
+    background-color: var(--back-con);
+
     border-radius: 10px;
     padding: 10px;
     display:flex;
@@ -1487,24 +1500,30 @@ padding-left: 10px;
 .comRight-footer a:hover{
     color: var(--primary-color);
 }
-.chat-message-container{
-    width: auto;
+ .chat-message-container{
+    
     border-radius: 20px;
-   
+   width: auto;
     padding: 10px 10px 10px 10px;
     border: 1px var(--primary-color) solid;
+    margin-top: 45px;
     position: absolute;
-    bottom: 45px;
 }
-.chat-message-container a{
+#comRight .chat-message-container a{
  display: flex;
     align-items: center;
     gap: 15px;
+ 
+}
+#comRight .chat-message-container a:hover{
+color: var(--primary-color);
+transform: scale(0.9);
+ 
 }
 .chat-list{
     display: flex;
     gap: 0;
-    position: relative;
+   
     align-content: center;
 }
 .chat-list-people-img{
