@@ -331,15 +331,15 @@ function displayMessage(msg) {
   dropdownMenu.className = "dropdown-menu";
   if (msg.memberQid === userMemberQid) {
     dropdownMenu.innerHTML = `
-      <li class='li-opt'><a class="dropdown-item edit-option"><i class="fa-solid fa-pen" style="color:green"></i> Edit</a></li>
-      <li class='li-opt'><a class="dropdown-item delete-option"><i class="fa-solid fa-trash" style="color:red" ></i> Delete</a></li>
-      <li class='li-opt'><a class="dropdown-item report-option"><i class="fa-solid fa-flag" style="color:orange"></i> Report</a></li>
-      <li class='li-opt'><a class="dropdown-item copy-option" href="#"><i class="fa-solid fa-link" style="color:blue"></i> Copy link</a></li>
+      <li class='li-opt'><a class="dropdown-item edit-option"><i class="fa-solid fa-pen" style="color:grey"></i> Edit</a></li>
+      <li class='li-opt'><a class="dropdown-item delete-option"><i class="fa-solid fa-trash" style="color:grey" ></i> Delete</a></li>
+      <li class='li-opt'><a class="dropdown-item report-option"><i class="fa-solid fa-flag" style="color:grey"></i> Report</a></li>
+      <li class='li-opt'><a class="dropdown-item copy-option" href="#"><i class="fa-solid fa-link" style="color:grey"></i> Copy link</a></li>
     `;
   } else {
     dropdownMenu.innerHTML = `
-      <li class='li-opt'><a class="dropdown-item report-option"><i class="fa-solid fa-flag" style="color:orange"></i> Report</a></li>
-      <li class='li-opt'><a class="dropdown-item copy-option" href="#"><i class="fa-solid fa-link" style="color:blue"></i> Copy link</a></li>
+      <li class='li-opt'><a class="dropdown-item report-option"><i class="fa-solid fa-flag" style="color:grey"></i> Report</a></li>
+      <li class='li-opt'><a class="dropdown-item copy-option" href="#"><i class="fa-solid fa-link" style="color:grey"></i> Copy link</a></li>
     `;
   }
   dropdownWrapper.appendChild(ellipsisBtn);

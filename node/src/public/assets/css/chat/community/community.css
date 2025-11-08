@@ -3,7 +3,7 @@
     --primary-color:#fd7648;
     --secondary-color: gainsboro;
     --font-color:rgb(65, 65, 65);
-    --back-con:rgb(240, 240, 240);
+    --back-con:rgb(245, 245, 245);
 }
 .dark-theme{
     --background-color:rgb(32, 32, 32);
@@ -1383,7 +1383,7 @@ padding-left: 10px;
          }
          
           
-        .fa-comment, .fa-share-from-square{
+        .fa-comment, .fa-share-from-square, .fa-bookmark, .fa-heart{
             color: gray;
         }
     
@@ -1508,6 +1508,7 @@ padding-left: 10px;
     margin-right: 8px;
     margin-top: 5px;
 }
+
 .comRight-footer a:hover{
     color: var(--primary-color);
 }
@@ -2052,7 +2053,7 @@ top:0px;
              }
     #message-container .post{
         border-radius: 0px;
-        margin-bottom: 10px;
+        margin-bottom: 0px;
         border-bottom: 1px solid var(--secondary-color); 
     }
      .post .post-header{
