@@ -70,7 +70,7 @@ const saveChatMessage = async (roomId, senderQid, message, senderName = "Someone
     console.error("❌ Error saving chat message:", err);
     return null;
   }
-};
+}; 
 
 const markMessageDelivered = async (roomId, receiverQid) => {
   try {

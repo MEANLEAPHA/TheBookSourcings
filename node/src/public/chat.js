@@ -9,7 +9,7 @@ async function subscribeUser() {
   const subscription = await registration.pushManager.subscribe({
     userVisibleOnly: true,
     applicationServerKey: urlBase64ToUint8Array(PUBLIC_VAPID_KEY)
-  });
+  }); 
 
   await fetch('/api/notification/subscribe', {
     method: 'POST',

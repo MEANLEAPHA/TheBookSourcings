@@ -7,32 +7,24 @@ const {
   followBackController,
   getFollowNotifications,
   getFollowers,
-  getFollowing
+  getFollowing,
+  clearOneNotificationById,
+  clearTheNotification
 } = require("../../../controller/book/userFollowStatus/followLogic");
 
-// =====================
-// Follow Status
-// =====================
-
-// Get user details + follow status
 router.get("/followStatus/:followedQid", authMiddleware, getFollowDetailsWithStatus);
 
-// Toggle follow/unfollow (normal follow)
+
 router.post("/channel/follow/:followedQid", authMiddleware, toggleFollow);
 
-// =====================
-// Follow Back
-// =====================
 
-// Follow back a user (current user follows back someone who followed them)
+
+
 router.post("/followBack/:followerQid", authMiddleware, followBackController);
 
-// =====================
-// Notifications
-// =====================
-
-// Get follow notifications for current user
 router.get("/follow/notifications", authMiddleware, getFollowNotifications);
+router.delete("/follow/notifications/clearAll", authMiddleware, clearTheNotification);
+router.delete("/follow/notifications/clear/:notiId", authMiddleware, clearOneNotificationById);
 
 router.get("/followers", authMiddleware, getFollowers);
 router.get("/following", authMiddleware, getFollowing);

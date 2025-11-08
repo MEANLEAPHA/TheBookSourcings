@@ -1,8 +1,8 @@
 const db = require("../../../config/db");
 const { ensureChatRoom } = require("../../shop/orderController");
-// ===============================
-// 1️⃣ Get user details + follow status
-// ===============================
+const dayjs = require("dayjs");
+const relativeTime = require("dayjs/plugin/relativeTime");
+dayjs.extend(relativeTime);
 const getFollowDetailsWithStatus = async (req, res) => {
   try {
     const { followedQid } = req.params;
@@ -280,19 +280,142 @@ const getFollowing = async (req, res) => {
 const getFollowNotifications = async (req, res) => {
   try {
     const userQid = req.user.memberQid;
-
     const [rows] = await db.query(
-      `SELECT * FROM notifications WHERE receiverQid = ?`,
+      ` SELECT s.userPf AS senderPf,
+        n.*
+        FROM notifications n
+        JOIN users s ON s.memberQid = n.senderQid
+        WHERE n.receiverQid = ?
+        ORDER BY n.created_at DESC;
+      `,
       [userQid]
     );
 
-    res.json({ notifications: rows });
 
+    // Map rows to include formatted datetime
+    const notifications = rows.map(noti => ({
+      ...noti,
+      datetime: dayjs(noti.created_at).fromNow() // e.g. "5 minutes ago"
+    }));
+
+    res.json({ notifications });
   } catch (err) {
     console.error("Error in getFollowNotifications:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
+
+const clearTheNotification = async (req, res) => {
+  try {
+    const memberQid = req.user.memberQid;
+
+    const [result] = await db.query(
+      `DELETE FROM notifications WHERE receiverQid = ?`,
+      [memberQid]
+    );
+
+    res.json({
+      message: "Cleared all notifications successfully",
+      affectedRows: result.affectedRows
+    });
+  } catch (err) {
+    console.error("Error in clearTheNotification:", err);
+    res.status(500).json({
+      error: err.message,
+      status: "failed to clear notifications"
+    });
+  }
+};
+
+const clearOneNotificationById = async (req, res) => {
+  try {
+    const memberQid = req.user.memberQid;
+    const { notiId } = req.params;
+
+    const [result] = await db.query(
+      `DELETE FROM notifications WHERE id = ? AND receiverQid = ?`,
+      [notiId, memberQid]
+    );
+
+    res.json({
+      message: "Deleted successfully",
+      affectedRows: result.affectedRows
+    });
+  } catch (err) {
+    console.error("Error in clearOneNotificationById:", err);
+    res.status(500).json({
+      error: err.message,
+      status: "failed to delete notification"
+    });
+  }
+};
+// const getFollowNotifications = async (req, res) => {
+//   try {
+//     const userQid = req.user.memberQid;
+
+//     const [rows] = await db.query(
+//       `SELECT * FROM notifications WHERE receiverQid = ?`,
+//       [userQid]
+//     );
+
+//     res.json({ notifications: rows });
+
+//   } catch (err) {
+//     console.error("Error in getFollowNotifications:", err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
+
+// const clearTheNotification = async (req,res)=>{
+//   try{
+//     const memberQid = req.user.memberQid;
+//     const [rows] = await db.query(
+//       `DELETE * FROM notifications WHERE memberQid = ?`,
+//       [memberQid]
+//     );
+
+//     res.json(
+//       {
+//         message : 'Clear all notification successfully',
+//         notifications : rows
+//       }
+//     );
+//   }
+//   catch(err){
+//     console.error(err);
+//     res.status(505).json({
+//       error : err.message,
+//       status : 'failed to fetch the data backend'
+//     })
+//   }
+// }
+
+// const clearOneNotificationById = async(req,res)=>{
+//   try{
+//     const memberQid = req.user.memberQid;
+//     const {notiId} = req.params;
+
+//     const [rows] = await db.query(
+//       `DELETE * FROM notifications WHERE id = ? AND memberQid = ?`,
+//       [notiId,memberQid]
+//     );
+
+//     res.json({
+//       message : 'Delete sucessfully',
+//       notifications : rows
+//     });
+
+//   }
+//   catch(err){
+//     console.error(err);
+//     res.status(505).json(
+//       {
+//         error : err.message,
+//         status : 'failed to fetch the data backend'
+//       }
+//     )
+//   }
+// }
 
 
 module.exports = {
@@ -300,6 +423,8 @@ module.exports = {
   toggleFollow,
   followBackController,
   getFollowNotifications,
+  clearOneNotificationById,
+  clearTheNotification,
   getFollowing,
   getFollowers
 };
