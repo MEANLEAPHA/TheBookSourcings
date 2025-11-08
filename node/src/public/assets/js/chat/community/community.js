@@ -1196,9 +1196,9 @@ document.getElementById("submitReportBtn").onclick = async () => {
 
  // Post toast
   const postToast = new bootstrap.Toast(document.getElementById("PostToast"), { autohide: false });
-  const searchBtn = document.getElementById("searchButton");
+  const postBtn = document.getElementById("post-btn");
 
-  searchBtn.addEventListener("click", () => {
+  postBtn.addEventListener("click", () => {
     postToast.show();
   });
 

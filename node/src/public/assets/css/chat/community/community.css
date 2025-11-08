@@ -218,6 +218,7 @@ header{
         display: flex;
         align-items: center;
         gap: 10px;
+        color: var(--font-color);
     }
      #create:hover{
         color: var(--primary-color);

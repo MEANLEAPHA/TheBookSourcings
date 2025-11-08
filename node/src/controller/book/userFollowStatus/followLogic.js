@@ -281,7 +281,7 @@ const getFollowNotifications = async (req, res) => {
   try {
     const userQid = req.user.memberQid;
     const [rows] = await db.query(
-      ` SELECT s.userPf AS senderPf,
+      ` SELECT s.pfUrl AS senderPf,
         n.*
         FROM notifications n
         JOIN users s ON s.memberQid = n.senderQid
