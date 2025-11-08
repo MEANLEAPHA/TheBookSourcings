@@ -611,8 +611,9 @@ font-size: 13px;
     overflow: hidden;
     z-index: 2001;
 }
-
-
+.absolute-top-right{
+    
+}
 /* notifaction */
 #liveNoti{
     background-color: var(--background-color);
