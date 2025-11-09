@@ -12,19 +12,18 @@ const notiDevMarket = document.querySelector(".notiUpdateMarket");
 const notiDevConnectionSpan = document.querySelector(".notiUpdateConnection-span");
 const notiDevSystemSpan = document.querySelector(".notiUpdateSystem-span");
 const notiDevMarketSpan = document.querySelector(".notiUpdateMarket-span");
-const clearAll = document.getElementById("btn-clear-noti");
+
 
 // Placeholder elements
 
-const devNoOtterNoti = document.getElementById('dev-no-otter-noti');
+const devNoOttherFri = document.getElementById('dev-no-otter-fri');
 
-async function loadFollowNotifications() {
+async function loadMutual() {
   try {
     const res = await fetch(`${API_BASE}/follow/notifications`, { headers });
     if (!res.ok) throw new Error("Failed to fetch notifications");
     const data = await res.json();
 
-    // Clear containers safely
     [notiDevConnection, notiDevSystem, notiDevMarket].forEach(dev => {
       if (dev) dev.innerHTML = "";
     });
@@ -45,7 +44,7 @@ async function loadFollowNotifications() {
 
       // Show placeholder
 
-      if(devNoOtterNoti) devNoOtterNoti.style.display = "block";
+      if(devNoOttherFri) devNoOttherFri.style.display = "block";
 
       return;
     }
@@ -80,65 +79,15 @@ async function loadFollowNotifications() {
       a.appendChild(pf);
       a.appendChild(div4message);
       a.appendChild(clearBtn);
-
-      if (noti.type === "follow") {
-        const isFollowBack = noti.message.includes("followed you back");
-        a.href = isFollowBack ? "/chatRoom.html" : "/userConnection.html";
-        notiDevConnection?.appendChild(a);
-      } else if (noti.type === "order") {
-        a.href = "/chatRoom.html";
-        notiDevMarket?.appendChild(a);
-      } else {
-        a.href = "/chatRoom.html";
-        notiDevSystem?.appendChild(a);
-      }
-
-      clearBtn.addEventListener("click", async (e) => {
-        try {
-          const id = e.target.dataset.id;
-          const res = await fetch(`${API_BASE}/follow/notifications/clear/${id}`, {
-            method: "DELETE",
-            headers
-          });
-          if (!res.ok) throw new Error("Failed to clear notification");
-          loadFollowNotifications();
-        } catch (err) {
-          console.error("Notification clear error:", err);
-        }
-      });
     });
-
-    // Show spans if notifications exist
-    [notiDevConnectionSpan, notiDevSystemSpan, notiDevMarketSpan].forEach(span => {
-      if (span) span.style.display = "inline";
-    });
-
-    // Show clear all button only if notifications exist
-    if (clearAll) clearAll.style.display = "inline";
-
     // Hide placeholder when notifications exist
-     if(devNoOtterNoti) devNoOtterNoti.style.display = "none";
-
-
+     if(devNoOttherFri) devNoOttherFri.style.display = "none";
   } catch (err) {
     console.error("Notification error:", err);
   }
 }
 
-// Clear all notifications
-clearAll?.addEventListener("click", async (e) => {
-  try {
-    e.preventDefault();
-    const res = await fetch(`${API_BASE}/follow/notifications/clearAll`, {
-      method: "DELETE",
-      headers
-    });
-    if (!res.ok) throw new Error("Failed to clear all notifications");
-    loadFollowNotifications();
-  } catch (err) {
-    console.error("Notification clear all error:", err);
-  }
-});
 
-setInterval(loadFollowNotifications, 20000);
-document.addEventListener("DOMContentLoaded", loadFollowNotifications);
+
+setInterval(loadMutual, 20000);
+document.addEventListener("DOMContentLoaded", loadMutual);

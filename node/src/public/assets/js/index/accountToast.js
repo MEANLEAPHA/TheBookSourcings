@@ -44,3 +44,25 @@ document.addEventListener('click', function (event) {
     toastNotiBootstrap.hide();
   }
 });
+
+
+
+const toastFriTrigger = document.querySelector('#liveFriBtn');
+const toastLiveFriExample = document.getElementById('liveFri');
+const toastFriBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveFriExample);
+
+if (toastFriTrigger) {
+  toastFriTrigger.addEventListener('click', () => {
+    toastFriBootstrap.show();
+  }); 
+}
+
+// Close toast when clicking outside
+document.addEventListener('click', function (event) {
+  const isClickInside = toastLiveFriExample.contains(event.target);
+  const isTrigger = toastFriTrigger.contains(event.target);
+
+  if (!isClickInside && !isTrigger) {
+    toastFriBootstrap.hide();
+  }
+});

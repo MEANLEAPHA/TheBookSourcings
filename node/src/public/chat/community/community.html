@@ -29,7 +29,7 @@
           </a>
         </div>
         <i class="fa-solid fa-bell"  id="liveNotiBtn"></i>
-        <i class="fa-solid fa-user"></i>
+        <i class="fa-solid fa-user" id="liveFriBtn"></i>
         <img src="../../assets/img/pf.jpg" class="userPf" alt="user" class="dropdown-item" style='color: rgb(60, 60, 60);font-family: "Reenie Beanie", cursive;font-weight: 599;font-size: large;' id="liveToastBtn">
     </div>
   </header>   
@@ -65,7 +65,7 @@
                     <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-lines-leaning"></i>Your Library</a></li>
                     <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-book"></i>Your Book</a></li>
                     <li><a href="userShop.html"><i class="fa-solid fa-dollar-sign"></i>Your Shop</a></li>
-                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-bookmark"></i>Favorite</a></li>
+                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-bookmark fav-fav"></i>Favorite</a></li>
                     <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-thumbs-up"></i>Liked</a></li>
                 </ul>
                 <ul id="u3">    
@@ -458,8 +458,29 @@
          <p class="notiUpdateMarket-span">Market</p>
         <div class="notiUpdateMarket">
         </div>
-        <i class="fa-solid fa-otter" ></i>
-        <p class="no-noti-span">No notification!</p>
+        <div id="dev-no-otter-noti">
+          <i class="fa-solid fa-otter" ></i>
+          <p class="no-noti-span">No notification!</p>
+        </div>
+        
+      </div>
+    </div>
+
+    
+    <!--Friend toast -->
+    <div class="toast-container position-fixed  end-0 p-3 fri-toast">
+      <div id="liveFri" class="toast" role="alert" aria-live="assertive" aria-atomic="true" >
+        <div class="fri-head">
+          <span>Friend shortcut</span>
+          <span id="see-all-con"><a href="../../userConnection.html">See all</a></span>
+        </div>
+        <div class="append-fri">
+
+        </div>
+        <div id="dev-no-otter-fri">
+          <i class="fa-solid fa-otter" ></i>
+          <p class="no-fri-span">No Friend yet!</p>
+        </div>
       </div>
     </div>
 

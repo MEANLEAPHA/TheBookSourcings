@@ -274,6 +274,31 @@ const getFollowing = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+const getMutual = async (req, res) => {
+  try {
+    const memberQid = req.user.memberQid;
+    const [rows] = await db.query(
+      `SELECT u.memberQid, u.username, u.nickname
+       FROM users u
+       JOIN user_follow_status f1 
+         ON f1.followerQid = u.memberQid AND f1.followedQid = ?
+       JOIN user_follow_status f2 
+         ON f2.followerQid = ? AND f2.followedQid = u.memberQid
+       WHERE f1.is_mutual = 1 AND f2.is_mutual = 1`,
+      [memberQid, memberQid]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "No mutual friends found" });
+    }
+
+    res.json({ mutual: rows });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error at controller: getMutual" });
+  }
+};
+
 
 // ===============================
 // 4️⃣ Notification Controller (fetch list of pending follow backs)
@@ -349,74 +374,6 @@ const clearOneNotificationById = async (req, res) => {
     });
   }
 };
-// const getFollowNotifications = async (req, res) => {
-//   try {
-//     const userQid = req.user.memberQid;
-
-//     const [rows] = await db.query(
-//       `SELECT * FROM notifications WHERE receiverQid = ?`,
-//       [userQid]
-//     );
-
-//     res.json({ notifications: rows });
-
-//   } catch (err) {
-//     console.error("Error in getFollowNotifications:", err);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// };
-
-// const clearTheNotification = async (req,res)=>{
-//   try{
-//     const memberQid = req.user.memberQid;
-//     const [rows] = await db.query(
-//       `DELETE * FROM notifications WHERE memberQid = ?`,
-//       [memberQid]
-//     );
-
-//     res.json(
-//       {
-//         message : 'Clear all notification successfully',
-//         notifications : rows
-//       }
-//     );
-//   }
-//   catch(err){
-//     console.error(err);
-//     res.status(505).json({
-//       error : err.message,
-//       status : 'failed to fetch the data backend'
-//     })
-//   }
-// }
-
-// const clearOneNotificationById = async(req,res)=>{
-//   try{
-//     const memberQid = req.user.memberQid;
-//     const {notiId} = req.params;
-
-//     const [rows] = await db.query(
-//       `DELETE * FROM notifications WHERE id = ? AND memberQid = ?`,
-//       [notiId,memberQid]
-//     );
-
-//     res.json({
-//       message : 'Delete sucessfully',
-//       notifications : rows
-//     });
-
-//   }
-//   catch(err){
-//     console.error(err);
-//     res.status(505).json(
-//       {
-//         error : err.message,
-//         status : 'failed to fetch the data backend'
-//       }
-//     )
-//   }
-// }
-
 
 module.exports = {
   getFollowDetailsWithStatus,
@@ -426,5 +383,6 @@ module.exports = {
   clearOneNotificationById,
   clearTheNotification,
   getFollowing,
-  getFollowers
+  getFollowers,
+  getMutual
 };

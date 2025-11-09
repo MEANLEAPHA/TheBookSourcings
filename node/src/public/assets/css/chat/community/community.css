@@ -611,6 +611,37 @@ font-size: 13px;
     overflow: hidden;
     z-index: 2001;
 }
+/* friend shortcut */
+#liveFri{
+    background-color: var(--background-color);
+    border: 1px solid var(--primary-color);
+    color: var(--font-color);
+    padding: 10px;
+    width: 100%;
+    
+}
+.fri-head{
+ display:flex;
+    justify-content: space-between;
+    margin: 0;
+    border-bottom: 1px solid var(--primary-color);
+    padding: 0;
+    color: var(--font-color);
+}
+.fri-head a:hover{
+    color: var(--primary-color);
+}
+#dev-no-otter-fri,#dev-no-otter-noti{
+display: flex;
+width: 100%;
+flex-direction: column;
+justify-content: center;
+text-align: center;
+margin: 0;
+padding: 0;
+align-items: center;
+margin-top: 5px;
+}
 
 /* notifaction */
 #liveNoti{
@@ -619,9 +650,7 @@ font-size: 13px;
     color: var(--font-color);
     padding: 10px;
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    
 }
 .noti-head{
     display:flex;
@@ -634,6 +663,7 @@ font-size: 13px;
     display: grid;
     gap: 8px;
 }
+
 .notiUpdateSystem,
 .notiUpdateConnection,
 .notiUpdateMarket,
@@ -642,7 +672,7 @@ font-size: 13px;
 .notiUpdateMarket-span,
 #btn-clear-noti
 {
-  display: none; /* hidden by default */
+  display: none; 
 }
 
 #btn-clear-noti{
@@ -1172,6 +1202,9 @@ padding-left: 10px;
         margin: 0;
         object-fit: cover;
     }
+    .post-header-child-right-top,.repost-header-child-right-top{
+        display: flex;
+    }
     .post-header-child-right-top a{
         margin: 0;
     }
@@ -1684,19 +1717,14 @@ top:0px;
      .theme-switch {
         width: 25px;
         padding: 0;
-        /* margin-left: 4px; */
-        
         background-color: var(--background-color);
         color: var(--font-color);
-        
-        
+        margin: 0;
         cursor: pointer;
         border: none;
-     
         }
        .theme-switch .fa-moon{
         display: none;
-
        }
        .dark-theme .theme-switch .fa-sun{
         display: none;
@@ -1962,6 +1990,10 @@ top:0px;
     padding: 15px;
     margin-top: 5px;
  }
+ .fav-fav{
+    color: var(--font-color);
+
+}
 
 @media screen and (max-width:1024px){
     #PostToastWrapper{
