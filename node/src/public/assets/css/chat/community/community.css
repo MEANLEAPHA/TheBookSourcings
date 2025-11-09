@@ -642,6 +642,43 @@ padding: 0;
 align-items: center;
 margin-top: 5px;
 }
+.friA{
+    width: 100%;
+    padding: 5px;
+    text-decoration: none;
+    color: var(--font-color);
+    display: flex;
+    gap: 5px;
+}
+.friA:hover{
+    color: var(--primary-color);
+}
+.friA-img{
+      width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover; 
+}
+.friA-div4Info{
+       width: 100%;
+    overflow: hidden;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+.friA-name{
+    font-size: medium;
+    color: var(--font-color);
+    font-family: monospace;
+
+}
+.friA-nickname{
+    font-size: small;
+    color: var(--font-color);
+    opacity: 0.7;
+    font-family: monospace;
+}
 
 /* notifaction */
 #liveNoti{
@@ -686,17 +723,30 @@ margin-top: 5px;
     color: rgb(255, 63, 63);
 }
 
+
+.notiList{
+    width: 100%;
+    padding: 5px;
+    display: flex;
+    gap: 5px;
+     max-height: 180px;
+       align-items: center;
+
+}
+
+/* a */
 .notiA{
     display: flex;
     color: var(--font-color);
-    width: 100%;
-    padding: 5px;
-    gap: 5px;
-    max-width: 500px;
-    overflow-y: scroll;
-    scrollbar-width: none;
+    width: 85%;
     height: auto;
     align-items: center;
+    text-decoration: none;
+    color: var(--font-color);
+    gap: 5px;
+}
+.notiA:hover{
+    color: var(--primary-color);
 }
 .notiA-img{
     width: 35px;
@@ -708,16 +758,15 @@ margin-top: 5px;
     display: grid;
     margin: 0;
     gap: 2px;
-    width: 75%;
-    
+    width: 80%;
 }
 .notiA-message{
     width: 100%;
-      overflow: hidden;
-      margin: 0;
+    overflow: hidden;
+    margin: 0;
     display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
 }
 .notiA-date{
 opacity: 0.7;

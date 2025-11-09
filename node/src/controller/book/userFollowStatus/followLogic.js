@@ -278,7 +278,7 @@ const getMutual = async (req, res) => {
   try {
     const memberQid = req.user.memberQid;
     const [rows] = await db.query(
-      `SELECT u.memberQid, u.username, u.nickname
+      `SELECT u.memberQid, u.username, u.nickname, u.pfUrl AS friendPf
        FROM users u
        JOIN user_follow_status f1 
          ON f1.followerQid = u.memberQid AND f1.followedQid = ?

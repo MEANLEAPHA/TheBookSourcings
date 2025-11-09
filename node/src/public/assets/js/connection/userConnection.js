@@ -6,87 +6,63 @@ const headers = {
   "Content-Type": "application/json"
 };
 
-const notiDevConnection = document.querySelector(".notiUpdateConnection");
-const notiDevSystem = document.querySelector(".notiUpdateSystem");
-const notiDevMarket = document.querySelector(".notiUpdateMarket");
-const notiDevConnectionSpan = document.querySelector(".notiUpdateConnection-span");
-const notiDevSystemSpan = document.querySelector(".notiUpdateSystem-span");
-const notiDevMarketSpan = document.querySelector(".notiUpdateMarket-span");
 
 
-// Placeholder elements
+const mutualFriDev = document.querySelector(".append-fri");
 
+// Placeholder elements (if no mutual)
 const devNoOttherFri = document.getElementById('dev-no-otter-fri');
 
 async function loadMutual() {
   try {
-    const res = await fetch(`${API_BASE}/follow/notifications`, { headers });
-    if (!res.ok) throw new Error("Failed to fetch notifications");
+    const res = await fetch(`${API_BASE}/display/mutual`, { headers });
+    if (!res.ok) throw new Error("Failed to fetch mutual");
     const data = await res.json();
 
-    [notiDevConnection, notiDevSystem, notiDevMarket].forEach(dev => {
-      if (dev) dev.innerHTML = "";
-    });
-
-    // Handle empty notifications
-    if (!data.notifications || data.notifications.length === 0) {
-      [
-        { dev: notiDevConnection, span: notiDevConnectionSpan },
-        { dev: notiDevSystem, span: notiDevSystemSpan },
-        { dev: notiDevMarket, span: notiDevMarketSpan }
-      ].forEach(({ dev, span }) => {
-        if (dev) dev.style.display = "none";   // hide container
-        if (span) span.style.display = "none"; // hide span
-      });
-
-      // Hide clear all button
-      if (clearAll) clearAll.style.display = "none";
-
-      // Show placeholder
-
-      if(devNoOttherFri) devNoOttherFri.style.display = "block";
-
+    // Handle empty mutuals
+    if (!data.mutual || data.mutual.length === 0) {
+      if (devNoOttherFri) devNoOttherFri.style.display = "block";
       return;
     }
 
-    // Render notifications
-    data.notifications.forEach(noti => {
-      const a = document.createElement("a");
-      a.className = "notiA";
-      const pf = document.createElement("img");
-      pf.className = "notiA-img";
-      const div4message = document.createElement("div");
-      div4message.className = "notiA-div4message";
-      const message = document.createElement("p");
-      message.className = "notiA-message";
-      const date = document.createElement("span");
-      date.className = "notiA-date";
-      const clearBtn = document.createElement("button");
+    mutualFriDev.innerHTML = "";
 
-      pf.src = noti.senderPf || "/default-avatar.png";
+    data.mutual.forEach(fri => {
+      const a = document.createElement("a");
+      a.className = "friA";
+
+      const pf = document.createElement("img");
+      pf.className = "friA-img";
+
+      const div4info = document.createElement("div");
+      div4info.className = "friA-div4Info";
+
+      const info = document.createElement("p");
+      info.className = "friA-name";
+
+      const nickname = document.createElement("p");
+      nickname.className = "friA-nickname"; 
+
+      pf.src = fri.friendPf || "/default-avatar.png";
       pf.alt = "Profile";
 
-      message.textContent = noti.message;
-      date.textContent = noti.datetime;
+      info.textContent = fri.username;
+      nickname.textContent = `@${fri.nickname}`;
 
-      clearBtn.className = "clearById";
-      clearBtn.textContent = "clear";
-      clearBtn.dataset.id = noti.id;
-
-      div4message.appendChild(message);
-      div4message.appendChild(date);
+      div4info.appendChild(info);
+      div4info.appendChild(nickname);
 
       a.appendChild(pf);
-      a.appendChild(div4message);
-      a.appendChild(clearBtn);
+      a.appendChild(div4info);
+
+      mutualFriDev.appendChild(a);
     });
-    // Hide placeholder when notifications exist
-     if(devNoOttherFri) devNoOttherFri.style.display = "none";
+
+    if (devNoOttherFri) devNoOttherFri.style.display = "none";
   } catch (err) {
-    console.error("Notification error:", err);
+    console.error("Mutual display error:", err);
   }
 }
-
 
 
 setInterval(loadMutual, 20000);

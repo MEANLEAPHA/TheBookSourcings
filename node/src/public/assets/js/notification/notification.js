@@ -52,6 +52,8 @@ async function loadFollowNotifications() {
 
     // Render notifications
     data.notifications.forEach(noti => {
+      const div = document.createElement("div");
+      div.className = "notiList";
       const a = document.createElement("a");
       a.className = "notiA";
       const pf = document.createElement("img");
@@ -79,7 +81,8 @@ async function loadFollowNotifications() {
 
       a.appendChild(pf);
       a.appendChild(div4message);
-      a.appendChild(clearBtn);
+      div.appendChild(a)
+      div.appendChild(clearBtn);
 
       if (noti.type === "follow") {
         const isFollowBack = noti.message.includes("followed you back");

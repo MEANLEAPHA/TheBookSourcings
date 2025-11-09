@@ -30,6 +30,6 @@ router.delete("/follow/notifications/clear/:notiId", authMiddleware, clearOneNot
 router.get("/followers", authMiddleware, getFollowers);
 router.get("/following", authMiddleware, getFollowing);
 
-router.get("/mutual", authMiddleware, getMutual);
+router.get("/display/mutual", authMiddleware, getMutual);
 
 module.exports = router;
