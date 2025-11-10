@@ -2120,7 +2120,7 @@ top:0px;
     border: none;
     background: none;
     color: var(--font-color);
-}
+} */
 body.toast-open {
   overflow: hidden;        
   pointer-events: none;      
@@ -2128,7 +2128,7 @@ body.toast-open {
 
 body.toast-open #imgToast {
   pointer-events: auto;      
-} */
+}
 
 @media screen and (max-width:1024px){
     #PostToastWrapper{
