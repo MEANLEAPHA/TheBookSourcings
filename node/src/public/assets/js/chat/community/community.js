@@ -1278,15 +1278,15 @@ function showImageToast(src) {
   if (!src) return;
   toastImage.src = src;
   bsToast.show();
- 
+  document.body.classList.add("toast-open");
 }
 
-// Hide viewer
 function hideImageToast() {
   bsToast.hide();
-  toastImage.src = ""; 
-
+  toastImage.src = "";
+  document.body.classList.remove("toast-open");
 }
+
 
 // Close when clicking the ✖️ button
 toastCloseBtn.addEventListener("click", hideImageToast);
