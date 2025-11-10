@@ -1002,10 +1002,10 @@ if (msg.repostData) {
 
   // == Attach fav toggle logic
   const favIcon = favBtn.querySelector("i");
-  const favCount = counts.querySelector(".post-favorite-count");
-  loadFavInfoForMessage(msg.message_id, favIcon, favCount);
+  // const favCount = counts.querySelector(".post-favorite-count");
+  loadFavInfoForMessage(msg.message_id, favIcon,);
   favBtn.onclick = async () => {
-     await toggleFavActivityForMessage(msg.message_id, favIcon, favCount);
+     await toggleFavActivityForMessage(msg.message_id, favIcon);
   }
 
   // === Dropdown click handlers ===
@@ -1064,14 +1064,14 @@ async function loadLikeInfoForMessage(messageId, likeIcon, likeCount) {
 
 // ===== ADD tO FAVOURITES =====
 
-async function loadFavInfoForMessage(messageId, favIcon, favCount){
+async function loadFavInfoForMessage(messageId, favIcon){
   try{
     const res = await fetch(`${API_URL}/api/communityPostFav/status/${messageId}`,{
       headers: { "Authorization": `Bearer ${token}`}
     });
 
     const data = await res.json();
-    favCount.textContent = data.post.favorite_count;
+    // favCount.textContent = data.post.favorite_count;
     favIcon.style.color = data.userStatus.favorited ? "orange" : "gray";
 
   }
@@ -1100,7 +1100,7 @@ async function toggleLikeActivityForMessage(messageId, likeIcon, likeCount) {
 }
 
 // toggleFav
-async function toggleFavActivityForMessage(messageId, favIcon, favCount){
+async function toggleFavActivityForMessage(messageId, favIcon ){
   try{
 
     const res = await fetch(`${API_URL}/api/communityPostFav/save/${messageId}`,{
@@ -1113,7 +1113,7 @@ async function toggleFavActivityForMessage(messageId, favIcon, favCount){
     if(!res.ok) throw new Error("Failed to toggle like");
     const data = await res.json();
     favIcon.style.color = data.favorited ? "orange" : "gray";
-    await loadFavInfoForMessage(messageId, favIcon, favCount);
+    await loadFavInfoForMessage(messageId, favIcon);
   }
   catch(err){
     console.error(err)

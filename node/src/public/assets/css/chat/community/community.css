@@ -2082,7 +2082,7 @@ top:0px;
 
 }
 
-#imageToastWrapper{
+/* #imageToastWrapper{
     width: 100%;
      height: 100%;
      z-index: 2000;
@@ -2093,7 +2093,7 @@ top:0px;
       left: 50%;
       transform: translate(-50%, -50%);
      
-}
+} */
 /* #imgToast{
 
         border-radius: 0px;
@@ -2106,7 +2106,7 @@ top:0px;
        
         
 } */
-#toastImage{
+/* #toastImage{
     height: auto;
     width: 100%;
     max-width: 600px;
@@ -2122,13 +2122,13 @@ top:0px;
     color: var(--font-color);
 }
 body.toast-open {
-  overflow: hidden;          /* lock scroll */
-  pointer-events: none;      /* disable clicks */
+  overflow: hidden;        
+  pointer-events: none;      
 }
 
 body.toast-open #imgToast {
-  pointer-events: auto;      /* allow interaction with toast itself */
-}
+  pointer-events: auto;      
+} */
 
 @media screen and (max-width:1024px){
     #PostToastWrapper{
