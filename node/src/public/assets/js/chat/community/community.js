@@ -331,15 +331,15 @@ function displayMessage(msg) {
   dropdownMenu.className = "dropdown-menu";
   if (msg.memberQid === userMemberQid) {
     dropdownMenu.innerHTML = `
-      <li class='li-opt'><a class="dropdown-item edit-option"><i class="fa-solid fa-pen" style="color:grey"></i> Edit</a></li>
-      <li class='li-opt'><a class="dropdown-item delete-option"><i class="fa-solid fa-trash" style="color:grey" ></i> Delete</a></li>
-      <li class='li-opt'><a class="dropdown-item report-option"><i class="fa-solid fa-flag" style="color:grey"></i> Report</a></li>
-      <li class='li-opt'><a class="dropdown-item copy-option" href="#"><i class="fa-solid fa-link" style="color:grey"></i> Copy link</a></li>
+      <li class='li-opt'><a class="dropdown-item edit-option"><i class="fa-solid fa-pen" ></i> Edit</a></li>
+      <li class='li-opt'><a class="dropdown-item delete-option"><i class="fa-solid fa-trash"  ></i> Delete</a></li>
+      <li class='li-opt'><a class="dropdown-item report-option"><i class="fa-solid fa-flag" ></i> Report</a></li>
+      <li class='li-opt'><a class="dropdown-item copy-option" href="#"><i class="fa-solid fa-link" ></i> Copy link</a></li>
     `;
   } else {
     dropdownMenu.innerHTML = `
-      <li class='li-opt'><a class="dropdown-item report-option"><i class="fa-solid fa-flag" style="color:grey"></i> Report</a></li>
-      <li class='li-opt'><a class="dropdown-item copy-option" href="#"><i class="fa-solid fa-link" style="color:grey"></i> Copy link</a></li>
+      <li class='li-opt'><a class="dropdown-item report-option"><i class="fa-solid fa-flag" ></i> Report</a></li>
+      <li class='li-opt'><a class="dropdown-item copy-option" href="#"><i class="fa-solid fa-link" ></i> Copy link</a></li>
     `;
   }
   dropdownWrapper.appendChild(ellipsisBtn);
@@ -930,7 +930,6 @@ if (msg.repostData) {
       <p><span class="post-like-count">${msg.like_count || 0}</span> Likes</p>
     </div>
     <div class="post-media-count-child-right">
-      <p><span class="post-favorite-count">${msg.favorite_count || 0}</span> favorites</p>
       <p><span class="post-comment-count">${msg.comment_count || 0}</span> comments</p>
       <p><span class="post-repost-count">${msg.repost_count || 0}</span> reposts</p>
     </div>
@@ -945,19 +944,19 @@ if (msg.repostData) {
   const likeBtn = document.createElement("button");
   likeBtn.className = "likeBtn media-btn";
   likeBtn.dataset.id = msg.message_id;
-  likeBtn.innerHTML = `<i class="fa-solid fa-heart"></i> <span>Like</span>`;
+  likeBtn.innerHTML = `<i class="fa-solid fa-heart"></i> <span style="color: grey;">Like</span>`;
 
   // Favorite btn
   const favBtn = document.createElement("button");
   favBtn.className = "favBtn media-btn";
   favBtn.dataset.id = msg.message_id;
-  favBtn.innerHTML = `<i class="fa-solid fa-bookmark"></i> <span>Favorites<span>`;
+  favBtn.innerHTML = `<i class="fa-solid fa-bookmark"></i> <span style="color: grey;">Favorites<span>`;
 
   // Comment btn
   const commentBtn = document.createElement("button");
   commentBtn.className = "commentBtn media-btn";
   commentBtn.dataset.id = msg.message_id;
-  commentBtn.innerHTML = `<i class="fa-solid fa-comment"></i> <span>Comment</span>`;
+  commentBtn.innerHTML = `<i class="fa-solid fa-comment"></i> <span style="color: grey;">Comment</span>`;
   commentBtn.onclick = () => {
     window.location.href = `commentView.html?postId=${msg.message_id}`;
   };
@@ -966,7 +965,7 @@ if (msg.repostData) {
   const repostBtn = document.createElement("button");
   repostBtn.className = "repostBtn media-btn";
   repostBtn.dataset.id = msg.message_id;
-  repostBtn.innerHTML = `<i class="fa-solid fa-share-from-square"></i> <span>Repost</span>`;
+  repostBtn.innerHTML = `<i class="fa-solid fa-share-from-square"></i> <span style="color: grey;">Repost</span>`;
 
   repostBtn.onclick = () => {
      repost_id = msg.message_id;

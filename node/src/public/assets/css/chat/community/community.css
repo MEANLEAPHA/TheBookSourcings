@@ -1067,7 +1067,6 @@ padding-left: 10px;
         align-items: center;
         margin: 0;
     }
-   
     /* Comment (upload with comment) */
     #commentToast .toast-body #uploadWithComment{
         width: 100%;
@@ -1140,9 +1139,7 @@ padding-left: 10px;
         text-align: center;
         gap: 4px;
     }
-    .li-opt:hover{
-        background: none;
-    }
+  
     
     #editToastWrapper {
         position: fixed;
@@ -1259,6 +1256,20 @@ padding-left: 10px;
         position: relative;
         padding: 0;
     }
+     .dropdown-menu{
+        background-color: var(--background-color);
+        border: 1px solid var(--primary-color);
+     }
+     .li-opt{
+       background-color: none;
+     }
+     .li-opt a{
+        color: var(--font-color);
+     }
+   
+     .li-opt:hover a{
+        color:var(--primary-color) ;
+     }
      .repost-header{
         width: 100%;
         display: flex;
@@ -1677,7 +1688,6 @@ transform: scale(0.9);
 /* 
 feedbackToast */
 .toast-containers{
-
 position: fixed;
 right: 0px;
 z-index: 1000;
@@ -1686,8 +1696,6 @@ margin: 0;
 /* top: 60px; */
 padding: 0;
 top:0px;
-
-  
 }
  #feedbackInput{
     width: 95%;
@@ -1704,16 +1712,13 @@ top:0px;
     border: none;
      color: var(--font-color);
     background: none;
-    font-size: medium;
-    
+    font-size: medium; 
 }
-
 #smallWarning{
     font-size: small;
     padding-top: 15px;
 }
-.toast-containers .toast-header{
-      
+.toast-containers .toast-header{   
     display: flex;
     font-family: sans-serif;
     justify-content: space-between;
@@ -1722,8 +1727,6 @@ top:0px;
     align-items: center;
     font-size: 16px;
     font-weight: 500;
-    
-
 }
 .toast-containers .toast-body{
     background-color:var(--background-color);
@@ -1782,7 +1785,6 @@ top:0px;
 
 #screenshot{
     width: 95%;
-   
     border-radius: 5px;
     height: 200px
 }
