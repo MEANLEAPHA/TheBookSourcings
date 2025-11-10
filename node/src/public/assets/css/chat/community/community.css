@@ -659,6 +659,7 @@ margin-top: 5px;
     border-radius: 50%;
     object-fit: cover; 
 }
+
 .friA-div4Info{
        width: 100%;
     overflow: hidden;
@@ -837,7 +838,7 @@ padding-left: 10px;
       width: 50%;
       height: auto;
       border-radius: 10px;
-      background: none;
+      
     }
     /*Upload Comment toast */
     #CommentToastWrapper {
@@ -871,6 +872,9 @@ padding-left: 10px;
         padding: 10px;
         background-color: var(--background-color);
         box-shadow: 0px 0px 2px var(--secondary-color);
+        color: var(--font-color);
+         border-radius: 10px;
+         border: 1px solid var(--primary-color);
     }
     /*Commenttoast */
     #CommentToastWrapper #commentToast {
@@ -896,10 +900,10 @@ padding-left: 10px;
         display: flex;
         height: auto;
         justify-content: start;
-        align-items: center;
         gap: 5px;
         text-align: start;
         background: none;
+        
     }
     /*Comment toast header */
     #commentToast .toast-header{
@@ -918,7 +922,7 @@ padding-left: 10px;
         display: flex;
         height: auto;
         justify-content: start;
-        align-items: center;
+      
         gap: 5px;
         text-align: start;
         background: none;
@@ -947,16 +951,29 @@ padding-left: 10px;
     /*Post username */
     #PostToast .toast-header .usernameFrom{
         color: var(--font-color);
-        font-size: x-large;
-        font-weight: bold;
+        display: flex;
+        flex-direction: column;
+        gap: 0px;
+        padding: 0;
+        margin: 0;
         font-family: monospace;
     }
+    .usernameFrom p{
+        margin: 0;
+    }
+    .usernameFrom #user-post-name{
+        font-size: large;
+    } 
+   
     /*comment username */
     #commentToast .toast-header .usernameFromComment{
         color: var(--font-color);
         font-size: x-large;
         font-weight: bold;
         font-family: monospace;
+    }
+    .fa-photo-film{
+        color: green;
     }
     /*Reply username */
     #ReplyToast .toast-header .usernameFromReply{
@@ -968,7 +985,8 @@ padding-left: 10px;
     #PostToast .toast-header #displayFeeling {
         color:gray;
         font-size: large;
-        padding-top:3px;
+        margin: 0;
+        padding: 0;
         font-family: monospace;
     }
     /* Post form */
@@ -1018,8 +1036,10 @@ padding-left: 10px;
         width: 100%;
         height: 45px;
         border-radius: 5px;
-        border:none;
+        background-color: var(--background-color);
+        border: 1px solid var(--primary-color);
     }
+  
     /* comment input */
     #commentToast #form-comment .toast-body #comment-input{
         width: 100%;
@@ -1047,6 +1067,7 @@ padding-left: 10px;
         align-items: center;
         margin: 0;
     }
+   
     /* Comment (upload with comment) */
     #commentToast .toast-body #uploadWithComment{
         width: 100%;
@@ -1137,6 +1158,21 @@ padding-left: 10px;
         height: auto;
         width: 100%;
     }
+
+
+#media-preview{
+   padding: 0;
+    height: auto;
+    display: flex;
+    overflow-x: scroll;
+    position: relative;
+    width: 100%;
+    scrollbar-width: none;
+    align-items: center;
+}
+#media-preview img{
+    height: auto;
+}
 
 
     /* Center delete toast in the page */
@@ -2118,6 +2154,7 @@ top:0px;
     }
 }
 @media screen and (max-width:600px){
+ 
     #headerLeft{
     gap: 5px;
     }
@@ -2157,6 +2194,7 @@ top:0px;
     }
     #message-container{
               width: 99%;
+    
              }
           
     #message-container .post{
@@ -2340,6 +2378,33 @@ top:0px;
          .media-btn:hover{
             background-color:var(--secondary-color);
          }
+
+
+
+    #PostToast .toast-header .userPfFrom{
+      width: 40px;
+      height: 40px;
+    }
+    .usernameFrom p{
+       font-size: small;
+    }
+    .usernameFrom #user-post-name{
+        font-size: medium;
+    } 
+    #PostToast #form .toast-body #message-input{
+        font-size: small;
+        color: var(--font-color);
+    }
+    #PostToast .toast-body #uploadWithPost{
+        font-size: small;
+    }
+    #PostToast .toast-header #displayFeeling {
+        font-size: small;
+        padding-top: 1px;
+    }
+    .fa-photo-film{
+        font-size: small;
+    }
          
 }
 

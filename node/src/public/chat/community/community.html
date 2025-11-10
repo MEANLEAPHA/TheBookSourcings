@@ -113,28 +113,28 @@
             </div>
     <div class="content">
         <div id="comLeft">
-            <!-- <div style="display: flex; width: 90%;justify-content: center;gap: 1px;margin:auto">
-  <img src="../../assets/img/pf.jpg" style="width: 50px;height: 50px;border-radius: 50%;object-fit: cover;">
-<button id="searchButton">Share your thought, Meanleap Ha? </button>
-</div> -->
 <div id="PostToastWrapper">
-  <div id="PostToast" class="toast align-items-center text-bg-light border-0 toastOfPost" role="alert" aria-live="assertive" aria-atomic="true">
+  <div id="PostToast" class="toast align-items-center toastOfPost" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="toast-header">
       <img src="../../assets/img/pf.jpg" class="userPfFrom">
-      <div class="usernameFrom"></div> <div id="displayFeeling"> </div>
+        <div class="usernameFrom">
+          <p id="user-post-name">meanleapha</p>
+          <p style="opacity: 0.7;">@<span id="user-post-nickname">nickname</span></p>
+        </div>
+        <div id="displayFeeling"> </div>
     </div>
     <form id="form">
       <div class="toast-body">
         <textarea id="message-input" class="form-control mb-2" placeholder="Share your thought here" ></textarea>
-        <div id="media-preview" class="mt-1 mb-1"></div>
+        <div id="media-preview" class="mb-1"></div>
         <div id="uploadWithPost">
           <div id="uploadWithPost-start">Add to your post</div>
           <div id="uploadWithPost-end"> 
             <label for="mediaInput" style="cursor: pointer" id="mediaInputLabel">
-                  <i class="fa-solid fa-photo-film fa-lg" style="color: green;"></i><div>Photo/Video</div> 
+                  <i class="fa-solid fa-photo-film fa-lg"></i><div>Photo/Video</div> 
             </label>
             <label for="feelingGrid" id="feelingLabel" style="cursor:pointer;">
-                  <i class="fa-solid fa-face-smile" style="color:gold; font-size: 1.5rem;"></i><div>Feeling</div> 
+                  <i class="fa-solid fa-face-smile" style="color:gold;"></i><div>Feeling</div> 
             </label>
           </div>
         </div>
@@ -188,11 +188,9 @@
     </form>
   </div>
 </div>
-
-            <div id="message-container"></div>
+           <div id="message-container"></div>
         </div>
         <div id="comRight"> 
-          
           <div id="sticky">
             <p>Suggested for you</p>
             <div id="followView">
@@ -247,7 +245,6 @@
                 <a href="">Advertise with us</a>
                 <a href="">TheBookSourcing, Inc. © 2025. All rights reserved.</a>
             </div>
-
            <div class="chat-message-container">
                <a href="">
                   <div>
@@ -258,15 +255,10 @@
                       <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="chat-list-people-img">
                       <img src="https://bootdey.com/img/Content/avatar/avatar5.png" class="chat-list-people-img">
                       <img src="https://bootdey.com/img/Content/avatar/avatar3.png" class="chat-list-people-img">
-
                   </div>
                </a>
-
-            </div>
-           
-            
-        </div>
-         
+            </div>   
+        </div>  
       </div>
     </div>
     <!-- account tool collapse -->
@@ -336,21 +328,21 @@
         </div>
       </div>
     </div>
-      
-    <!-- Bootstrap Toast for editing -->
-<div id="editToastWrapper">
-  <div id="editToast" class="toast align-items-center text-bg-light border-0" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="toast-body">
-      <input type="text" id="editMessageInput" class="form-control mb-2">
-      <div class="d-flex justify-content-end w-100">
-        <button id="cancelEditBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
-        <button id="saveEditBtn" type="button" class="btn btn-sm btn-primary">Save</button>
+  </main>
+   <!-- Bootstrap Toast for editing -->
+    <div id="editToastWrapper">
+      <div id="editToast" class="toast align-items-center text-bg-light border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-body">
+          <input type="text" id="editMessageInput" class="form-control mb-2">
+          <div class="d-flex justify-content-end w-100">
+            <button id="cancelEditBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
+            <button id="saveEditBtn" type="button" class="btn btn-sm btn-primary">Save</button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 
-<!-- Bootstrap Toast for deleting -->
+  <!-- Bootstrap Toast for deleting -->
 <div id="deleteToastWrapper">
   <div id="deleteToast" class="toast align-items-center text-bg-light border-0" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="toast-body">
@@ -363,7 +355,7 @@
   </div>
 </div>
 
-<!-- Report Toast -->
+  <!-- Report Toast -->
 <div id="reportToastWrapper">
   <div id="reportToast" class="toast align-items-center text-bg-light border-0" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="toast-body">
@@ -377,71 +369,66 @@
   </div>
 </div>
 
-<!-- Full Image Viewer -->
-<div id="imageToastWrapper" class="position-fixed top-50 start-50 left-50 translate-middle" style="width: 90%; height: 90%;z-index: 2000; pointer-events: none;">
-  <div id="imgToast" class="toast align-items-center border-0 w-100 " role="alert" aria-live="assertive" aria-atomic="true" style=" background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);">
-    <div class="toast-body w-100 align-items-center h-100" >
-        <button id="toastCloseBtn" class="btn-close btn-close-red position-absolute top-0 end-0"  type="button"></button>
-        <img id="toastImage" class="toast-image h-auto object-fit-contain " alt="Full view" >
+  <!-- Full Image Viewer -->
+  <div id="imageToastWrapper" class="position-fixed top-50 start-50 left-50 translate-middle" style="width: 90%; height: 90%;z-index: 2000; pointer-events: none;">
+    <div id="imgToast" class="toast align-items-center border-0 w-100 " role="alert" aria-live="assertive" aria-atomic="true" style=" background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);">
+      <div class="toast-body w-100 align-items-center h-100" >
+          <button id="toastCloseBtn" class="btn-close btn-close-red position-absolute top-0 end-0"  type="button"></button>
+          <img id="toastImage" class="toast-image h-auto object-fit-contain " alt="Full view" >
+      </div>
     </div>
   </div>
-</div>
-
-
-<!--Feeling Toast-->
-<div id="FeelingToastWrapper">
-    <div id="FeelingToast" class="toast align-items-center text-bg-light border-0" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-body">
-         <div id="feelingGrid" class="grid-container">
-          
-          <div class="feeling-option">😊 happy</div>
-          <div class="feeling-option">😢 sad</div>
-          <div class="feeling-option">😡 angry</div>
-          <div class="feeling-option">😇 blissful</div>
-          <div class="feeling-option">😍 in love</div>
-          <div class="feeling-option">😜 silly</div>
-          <div class="feeling-option">😎 cool</div>
-          <div class="feeling-option">😌 relaxed</div>
-          <div class="feeling-option">😴 sleepy</div>
-          <div class="feeling-option">🤒 sick</div>
-          <div class="feeling-option">🤗 loved</div>
-          <div class="feeling-option">😱 shocked</div>
-          <div class="feeling-option">😞 disappointed</div>
-          <div class="feeling-option">😤 frustrated</div>
-          <div class="feeling-option">🤩 excited</div>
-          <div class="feeling-option">🥳 festive</div>
-          <div class="feeling-option">😔 down</div>
-          <div class="feeling-option">😕 confused</div>
-          <div class="feeling-option">😬 nervous</div>
-          <div class="feeling-option">😇 blessed</div>
-          <div class="feeling-option">🙏 thankful</div>
-          <div class="feeling-option">😅 amused</div>
-          <div class="feeling-option">🤓 curious</div>
-          <div class="feeling-option">😩 overwhelmed</div>
-          <div class="feeling-option">😆 fantastic</div>
-          <div class="feeling-option">😶 meh</div>
-          <div class="feeling-option">😢 heartbroken</div>
-          <div class="feeling-option">😤 determined</div>
-          <div class="feeling-option">😇 inspired</div>
-          <div class="feeling-option">😵‍💫 crazy</div>
-          <div class="feeling-option">😐 OK</div>
-          <div class="feeling-option">😃 proud</div>
-          <div class="feeling-option">😋 satisfied</div>
-          <div class="feeling-option">😳 embarrassed</div>
-          <div class="feeling-option">🤔 thoughtful</div>
-          <div class="feeling-option">😍 lovely</div>
-          <div class="feeling-option">😖 miserable</div>
-          <div class="feeling-option">😇 grateful</div>
-        </div>
-          <div class="d-flex justify-content-end mt-2">
-            <button id="cancelFeelingBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
+  <!--Feeling Toast-->
+  <div id="FeelingToastWrapper">
+      <div id="FeelingToast" class="toast align-items-center text-bg-light border-0" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="toast-body">
+          <div id="feelingGrid" class="grid-container">
+            <div class="feeling-option">😊 happy</div>
+            <div class="feeling-option">😢 sad</div>
+            <div class="feeling-option">😡 angry</div>
+            <div class="feeling-option">😇 blissful</div>
+            <div class="feeling-option">😍 in love</div>
+            <div class="feeling-option">😜 silly</div>
+            <div class="feeling-option">😎 cool</div>
+            <div class="feeling-option">😌 relaxed</div>
+            <div class="feeling-option">😴 sleepy</div>
+            <div class="feeling-option">🤒 sick</div>
+            <div class="feeling-option">🤗 loved</div>
+            <div class="feeling-option">😱 shocked</div>
+            <div class="feeling-option">😞 disappointed</div>
+            <div class="feeling-option">😤 frustrated</div>
+            <div class="feeling-option">🤩 excited</div>
+            <div class="feeling-option">🥳 festive</div>
+            <div class="feeling-option">😔 down</div>
+            <div class="feeling-option">😕 confused</div>
+            <div class="feeling-option">😬 nervous</div>
+            <div class="feeling-option">😇 blessed</div>
+            <div class="feeling-option">🙏 thankful</div>
+            <div class="feeling-option">😅 amused</div>
+            <div class="feeling-option">🤓 curious</div>
+            <div class="feeling-option">😩 overwhelmed</div>
+            <div class="feeling-option">😆 fantastic</div>
+            <div class="feeling-option">😶 meh</div>
+            <div class="feeling-option">😢 heartbroken</div>
+            <div class="feeling-option">😤 determined</div>
+            <div class="feeling-option">😇 inspired</div>
+            <div class="feeling-option">😵‍💫 crazy</div>
+            <div class="feeling-option">😐 OK</div>
+            <div class="feeling-option">😃 proud</div>
+            <div class="feeling-option">😋 satisfied</div>
+            <div class="feeling-option">😳 embarrassed</div>
+            <div class="feeling-option">🤔 thoughtful</div>
+            <div class="feeling-option">😍 lovely</div>
+            <div class="feeling-option">😖 miserable</div>
+            <div class="feeling-option">😇 grateful</div>
           </div>
-        </div>
+            <div class="d-flex justify-content-end mt-2">
+              <button id="cancelFeelingBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
+            </div>
+          </div>
+      </div>
     </div>
-  </div>
-  </main>
-  <footer>
-  </footer>
+
     <!-- Notication Toast -->
     <div class="toast-container position-fixed  end-0 p-3 noti-toast">
       <div id="liveNoti" class="toast" role="alert" aria-live="assertive" aria-atomic="true" >
@@ -462,11 +449,9 @@
           <i class="fa-solid fa-otter" ></i>
           <p class="no-noti-span">No notification!</p>
         </div>
-        
       </div>
     </div>
 
-    
     <!--Friend toast -->
     <div class="toast-container position-fixed  end-0 p-3 fri-toast">
       <div id="liveFri" class="toast" role="alert" aria-live="assertive" aria-atomic="true" >
@@ -475,7 +460,6 @@
           <span id="see-all-con"><a href="../../userConnection.html">See all</a></span>
         </div>
         <div class="append-fri">
-
         </div>
         <div id="dev-no-otter-fri">
           <i class="fa-solid fa-otter" ></i>
@@ -484,10 +468,9 @@
       </div>
     </div>
 
-<script src="/socket.io/socket.io.js"></script>
-<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-
-<script src="../../assets/js/chat/community/community.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script src="../../assets/js/chat/community/community.js"></script>
   <!-- <script src="../../assets/js/index/index.js"></script> -->
   <script src="../../assets/js/index/darkmode.js" defer></script>
   <script src="../../assets/js/index/collapseResponsive.js"></script>
@@ -498,5 +481,6 @@
   <script src="../../assets/js/index/headerSearch.js"></script>
   <!-- <script src="../../assets/js/userUploadBook/userDisplayBook.js"></script> -->
   <script src="../../assets/js/notification/notification.js"></script>
+  <script src="../../assets/js/connection/userConnection.js"></script>
 </body>
 </html>
