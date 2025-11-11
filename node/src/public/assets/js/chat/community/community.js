@@ -296,7 +296,7 @@ form.addEventListener("submit", async (e) => {
 
     // if (!res.ok) throw new Error("Failed to send message");
     if (!res.ok) {
-          if (res.status === 401) {
+          if (res.status === 403) {
             showErrorToast("Unauthorized. Please log in or sign up first.");
             setTimeout(() => {
               window.location.href = 'login.html';
@@ -1156,7 +1156,7 @@ async function toggleLikeActivityForMessage(messageId, likeIcon, likeCount) {
     });
 
     if (!res.ok) {
-      if (res.status === 401) {
+      if (res.status === 403) {
         showErrorToast("Unauthorized. Please log in or sign up first.");
         setTimeout(() => {
           window.location.href = 'login.html';
@@ -1210,7 +1210,7 @@ async function toggleFavActivityForMessage(messageId, favIcon ){
     });
     // if(!res.ok) throw new Error("Failed to toggle like");
      if (!res.ok) {
-      if (res.status === 401) {
+      if (res.status === 403) {
         showErrorToast("Unauthorized. Please log in or sign up first.");
         setTimeout(() => {
           window.location.href = 'login.html';
@@ -1293,7 +1293,7 @@ document.getElementById("submitReportBtn").onclick = async () => {
 
     // if (!res.ok) throw new Error("Failed to submit report");
      if (!res.ok) {
-      if (res.status === 401) {
+      if (res.status === 403) {
         showErrorToast("Unauthorized. Please log in or sign up first.");
         setTimeout(() => {
           window.location.href = 'login.html';
