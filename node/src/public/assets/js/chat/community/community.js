@@ -86,10 +86,10 @@ async function loadUserInfo() {
       }
     });
     const data = await response.json();
-    if (data) {
-      usernameCol.textContent = data.username || 'Guest-User';
-      nicknameCol.textContent = data.nickname || 'WelcomeMyGuest';
-      userPf.src = data.pfUrl;
+    if (data && data.user) {
+      usernameCol.textContent = data.user.username || 'Guest-User';
+      nicknameCol.textContent = data.user.nickname || 'WelcomeMyGuest';
+      userPf.src = data.user.pfUrl;
     }
   } catch (error) {
     console.error('Error fetching user info:', error);
