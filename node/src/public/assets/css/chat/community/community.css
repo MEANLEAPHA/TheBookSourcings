@@ -2081,6 +2081,18 @@ top:0px;
     color: var(--font-color);
 
 }
+#toastCloseBtn{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    color: var(--font-color);
+    opacity: 0.7;
+}
+#imgToast{
+    background: var(--background-color);
+    border-radius: 0px;
+}
 @media (max-width: 768px) {
   #toastImage {
     width: 100%;
