@@ -2175,8 +2175,9 @@ body.toast-open #imgToast {
      }
      .li-opt:hover .dropdown-item{
         color:var(--primary-color) ;
-          background-color: none;
+          background-color: var(--background-color);
           border: none;
+          border-radius: 0px;
      }
 @media screen and (max-width:1024px){
     #PostToastWrapper{
