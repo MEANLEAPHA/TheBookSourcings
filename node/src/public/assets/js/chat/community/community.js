@@ -73,6 +73,7 @@ if (username) {
 const socket = io(API_URL, { auth: { token } });
 
 // load user info to fill
+const userPfHeader = document.querySelector('.userPf'); // on header
 const usernameCol = document.querySelector('.userName-collapse');
 const nicknameCol = document.querySelector('.nickName-collapse');
 const userPf = document.querySelector('.userPf-collapse');
@@ -88,8 +89,9 @@ async function loadUserInfo() {
     const data = await response.json();
     if (data && data.user) {
       usernameCol.textContent = data.user.username || 'Guest-User';
-      nicknameCol.textContent = data.user.nickname || 'WelcomeMyGuest';
+      nicknameCol.textContent = `@${data.user.nickname}` || data.user.nickname || '@WelcomeMyGuest';
       userPf.src = data.user.pfUrl;
+      userPfHeader.src = data.user.pfUrl;
     }
   } catch (error) {
     console.error('Error fetching user info:', error);
@@ -292,8 +294,19 @@ form.addEventListener("submit", async (e) => {
       body: formData
     });
 
-    if (!res.ok) throw new Error("Failed to send message");
-
+    // if (!res.ok) throw new Error("Failed to send message");
+    if (!res.ok) {
+          if (res.status === 401) {
+            showErrorToast("Unauthorized. Please log in or sign up first.");
+            setTimeout(() => {
+              window.location.href = 'login.html';
+            }, 10000); // redirect after 2s
+          } else {
+            const errorText = await res.text();
+            showErrorToast("Error: " + errorText);
+          }
+          return;
+        }
     const savedMsg = await res.json();
     savedMsg.createFormNow = "just now"; // instant display
     displayMessage(savedMsg);
@@ -1141,15 +1154,48 @@ async function toggleLikeActivityForMessage(messageId, likeIcon, likeCount) {
         "Content-Type": "application/json"
       }
     });
-    if (!res.ok) throw new Error("Failed to toggle like");
+
+    if (!res.ok) {
+      if (res.status === 401) {
+        showErrorToast("Unauthorized. Please log in or sign up first.");
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 10000); // redirect after 2s
+      } else {
+        const errorText = await res.text();
+        showErrorToast("Error: " + errorText);
+      }
+      return;
+    }
 
     const data = await res.json();
     likeIcon.style.color = data.liked ? "red" : "gray";
     await loadLikeInfoForMessage(messageId, likeIcon, likeCount);
+
   } catch (err) {
     console.error(err);
+    showErrorToast("Unexpected error occurred.");
   }
 }
+
+// async function toggleLikeActivityForMessage(messageId, likeIcon, likeCount) {
+//   try {
+//     const res = await fetch(`${API_URL}/api/communityPostLike/like/${messageId}`, {
+//       method: "POST",
+//       headers: {
+//         "Authorization": `Bearer ${token}`,
+//         "Content-Type": "application/json"
+//       }
+//     });
+//     if (!res.ok) throw new Error("Failed to toggle like");
+
+//     const data = await res.json();
+//     likeIcon.style.color = data.liked ? "red" : "gray";
+//     await loadLikeInfoForMessage(messageId, likeIcon, likeCount);
+//   } catch (err) {
+//     console.error(err);
+//   }
+// }
 
 // toggleFav
 async function toggleFavActivityForMessage(messageId, favIcon ){
@@ -1162,7 +1208,19 @@ async function toggleFavActivityForMessage(messageId, favIcon ){
         "Content-Type": "application/json"
       }
     });
-    if(!res.ok) throw new Error("Failed to toggle like");
+    // if(!res.ok) throw new Error("Failed to toggle like");
+     if (!res.ok) {
+      if (res.status === 401) {
+        showErrorToast("Unauthorized. Please log in or sign up first.");
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 10000); // redirect after 2s
+      } else {
+        const errorText = await res.text();
+        showErrorToast("Error: " + errorText);
+      }
+      return;
+    }
     const data = await res.json();
     favIcon.style.color = data.favorited ? "orange" : "gray";
     await loadFavInfoForMessage(messageId, favIcon);
@@ -1233,7 +1291,19 @@ document.getElementById("submitReportBtn").onclick = async () => {
       })
     });
 
-    if (!res.ok) throw new Error("Failed to submit report");
+    // if (!res.ok) throw new Error("Failed to submit report");
+     if (!res.ok) {
+      if (res.status === 401) {
+        showErrorToast("Unauthorized. Please log in or sign up first.");
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 10000); // redirect after 2s
+      } else {
+        const errorText = await res.text();
+        showErrorToast("Error: " + errorText);
+      }
+      return;
+    }
 
     const data = await res.json();
     alert(data.message);
@@ -1338,6 +1408,15 @@ function hideImageToast() {
   toastImage.src = "";
   document.body.classList.remove("toast-open");
 }
+function showErrorToast(message) {
+  const toastEl = document.getElementById('errorToast');
+  const toastBody = document.getElementById('errorToastBody');
+  toastBody.textContent = message;
+
+  const toast = new bootstrap.Toast(toastEl);
+  toast.show();
+}
+
 
 
 // Close when clicking the ✖️ button

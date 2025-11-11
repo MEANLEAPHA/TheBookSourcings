@@ -220,7 +220,7 @@ header{
         gap: 10px;
         color: var(--font-color);
     }
-     #create:hover{
+     #create:hover #post-btn{
         color: var(--primary-color);
      }
     
@@ -1844,6 +1844,21 @@ top:0px;
         
         display: block;
        }
+       #loginButton, #logoutButton{
+      background: none;
+      border: none;
+      color: var(--font-color);
+     text-align: start;
+      width: 100%;
+      padding: 5px 0px 5px 0px;
+}
+#loginButton:hover{
+    color: var(--primary-color);
+}
+
+#logoutButton:hover{
+    color: var(--primary-color);
+}
 
        /* comment and reply upload ui */
        .reply,.comment{
@@ -2157,7 +2172,6 @@ body.toast-open {
   overflow: hidden;        
   pointer-events: none;      
 }
-
 body.toast-open #imgToast {
   pointer-events: auto;      
 }
