@@ -134,10 +134,10 @@ async function loadChatIcons() {
     const data = await res.json(); 
     // Expecting something like: { status: true, data: [ { pfUrl: "...", memberQid: "..." }, ... ] }
 
-    const chatList = document.getElementById("chat-list");
+    const chatList = document.querySelector(".chat-list");
     chatList.innerHTML = ""; // clear old content
 
-    data.data.forEach(user => {
+    data.dataPf.forEach(user => {
       const img = document.createElement("img");
       img.src = user.pfUrl || "https://bootdey.com/img/Content/avatar/default.png";
       img.className = "chat-list-people-img";
