@@ -57,11 +57,13 @@ const reportCommunityRoute = require('./routes/chat/community/reportPAC/reportRo
 const bookSellerRoutes = require("./routes/shop/saleRoute");
 
 // order and chat 
+
+
 const chatController = require("./controller/chat/room/chatController");
 
 const roomChat = require("./routes/chat/room/chatRoutes");
 
-
+const userChatIcon = require("./routes/chat/community/userRoomChatRoutes");
 
 // search gobal
 
@@ -110,6 +112,9 @@ app.use("/api/chat", roomChat);
 
 // search
 app.use('/api', search);
+
+// user chat icon
+app.use("/api", userChatIcon);
 
 
 // push nootification

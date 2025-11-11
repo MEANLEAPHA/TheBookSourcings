@@ -119,6 +119,41 @@ if (token) {
 
 
 
+async function loadChatIcons() {
+  try {
+    const res = await fetch("https://thebooksourcings.onrender.com/api/displayUserChatIcon", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}` // if your API requires auth
+      }
+    });
+
+    if (!res.ok) throw new Error("Failed to fetch chat icons");
+
+    const data = await res.json(); 
+    // Expecting something like: { status: true, data: [ { pfUrl: "...", memberQid: "..." }, ... ] }
+
+    const chatList = document.getElementById("chatList");
+    chatList.innerHTML = ""; // clear old content
+
+    data.data.forEach(user => {
+      const img = document.createElement("img");
+      img.src = user.pfUrl || "https://bootdey.com/img/Content/avatar/default.png";
+      img.className = "chat-list-people-img";
+      img.alt = `User ${user.memberQid}`;
+      chatList.appendChild(img);
+    });
+
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// Call on page load
+loadChatIcons();
+
+
 
 
 

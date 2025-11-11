@@ -286,7 +286,7 @@ const getMutual = async (req, res) => {
          ON f2.followerQid = ? AND f2.followedQid = u.memberQid
        WHERE f1.is_mutual = 1 AND f2.is_mutual = 1`,
       [memberQid, memberQid]
-    );
+    ); 
 
     if (rows.length === 0) {
       return res.status(404).json({ message: "No mutual friends found" });
