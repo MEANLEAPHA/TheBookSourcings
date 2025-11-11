@@ -73,8 +73,8 @@ if (username) {
 const socket = io(API_URL, { auth: { token } });
 
 // load user info to fill
-const usernameCol = document.querySelector('.username-collapse');
-const nicknameCol = document.querySelector('.nickname-collapse');
+const usernameCol = document.querySelector('.userName-collapse');
+const nicknameCol = document.querySelector('.nickName-collapse');
 const userPf = document.querySelector('.userPf-collapse');
 
 async function loadUserInfo() {

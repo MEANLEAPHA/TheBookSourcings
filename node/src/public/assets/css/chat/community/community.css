@@ -1273,22 +1273,7 @@ padding-left: 10px;
         background-color: var(--background-color);
         border: 1px solid var(--primary-color);
      }
-     .li-opt{
-       background-color: none;
-     }
-     .li-opt a{
-        color: var(--font-color);
-     }
-   
-     .li-opt:hover{
-          background-color: none;
-          border: none;
-     }
-     .li-opt:hover a{
-        color:var(--primary-color) ;
-          background-color: none;
-          border: none;
-     }
+    
      .repost-header{
         width: 100%;
         display: flex;
@@ -2176,7 +2161,22 @@ body.toast-open {
 body.toast-open #imgToast {
   pointer-events: auto;      
 }
-
+ .li-opt{
+       background-color: none;
+     }
+     .li-opt a{
+        color: var(--font-color);
+     }
+   
+     .li-opt:hover{
+          background-color: none;
+          border: none;
+     }
+     .li-opt:hover a{
+        color:var(--primary-color) ;
+          background-color: none;
+          border: none;
+     }
 @media screen and (max-width:1024px){
     #PostToastWrapper{
         width: 70%;
