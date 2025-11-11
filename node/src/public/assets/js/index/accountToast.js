@@ -19,10 +19,14 @@ document.addEventListener('click', function (event) {
 });
 
 
-//   function logout() {
-//     localStorage.removeItem('token');
-//     window.location.href = "login.html";
-//   }
+  function logout() {
+    localStorage.removeItem('token');
+    window.location.href = "login.html";
+  }
+
+  function login() {
+    window.location.href = "login.html";
+  }
 
 
 const toastNotiTrigger = document.querySelector('#liveNotiBtn');

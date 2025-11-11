@@ -72,6 +72,57 @@ if (username) {
 
 const socket = io(API_URL, { auth: { token } });
 
+// load user info to fill
+const usernameCol = document.querySelector('.username-collapse');
+const nicknameCol = document.querySelector('.nickname-collapse');
+const userPf = document.querySelector('.userPf-collapse');
+
+async function loadUserInfo() {
+  try {
+    const response = await fetch(`https://thebooksourcings.onrender.com/loadUserInfo`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+    const data = await response.json();
+    if (data) {
+      usernameCol.textContent = data.username || 'Guest-User';
+      nicknameCol.textContent = data.nickname || 'WelcomeMyGuest';
+      userPf.src = data.pfUrl;
+    }
+  } catch (error) {
+    console.error('Error fetching user info:', error);
+  }
+}
+
+loadUserInfo();
+
+// login and out 
+const loginButton = document.getElementById("loginButton");
+const logoutButton = document.getElementById("logoutButton");
+
+if (token) {
+  loginButton.style.display = "none";
+  logoutButton.style.display = "block";
+} else {
+  loginButton.style.display = "block";
+  logoutButton.style.display = "none";
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // ====== DECLARATIONS ======
 // Edit
 let editingMessageId = null;

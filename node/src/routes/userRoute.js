@@ -14,7 +14,8 @@ const {
   changePassword,
   fullRegister,
   getFullRegisterData,
-  loadUser
+  loadUser,
+  getUser
   // validate_token
 } = require('../controller/userController');
 
@@ -40,6 +41,7 @@ const TheBookSourcingUser = (app) => {
   app.put('/changepassword', authMiddleware, changePassword);
 
   app.get('/userInfo/:userQid', loadUser);
+  app.get('/loadUserInfo', authMiddleware, getUser);
 
 };
 

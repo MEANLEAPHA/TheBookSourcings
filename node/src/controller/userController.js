@@ -21,7 +21,7 @@ const loginMember = async (req, res) => {
             return res.status(404).json(
               { message: "No user found ! " }
             );
-        }
+        } 
 
         const user = users[0];
         const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -541,6 +541,36 @@ const loadUser = async (req,res) =>{
     return res.status(500).json({ message: "failed to load user data on backend" });
   }
 }
+const getUser = async (req, res) => {
+  try {
+    const memberQid = req.user?.memberQid; 
+    if (!memberQid) {
+      return res.status(401).json({ // ✅ 401 is more appropriate than 404
+        message: "This user hasn't logged in yet! Please login."
+      });
+    }
+
+    const [rows] = await db.query(
+      "SELECT * FROM users WHERE memberQid = ?",
+      [memberQid]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({
+        message: "No information found on this user!"
+      });
+    }
+
+    const user = rows[0];
+    return res.json({ user });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      message: "Failed to load user data"
+    });
+  }
+};
+
 
 module.exports ={
     loginMember,
@@ -556,5 +586,6 @@ module.exports ={
     verifyResetPin,
     fullRegister,
     getFullRegisterData,
-    loadUser
+    loadUser,
+    getUser
 }
