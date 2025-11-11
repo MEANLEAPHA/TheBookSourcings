@@ -134,7 +134,7 @@ async function loadChatIcons() {
     const data = await res.json(); 
     // Expecting something like: { status: true, data: [ { pfUrl: "...", memberQid: "..." }, ... ] }
 
-    const chatList = document.getElementById("chatList");
+    const chatList = document.getElementById("chat-list");
     chatList.innerHTML = ""; // clear old content
 
     data.data.forEach(user => {
