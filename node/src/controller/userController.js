@@ -543,7 +543,7 @@ const loadUser = async (req,res) =>{
 }
 const getUser = async (req, res) => {
   try {
-    const memberQid = req.user?.memberQid; 
+    const memberQid = req.user.memberQid; 
     if (!memberQid) {
       return res.status(401).json({ // ✅ 401 is more appropriate than 404
         message: "This user hasn't logged in yet! Please login."

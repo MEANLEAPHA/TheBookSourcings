@@ -81,7 +81,8 @@ async function loadUserInfo() {
   try {
     const response = await fetch(`https://thebooksourcings.onrender.com/loadUserInfo`, {
       headers: {
-        "Authorization": `Bearer ${token}`
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
       }
     });
     const data = await response.json();
