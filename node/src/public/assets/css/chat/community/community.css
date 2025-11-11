@@ -2081,6 +2081,21 @@ top:0px;
     color: var(--font-color);
 
 }
+@media (max-width: 768px) {
+  #toastImage {
+    width: 100%;
+    height: auto;
+  }
+}
+
+@media (min-width: 769px) {
+  #toastImage {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+  }
+}
 
 /* #imageToastWrapper{
     width: 100%;
