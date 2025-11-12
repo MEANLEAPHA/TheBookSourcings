@@ -32,4 +32,33 @@ const userRoomChatController = async (req, res) => {
   }
 };
 
-module.exports = {userRoomChatController};
+const displayUserFollowing = async ()=>{
+  try{
+     const memeberQid = req.user.memberQid;
+     const [rows] = await db.query(
+      `SELECT u.pfUrl, u.username, u.memberQid
+       FROM user_follow_status f
+       JOIN users u
+       ON u.memberQid = f.followedQid AND f.followerQid = ?
+       ORDER BY f.create_at DESC
+       LIMIT 5`
+     )
+     if (rows.length === 0) {
+      return res.status(404).json({ message: "No mutual chats found" });
+    }
+
+    res.status(200).json({
+      status: true,
+      dfollowing: rows
+    });
+
+  }
+  catch(err){
+    console.error(err);
+    res.status(500).json({
+      status: false,
+      error: err.message
+    });
+  }
+}
+module.exports = {userRoomChatController,displayUserFollowing};
