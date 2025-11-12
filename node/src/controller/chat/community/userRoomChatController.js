@@ -40,7 +40,7 @@ const displayUserFollowing = async (req,res)=>{
        FROM user_follow_status f
        JOIN users u
        ON u.memberQid = f.followedQid AND f.followerQid = ?
-       ORDER BY f.create_at DESC
+       ORDER BY f.created_at DESC
        LIMIT 5`,
       [memeberQid]
      )
