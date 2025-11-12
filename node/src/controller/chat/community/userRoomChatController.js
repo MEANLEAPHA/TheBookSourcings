@@ -32,7 +32,7 @@ const userRoomChatController = async (req, res) => {
   }
 };
 
-const displayUserFollowing = async ()=>{
+const displayUserFollowing = async (req,res)=>{
   try{
      const memeberQid = req.user.memberQid;
      const [rows] = await db.query(
@@ -41,7 +41,8 @@ const displayUserFollowing = async ()=>{
        JOIN users u
        ON u.memberQid = f.followedQid AND f.followerQid = ?
        ORDER BY f.create_at DESC
-       LIMIT 5`
+       LIMIT 5`,
+      [memeberQid]
      )
      if (rows.length === 0) {
       return res.status(404).json({ message: "No mutual chats found" });
