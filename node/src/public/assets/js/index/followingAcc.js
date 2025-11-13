@@ -47,7 +47,7 @@ const fetchUserFollowing = async () => {
        }
     });
 
-    if (res.status === 401) {
+    if (res.status === 403) {
       // Guest / not logged in
       displayUserFollowingContainer.innerHTML = "";
       allFollowing.style.display = "none";
