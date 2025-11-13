@@ -49,15 +49,17 @@ const fetchUserFollowing = async () => {
 
     if (res.status === 403) {
       // Guest / not logged in
-      displayUserFollowingContainer.innerHTML = "";
+       displayUserFollowingContainer.innerHTML = "";
       allFollowing.style.display = "none";
       showLessFollow.style.display = "none";
       showMoreFollow.style.display = "none";
 
       const msgDiv = document.createElement("div");
-      msgDiv.textContent = "Please login or sign up";
-      msgDiv.style.color = "red";
-      msgDiv.style.fontWeight = "bold";
+      msgDiv.className = 'noFollowing';
+      msgDiv.innerHTML = `<i class="fa-solid fa-otter"></i>
+      <p><a href='https://thebooksourcings.onrender.com/userSign/login.html'>Login / Sign up</a> to see your following</p>`;
+      
+      
       displayUserFollowingContainer.appendChild(msgDiv);
       return;
     }
@@ -122,7 +124,17 @@ const fetchUserFollowing = async () => {
 
   } catch (err) {
     console.error(err);
-    displayUserFollowingContainer.innerHTML = "<p>Error loading following list</p>";
+    // displayUserFollowingContainer.innerHTML = "<p>Error loading following list</p>";
+     displayUserFollowingContainer.innerHTML = "";
+      allFollowing.style.display = "none";
+      showLessFollow.style.display = "none";
+      showMoreFollow.style.display = "none";
+      const msgDiv = document.createElement("div");
+      msgDiv.className = 'noFollowing';
+      msgDiv.innerHTML = `<i class="fa-solid fa-screwdriver-wrench"></i>
+      <p>Sorry, temporary issue — we’re on it.</p>`;
+      displayUserFollowingContainer.appendChild(msgDiv);
+      return;
   }
 };
 

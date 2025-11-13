@@ -28,6 +28,13 @@ document.addEventListener('click', function (event) {
     window.location.href = "login.html";
   }
 
+  function helpLink(){
+    window.location.href = "help.html";
+  }
+
+  function settingLink(){
+    window.location.href = "setting.html";
+  }
 
 const toastNotiTrigger = document.querySelector('#liveNotiBtn');
 const toastLiveNotiExample = document.getElementById('liveNoti');

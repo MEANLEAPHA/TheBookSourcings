@@ -285,7 +285,7 @@
           </div>
         </div>
         <div class="toast-header">
-          <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
+          <button onclick="settingLink()" class="btn-col-acc"><a><i class="fa-solid fa-gear"></i> Settings</a></button>
         </div>
         <div class="toast-header" id="themeSwitchSection">
             <button class="theme-switch">
@@ -298,14 +298,15 @@
             </p>
         </div>
         <div class="toast-header">
-          <a href="#"><i class="fa-solid fa-circle-question"></i> Help</a>
+          <button onclick="helpLink()" class="btn-col-acc"><a><i class="fa-solid fa-circle-question"></i> Help</a></button>
         </div>
         <div class="toast-header"  >
-          <a class="feedBackBtn2"><i class="fa-solid fa-comment-dots"></i> Feedback</a>
+          <!-- <a class="feedBackBtn2"><i class="fa-solid fa-comment-dots"></i> Feedback</a> -->
+          <button onclick="showFeedBackToast()" class="btn-col-acc"><a><i class="fa-solid fa-comment-dots"></i> Feedback</a></button>
         </div>
         <div class="toast-body log-in-out">
-          <button onclick="login()" id="loginButton"><a><i class="fa-solid fa-arrow-right-to-bracket"></i> Login</a></button>
-          <button onclick="logout()" id="logoutButton"><a><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a></button>
+          <button onclick="login()" id="loginButton" class="btn-col-acc"><a><i class="fa-solid fa-arrow-right-to-bracket"></i> Login</a></button>
+          <button onclick="logout()" id="logoutButton" class="btn-col-acc"><a><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a></button>
         </div>
       </div>
     </div>
@@ -336,6 +337,7 @@
               <input type="checkbox" name="" id=""><label>We may email you for more updates</label>
             </div>
             <p id="smallWarning" ><i class="fa-solid fa-circle-exclamation text-warning" ></i> Please do not include any sensitive information! Sensitive information is any data that should be protected. Please do not include passwords, credit card numbers, or personal detail.</p>
+            <button type="submit" onclick="closeFeedBackToast()">Cancel</button>
             <button type="submit" id="feedbackSubmit" name="feedbackSubmit">Submit</button>
           </form>
         </div>
@@ -491,7 +493,7 @@
           <div class="toast-body" id="errorToastBody">
             Unauthorized. Please log in first.
           </div>
-          <button type="button" class="btn-success"><a href="../../userSign/login.html" style="text-decoration: none;">Login/sign up</a></button>
+          <button type="button" class="btn-success"><a href="../../userSign/login.html" style="text-decoration: none;">Login / sign up</a></button>
           <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
       </div>

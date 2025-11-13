@@ -541,7 +541,7 @@ font-size: 13px;
   
 } 
 .collapse .following{
-    width: 90%;
+    width: 100%;
     height: auto;
     /* padding: 0; */
     display: grid;
@@ -1799,21 +1799,24 @@ top:0px;
 
      #themeSwitchSection{
         width: 100%;
-        height: 40px;
+        height: 45px;
         display: flex;
-        gap: 7px;
+        align-items: center;
+        gap: 17px;
         justify-content: start;
         
      }
      .theme-switch {
-        width: 25px;
+        width: 28px;
         padding: 0;
-        background-color: var(--background-color);
+       
         color: var(--font-color);
         margin: 0;
+        background-color: var(--background-color);
         cursor: pointer;
         border: none;
         }
+        
        .theme-switch .fa-moon{
         display: none;
        }
@@ -1844,22 +1847,48 @@ top:0px;
         
         display: block;
        }
-       #loginButton, #logoutButton{
-      background: none;
+       #themeSwitchSection:hover .theme-switch{
+            color: var(--primary-color);
+        }
+       .btn-col-acc{
+        background: none;
       border: none;
       color: var(--font-color);
      text-align: start;
       width: 100%;
       padding: 5px 0px 5px 0px;
-}
-#loginButton:hover{
+       }
+       .btn-col-acc a{
+        display: flex;
+        gap: 20px;
+        align-items: center;
+       }
+      .btn-col-acc:hover {
     color: var(--primary-color);
 }
 
-#logoutButton:hover{
-    color: var(--primary-color);
-}
 
+.displayUserFollowing{
+width: 100%;
+
+}
+.noFollowing{
+    color: var(--font-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    font-size: small;
+    
+    padding: 5px;
+    
+    width: 100%;
+  border-bottom: 0.3px solid  var(--secondary-color);
+}
+.noFollowing a:hover{
+    color: var(--primary-color);
+
+}
        /* comment and reply upload ui */
        .reply,.comment{
          width: auto;
