@@ -333,9 +333,9 @@ form.addEventListener("submit", async (e) => {
     if (!res.ok) {
           if (res.status === 403) {
             showErrorToast("Unauthorized. Please log in or sign up first.");
-            setTimeout(() => {
-              window.location.href = 'login.html';
-            }, 10000); // redirect after 2s
+            // setTimeout(() => {
+            //   window.location.href = 'login.html';
+            // }, 10000); 
           } else {
             const errorText = await res.text();
             showErrorToast("Error: " + errorText);
@@ -1193,9 +1193,7 @@ async function toggleLikeActivityForMessage(messageId, likeIcon, likeCount) {
     if (!res.ok) {
       if (res.status === 403) {
         showErrorToast("Unauthorized. Please log in or sign up first.");
-        setTimeout(() => {
-          window.location.href = 'login.html';
-        }, 10000); // redirect after 2s
+     
       } else {
         const errorText = await res.text();
         showErrorToast("Error: " + errorText);
@@ -1247,9 +1245,6 @@ async function toggleFavActivityForMessage(messageId, favIcon ){
      if (!res.ok) {
       if (res.status === 403) {
         showErrorToast("Unauthorized. Please log in or sign up first.");
-        setTimeout(() => {
-          window.location.href = 'login.html';
-        }, 10000); // redirect after 2s
       } else {
         const errorText = await res.text();
         showErrorToast("Error: " + errorText);
@@ -1330,9 +1325,6 @@ document.getElementById("submitReportBtn").onclick = async () => {
      if (!res.ok) {
       if (res.status === 403) {
         showErrorToast("Unauthorized. Please log in or sign up first.");
-        setTimeout(() => {
-          window.location.href = 'login.html';
-        }, 10000); // redirect after 2s
       } else {
         const errorText = await res.text();
         showErrorToast("Error: " + errorText);
@@ -1451,7 +1443,6 @@ function showErrorToast(message) {
   const toast = new bootstrap.Toast(toastEl);
   toast.show();
 }
-
 
 
 // Close when clicking the ✖️ button

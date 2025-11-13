@@ -2141,6 +2141,17 @@ width: 100%;
     background: var(--background-color);
     border-radius: 0px;
 }
+.close-btn-no-token{
+    background-color: none;
+    text-decoration: none; 
+    border: none;
+
+}
+.close-btn-no-token a{
+    color: var(--font-color);
+    background-color: none;
+}
+
 @media (max-width: 768px) {
   #toastImage {
     width: 100%;

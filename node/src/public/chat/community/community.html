@@ -81,11 +81,9 @@
                 </div>
                 <ul id="u4">    
                     <li class="liTop"><Big>Explore</Big></li>
-                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-masks-theater"></i>Novel</a></li>
-                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-mask"></i>Comic Book</a></li>
-                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-user-ninja"></i>Manga</a></li>
-                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-lightbulb"></i>Literature</a></li>
-                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-feather-pointed"></i>Poetry</a></li>
+                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-fire"></i>What's Hot</a></li>
+                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-ghost"></i> Nobody’s Secret</a></li>
+                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-medal"></i> Hall of Fame</a></li>
                 </ul>
                 <ul id="u5">    
                     <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-gear"></i>Settings</a></li>
@@ -445,8 +443,7 @@
       </div>
     </div>
 
-  
-
+ 
     <!-- Notication Toast -->
     <div class="toast-container position-fixed  end-0 p-3 noti-toast">
       <div id="liveNoti" class="toast" role="alert" aria-live="assertive" aria-atomic="true" >
@@ -487,18 +484,22 @@
     </div>
 
     <!-- Toast container for logib/signup-->
-    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
-      <div id="errorToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-          <div class="toast-body" id="errorToastBody">
-            Unauthorized. Please log in first.
+    <div class="position-fixed" style="z-index: 1100; right: 10px;bottom: 10px;">
+      <div id="errorToast" class="toast align-items-center text-bg-warning border-0 p-8" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex flex-column" style="padding: 10px;">
+          <div class="d-flex justify-content-between w-100 gap-2" >
+            <div  id="errorToastBody">
+            Unauthorized. Please log in / sign up first. It takes a few seconds :)
+            </div>
+            <button type="button" class="btn-close btn-close-white " data-bs-dismiss="toast" aria-label="Close"></button>
           </div>
-          <button type="button" class="btn-success"><a href="../../userSign/login.html" style="text-decoration: none;">Login / sign up</a></button>
-          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+          
+          <button type="button" class="close-btn-no-token btn btn-success border-0 mt-1" style="border-radius: 5px;width: 45%;font-size: small;"><a href="../../userSign/login.html">Log in / sign up</a></button>
         </div>
       </div>
     </div>
 
+    
  
   <script>
  
