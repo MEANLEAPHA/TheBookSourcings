@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://kit.fontawesome.com/ec7a51a641.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icons/6.7.0/css/flag-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="assets/css/signup/accountEdit.css">
+</head>
+<body>
+    <div id="form-div">
+        <form id="authorForm" enctype="multipart/form-data">
+            <!-- profile and banner -->
+            <div id="form-div-pf">
+                <div  id="banner">
+                   <div class="banner-upload" id="bannerPreview">
+                        <img id="bannerImage">
+                        <label for="bannerInput" id="bannerInputLabel">Edit Banner</label>
+                        <input type="file" id="bannerInput">
+                    </div>
+
+                </div>
+                 <div class="profile-section-right text-center profile">
+                    <div class="profile-upload" id="profilePreview">
+                        <img id="profileImage">
+                        <input type="file" id="profileInput" accept="image/*" class="form-control">
+                        <span class="edit-profile-span" id="input-pen">Edit Profile</span>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="div-4-2">
+                <div>
+                    <label for="fullname">Username</label>
+                     <div class="input-group">
+                        <input type="text" class="form-control" id="fullname" required aria-describedby="input-pen">
+                        <span class="input-group-text " id="input-pen-username"><i class="fa-regular fa-pen-to-square"></i></span>
+                     </div>
+                </div>
+                <div>
+                    <label for="nickname">Nickname</label>
+                    <div class="input-group">
+                        <span class="input-group-text input-group-text2" id="nickname-addon">@</span>
+                        <input type="text" id="nickname" class="form-control form-control-nickname" aria-describedby="input-pen nickname-addon" placeholder="eg. meanleaphaTheGreat">
+                        <span class="input-group-text" id="input-pen"><i class="fa-regular fa-pen-to-square"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="div-4-2">
+                <div>
+                    <label for="dob" >Date of Birth</label>
+                    <div class="input-group">
+                        <input type="date" class="form-control" id="DOB">
+                    </div>
+                </div>
+                <div>
+                     <label for="gender">Gender</label>
+                        <select class="form-select" id="gender">
+                            <option value="" disabled selected></option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                </div>
+            </div>
+             <div class="div-4-2">
+                <div>
+                    <label for="work" >Occupation</label>
+                    <select class="form-select" id="work">
+                    <option value="" disabled selected></option>
+                    <option value="worker">Worker</option>
+                    <option value="student">Student</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="nationality">Nationality</label>
+                    <select class="form-select" id="nationality" >
+                        <option value="" disabled selected>Choose your nationality</option>
+                        <option data-content="<span class='fi fi-af me-2'></span>Afghanistan" value="Afghanistan">Afghanistan</option>
+                        <option data-content="<span class='fi fi-al me-2'></span>Albania" value="Albania">Albania</option>
+                        <option data-content="<span class='fi fi-dz me-2'></span>Algeria" value="Algeria">Algeria</option>
+                        <option data-content="<span class='fi fi-ad me-2'></span>Andorra" value="Andorra">Andorra</option>
+                        <option data-content="<span class='fi fi-ao me-2'></span>Angola" value="Angola">Angola</option>
+                        <option data-content="<span class='fi fi-ag me-2'></span>Antigua and Barbuda" value="Antigua and Barbuda">Antigua and Barbuda</option>
+                        <option data-content="<span class='fi fi-ar me-2'></span>Argentina" value="Argentina">Argentina</option>
+                        <option data-content="<span class='fi fi-am me-2'></span>Armenia" value="Armenia">Armenia</option>
+                        <option data-content="<span class='fi fi-au me-2'></span>Australia" value="Australia">Australia</option>
+                        <option data-content="<span class='fi fi-at me-2'></span>Austria" value="Austria">Austria</option>
+                        <option data-content="<span class='fi fi-az me-2'></span>Azerbaijan" value="Azerbaijan">Azerbaijan</option>
+                        <option data-content="<span class='fi fi-bs me-2'></span>Bahamas" value="Bahamas">Bahamas</option>
+                        <option data-content="<span class='fi fi-bh me-2'></span>Bahrain" value="Bahrain">Bahrain</option>
+                        <option data-content="<span class='fi fi-bd me-2'></span>Bangladesh" value="Bangladesh">Bangladesh</option>
+                        <option data-content="<span class='fi fi-bb me-2'></span>Barbados" value="Barbados">Barbados</option>
+                        <option data-content="<span class='fi fi-by me-2'></span>Belarus" value="Belarus">Belarus</option>
+                        <option data-content="<span class='fi fi-be me-2'></span>Belgium" value="Belgium">Belgium</option>
+                        <option data-content="<span class='fi fi-bz me-2'></span>Belize" value="Belize">Belize</option>
+                        <option data-content="<span class='fi fi-bj me-2'></span>Benin" value="Benin">Benin</option>
+                        <option data-content="<span class='fi fi-bt me-2'></span>Bhutan" value="Bhutan">Bhutan</option>
+                        <option data-content="<span class='fi fi-bo me-2'></span>Bolivia" value="Bolivia">Bolivia</option>
+                        <option data-content="<span class='fi fi-ba me-2'></span>Bosnia and Herzegovina" value="Bosnia and Herzegovina">Bosnia and Herzegovina</option>
+                        <option data-content="<span class='fi fi-bw me-2'></span>Botswana" value="Botswana">Botswana</option>
+                        <option data-content="<span class='fi fi-br me-2'></span>Brazil" value="Brazil">Brazil</option>
+                        <option data-content="<span class='fi fi-bn me-2'></span>Brunei" value="Brunei">Brunei</option>
+                        <option data-content="<span class='fi fi-bg me-2'></span>Bulgaria" value="Bulgaria">Bulgaria</option>
+                        <option data-content="<span class='fi fi-bf me-2'></span>Burkina Faso" value="Burkina Faso">Burkina Faso</option>
+                        <option data-content="<span class='fi fi-bi me-2'></span>Burundi" value="Burundi">Burundi</option>
+                        <option data-content="<span class='fi fi-kh me-2'></span>Cambodia" value="Cambodia">Cambodia</option>
+                        <option data-content="<span class='fi fi-cm me-2'></span>Cameroon" value="Cameroon">Cameroon</option>
+                        <option data-content="<span class='fi fi-ca me-2'></span>Canada" value="Canada">Canada</option>
+                        <option data-content="<span class='fi fi-cf me-2'></span>Central African Republic" value="Central African Republic">Central African Republic</option>
+                        <option data-content="<span class='fi fi-cl me-2'></span>Chile" value="Chile">Chile</option>
+                        <option data-content="<span class='fi fi-cn me-2'></span>China" value="China">China</option>
+                        <option data-content="<span class='fi fi-co me-2'></span>Colombia" value="Colombia">Colombia</option>
+                        <option data-content="<span class='fi fi-cr me-2'></span>Costa Rica" value="Costa Rica">Costa Rica</option>
+                        <option data-content="<span class='fi fi-hr me-2'></span>Croatia" value="Croatia">Croatia</option>
+                        <option data-content="<span class='fi fi-cu me-2'></span>Cuba" value="Cuba">Cuba</option>
+                        <option data-content="<span class='fi fi-cy me-2'></span>Cyprus" value="Cyprus">Cyprus</option>
+                        <option data-content="<span class='fi fi-cz me-2'></span>Czech Republic" value="Czech Republic">Czech Republic</option>
+                        <option data-content="<span class='fi fi-dk me-2'></span>Denmark" value="Denmark">Denmark</option>
+                        <option data-content="<span class='fi fi-dj me-2'></span>Djibouti" value="Djibouti">Djibouti</option>
+                        <option data-content="<span class='fi fi-do me-2'></span>Dominican Republic" value="Dominican Republic">Dominican Republic</option>
+                        <option data-content="<span class='fi fi-ec me-2'></span>Ecuador" value="Ecuador">Ecuador</option>
+                        <option data-content="<span class='fi fi-eg me-2'></span>Egypt" value="Egypt">Egypt</option>
+                        <option data-content="<span class='fi fi-sv me-2'></span>El Salvador" value="El Salvador">El Salvador</option>
+                        <option data-content="<span class='fi fi-gq me-2'></span>Equatorial Guinea" value="Equatorial Guinea">Equatorial Guinea</option>
+                        <option data-content="<span class='fi fi-er me-2'></span>Eritrea" value="Eritrea">Eritrea</option>
+                        <option data-content="<span class='fi fi-ee me-2'></span>Estonia" value="Estonia">Estonia</option>
+                        <option data-content="<span class='fi fi-et me-2'></span>Ethiopia" value="Ethiopia">Ethiopia</option>
+                        <option data-content="<span class='fi fi-fi me-2'></span>Finland" value="Finland">Finland</option>
+                        <option data-content="<span class='fi fi-fr me-2'></span>France" value="France">France</option>
+                        <option data-content="<span class='fi fi-de me-2'></span>Germany" value="Germany">Germany</option>
+                        <option data-content="<span class='fi fi-gr me-2'></span>Greece" value="Greece">Greece</option>
+                        <option data-content="<span class='fi fi-hk me-2'></span>Hong Kong" value="Hong Kong">Hong Kong</option>
+                        <option data-content="<span class='fi fi-in me-2'></span>India" value="India">India</option>
+                        <option data-content="<span class='fi fi-id me-2'></span>Indonesia" value="Indonesia">Indonesia</option>
+                        <option data-content="<span class='fi fi-ir me-2'></span>Iran" value="Iran">Iran</option>
+                        <option data-content="<span class='fi fi-iq me-2'></span>Iraq" value="Iraq">Iraq</option>
+                        <option data-content="<span class='fi fi-ie me-2'></span>Ireland" value="Ireland">Ireland</option>
+                        <option data-content="<span class='fi fi-il me-2'></span>Israel" value="Israel">Israel</option>
+                        <option data-content="<span class='fi fi-it me-2'></span>Italy" value="Italy">Italy</option>
+                        <option data-content="<span class='fi fi-jp me-2'></span>Japan" value="Japan">Japan</option>
+                        <option data-content="<span class='fi fi-kp me-2'></span>North Korea" value="North Korea">North Korea</option>
+                        <option data-content="<span class='fi fi-kr me-2'></span>South Korea" value="South Korea">South Korea</option>
+                        <option data-content="<span class='fi fi-la me-2'></span>Laos" value="Laos">Laos</option>
+                        <option data-content="<span class='fi fi-lv me-2'></span>Latvia" value="Latvia">Latvia</option>
+                        <option data-content="<span class='fi fi-lb me-2'></span>Lebanon" value="Lebanon">Lebanon</option>
+                        <option data-content="<span class='fi fi-lr me-2'></span>Liberia" value="Liberia">Liberia</option>
+                        <option data-content="<span class='fi fi-lt me-2'></span>Lithuania" value="Lithuania">Lithuania</option>
+                        <option data-content="<span class='fi fi-lu me-2'></span>Luxembourg" value="Luxembourg">Luxembourg</option>
+                        <option data-content="<span class='fi fi-my me-2'></span>Malaysia" value="Malaysia">Malaysia</option>
+                        <option data-content="<span class='fi fi-mm me-2'></span>Myanmar" value="Myanmar">Myanmar</option>
+                        <option data-content="<span class='fi fi-np me-2'></span>Nepal" value="Nepal">Nepal</option>
+                        <option data-content="<span class='fi fi-nl me-2'></span>Netherlands" value="Netherlands">Netherlands</option>
+                        <option data-content="<span class='fi fi-nz me-2'></span>New Zealand" value="New Zealand">New Zealand</option>
+                        <option data-content="<span class='fi fi-ng me-2'></span>Nigeria" value="Nigeria">Nigeria</option>
+                        <option data-content="<span class='fi fi-no me-2'></span>Norway" value="Norway">Norway</option>
+                        <option data-content="<span class='fi fi-ph me-2'></span>Philippines" value="Philippines">Philippines</option>
+                        <option data-content="<span class='fi fi-pl me-2'></span>Poland" value="Poland">Poland</option>
+                        <option data-content="<span class='fi fi-pt me-2'></span>Portugal" value="Portugal">Portugal</option>
+                        <option data-content="<span class='fi fi-qa me-2'></span>Qatar" value="Qatar">Qatar</option>
+                        <option data-content="<span class='fi fi-ru me-2'></span>Russia" value="Russia">Russia</option>
+                        <option data-content="<span class='fi fi-sa me-2'></span>Saudi Arabia" value="Saudi Arabia">Saudi Arabia</option>
+                        <option data-content="<span class='fi fi-sg me-2'></span>Singapore" value="Singapore">Singapore</option>
+                        <option data-content="<span class='fi fi-za me-2'></span>South Africa" value="South Africa">South Africa</option>
+                        <option data-content="<span class='fi fi-es me-2'></span>Spain" value="Spain">Spain</option>
+                        <option data-content="<span class='fi fi-lk me-2'></span>Sri Lanka" value="Sri Lanka">Sri Lanka</option>
+                        <option data-content="<span class='fi fi-se me-2'></span>Sweden" value="Sweden">Sweden</option>
+                        <option data-content="<span class='fi fi-ch me-2'></span>Switzerland" value="Switzerland">Switzerland</option>
+                        <option data-content="<span class='fi fi-th me-2'></span>Thailand" value="Thailand">Thailand</option>
+                        <option data-content="<span class='fi fi-tr me-2'></span>Turkey" value="Turkey">Turkey</option>
+                        <option data-content="<span class='fi fi-gb me-2'></span>United Kingdom" value="United Kingdom">United Kingdom</option>
+                        <option data-content="<span class='fi fi-us me-2'></span>United States" value="United States">United States</option>
+                        <option data-content="<span class='fi fi-vn me-2'></span>Vietnam" value="Vietnam">Vietnam</option>
+                    </select>
+                </div>
+            </div>
+            <div id="dynamicFields" class="div-4-2 append">
+
+            </div>
+             <div class="div-4-2">
+                <div>
+                    <label for="playfulLabel">Quirky Tag</label>
+                     <div class="input-group">
+                        <input type="text" class="form-control" id="playfulLabel" required aria-describedby="input-pen" placeholder="eg. Traffic jam enjoyer">
+                        <span class="input-group-text" id="input-pen"><i class="fa-regular fa-pen-to-square"></i></span>
+                     </div>
+                </div>
+                <div>
+                     <label for="mood">Persona</label>
+                        <select class="form-select" id="mood">
+                        <option disabled selected></option>
+                        <option value="yellow">🟡 Optimistic / playful</option>
+                        <option value="green">🟢 Supportive / growth‑oriented</option>
+                        <option value="blue">🔵 Calm / reliable</option>
+                        <option value="purple">🟣 Creative/ unique</option>
+                        <option value="red">🔴 Passionate / driven</option>
+                        <option value="pink">🩷 Charming / cute</option>
+                        <option value="orange">🟠 Violated / chaotic</option>
+                    </select>
+                </div>
+            </div>
+            
+
+           
+             <div class="div-4-2">
+                <!-- <div>
+                    <label for="bio">Bio</label>
+                    <textarea class="form-control" id="bio" rows="1"></textarea>
+                </div> -->
+                <div>
+  <label for="bio" style="display: flex;justify-content: space-between;">Bio </label>
+  
+  <textarea class="form-control" id="bio" rows="1" maxlength="150" ></textarea>
+  <small id="bioCounter">0 / 150</small>
+   
+  
+</div>
+                <div>
+                     <label for="websiteLink">Website</label>
+                     <div class="input-group">
+                        <input type="text" class="form-control" id="websiteLink" required aria-describedby="input-pen" >
+                        <span class="input-group-text" id="input-pen"><i class="fa-regular fa-pen-to-square"></i></span>
+                     </div>
+                </div>
+            </div>
+            <div class="hidden">
+                <input type="text" id="authorQid" value="" hidden>
+                <input type="text" id="ghostQid" value="" hidden>
+            </div>
+    <div>
+        <button type="submit" class="btn btn-primary" id="submiteBtn">Save</button>
+    </div>
+
+
+
+
+
+
+
+        </form>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        const moodSelect = document.getElementById("mood");
+const profileUpload = document.getElementById("profilePreview");
+
+moodSelect.addEventListener("change", function() {
+  // Remove any existing mood class
+  profileUpload.className = profileUpload.className
+    .replace(/\bmood-\w+\b/g, "").trim();
+
+  // Add the new mood class
+  const selectedMood = this.value;
+  if (selectedMood) {
+    profileUpload.classList.add(`mood-${selectedMood}`);
+  }
+});
+
+ const bioInput = document.getElementById("bio");
+  const bioCounter = document.getElementById("bioCounter");
+  const maxLength = bioInput.getAttribute("maxlength");
+
+  bioInput.addEventListener("input", () => {
+    const currentLength = bioInput.value.length;
+    bioCounter.textContent = `${currentLength} / ${maxLength}`;
+  });
+        // ID generator function (example: TB19265S)
+        function generateAuthorID() {
+            const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const randomNum = Math.floor(10000 + Math.random() * 90000); // 5-digit number
+            const randomLetter = letters.charAt(Math.floor(Math.random() * letters.length));
+            return `OTT${randomNum}${randomLetter}HOR`;
+        }
+
+        function generateGhostID() {
+            const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const randomNum = Math.floor(10000 + Math.random() * 90000); // 5-digit number
+            const randomLetter = letters.charAt(Math.floor(Math.random() * letters.length));
+            return `GHO${randomNum}${randomLetter}ST`;
+        }
+
+        const workSelect = document.getElementById('work');
+        const dynamicFields = document.getElementById('dynamicFields');
+
+        // Helper function to render dynamic input fields
+        function renderDynamicFields(workType, workPlaceValue = "", workRoleValue = "") {
+            dynamicFields.innerHTML = "";
+            dynamicFields.style.display = "flex";
+            if (workType === "worker") {
+            dynamicFields.innerHTML = `
+               
+                <div>
+                    <label>Organization</label>
+                    <div class="input-group">
+                        <input type="text" id="workPlace" class="form-control workPlace" value="${workPlaceValue}" aria-describedby="input-pen">
+                        <span class="input-group-text" id="input-pen"><i class="fa-regular fa-pen-to-square"></i></span>
+                    </div>
+                </div>
+                <div>
+                    <label>Position</label>
+                    <div class="input-group">
+                        <input type="text" id="workRole" class="form-control workRole" value="${workRoleValue}" aria-describedby="input-pen">
+                        <span class="input-group-text" id="input-pen"><i class="fa-regular fa-pen-to-square"></i></span>
+                    </div>
+                </div>
+                `;
+            } else if (workType === "student") {
+            dynamicFields.innerHTML = `
+               
+                <div>
+                    <label>Institution</label>
+                    <div class="input-group">
+                        <input type="text" id="workPlace" class="form-control workPlace" value="${workPlaceValue}" aria-describedby="input-pen">
+                        <span class="input-group-text" id="input-pen"><i class="fa-regular fa-pen-to-square"></i></span>
+                    </div>
+                </div>
+                <div>
+                    <label>Field of Study</label>
+                    <div class="input-group">
+                        <input type="text" id="workRole" class="form-control workRole" value="${workRoleValue}" aria-describedby="input-pen">
+                        <span class="input-group-text" id="input-pen"><i class="fa-regular fa-pen-to-square"></i></span>
+                    </div>
+                </div>
+                `;
+            }
+        }
+
+        // Handle dropdown change
+        workSelect.addEventListener('change', function () {
+            const selected = this.value;
+
+            // When switching between Worker and Student, clear the old inputs
+            if (selected === "worker" || selected === "student") {
+            renderDynamicFields(selected, "", "");
+            } else {
+            dynamicFields.innerHTML = ""; // Clear everything if "None" or other value
+            }
+        });
+
+        // === Profile Upload Preview ===
+        const profileInput = document.getElementById('profileInput');
+        const profilePreview = document.getElementById('profilePreview');
+        const profileImage = document.getElementById('profileImage');
+
+        profilePreview.addEventListener('click', () => profileInput.click());
+
+        profileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                profileImage.src = event.target.result || 'assets/img/aUser.png';
+            };
+            reader.readAsDataURL(file);
+            }
+        });
+
+
+       const bannerInput = document.getElementById("bannerInput");
+const bannerImage = document.getElementById("bannerImage");
+const bannerPreview = document.getElementById("bannerPreview");
+
+bannerInput.addEventListener("change", function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+        const imgURL = e.target.result;
+
+        // Set real image
+        bannerImage.src = imgURL;
+
+        // Set blurred background (::before uses this)
+        bannerPreview.style.setProperty("--bg-img", `url(${imgURL})`);
+    };
+
+    reader.readAsDataURL(file);
+});
+
+
+
+
+
+        // === Load user info (for edit mode) ===
+        $.ajax({
+            url: `https://thebooksourcings.onrender.com/getFullRegisterData`,
+            type: 'GET',
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+            success: function(data) {
+            if (!data) return;
+            $('#fullname').val(data.username || '');
+            $('#nickname').val(data.nickname || '');
+            $('#bio').val(data.bio || '');
+            $('#websiteLink').val(data.websiteUrl || '');
+            $('#mood').val(data.mood || '');
+            $('#playfulLabel').val(data.playfulLabel || '');
+            $('#gender').val(data.gender || '');
+            $('#work').val(data.work || '');
+                 
+            
+            const profileUpload = document.getElementById("profilePreview");
+            if (data.mood) {
+                profileUpload.className = profileUpload.className.replace(/\bmood-\w+\b/g, "").trim();
+                profileUpload.classList.add(`mood-${data.mood}`);
+            }
+        // ✅ Date of Birth formatting
+        if (data.DOB) {
+            try {
+            const formattedDate = new Date(data.DOB).toISOString().split('T')[0];
+            $('#DOB').val(formattedDate);
+            } catch (err) {
+            console.warn("Invalid DOB format:", data.DOB);
+            $('#DOB').val('');
+            }
+        } else {
+            $('#DOB').val('');
+        }
+
+        // ✅ Nationality (Bootstrap Select)
+        if (data.nationality) {
+            $('#nationality').val(data.nationality);
+        } else {
+            $('#nationality').val('');
+        }
+
+        // ✅ Re-render dynamic fields based on existing work type
+        renderDynamicFields(data.work || '', data.workPlace || '', data.workRole || '');
+
+        // ✅ Handle authorQid
+        if (!data.authorQid || data.authorQid.trim() === '') {
+            const newId = generateAuthorID();
+            $('#authorQid').val(newId);
+        } else {
+            $('#authorQid').val(data.authorQid);
+        }
+
+         if (!data.ghostQid || data.ghostQid.trim() === '') {
+            const newId = generateGhostID();
+            $('#ghostQid').val(newId);
+        } else {
+            $('#ghostQid').val(data.ghostQid);
+        }
+
+        if (data.pfUrl) {
+        // 👇 Add a cache-busting query to force refresh
+        const freshUrl = data.pfUrl + '?t=' + new Date().getTime();
+        $('#profileImage').attr('src', freshUrl);
+        } else {
+        $('#profileImage');
+        };
+
+        if (data.bannerUrl) {
+        // 👇 Add a cache-busting query to force refresh
+        const freshUrl = data.bannerUrl + '?t=' + new Date().getTime();
+        $('#bannerImage').attr('src', freshUrl);
+        } else {
+        $('#bannerImage');
+        };
+
+            },
+            error: function(err) {
+            console.error("Error fetching user:", err);
+            }
+        });
+
+        // === Submit update ===
+        $('#submiteBtn').click(function() {
+            const formData = new FormData();
+            formData.append('fullname', $('#fullname').val());
+            formData.append('nickname', $('#nickname').val());
+            formData.append('dob', $('#DOB').val());
+            formData.append('gender', $('#gender').val());
+            formData.append('work', $('#work').val());
+            formData.append('nationality', $('#nationality').val());
+            formData.append('workPlace', $('#workPlace').val());
+            formData.append('workRole', $('#workRole').val());
+            formData.append('websiteLink', $('#websiteLink').val());
+            formData.append('bio', $('#bio').val());
+            formData.append('playfulLabel', $('#playfulLabel').val());
+            formData.append('mood', $('#mood').val());
+            formData.append('authorQid', $('#authorQid').val());
+            formData.append('ghostQid', $('#ghostQid').val());
+            
+
+            const pfInput = $('#profileInput')[0];
+            if (pfInput.files[0]) formData.append('pfUrl', pfInput.files[0]);
+
+            const bannerInput = $('#bannerInput')[0];
+            if (bannerInput.files[0]) formData.append('bannerUrl', bannerInput.files[0]);
+
+            $.ajax({
+            url: `https://thebooksourcings.onrender.com/fullRegister`,
+            method: 'PUT',
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(res) {
+                alert("✅ Profile updated successfully!");
+                location.reload();
+            },
+            error: function(err) {
+                console.error("Error updating profile:", err);
+                alert("❌ Failed to update profile.");
+            }
+            });
+        });
+        });
+        </script>
+</body>
+</html>
+

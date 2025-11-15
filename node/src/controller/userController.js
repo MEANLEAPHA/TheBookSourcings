@@ -416,6 +416,7 @@ const fullRegister = async(req,res) =>{
 
     const oldUser = users[0];
     let pfCoverUrl = oldUser.pfUrl;
+    let bannerCoverUrl = oldUser.bannerUrl;
 
     if (req.files?.pfUrl && req.files.pfUrl[0]) {
       try {
@@ -423,7 +424,7 @@ const fullRegister = async(req,res) =>{
         const newPfCover = await uploadToS3(req.files.pfUrl[0], "userPf/");
 
         // Safely delete old profile if it exists and is not empty
-        if (oldUser.pfUrl && oldUser.pfUrl.trim() !== "") {
+        if (oldUser.pfUrl && oldUser.pfUrl.trim() !== "" ) {
           try {
             await deleteFromS3(oldUser.pfUrl);
           } catch (deleteErr) {
@@ -431,7 +432,6 @@ const fullRegister = async(req,res) =>{
             // don't stop execution — deletion is not critical
           }
         }
-
         pfCoverUrl = newPfCover;
       } catch (uploadError) {
         console.error("Error uploading profile image:", uploadError);
@@ -439,14 +439,31 @@ const fullRegister = async(req,res) =>{
       }
     }
 
-
-    
+    if(req.files?.bannerUrl && req.files.bannerUrl[0]){
+      try{
+        const newBannerCover = await uploadToS3(req.files.bannerUrl[0], "userBanner/");
+        if (oldUser.bannerUrl && oldUser.bannerUrl.trim() !== "" ) {
+          try {
+            await deleteFromS3(oldUser.bannerUrl);
+          } catch (deleteErr) {
+            console.warn("Warning: Failed to delete old banner image:", deleteErr.message);
+            // don't stop execution — deletion is not critical
+          }
+        }
+        bannerCoverUrl = newBannerCover;
+      }catch(uploadError){
+        console.error("Error uploading banner image:", uploadError);
+        return res.status(500).json({ message: "Banner image upload failed" });
+      }
+    }
 
   try{
     const memberQid = req.user.memberQid;
     const {
       fullname,
       nickname,
+      playfulLabel,
+      mood,
       dob,
       gender,
       work,
@@ -455,7 +472,8 @@ const fullRegister = async(req,res) =>{
       workRole,
       websiteLink,
       bio,
-      authorQid
+      authorQid,
+      ghostQid
     } = req.body
     
     // --- Handle file uploads ---
@@ -466,8 +484,8 @@ const fullRegister = async(req,res) =>{
     }
 
     const [update] = await db.query(
-      `UPDATE users SET username = ?, nickname = ?, pfUrl = ?, DOB = ?, gender = ?, work = ?, nationality = ?, workPlace = ?, workRole = ?, websiteUrl = ?, bio = ?, authorQid = ? WHERE memberQid = ?`,
-      [fullname, nickname, pfCoverUrl, dob, gender, work, nationality, workPlace, workRole, websiteLink, bio, authorQid, memberQid]
+      `UPDATE users SET username = ?, nickname = ?, playfulLabel = ?, pfUrl = ?, bannerUrl = ?, DOB = ?, gender = ?, work = ?, nationality = ?, mood = ?, workPlace = ?, workRole = ?, websiteUrl = ?, bio = ?, authorQid = ?, ghostQid = ? WHERE memberQid = ?`,
+      [fullname, nickname, playfulLabel, pfCoverUrl, bannerCoverUrl, dob, gender, work, nationality, mood, workPlace, workRole, websiteLink, bio, authorQid, ghostQid, memberQid]
     );
 
     if (update.affectedRows === 0) {
@@ -491,16 +509,20 @@ const getFullRegisterData = async (req,res) => {
         `SELECT 
           username,
           nickname,
+          playfulLabel,
           pfUrl,
+          bannerUrl,
           DOB,
           gender,
+          mood,
           work,
           nationality,
           workPlace,
           workRole,
           websiteUrl,
           bio,
-          authorQid 
+          authorQid,
+          ghostQid, 
           FROM users 
           WHERE memberQid = ?
        `,

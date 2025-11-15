@@ -1,0 +1,484 @@
+:root{
+    --background-color:white;
+    --primary-color:#fd7648;
+    --secondary-color: gainsboro;
+    --font-color:rgb(65, 65, 65);
+    --back-con:rgb(245, 245, 245);
+}
+.dark-theme{
+    --background-color:rgb(32, 32, 32);
+    --primary-color:#fd7648;
+    --secondary-color: rgba(220, 220, 220, 0.318);
+    --font-color:rgb(255, 255, 255);
+     --back-con:rgb(40, 40, 40);
+}
+
+body{
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-color);
+}
+#form-div{
+    width:80%;
+    height: auto;
+    margin: auto;
+   
+}
+#form-div #form-div-pf{
+    width: 100%;
+    height: 330px;
+    position: relative;
+  
+}
+#form-div #form-div-pf #banner{
+    width: 100%;
+    height: 250px;
+    border: 1px solid var(--secondary-color);
+    position: relative;
+}
+#form-div #form-div-pf .profile{
+width: 130px;
+height: 130px;
+border-radius: 50%;
+border: 1px solid var(--secondary-color);
+object-fit: cover;
+position: absolute;
+
+bottom: 10px;
+left: 10px;
+
+}
+/* === Profile Upload Styling === */
+.profile-upload {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+ 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+   
+  transition: transform 0.3s ease;
+}
+
+/* .profile-upload:hover {
+  transform: scale(1.01);
+   border: 1px solid var(--primary-color);
+   box-shadow: var(--primary-color) 0px 0px 5px 1px;
+} */
+ /* Base style */
+.profile-upload {
+  transition: box-shadow 0.3s ease;
+}
+
+/* Mood color classes */
+.mood-yellow {
+  box-shadow: yellow 0px 0px 5px 1px;
+  border: 1px solid yellow;
+}
+.mood-green {
+  box-shadow: green 0px 0px 5px 1px;
+  border: 1px solid green;
+}
+.mood-blue {
+  box-shadow: blue 0px 0px 5px 1px;
+  border: 1px solid blue;
+}
+.mood-purple {
+  box-shadow: purple 0px 0px 5px 1px;
+  border: 1px solid purple;
+}
+.mood-red {
+  box-shadow: red 0px 0px 5px 1px;
+  border: 1px solid red;
+}
+.mood-pink {
+  box-shadow: rgb(255, 105, 130) 0px 0px 5px 1px;
+  border: 1px solid rgb(255, 105, 130);
+}
+.mood-orange {
+  box-shadow: var(--primary-color) 0px 0px 5px 1px;
+  border: 1px solid var(--primary-color);
+}
+
+.profile-upload:hover .edit-profile-span{
+    background-color: black;
+    color: white;
+}
+#form-div #form-div-pf .profile .profile-upload #profileImage{
+  width: 100%;
+  height: 100%;
+object-fit:cover;
+  border-radius: 50%;
+
+}
+#bioCounter{
+font-size: smaller;
+  opacity: 0.7;
+
+}
+/* #bannerImage{
+  width: auto;
+  height: 100%;
+} */
+.banner-upload {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  
+  overflow: hidden;
+  cursor: pointer;
+ 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+    object-fit:cover;
+  transition: transform 0.3s ease;
+}
+
+/* blurred background */
+.banner-upload::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(20px);
+  transform: scale(1.1);
+  z-index: 0;
+    background-image: var(--bg-img);
+}
+#bannerInputLabel{
+    position: absolute;
+    bottom: 5px;
+    font-size: small;
+    right: 5px;
+    color: whitesmoke;
+ background-color: rgba(57, 57, 57, 0.87);
+  cursor: pointer;
+  opacity: 0.6;
+  padding: 5px;
+  text-align: center;
+  width: 10%;
+  border-radius: 5px;
+  /* Blur logic */
+  backdrop-filter: blur(5px);        /* Chrome, Firefox (latest), Edge */
+  -webkit-backdrop-filter: blur(5px); 
+  z-index: 2;/* iOS Safari */
+}
+#bannerInputLabel:hover{
+  background-color: black;
+  color: white;
+}
+/* main image */
+#bannerImage {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* keep the full image visible */
+  background: transparent;
+}
+
+.profile-upload input[type="file"],.banner-upload input[type="file"]{
+  display: none;
+}
+
+
+/* Hover overlay */
+.edit-profile-span{
+     position: absolute;
+  bottom: 0px;
+  font-size: small;
+  left: 1px;
+  color: whitesmoke;
+ background-color: rgba(57, 57, 57, 0.87);
+  padding-bottom: 10px;
+  opacity: 0.6;
+  text-align: center;
+  width: 100%;
+  /* Blur logic */
+  backdrop-filter: blur(5px);        /* Chrome, Firefox (latest), Edge */
+  -webkit-backdrop-filter: blur(5px); /* iOS Safari */
+}
+/* .profile-upload::before {
+  content: "Update Photo";
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  text-align: center;
+  padding: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  font-size: 14px;
+} */
+
+.div-4-2{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+     margin-bottom: 8px;
+}
+
+.div-4-2 div{
+    width: calc(100%/2.04);
+}
+.div-4-2 div .input-group{
+    width: 100%;
+}
+
+.form-select:focus {
+  outline: none !important;
+  border-color: var(--primary-color);
+  box-shadow: var(--primary-color) 0px 0px 5px 1px;
+}
+.form-control{
+border-right: none;
+}
+.form-control:focus {
+   border-color: var(--primary-color);
+ 
+  box-shadow: var(--primary-color) 0px 0px 2px 1px;
+
+}
+.form-select,#bio,#DOB{
+    border-right: 1px solid var(--secondary-color);
+}
+.input-group-text{
+    background-color: none;
+     background: none;
+    border-left: none;
+}
+.input-group-text2{
+    border-left: 1px solid var(--secondary-color);
+    border-right: none;
+}
+
+ .input-group:focus-within .input-group-text2 {
+  border-color: var(--primary-color);
+  box-shadow: var(--primary-color) 0px 0px 5px 1px;
+}
+
+.input-group:focus-within .input-group-text {
+  border-color: var(--primary-color);
+  border-left: none;
+  box-shadow: var(--primary-color) 0px 0px 5px 1px;
+}
+
+.append{
+  margin: 0;  
+ margin-bottom: 8px;    /* no gap */
+  padding: 0;    
+  display: none;  /* no padding */
+   /* completely hidden until something is inside */
+}
+.form-control-nickname{
+    border-left: none;
+}
+
+#submiteBtn{
+    padding: 5px 28px;
+    font-size: 14px;
+    margin-top: 8px;
+}
+
+
+
+
+
+/* Ensure wrapper and toggle button are full width */
+.bootstrap-select {
+  width: 100% !important;
+  background:none;
+ 
+}
+
+.bootstrap-select .dropdown-toggle {
+  width: 100% !important;
+  background:none;
+  border: 1px solid var(--secondary-color);
+}
+.bootstrap-select .dropdown-toggle:focus{
+   border-color: var(--primary-color);
+  outline: none !important;
+  background-color: none;
+  box-shadow: var(--primary-color) 0px 0px 2px 1px;
+}
+
+/* Force dropdown menu to match wrapper width */
+.bootstrap-select .dropdown-menu {
+  width: 100% !important;
+  min-width: 100% !important;
+}
+
+/* Make search input full width */
+.bootstrap-select .bs-searchbox input {
+  width: 100% !important;
+  box-sizing: border-box;
+  padding-left: 0.75rem; /* optional: match your design */
+  padding-right: 0.75rem;
+}
+
+/* Make each list item and its content full width */
+.bootstrap-select .dropdown-menu li {
+  width: 100% !important;
+}
+
+.bootstrap-select .dropdown-menu li a {
+  display: flex !important;         /* allows flag + text alignment */
+  align-items: center;
+  width: 100% !important;
+  padding-left: 0.75rem;            /* optional: match your spacing */
+  padding-right: 0.75rem;
+  box-sizing: border-box;
+}
+
+
+@media screen and (max-width:1024px){
+#form-div{
+    width: 85%;
+}  
+}
+@media screen and (max-width:768px){
+  #form-div #form-div-pf{
+    height: 280px; 
+}
+ 
+#form-div #form-div-pf #banner{
+    height: 210px;
+}
+#form-div #form-div-pf .profile{
+    width: 110px;
+    height: 110px;
+    
+}
+/* .div-4-2 div{
+    width: calc(100%);
+    background-color: rgb(26, 255, 0);
+} */
+}
+@media screen and (max-width:600px){
+    #form-div #form-div-pf{
+    height: 240px; 
+    
+}
+#form-div{
+    width: 100%;
+    padding: 10px;
+}  
+#form-div #form-div-pf #banner{
+    height: 180px;
+}
+#form-div #form-div-pf .profile{
+    width: 95px;
+    height: 95px;
+    bottom: 10px;
+}
+.div-4-2{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+      margin-bottom: 8px;
+    
+}
+.div-4-2 div{
+    width: calc(100%);
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    font-size: small;
+}
+.div-4-2 div .input-group{
+    width: 80%;
+        
+}
+.div-4-2 div input,#DOB{
+    border: none;
+    border-bottom: 1px solid var(--secondary-color);
+    border-radius: 0px;
+    width: 100%;
+    font-size: small;
+}
+.div-4-2 div .form-select,#bio{
+    border: none;
+    border-bottom: 1px solid var(--secondary-color);
+    border-radius: 0px;
+    width: 80%;
+    font-size: small;
+}
+.input-group-text{
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--secondary-color);
+    border-radius: 0px;
+        font-size: small;
+}
+.form-select:focus {
+   outline: none !important;
+  border-color: none !important;
+  border-bottom-color: var(--primary-color);
+  box-shadow: none !important;
+}
+#DOB:focus {
+  outline: none !important;
+  border-color: none !important;
+  border-bottom-color: var(--primary-color);
+  box-shadow: none !important;
+}
+#bio:focus {
+  outline: none !important;
+  border-color: none !important;
+  border-bottom-color: var(--primary-color);
+  box-shadow: none !important;
+}
+.form-control:focus {
+  outline: none !important;
+  border-color: none !important;
+  border-bottom-color: var(--primary-color);
+  box-shadow: none !important;
+}
+.input-group:focus-within .input-group-text2 {
+    outline: none !important;
+  border-color: none !important;
+  border-bottom-color: var(--primary-color);
+  box-shadow: none !important;
+}
+
+.input-group:focus-within .input-group-text {
+   outline: none !important;
+  border-color: none !important;
+  border-bottom-color: var(--primary-color);
+  box-shadow: none !important;
+}
+
+
+#submiteBtn{
+    padding: 5px 20px;
+    font-size: 14px;
+    margin-top: 20px;
+}
+.edit-profile-span{
+     position: absolute;
+  bottom: 0px;
+  font-size: x-small;
+  left: 1px;
+  color: whitesmoke;
+ background-color: rgba(128, 128, 128, 0.6);
+  padding-bottom: 5px;
+  opacity: 0.6;
+  text-align: center;
+  width: 100%;
+  /* Blur logic */
+  backdrop-filter: blur(5px);        /* Chrome, Firefox (latest), Edge */
+  -webkit-backdrop-filter: blur(5px); /* iOS Safari */
+}
+#bannerInputLabel{
+width: 20%;
+  font-size: x-small;
+}
+}
