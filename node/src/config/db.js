@@ -8,7 +8,7 @@ const dbconfig = mysql.createPool(
     {
         host:"srv1777.hstgr.io", //localhost
         user:"u859618886_otthorAdmin", //root
-        password:'Otthor$$2005&&333', //password
+        password:"OtthorAnd2005", //password
         database:"u859618886_otthorDB", //database
         waitForConnections: true, //wait for connections
         connectionLimit: 10, //max connections
