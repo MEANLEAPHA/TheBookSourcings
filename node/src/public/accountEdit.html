@@ -38,7 +38,7 @@
                 <div>
                     <label for="fullname">Username</label>
                      <div class="input-group">
-                        <input type="text" class="form-control" id="fullname" required aria-describedby="input-pen">
+                        <input type="text" class="form-control" id="fullname" required aria-describedby="input-pen" maxlength="30">
                         <span class="input-group-text " id="input-pen-username"><i class="fa-regular fa-pen-to-square"></i></span>
                      </div>
                 </div>
@@ -46,7 +46,7 @@
                     <label for="nickname">Nickname</label>
                     <div class="input-group">
                         <span class="input-group-text input-group-text2" id="nickname-addon">@</span>
-                        <input type="text" id="nickname" class="form-control form-control-nickname" aria-describedby="input-pen nickname-addon" placeholder="eg. meanleaphaTheGreat">
+                        <input type="text" id="nickname" class="form-control form-control-nickname" aria-describedby="input-pen nickname-addon" maxlength="15" placeholder="eg. meanleaphaTheGreat">
                         <span class="input-group-text" id="input-pen"><i class="fa-regular fa-pen-to-square"></i></span>
                     </div>
                 </div>
@@ -186,7 +186,7 @@
                 <div>
                     <label for="playfulLabel">Quirky Tag</label>
                      <div class="input-group">
-                        <input type="text" class="form-control" id="playfulLabel" required aria-describedby="input-pen" placeholder="eg. Traffic jam enjoyer">
+                        <input type="text" class="form-control" id="playfulLabel" required aria-describedby="input-pen" placeholder="eg. Traffic jam enjoyer" maxlength="30">
                         <span class="input-group-text" id="input-pen"><i class="fa-regular fa-pen-to-square"></i></span>
                      </div>
                 </div>
@@ -213,17 +213,20 @@
                     <textarea class="form-control" id="bio" rows="1"></textarea>
                 </div> -->
                 <div>
-  <label for="bio" style="display: flex;justify-content: space-between;">Bio </label>
-  
-  <textarea class="form-control" id="bio" rows="1" maxlength="150" ></textarea>
-  <small id="bioCounter">0 / 150</small>
+  <label for="bio" >Bio</label>
+  <br>
+  <div class="textarea-wrapper ">
+  <textarea class="form-control" id="bio" rows="1" maxlength="150"></textarea>
+  <span id="bioCounter">0 / 150</span>
+</div>
+
    
   
 </div>
                 <div>
-                     <label for="websiteLink">Website</label>
+                     <label for="websiteLink">Your Website</label>
                      <div class="input-group">
-                        <input type="text" class="form-control" id="websiteLink" required aria-describedby="input-pen" >
+                        <input type="text" class="form-control" id="websiteLink" required aria-describedby="input-pen" maxlength="100">
                         <span class="input-group-text" id="input-pen"><i class="fa-regular fa-pen-to-square"></i></span>
                      </div>
                 </div>
@@ -272,7 +275,10 @@ moodSelect.addEventListener("change", function() {
     const currentLength = bioInput.value.length;
     bioCounter.textContent = `${currentLength} / ${maxLength}`;
   });
-        // ID generator function (example: TB19265S)
+      
+
+   
+  // ID generator function (example: TB19265S)
         function generateAuthorID() {
             const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             const randomNum = Math.floor(10000 + Math.random() * 90000); // 5-digit number
