@@ -522,7 +522,7 @@ const getFullRegisterData = async (req,res) => {
           websiteUrl,
           bio,
           authorQid,
-          ghostQid, 
+          ghostQid
           FROM users 
           WHERE memberQid = ?
        `,
