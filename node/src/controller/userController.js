@@ -477,11 +477,11 @@ const fullRegister = async(req,res) =>{
     } = req.body
     
     // --- Handle file uploads ---
-    if (req.files?.bookCover) {
-      const newCover = await uploadToS3(req.files.bookCover[0], "covers/");
-      if (oldBook.bookCover) await deleteFromS3(oldBook.bookCover);
-      bookCoverUrl = newCover;
-    }
+    // if (req.files?.bookCover) {
+    //   const newCover = await uploadToS3(req.files.bookCover[0], "covers/");
+    //   if (oldBook.bookCover) await deleteFromS3(oldBook.bookCover);
+    //   bookCoverUrl = newCover;
+    // }
 
     const [update] = await db.query(
       `UPDATE users SET username = ?, nickname = ?, playfulLabel = ?, pfUrl = ?, bannerUrl = ?, DOB = ?, gender = ?, work = ?, nationality = ?, mood = ?, workPlace = ?, workRole = ?, websiteUrl = ?, bio = ?, authorQid = ?, ghostQid = ? WHERE memberQid = ?`,
