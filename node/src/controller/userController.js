@@ -441,7 +441,7 @@ const fullRegister = async(req,res) =>{
 
     if(req.files?.bannerUrl && req.files.bannerUrl[0]){
       try{
-        const newBannerCover = await uploadToS3(req.files.bannerUrl[0], "userPf/");
+        const newBannerCover = await uploadToS3(req.files.bannerUrl[0], "userBanner/");
         if (oldUser.bannerUrl && oldUser.bannerUrl.trim() !== "" ) {
           try {
             await deleteFromS3(oldUser.bannerUrl);
