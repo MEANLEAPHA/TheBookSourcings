@@ -379,7 +379,7 @@ moodSelect.addEventListener("change", function() {
             if (file) {
                 const reader = new FileReader();
                 reader.onload =(event)=> {
-                    const imgURL = event.target.result;
+                    bannerImage.src = event.target.result;
                     // bannerImage.src = imgURL;
                     // bannerPreview.style.setProperty("--bg-img", `url(${imgURL})`);
                 };
