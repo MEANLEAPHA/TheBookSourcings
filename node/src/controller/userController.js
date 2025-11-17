@@ -438,53 +438,53 @@ const fullRegister = async(req,res) =>{
         return res.status(500).json({ message: "Profile image upload failed" });
       }
     }
-if(req.files?.bannerUrl && req.files.bannerUrl[0]){
-  try{
-    const bannerFile = req.files.bannerUrl[0];
+// if(req.files?.bannerUrl && req.files.bannerUrl[0]){
+//   try{
+//     const bannerFile = req.files.bannerUrl[0];
     
-    // Debug: Log the file details before upload
-    console.log("📢 BANNER UPLOAD DEBUG:");
-    console.log("Original filename:", bannerFile.originalname);
-    console.log("Mimetype:", bannerFile.mimetype);
-    console.log("File buffer size:", bannerFile.buffer?.length);
-    console.log("Fieldname:", bannerFile.fieldname);
+//     // Debug: Log the file details before upload
+//     console.log("📢 BANNER UPLOAD DEBUG:");
+//     console.log("Original filename:", bannerFile.originalname);
+//     console.log("Mimetype:", bannerFile.mimetype);
+//     console.log("File buffer size:", bannerFile.buffer?.length);
+//     console.log("Fieldname:", bannerFile.fieldname);
     
-    const newBannerCover = await uploadToS3(bannerFile, "userPf/");
+//     const newBannerCover = await uploadToS3(bannerFile, "userPf/");
     
-    console.log("✅ Upload successful - Generated URL:", newBannerCover);
-    console.log("URL has extension:", /\.[a-zA-Z0-9]+$/.test(newBannerCover));
+//     console.log("✅ Upload successful - Generated URL:", newBannerCover);
+//     console.log("URL has extension:", /\.[a-zA-Z0-9]+$/.test(newBannerCover));
     
-    if (oldUser.bannerUrl && oldUser.bannerUrl.trim() !== "" ) {
-      console.log("🗑️ Deleting old banner:", oldUser.bannerUrl);
-      try {
-        await deleteFromS3(oldUser.bannerUrl);
-      } catch (deleteErr) {
-        console.warn("Warning: Failed to delete old banner image:", deleteErr.message);
+//     if (oldUser.bannerUrl && oldUser.bannerUrl.trim() !== "" ) {
+//       console.log("🗑️ Deleting old banner:", oldUser.bannerUrl);
+//       try {
+//         await deleteFromS3(oldUser.bannerUrl);
+//       } catch (deleteErr) {
+//         console.warn("Warning: Failed to delete old banner image:", deleteErr.message);
+//       }
+//     }
+//     bannerCoverUrl = newBannerCover;
+//   }catch(uploadError){
+//     console.error("❌ Error uploading banner image:", uploadError);
+//     return res.status(500).json({ message: "Banner image upload failed" });
+//   }
+// }
+    if(req.files?.bannerUrl && req.files.bannerUrl[0]){
+      try{
+        const newBannerCover = await uploadToS3(req.files.bannerUrl[0], "userPf/");
+        if (oldUser.bannerUrl && oldUser.bannerUrl.trim() !== "" ) {
+          try {
+            await deleteFromS3(oldUser.bannerUrl);
+          } catch (deleteErr) {
+            console.warn("Warning: Failed to delete old banner image:", deleteErr.message);
+            // don't stop execution — deletion is not critical
+          }
+        }
+        bannerCoverUrl = newBannerCover;
+      }catch(uploadError){
+        console.error("Error uploading banner image:", uploadError);
+        return res.status(500).json({ message: "Banner image upload failed" });
       }
     }
-    bannerCoverUrl = newBannerCover;
-  }catch(uploadError){
-    console.error("❌ Error uploading banner image:", uploadError);
-    return res.status(500).json({ message: "Banner image upload failed" });
-  }
-}
-    // if(req.files?.bannerUrl && req.files.bannerUrl[0]){
-    //   try{
-    //     const newBannerCover = await uploadToS3(req.files.bannerUrl[0], "userPf/");
-    //     if (oldUser.bannerUrl && oldUser.bannerUrl.trim() !== "" ) {
-    //       try {
-    //         await deleteFromS3(oldUser.bannerUrl);
-    //       } catch (deleteErr) {
-    //         console.warn("Warning: Failed to delete old banner image:", deleteErr.message);
-    //         // don't stop execution — deletion is not critical
-    //       }
-    //     }
-    //     bannerCoverUrl = newBannerCover;
-    //   }catch(uploadError){
-    //     console.error("Error uploading banner image:", uploadError);
-    //     return res.status(500).json({ message: "Banner image upload failed" });
-    //   }
-    // }
 
   try{
     const memberQid = req.user.memberQid;
