@@ -438,39 +438,10 @@ const fullRegister = async(req,res) =>{
         return res.status(500).json({ message: "Profile image upload failed" });
       }
     }
-// if(req.files?.bannerUrl && req.files.bannerUrl[0]){
-//   try{
-//     const bannerFile = req.files.bannerUrl[0];
-    
-//     // Debug: Log the file details before upload
-//     console.log("📢 BANNER UPLOAD DEBUG:");
-//     console.log("Original filename:", bannerFile.originalname);
-//     console.log("Mimetype:", bannerFile.mimetype);
-//     console.log("File buffer size:", bannerFile.buffer?.length);
-//     console.log("Fieldname:", bannerFile.fieldname);
-    
-//     const newBannerCover = await uploadToS3(bannerFile, "userPf/");
-    
-//     console.log("✅ Upload successful - Generated URL:", newBannerCover);
-//     console.log("URL has extension:", /\.[a-zA-Z0-9]+$/.test(newBannerCover));
-    
-//     if (oldUser.bannerUrl && oldUser.bannerUrl.trim() !== "" ) {
-//       console.log("🗑️ Deleting old banner:", oldUser.bannerUrl);
-//       try {
-//         await deleteFromS3(oldUser.bannerUrl);
-//       } catch (deleteErr) {
-//         console.warn("Warning: Failed to delete old banner image:", deleteErr.message);
-//       }
-//     }
-//     bannerCoverUrl = newBannerCover;
-//   }catch(uploadError){
-//     console.error("❌ Error uploading banner image:", uploadError);
-//     return res.status(500).json({ message: "Banner image upload failed" });
-//   }
-// }
+
     if(req.files?.bannerUrl && req.files.bannerUrl[0]){
       try{
-        const newBannerCover = await uploadToS3(req.files.bannerUrl[0], "userPf/");
+        const newBannerCover = await uploadToS3(req.files.bannerUrl[0], "userBanner/");
         if (oldUser.bannerUrl && oldUser.bannerUrl.trim() !== "" ) {
           try {
             await deleteFromS3(oldUser.bannerUrl);
@@ -505,12 +476,6 @@ const fullRegister = async(req,res) =>{
       ghostQid
     } = req.body
     
-    // --- Handle file uploads ---
-    // if (req.files?.bookCover) {
-    //   const newCover = await uploadToS3(req.files.bookCover[0], "covers/");
-    //   if (oldBook.bookCover) await deleteFromS3(oldBook.bookCover);
-    //   bookCoverUrl = newCover;
-    // }
 
     const [update] = await db.query(
       `UPDATE users SET username = ?, nickname = ?, playfulLabel = ?, pfUrl = ?, bannerUrl = ?, DOB = ?, gender = ?, work = ?, nationality = ?, mood = ?, workPlace = ?, workRole = ?, websiteUrl = ?, bio = ?, authorQid = ?, ghostQid = ? WHERE memberQid = ?`,

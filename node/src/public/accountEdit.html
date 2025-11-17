@@ -470,10 +470,16 @@ bannerInput.addEventListener("change", function () {
         };
 
         if (data.bannerUrl) {
-        // 👇 Add a cache-busting query to force refresh
-        const freshUrl = data.bannerUrl + '?t=' + new Date().getTime();
-        $('#bannerImage').attr('src', freshUrl);
-        } else {
+    // Add a cache-busting query
+    const freshUrl = data.bannerUrl + '?t=' + new Date().getTime();
+    
+    // Set the <img> src using jQuery
+    $('#bannerImage').attr('src', freshUrl);
+
+    // Set the CSS variable --bg-img on the parent preview div
+    document.getElementById('bannerPreview').style.setProperty('--bg-img', `url(${freshUrl})`);
+}
+else {
         $('#bannerImage');
         };
 
