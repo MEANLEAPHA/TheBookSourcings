@@ -21,23 +21,50 @@ const storage = multer.memoryStorage(); // keep files in memory for lib-storage
 
 const upload = multer({ storage });
 
+
 const uploadToS3 = async (file, folder = "") => {
+  // Ensure the filename has an extension
+  let fileName = file.originalname;
+  if (!fileName.includes('.')) {
+    // If no extension, add one based on mimetype
+    const ext = file.mimetype.split('/')[1] || 'jpg';
+    fileName = `${fileName}.${ext}`;
+  }
+  
   const uploadParams = {
     Bucket: process.env.AWS_BUCKET_NAME,
-    Key: `${folder}${Date.now()}-${file.originalname}`,
+    Key: `${folder}${Date.now()}-${fileName}`,
     Body: file.buffer,
     ContentType: file.mimetype
-    // ACL: "public-read" 
   };
 
+  console.log("📁 Final S3 Key:", uploadParams.Key);
+
   const parallelUpload = new Upload({
-    client: s3Client, // must be v3 S3Client
+    client: s3Client,
     params: uploadParams
   });
 
   const result = await parallelUpload.done();
-  return result.Location; // the file URL
+  return result.Location;
 };
+// const uploadToS3 = async (file, folder = "") => {
+//   const uploadParams = {
+//     Bucket: process.env.AWS_BUCKET_NAME,
+//     Key: `${folder}${Date.now()}-${file.originalname}`,
+//     Body: file.buffer,
+//     ContentType: file.mimetype
+//     // ACL: "public-read" 
+//   };
+
+//   const parallelUpload = new Upload({
+//     client: s3Client, // must be v3 S3Client
+//     params: uploadParams
+//   });
+
+//   const result = await parallelUpload.done();
+//   return result.Location; // the file URL
+// };
 
 
 const deleteFromS3 = async (fileUrl) => {

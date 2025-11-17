@@ -418,44 +418,93 @@ const fullRegister = async(req,res) =>{
     let pfCoverUrl = oldUser.pfUrl;
     let bannerCoverUrl = oldUser.bannerUrl;
 
+    // if (req.files?.pfUrl && req.files.pfUrl[0]) {
+    //   try {
+    //     // Upload new profile picture to S3
+    //     const newPfCover = await uploadToS3(req.files.pfUrl[0], "userPf/");
+
+    //     // Safely delete old profile if it exists and is not empty
+    //     if (oldUser.pfUrl && oldUser.pfUrl.trim() !== "" ) {
+    //       try {
+    //         await deleteFromS3(oldUser.pfUrl);
+    //       } catch (deleteErr) {
+    //         console.warn("Warning: Failed to delete old profile image:", deleteErr.message);
+    //         // don't stop execution — deletion is not critical
+    //       }
+    //     }
+    //     pfCoverUrl = newPfCover;
+    //   } catch (uploadError) {
+    //     console.error("Error uploading profile image:", uploadError);
+    //     return res.status(500).json({ message: "Profile image upload failed" });
+    //   }
+    // }
     if (req.files?.pfUrl && req.files.pfUrl[0]) {
+  try {
+    const profileFile = req.files.pfUrl[0];
+    
+    console.log("📢 PROFILE UPLOAD DEBUG:");
+    console.log("Original filename:", profileFile.originalname);
+    console.log("Mimetype:", profileFile.mimetype);
+    console.log("File buffer size:", profileFile.buffer?.length);
+    
+    const newPfCover = await uploadToS3(profileFile, "userPf/");
+    
+    console.log("✅ Profile upload successful - Generated URL:", newPfCover);
+    console.log("Profile URL has extension:", /\.[a-zA-Z0-9]+$/.test(newPfCover));
+    
+    // ... rest of your existing code
+  } catch (uploadError) {
+    console.error("Error uploading profile image:", uploadError);
+    return res.status(500).json({ message: "Profile image upload failed" });
+  }
+}
+if(req.files?.bannerUrl && req.files.bannerUrl[0]){
+  try{
+    const bannerFile = req.files.bannerUrl[0];
+    
+    // Debug: Log the file details before upload
+    console.log("📢 BANNER UPLOAD DEBUG:");
+    console.log("Original filename:", bannerFile.originalname);
+    console.log("Mimetype:", bannerFile.mimetype);
+    console.log("File buffer size:", bannerFile.buffer?.length);
+    console.log("Fieldname:", bannerFile.fieldname);
+    
+    const newBannerCover = await uploadToS3(bannerFile, "userPf/");
+    
+    console.log("✅ Upload successful - Generated URL:", newBannerCover);
+    console.log("URL has extension:", /\.[a-zA-Z0-9]+$/.test(newBannerCover));
+    
+    if (oldUser.bannerUrl && oldUser.bannerUrl.trim() !== "" ) {
+      console.log("🗑️ Deleting old banner:", oldUser.bannerUrl);
       try {
-        // Upload new profile picture to S3
-        const newPfCover = await uploadToS3(req.files.pfUrl[0], "userPf/");
-
-        // Safely delete old profile if it exists and is not empty
-        if (oldUser.pfUrl && oldUser.pfUrl.trim() !== "" ) {
-          try {
-            await deleteFromS3(oldUser.pfUrl);
-          } catch (deleteErr) {
-            console.warn("Warning: Failed to delete old profile image:", deleteErr.message);
-            // don't stop execution — deletion is not critical
-          }
-        }
-        pfCoverUrl = newPfCover;
-      } catch (uploadError) {
-        console.error("Error uploading profile image:", uploadError);
-        return res.status(500).json({ message: "Profile image upload failed" });
+        await deleteFromS3(oldUser.bannerUrl);
+      } catch (deleteErr) {
+        console.warn("Warning: Failed to delete old banner image:", deleteErr.message);
       }
     }
-
-    if(req.files?.bannerUrl && req.files.bannerUrl[0]){
-      try{
-        const newBannerCover = await uploadToS3(req.files.bannerUrl[0], "userPf/");
-        if (oldUser.bannerUrl && oldUser.bannerUrl.trim() !== "" ) {
-          try {
-            await deleteFromS3(oldUser.bannerUrl);
-          } catch (deleteErr) {
-            console.warn("Warning: Failed to delete old banner image:", deleteErr.message);
-            // don't stop execution — deletion is not critical
-          }
-        }
-        bannerCoverUrl = newBannerCover;
-      }catch(uploadError){
-        console.error("Error uploading banner image:", uploadError);
-        return res.status(500).json({ message: "Banner image upload failed" });
-      }
-    }
+    bannerCoverUrl = newBannerCover;
+  }catch(uploadError){
+    console.error("❌ Error uploading banner image:", uploadError);
+    return res.status(500).json({ message: "Banner image upload failed" });
+  }
+}
+    // if(req.files?.bannerUrl && req.files.bannerUrl[0]){
+    //   try{
+    //     const newBannerCover = await uploadToS3(req.files.bannerUrl[0], "userPf/");
+    //     if (oldUser.bannerUrl && oldUser.bannerUrl.trim() !== "" ) {
+    //       try {
+    //         await deleteFromS3(oldUser.bannerUrl);
+    //       } catch (deleteErr) {
+    //         console.warn("Warning: Failed to delete old banner image:", deleteErr.message);
+    //         // don't stop execution — deletion is not critical
+    //       }
+    //     }
+    //     bannerCoverUrl = newBannerCover;
+    //   }catch(uploadError){
+    //     console.error("Error uploading banner image:", uploadError);
+    //     return res.status(500).json({ message: "Banner image upload failed" });
+    //   }
+    // }
 
   try{
     const memberQid = req.user.memberQid;
