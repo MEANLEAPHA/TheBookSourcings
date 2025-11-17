@@ -388,13 +388,6 @@ const bannerPreview = document.getElementById("bannerPreview");
 bannerInput.addEventListener("change", function () {
     const file = this.files[0];
     if (!file) return;
-    
-    console.log("Frontend - Selected banner file:", {
-        name: file.name,
-        type: file.type,
-        size: file.size
-    });
-    
     const reader = new FileReader();
     reader.onload = function (e) {
         const imgURL = e.target.result;
@@ -402,20 +395,9 @@ bannerInput.addEventListener("change", function () {
         bannerPreview.style.setProperty("--bg-img", `url(${imgURL})`);
     };
     reader.readAsDataURL(file);
-});
-// bannerInput.addEventListener("change", function () {
-//     const file = this.files[0];
-//     if (!file) return;
-//     const reader = new FileReader();
-//     reader.onload = function (e) {
-//         const imgURL = e.target.result;
-//         bannerImage.src = imgURL;
-//         bannerPreview.style.setProperty("--bg-img", `url(${imgURL})`);
-//     };
-//     reader.readAsDataURL(file);
 
    
-// });
+});
 
 
 
