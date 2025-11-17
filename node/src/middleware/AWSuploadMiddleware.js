@@ -21,22 +21,43 @@ const storage = multer.memoryStorage(); // keep files in memory for lib-storage
 
 const upload = multer({ storage });
 
+// const uploadToS3 = async (file, folder = "") => {
+//   const uploadParams = {
+//     Bucket: process.env.AWS_BUCKET_NAME,
+//     Key: `${folder}${Date.now()}-${file.originalname}`,
+//     Body: file.buffer,
+//     ContentType: file.mimetype
+//     // ACL: "public-read" 
+//   };
+
+//   const parallelUpload = new Upload({
+//     client: s3Client, // must be v3 S3Client
+//     params: uploadParams
+//   });
+
+//   const result = await parallelUpload.done();
+//   return result.Location; // the file URL
+// };
+const path = require("path");
+
 const uploadToS3 = async (file, folder = "") => {
+  const ext = path.extname(file.originalname) || ".jpg"; // default to .jpg if missing
+  const key = `${folder}${Date.now()}-${Math.random().toString(36).substr(2,6)}${ext}`;
+
   const uploadParams = {
     Bucket: process.env.AWS_BUCKET_NAME,
-    Key: `${folder}${Date.now()}-${file.originalname}`,
+    Key: key,
     Body: file.buffer,
     ContentType: file.mimetype
-    // ACL: "public-read" 
   };
 
   const parallelUpload = new Upload({
-    client: s3Client, // must be v3 S3Client
+    client: s3Client,
     params: uploadParams
   });
 
   const result = await parallelUpload.done();
-  return result.Location; // the file URL
+  return result.Location;
 };
 
 
