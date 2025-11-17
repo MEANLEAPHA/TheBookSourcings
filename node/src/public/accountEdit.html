@@ -375,7 +375,7 @@ moodSelect.addEventListener("change", function() {
         });
 
         bannerInput.addEventListener("change", (e) => {
-            const file = this.files[0];
+           const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload =(event)=> {
