@@ -85,6 +85,14 @@ const createMember = async (req, res) => {
     // Generate 6-digit PIN code
     const pinCode = Math.floor(100000 + Math.random() * 900000).toString();
 
+     try { 
+      await sendPinCodeEmail(email, pinCode);
+    } catch (mailError) {
+      console.error("Email sending failed:", mailError);
+      // Still respond, but warn client
+      return res.status(500).json({ message: "User created, but email failed to send." });
+    }
+    
     // Insert user with pin_code and status = 'unverified', pin_created_at = now()
     const [result] = await db.query(
       `INSERT INTO users (username, email, password, timezone, pin_code, pin_created_at, status)
@@ -97,15 +105,6 @@ const createMember = async (req, res) => {
     }
 
    
-    
-    try {
-      await sendPinCodeEmail(email, pinCode);
-    } catch (mailError) {
-      console.error("Email sending failed:", mailError);
-      // Still respond, but warn client
-      return res.status(500).json({ message: "User created, but email failed to send." });
-    
-    }
       const token = createToken({
         user_id: result.insertId,
         username,

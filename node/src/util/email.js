@@ -1,14 +1,28 @@
-require('dotenv').config();
-const nodemailer = require('nodemailer');
+// require('dotenv').config();
+// const nodemailer = require('nodemailer');
 
+// const transporter = nodemailer.createTransport({
+//     host: 'smtp.gmail.com',
+//     port: 465, // use to be 465
+//     secure: true, // use to be true
+//     auth: {
+//         user: "meanleapha@gmail.com",       // your Gmail address
+//         pass: "ipfxsixplyobvzyz"    // your Gmail app password
+//     }
+// });
+
+const nodemailer = require('nodemailer');
+require('dotenv').config();
 const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465, // use to be 465
-    secure: true, // use to be true
-    auth: {
-        user: "meanleapha@gmail.com",       // your Gmail address
-        pass: "ipfxsixplyobvzyz"    // your Gmail app password
-    }
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.EMAIL_USER,       // Gmail address
+    pass: process.env.EMAIL_PASS    // Gmail app password
+  },
+  logger: true,
+  debug: true
 });
 
 const sendEmail = async (to, subject, text) => {
@@ -24,13 +38,14 @@ const sendEmail = async (to, subject, text) => {
         console.error('❌ Error sending email:', error);
     }
 };
+
 const sendPinCodeEmail = async (to, pinCode) => {
   const subject = 'Your Verification Code';
   const html = `<p>Your verification code is: <b>${pinCode}</b></p>`;
   
   try {
     const info = await transporter.sendMail({
-        from: `"TheBookSourcing" <${process.env.EMAIL_USER}>`,
+      from: `"TheBookSourcing" <${process.env.EMAIL_USER}>`,
       to,
       subject,
       html
@@ -40,6 +55,23 @@ const sendPinCodeEmail = async (to, pinCode) => {
     console.error('❌ Error sending verification email:', error);
   }
 };
+
+// const sendPinCodeEmail = async (to, pinCode) => {
+//   const subject = 'Your Verification Code';
+//   const html = `<p>Your verification code is: <b>${pinCode}</b></p>`;
+  
+//   try {
+//     const info = await transporter.sendMail({
+//         from: `"TheBookSourcing" <${process.env.EMAIL_USER}>`,
+//       to,
+//       subject,
+//       html
+//     });
+//     console.log('✅ Verification email sent:', info.response);
+//   } catch (error) {
+//     console.error('❌ Error sending verification email:', error);
+//   }
+// };
 
 const sendResendPinEmail = async (to, pinCode) => {
     const subject = 'Your New Verification Code';

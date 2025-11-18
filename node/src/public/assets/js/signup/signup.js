@@ -5,7 +5,6 @@
       
       $('#msg').text('You must agree to the Terms & Conditions to continue.').css('color', 'red');
       
-    // Prevent form from submitting
       return;
     }
        const newPass = $('#password').val();
@@ -21,8 +20,6 @@
         $('#msg').text('Passwords do not match.').css('color', 'red');
         return;
       }
-
-        // Get user timezone from browser
         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
 
         const member = {
@@ -41,12 +38,7 @@
             $('#msg').text(response.message).css('color', 'green');
             localStorage.setItem('verify_token', response.token);
             location.href = 'https://thebooksourcings.onrender.com/userSign/verify.html';
-            // Optionally clear the form or redirect here
           },
-          // error: function (xhr, status, error) {
-          //   console.error('AJAX Error:', xhr.responseText);
-          //   alert('createmember: ' + xhr.responseText);
-          // },
             error: function(xhr, status, error) {
                 try {
                     const err = JSON.parse(xhr.responseText);
