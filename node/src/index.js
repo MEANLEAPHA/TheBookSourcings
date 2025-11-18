@@ -351,32 +351,6 @@ socket.on("markRoomSeen", async ({ roomId }) => {
     }
   });
 
-
-  // Mark all messages in a room as seen
-  // socket.on("markRoomSeen", async ({ roomId }) => {
-  //   if (!socket.user) return;
-  //   try {
-  //     const seenIds = await chatController.markAllMessagesSeen(roomId, socket.user.memberQid);
-  //     if (seenIds.length) io.to(roomId).emit("roomMessagesSeen", { messageIds: seenIds, roomId });
-  //   } catch (err) {
-  //     console.error("❌ Error marking room messages seen:", err);
-  //   }
-  // });
-
-//   socket.on("messageSeen", async ({ messageId, roomId }) => {
-//   if (!socket.user || !messageId || !roomId) return;
-//   const viewerQid = socket.user.memberQid;
-
-//   try {
-//     const updated = await chatController.markMessageSeen(messageId, viewerQid);
-//     if (updated) {
-//       io.to(roomId).emit("messageSeen", { messageId });
-//     }
-//   } catch (err) {
-//     console.error("❌ Error marking message seen:", err);
-//   }
-// });
-// when a client marks a room as seen (e.g. socket.emit('markRoomSeen', { roomId }))
 socket.on("markRoomSeen", async ({ roomId }) => {
   if (!socket.user) return;
   const viewerQid = socket.user.memberQid;
@@ -474,36 +448,6 @@ socket.on("deleteMessage", async ({ messageId, roomId }) => {
     console.error("❌ Error deleting message:", err);
   }
 });
-
-// socket.on("deleteMessage", async ({ messageId, roomId }) => {
-//   if (!socket.user || !messageId || !roomId) return;
-//   const senderQid = socket.user.memberQid;
-
-//   try {
-//     const deleted = await chatController.deleteChatMessage(messageId, senderQid);
-//     if (!deleted) return;
-
-//     io.to(roomId).emit("messageDeleted", { messageId, roomId });
-
-//     const lastMsg = await chatController.getLastMessage(roomId);
-
-//     // If the deleted message was the last one → show placeholder
-//     if (lastMsg && lastMsg.messageId === messageId) {
-//       io.emit("roomLastMessageUpdated", {
-//         roomId,
-//         lastMessage: { message: "This message was deleted.", prevMessage: lastMsg.message, messageId },
-//         type: "delete",
-//         senderQid
-//       });
-//     }
-//   } catch (err) {
-//     console.error("❌ Error deleting message:", err);
-//   }
-// });
-
-
-
-
 
   // disconnect for status in future online || offine
   socket.on("disconnect", () => {
