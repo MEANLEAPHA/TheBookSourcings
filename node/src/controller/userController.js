@@ -96,12 +96,9 @@ const createMember = async (req, res) => {
       return res.status(500).json({ message: "Error creating member",  });
     }
 
-    // Send the PIN code via email
+   
     await sendPinCodeEmail(email, pinCode);
 
-    // Optionally create a token here for verification page access (e.g. with user_id)
-    // Example:
-    // You need the new user's email as well — since you inserted it, you have it in req.body.email
       const token = createToken({
         user_id: result.insertId,
         username,
