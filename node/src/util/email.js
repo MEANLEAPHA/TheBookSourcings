@@ -5,10 +5,10 @@ const transporter = nodemailer.createTransport({
     service: 'gmail',
     host: 'smtp.gmail.com',
     port: 465, // use to be 465
-    secure: false, // use to be true
+    secure: true, // use to be true
     auth: {
-        user: "meanleapha@gmail.com",  // Secure email login
-        pass: "xscvjgtsfdosstxp"   // Secure app password
+        user: process.env.EMAIL_USER,       // your Gmail address
+        pass: process.env.EMAIL_PASS    // your Gmail app password
     }
 });
 
