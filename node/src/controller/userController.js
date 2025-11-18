@@ -92,7 +92,7 @@ const createMember = async (req, res) => {
       // Still respond, but warn client
       return res.status(500).json({ message: "User created, but email failed to send." });
     }
-    
+
     // Insert user with pin_code and status = 'unverified', pin_created_at = now()
     const [result] = await db.query(
       `INSERT INTO users (username, email, password, timezone, pin_code, pin_created_at, status)
@@ -108,7 +108,7 @@ const createMember = async (req, res) => {
       const token = createToken({
         user_id: result.insertId,
         username,
-        authorQid: NULL,
+        authorQid: null,
         email,
         timezone: timezone || 'UTC'
       });
