@@ -85,13 +85,13 @@ const createMember = async (req, res) => {
     // Generate 6-digit PIN code
     const pinCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-     try { 
-      await sendPinCodeEmail(email, pinCode);
-    } catch (mailError) {
-      console.error("Email sending failed:", mailError);
-      // Still respond, but warn client
-      return res.status(500).json({ message: "User created, but email failed to send." });
-    }
+    //  try { 
+    //   await sendPinCodeEmail(email, pinCode);
+    // } catch (mailError) {
+    //   console.error("Email sending failed:", mailError);
+    //   // Still respond, but warn client
+    //   return res.status(500).json({ message: "User created, but email failed to send." });
+    // }
 
     // Insert user with pin_code and status = 'unverified', pin_created_at = now()
     const [result] = await db.query(
@@ -104,7 +104,16 @@ const createMember = async (req, res) => {
       return res.status(500).json({ message: "Error creating member",  });
     }
 
-   
+   let emailSent = false;
+try {
+  await sendPinCodeEmail(email, pinCode);
+  emailSent = true;
+} catch (err) {
+  console.error("Email failed:", err);
+}
+
+
+
       const token = createToken({
         user_id: result.insertId,
         username,
@@ -113,15 +122,22 @@ const createMember = async (req, res) => {
         timezone: timezone || 'UTC'
       });
 
+res.status(201).json({
+  message: emailSent
+    ? "Registration successful, please check your email."
+    : "Registration successful, but email could not be sent. Please use 'Resend Code'.",
+  user_id: result.insertId,
+  token,
+  Result: "True"
+});
 
-
-    res.status(201).json({
-      message: "Registration successfully, please check your email for the verification code.",
-      user_id: result.insertId,
-      token,
-      Result: "True"
-      // token
-    });
+    // res.status(201).json({
+    //   message: "Registration successfully, please check your email for the verification code.",
+    //   user_id: result.insertId,
+    //   token,
+    //   Result: "True"
+    //   // token
+    // });
 
   } catch (error) {
     console.error("Error in createMember:", error);
