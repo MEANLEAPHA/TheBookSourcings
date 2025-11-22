@@ -8,15 +8,15 @@
             headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
             success: function(data) {
                 if (!data) return;
-                $('#username').val(data.username || '');
-                $('#usernickname').val(`@${data.nickname || ''}`);
-                $('#bio').val(data.bio || '');
-                $('#website').val(data.websiteUrl || '');
+                $('#username').text(data.username || '');
+                $('#usernickname').text(`@${data.nickname || ''}`);
+                $('#bio').text(data.bio || '');
+                $('#website').text(data.websiteUrl || '');
                 $('#website').attr('href', data.websiteUrl || '');
-                $('#quirkyTag').val(data.playfulLabel || '');
-                $('#occupation').val(`${data.workRole} at ${data.workPlace}` || '');
-                $('#memberQid').val(data.memberQid || '');
-                $('#authorQid').val(data.authorQid || '');
+                $('#quirkyTag').text(data.playfulLabel || '');
+                $('#occupation').text(`${data.workRole} at ${data.workPlace}` || '');
+                $('#memberQid').text(data.memberQid || '');
+                $('#authorQid').text(data.authorQid || '');
 
                 $('#bannerImage').attr('src', data.bannerUrl || '');
                 $('#bannerImage').css('--bg-img', `url(${data.bannerUrl || ''})`);
