@@ -554,6 +554,45 @@ const getFullRegisterData = async (req,res) => {
       return res.status(500).json({ message: "failed to sumbit the full register" });
     }
 }
+const getFullRegisterDataByQid = async (req,res) => {
+    try{
+        const {memberQid} = req.params;
+       const [rows] = await db.query(
+        `SELECT 
+          username,
+          nickname,
+          playfulLabel,
+          pfUrl,
+          bannerUrl,
+          DOB,
+          gender,
+          mood,
+          work,
+          nationality,
+          workPlace,
+          workRole,
+          websiteUrl,
+          bio,
+          authorQid,
+          ghostQid
+          FROM users 
+          WHERE memberQid = ?
+       `,
+        [memberQid]
+       );
+         // ✅ rows is an array
+    if (!rows || rows.length === 0) {
+      return res.status(404).json({ message: "No data found", Result: "False" });
+    }
+
+    // ✅ send data back
+    return res.status(200).json(rows[0]);
+    }
+    catch(error){
+      console.error("Error in getFullRegisterDataByQid:", error);
+      return res.status(500).json({ message: "failed to sumbit the full register" });
+    }
+}
 
 const loadUser = async (req,res) =>{
   try{
@@ -621,6 +660,7 @@ module.exports ={
     verifyResetPin,
     fullRegister,
     getFullRegisterData,
+    getFullRegisterDataByQid,
     loadUser,
     getUser
 }

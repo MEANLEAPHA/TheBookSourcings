@@ -1,0 +1,833 @@
+:root{
+    --background-color:white;
+    --primary-color:#fd7648;
+    --secondary-color: gainsboro;
+    --font-color:rgb(65, 65, 65);
+    --back-con:rgb(245, 245, 245);
+}
+.dark-theme{
+    --background-color:rgb(32, 32, 32);
+    --primary-color:#fd7648;
+    --secondary-color: rgba(220, 220, 220, 0.318);
+    --font-color:rgb(255, 255, 255);
+     --back-con:rgb(40, 40, 40);
+}
+body{
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-color);
+}
+#account-form{
+    width: 85%;
+    height: auto;
+    margin: auto;
+}
+.account-form-header{
+ background-color: var(--back-con);
+}
+#form-div-pf{
+    width: 100%;
+    margin: auto;
+    height: auto;
+    position: relative;
+    padding: 0;
+    margin: 0;
+ 
+}
+#form-div-pf #banner{
+    width: 100%;
+    height: 250px;
+ 
+    position: relative;
+    padding: 0;
+    margin: 0;
+}
+#form-div-pf .profile{
+width: 60%;
+height: auto;
+justify-content: start;
+
+object-fit: cover;
+position: absolute;
+display: flex;
+align-items: end;
+z-index: 1;
+bottom: 10px;
+left: 10px;
+}
+.profile-upload {
+  position: relative;
+
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+ 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+   
+  transition: transform 0.3s ease;
+}
+
+#div-user-name{
+    margin: 0;
+     /* background-color: aqua; */
+    padding:5px 0px 20px 10px;
+    
+}
+#div-user-name p{
+    margin: 0px;
+    font-family: monospace;
+    font-size: x-large;
+   
+}
+#div-user-name #username{
+    font-weight: bold;
+
+}
+#div-user-name #usernickname{
+    opacity: 0.7;
+    font-size: medium;
+ 
+}
+#div-user-name #userFollow{
+    font-size: small;
+    margin-top: 5px;
+}
+ /* Base style */
+.profile-upload {
+  transition: box-shadow 0.3s ease;
+}
+
+/* Mood color classes */
+.mood-yellow {
+  box-shadow: yellow 0px 0px 5px 1px;
+  border: 1px solid yellow;
+}
+.mood-green {
+  box-shadow: green 0px 0px 5px 1px;
+  border: 1px solid green;
+}
+.mood-blue {
+  box-shadow: blue 0px 0px 5px 1px;
+  border: 1px solid blue;
+}
+.mood-purple {
+  box-shadow: purple 0px 0px 5px 1px;
+  border: 1px solid purple;
+}
+.mood-red {
+  box-shadow: red 0px 0px 5px 1px;
+  border: 1px solid red;
+}
+.mood-pink {
+  box-shadow: rgb(255, 105, 130) 0px 0px 5px 1px;
+  border: 1px solid rgb(255, 105, 130);
+}
+.mood-orange {
+  box-shadow: var(--primary-color) 0px 0px 5px 1px;
+  border: 1px solid var(--primary-color);
+}
+
+.profile-upload:hover .edit-profile-span{
+    background-color: black;
+    color: white;
+}
+#form-div-pf .profile .profile-upload #profileImage{
+  width:130pX;
+  height:130pX;
+object-fit:cover;
+  border-radius: 50%;
+
+}
+
+.banner-upload {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+    object-fit:cover;
+    padding: 0;
+  transition: transform 0.3s ease;
+}
+
+/* blurred background */
+.banner-upload::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(20px);
+  transform: scale(1.1);
+  z-index: 0;
+    background-image: var(--bg-img);
+}
+
+/* main image */
+#bannerImage {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding: 0;
+  height: 100%;
+  object-fit: contain; /* keep the full image visible */
+  background: transparent;
+}
+
+#form-div-pf #follow-holder{
+    display: flex;
+    width: 100%;
+    justify-content: end;
+    height: 120px;
+    align-items: center;
+    z-index: 2;
+   background-color: var(--back-con);
+   padding: 20px ;
+   gap: 5px;
+   margin: 0;
+}
+#form-div-pf #follow-holder button{
+   padding: 5px 8px 5px 8px;
+}
+#form-div-pf #follow-holder #btn-friend,#btn-following{
+   background: none;
+   border: none;
+   opacity: 0.7;;
+}
+#form-div-pf #follow-holder #btn-message,#btn-follow,#btn-more{
+   background: none;
+   border: 1px solid var(--primary-color);
+   border-radius: 5px;
+   opacity: 0.7;
+   background-color: var(--background-color);
+
+}
+
+ .user-detail-child{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.7;
+    gap:0px;
+    font-family: monospace;
+    width: 6%;
+    cursor: pointer;
+    padding: 0;
+   margin: 0;
+
+}
+ .user-detail-child:hover{
+    color: var(--primary-color);
+ }
+.countItem{
+    font-size: large;
+    font-weight: bold;
+}
+.spanItem{
+    margin: 0;
+}
+#account-form #btn-2-fetch{
+    width: 100%;
+    display: flex;
+    justify-content: start;
+    gap: 10px;
+    margin-top: 10px;
+    padding: 10px 0px 10px 0px;
+    border-top: 1px solid var(--secondary-color);
+
+}
+#btn-2-fetch button{
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+#div-all-content{
+    display:flex;
+    width: 100%;
+    flex-direction: row-reverse;
+    height: auto;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+.div-all-content-child:first-child{
+    width: 30%;
+    height: auto;
+   
+    margin: 0;
+    padding: 0;
+    
+}
+.sticky{
+position:sticky;
+    top: 10px; 
+    
+}
+#user-info-display, #user-connection-display, #user-post-display, #user-book-display, #user-product-display, #user-fimiliar-display{
+ 
+    height: auto;
+}
+#user-info-display{
+margin-top: 10px;
+box-shadow: 0px 0px 1px 2px var(--back-con);
+ font-family: sans-serif;
+ padding:5px 10px 5px 10px;
+}
+#user-info-display p{
+    margin: 10px;
+    font-size: small;
+}
+#user-info-display p i{
+  opacity: 0.7;
+}
+#bio{
+    font-size: small;
+}
+ #user-connection-display{
+box-shadow: 0px 0px 1px 2px var(--back-con);
+padding:5px 10px 5px 10px;
+border-radius: 5px;
+position: relative;
+margin-top: 10px;
+}
+#user-connection-display p{
+    margin: 10px;
+      font-family: sans-serif;
+}
+#user-connected{
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+#user-connected a{
+    width: calc(100%/3.1);
+    height: auto;
+    text-decoration: none;
+    color: var(--font-color);
+    font-family: sans-serif;
+}
+#user-connected a p{
+    margin: 0px 0px 5px 5px;
+    
+}
+#user-connected a img{
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+.div-all-content-child:last-child{
+    width: 68%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    height: auto;
+}
+
+.div-all-content-child-div{
+border-bottom: 1px solid var(--secondary-color);
+padding-bottom: 10px;
+}
+
+
+
+
+
+
+
+
+
+
+/* Products */
+#user-product-display{
+padding:5px 10px 5px 0px;
+height: auto;
+}
+#user-post-display{
+padding:5px 10px 5px 0px;
+height: auto;
+}
+ 
+.div-all-content-child:last-child .BookContent{
+   
+      height: auto;
+      display: flex;
+      justify-content: start;
+      flex-wrap: wrap;
+      /* border: 1px solid black; */
+      padding: 0;
+      gap: 10px;
+      margin: 0;
+      
+      align-items: flex-start;
+    
+    }
+     .BookContent .saleBook-container{
+      width: calc(100%/4.2);
+      height:auto;
+      overflow: hidden;
+      padding-bottom: 3px;
+    }
+    .saleBook-cover-holder{
+      width: 100%;
+      height:280px;
+      position: relative;
+   
+    }
+    
+     .card-name,.card-book-author-holder,.book-genre-holder{
+        width: 100%;
+        height: 30px;
+        margin: 0;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+        }
+    .card-book-type{
+      width: 100%;
+      height: 25px;
+   
+      padding-top: 10px;
+    }
+    .card-book-price{
+      width: 100%;
+      height: 30px;
+      padding-top: 4px;
+    
+    }
+
+    .saleBook-cover-holder:hover .badge-promotion{
+      visibility: hidden;
+      transition: opacity 1s ease-out;
+    }
+    .badge-promotion{
+      position: absolute;
+      top: 10px;
+      right: -35px;
+      transform: rotate(35deg);
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      padding: 3px 10px 3px 10px;
+      width: 155px;
+      text-align: center;
+      transition: opacity 1s ease-out;
+    }
+    .free-type{
+      background-color: rgba(0, 255, 85, 0.808);
+    }
+    .discount-type{
+      background-color: rgba(255, 0, 0, 0.808);
+    }
+
+    .saleBook-src{
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+    .saleBook-title{
+      font-family: monospace;
+      font-size: large;
+      font-weight: bold;
+      margin: 8px 0;
+    }
+    .book-type{
+      font-size: x-small;
+      margin: 0;
+      color: gray;
+      font-family: sans-serif;
+    }
+
+    .order-saleBook-btn{
+      border: none;
+      background:none;
+      padding: 0;
+      margin-top: 2px;
+      
+    }
+    .order-saleBook-btn:hover{
+      background-color:var(--primary-color);
+      padding-right: 10px;
+      border-radius: 25px;
+      color: white;
+    }
+    .order-saleBook-btn:hover a{
+      color: white;
+    }
+    .order-saleBook-btn a{
+      color: grey;
+      text-decoration: none;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+        transition: gap 0.3s ease; /* animate the gap */
+    }
+    .order-saleBook-btn a i{
+      transform: rotate(40deg);
+      background-color: var(--primary-color);
+      padding: 10px;
+      width: 35px;
+       transition: transform 0.3s ease, background-color 0.3s ease;
+      height: 35px;
+      border-radius: 50%;
+      color: white;
+    }
+    .order-saleBook-btn:hover a  {
+     gap: 0px;
+}
+    .order-saleBook-btn:hover a i {
+  transform: rotate(90deg); 
+  background:none;/* rotate to 90deg on hover */
+}
+#user-info-display .label{
+  font-size: medium;
+  color: var(--primary-color);
+}
+.label{
+  font-size: medium;
+  color: var(--primary-color);
+}
+.user-pf-href p{
+ font-size: small;
+}
+@media screen and (max-width:1290px){
+ 
+ .BookContent .saleBook-container{
+      width: calc(100%/4.3);
+      height:auto;    
+      overflow: hidden;
+    }
+    .saleBook-cover-holder{
+      width: 100%;
+      height:250px;
+      position: relative;
+   
+    }
+}
+
+
+
+@media screen and (max-width:1150px){
+    .saleBook-cover-holder{
+      height:200px;
+     
+    }
+
+}
+/* responsive */
+@media screen and (max-width:1024px){
+
+ #div-all-content{
+    display:flex;
+    width: 100%;
+    flex-direction: column
+}
+ .div-all-content-child:first-child{
+   width: 100%;
+ }
+ .div-all-content-child:last-child{
+   width: 100%;
+ }
+  .sticky{
+    position: relative;
+    display: flex;
+   
+  }
+
+  #user-info-display{
+    width: 50%;
+    box-shadow: none;
+    margin-top: 0px;
+  }
+  #user-connection-display{
+    width: 50%;
+    box-shadow: none;
+    margin-top: 0px;
+  }
+  /* #user-product-display{
+    width: 100%;
+    background-color: #fd7648;
+  }
+  .BookContent{
+    width: 100%;
+  } */
+.BookContent .saleBook-container{
+      width: calc(100%/4.2);
+    }
+    .saleBook-cover-holder{
+      width: 100%;
+      height:250px;
+      position: relative;
+   
+    }
+#form-div{
+    width: 85%;
+}  
+}
+/* responsive */
+@media screen and (max-width:900px){
+ 
+.BookContent .saleBook-container{
+      width: calc(100%/4.2);
+    }
+    .saleBook-cover-holder{
+      width: 100%;
+      height:230px;
+      position: relative;
+   
+    }
+
+}
+@media screen and (max-width:768px){
+   
+    .sticky{
+position:relative;
+   
+flex-direction: column;
+}
+  #user-info-display{
+    width: 100%;
+  }
+  #user-connection-display{
+    width: 100%;
+  }
+    #account-form{
+    width: 99%;
+    height: auto;
+    margin: auto;
+}
+#div-all-content{ 
+    flex-direction: column;
+    margin-top: 0px;
+   
+}
+.div-all-content-child:first-child{
+     width: 100%;
+}
+.div-all-content-child:last-child{
+    width: 100%;
+    height: auto;
+    position: relative;
+    margin: 0;
+    padding: 0;
+}
+#user-info-display{
+box-shadow: none;
+margin-top: 0px;
+ padding:0px 10px 5px 10px;
+}
+#user-connection-display{
+box-shadow: none;
+margin-top: 0px;
+ padding:0px 10px 5px 10px;
+}
+#form-div-pf #banner{
+    height: 210px; 
+}
+ #form-div-pf .profile{
+    bottom: 0px;
+}
+#form-div-pf .profile .profile-upload #profileImage{
+    width: 95px;
+    height: 95px;
+}
+#div-user-name{
+    margin: 0;
+    padding:5px 0px 15px 10px; 
+}
+#div-user-name p{
+    font-size: medium;
+}
+#form-div-pf #follow-holder{
+    height: 78px;
+    /* background-color: #fd7648; */
+}
+#div-user-name{
+    margin: 0;
+    padding:5px 0px 5px 10px;
+    
+}
+#div-user-name #username{
+    font-size: large;
+}
+.user-detail-child:last-child{
+    margin-right: 8px;
+}
+.countItem{
+    font-size: large;
+}
+
+#user-info-display{
+box-shadow: none;
+margin-top: 5px;
+ padding:5px 10px 5px 5px;
+}
+#user-info-display p {
+  margin: 10px 10px 0px 5px;
+}
+#user-connection-display{
+box-shadow: none;
+margin-top: 0px;
+ padding:0px 10px 5px 0px;
+}
+#user-connected a p{
+    margin: 0px 0px 5px 5px;
+    font-size: small;
+}
+#user-book-display{
+padding:5px 0px 5px 10px;
+
+}
+/* #message-container{
+  padding: 0px;
+} */
+#user-post-display{
+padding:5px 0px 5px 10px;
+
+}
+/* product */
+#user-product-display{
+padding:5px 0px 5px 10px;
+}
+ /* .div-all-content-child:last-child .BookContent{
+  justify-content: space-between;
+  
+
+  } */
+   .BookContent .saleBook-container{
+      width: calc(100%/3.15);
+      height: auto;
+      overflow: hidden;
+    }
+    .saleBook-cover-holder{
+      width: 100%;
+      height:290px;
+      position: relative;
+   
+    }
+}
+@media screen and (max-width:600px){
+ #form-div-pf{
+    height: auto; 
+}
+#form-div-pf #banner{
+    height: 180px;
+}
+ #form-div-pf .profile{
+    bottom: 0px;
+}
+#form-div-pf .profile .profile-upload #profileImage{
+    width: 80px;
+    height: 80px;
+}
+#div-user-name{
+    margin: 0;
+    padding:5px 0px 9px 10px;
+    
+}
+#div-user-name p{
+    font-size: small; 
+}
+#div-user-name #username{
+   font-size: large;
+
+}
+#div-user-name #userFollow{
+    font-size: xx-small;
+    margin-top: 5px;
+}
+
+#form-div-pf #follow-holder{
+    height: 71px;
+}
+#form-div-pf #follow-holder button{
+   font-size: small;
+}
+#div-user-name #usernickname{
+    
+    font-size: x-small;
+ 
+}
+
+.countItem{
+    font-size: medium;
+}
+#div-all-content{
+    display: block;
+margin-top: 0px;   
+}
+#user-info-display{
+    width: 100%;
+   margin-bottom: 10px;
+    margin-top: 0px;
+    padding-top: 0px;
+  }
+#div-all-content .div-all-content-child:first-child{
+    width: 100%;
+  margin-top: 0px;
+}
+#user-info-display p{
+font-size: small;
+}
+#user-info-display .label{
+    font-size: medium;
+    
+}
+#div-all-content .div-all-content-child:last-child{
+    width: 100%;
+    
+}
+
+
+#user-connection-display{
+box-shadow: none;
+margin-top: 0px;
+margin-bottom: 10px;
+ padding:0px 5px 5px 0px;
+}
+#user-connected a p{
+    margin: 0px 0px 5px 5px;
+    font-size: small;
+}
+
+
+.label{
+    font-size: medium;
+    
+}
+
+
+
+
+
+
+
+
+
+/* product */
+#user-product-display{
+padding:5px 5px 5px 10px;
+}
+#user-book-display{
+padding:5px 5px 5px 10px;
+}
+#user-post-display{
+padding:5px 5px 5px 10px;
+}
+.BookContent .saleBook-container{
+      width: calc(100%/2.07);
+    }
+    .saleBook-cover-holder{
+      width: 100%;
+      height:280px;
+      position: relative;
+   
+    }
+}

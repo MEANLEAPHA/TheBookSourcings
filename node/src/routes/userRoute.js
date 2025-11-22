@@ -14,6 +14,7 @@ const {
   changePassword,
   fullRegister,
   getFullRegisterData,
+  getFullRegisterDataByQid,
   loadUser,
   getUser
   // validate_token
@@ -34,6 +35,7 @@ const TheBookSourcingUser = (app) => {
 );
 
   app.get('/getFullRegisterData', authMiddleware,  getFullRegisterData);
+  app.get('/getFullRegisterDataByQid/:memberQid',  getFullRegisterDataByQid);
   app.post('/verify', authMiddleware, verifyMember);
   app.post('/resend-pin', authMiddleware, resendPin);
   app.get('/profile', authMiddleware, (req, res) => {

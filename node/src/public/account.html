@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meanleap Ha - Account</title>
+    <script src="https://kit.fontawesome.com/ec7a51a641.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="assets/css/chat/community/community.css">
+    <link rel="stylesheet" href="assets/css/account/account.css">
+</head>
+<body>
+    <div id="account-form">
+        <div class="account-form-header">
+            <div id="form-div-pf">
+                    <div id="banner">
+                    <div class="banner-upload" id="bannerPreview">
+                            <img id="bannerImage">
+                        </div>
+                    </div>
+                    <div class="profile-section-right profile">
+                        <div class="profile-upload" id="profilePreview">
+                            <img id="profileImage">
+                        </div>
+                        <div id="div-user-name">
+                            <p id="username"></p>
+                            <p id="usernickname"></p>
+                            <p id="userFollow">130 Followers</p>
+                        </div>
+                    </div>
+                    <div id="follow-holder">
+                        <button id="btn-follow"><i class="fa-solid fa-plus"></i> Follow</button>
+                        <!-- <button id="btn-following"><i class="fa-solid fa-check"></i> Following</button> -->
+                        <!-- <button id="btn-friend"><i class="fa-solid fa-user-check"></i> Friend</button>
+                        <button id="btn-message"><i class="fa-solid fa-paper-plane"></i> Message</button> -->
+                        <!-- <button id="btn-message"><i class="fa-solid fa-pen-to-square"></i> Edit</button> -->
+                        <button class="dropdown" id="btn-more"><i class="fa-solid fa-ellipsis" data-bs-toggle="dropdown" aria-hidden="true" style="cursor: pointer;"></i><ul class="dropdown-menu">
+                                <li class="li-opt"><a class="dropdown-item report-option"><i class="fa-solid fa-flag" aria-hidden="true"></i> Report</a></li>
+                                <li class="li-opt"><a class="dropdown-item copy-option" href="#"><i class="fa-solid fa-link" aria-hidden="true"></i> Copy link</a></li>
+                                </ul>
+                        </button>
+                    </div>  
+            </div>
+            <div id="btn-2-fetch">
+                <button>Profile</button>
+                <button>Books</button>
+                <button>Posts</button>
+                <button>Products</button>
+            </div>
+        </div>    
+        <div id="div-all-content">
+            <div class="div-all-content-child">
+                <div class="sticky">
+                    <div id="user-info-display" >
+                        <p class="label">Introduction</p>
+                        <p><span id="bio"></span></p>
+                        <p><i class="fa-solid fa-tag"></i><a id="quirkyTag"> </a></p>
+                        <p><i class="fa-solid fa-suitcase"></i><a id="occupation"> </a></p>
+                        <p><i class="fa-solid fa-globe"></i><a id="website"> </a></p>
+                        <p><i class="fa-regular fa-address-card"></i> <a>Member id : <span id="memberQid"></span></a> </p>
+                        <p><i class="fa-regular fa-address-card"></i> <a>Author id : <span id="authorQid"></span></a> </p>
+
+                    </div>
+                    <div id="user-connection-display">
+                        <div class="d-flex flex-row justify-content-between w-100 ">
+                            <p class="label">Connections</p>
+                            <p><a href="">See all</a></p>
+                        </div>
+                        <!-- <p class="label">Connections</p> -->
+                        <div id="user-connected">
+                            <a href="" class="user-pf-href">
+                                <img src="https://bootdey.com/img/Content/avatar/avatar5.png" class="user-pf">
+                                <p>username1</p>
+                            </a>
+                            <a href="" class="user-pf-href">
+                                <img src="https://bootdey.com/img/Content/avatar/avatar3.png" class="user-pf">
+                                <p>username1</p>
+                            </a>
+                            <a href="" class="user-pf-href">
+                                <img src="https://bootdey.com/img/Content/avatar/avatar4.png" class="user-pf">
+                                <p>username1</p>
+                            </a>
+                            <a href="" class="user-pf-href">
+                                <img src="https://bootdey.com/img/Content/avatar/avatar2.png" class="user-pf">
+                                <p>username1</p>
+                            </a>
+                            <a href="" class="user-pf-href">
+                                <img src="https://bootdey.com/img/Content/avatar/avatar5.png" class="user-pf">
+                                <p>username1</p>
+                            </a>
+                            <a href="" class="user-pf-href">
+                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="user-pf">
+                                <p>username1</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="div-all-content-child">
+                <div id="user-book-display">
+                    <!-- <p class="label">Books</p> -->
+                     <div class="d-flex flex-row justify-content-between w-100" style="padding-right: 10px;">
+                            <p class="label">Books</p>
+                            <p><a href="">See all</a></p>
+                    </div>
+                    <div class="BookContent">
+                        
+                        <div class="saleBook-container">
+                            <div class="saleBook">
+                            <div class="saleBook-cover-holder">
+                         
+                                <img src="https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1729098091i/218559595.jpg" class="saleBook-src" alt="Free Book">
+                            </div>
+                            <div class="card-body"> 
+                                <div class="card-name">
+                                <p class="saleBook-title">The Alchemist greatest of all the time</p>
+                                </div>
+                                <div class="card-book-type book-genre-holder">
+                                <p class="book-type book-genre">Romance, Fiction</p>
+                                </div>
+                                <div class="card-book-price card-book-author-holder">
+                                <p class="mb-1"><span class="book-author">Robert Paul Bowman, Paulo Coelho</span></p>
+                                </div>
+                                <button class="order-saleBook-btn"><a href="aboutSaleBook.html?bookSid=1"><i class="fa-solid fa-arrow-up"></i>View Book</a></button>
+                            </div>
+                            </div>
+                        </div>
+
+                        
+                        <div class="saleBook-container">
+                            <div class="saleBook">
+                            <div class="saleBook-cover-holder">
+                             
+                                <img src="https://media-cldnry.s-nbcnews.com/image/upload/t_fit-320w,f_auto,q_auto:best/rockcms/2024-12/71dZkTxmnQL-5a6ee5.jpg" class="saleBook-src" alt="Discount Book">
+                            </div>
+                            <div class="card-body"> 
+                                <div class="card-name">
+                                <p class="saleBook-title">The Alchemist greatest of all the time</p>
+                                </div>
+                                <div class="card-book-type book-genre-holder">
+                                <p class="book-type book-genre">Romance, Fiction</p>
+                                </div>
+                                <div class="card-book-price card-book-author-holder">
+                                <p class="mb-1"><span class="book-author">Robert Paul Bowman, Paulo Coelho</span></p>
+                                </div>
+                                <button class="order-saleBook-btn"><a href="aboutSaleBook.html?bookSid=1"><i class="fa-solid fa-arrow-up"></i>View Book</a></button>
+                            </div>
+                            </div>
+                        </div>
+                        
+                        <div class="saleBook-container">
+                            <div class="saleBook">
+                            <div class="saleBook-cover-holder">
+                                <img src="https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1720712855i/216223604.jpg" class="saleBook-src" alt="Premium Book">
+                            </div>
+                            <div class="card-body"> 
+                                <div class="card-name">
+                                <p class="saleBook-title">The Alchemist greatest of all the time</p>
+                                </div>
+                                <div class="card-book-type book-genre-holder">
+                                <p class="book-type book-genre">Romance, Fiction</p>
+                                </div>
+                                <div class="card-book-price card-book-author-holder">
+                                <p class="mb-1"><span class="book-author">Robert Paul Bowman, Paulo Coelho</span></p>
+                                </div>
+                                <button class="order-saleBook-btn"><a href="aboutSaleBook.html?bookSid=1"><i class="fa-solid fa-arrow-up"></i>View Book</a></button>
+                            </div>
+                            </div>
+                        </div>
+                        
+                        <div class="saleBook-container">
+                            <div class="saleBook">
+                            <div class="saleBook-cover-holder">
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_BuyUI-RPbFEVZEN0Qz-Hmw8Emlmc6KasYoJxIsgQ11S64L-lNvcRi_Z3vuCCHDMGqkc&usqp=CAU" class="saleBook-src" alt="Regular Book">
+                            </div>
+                            <div class="card-body"> 
+                                <div class="card-name">
+                                <p class="saleBook-title">The Alchemist greatest of all the time</p>
+                                </div>
+                                <div class="card-book-type book-genre-holder">
+                                <p class="book-type book-genre">Romance, Fiction</p>
+                                </div>
+                                <div class="card-book-price card-book-author-holder">
+                                <p class="mb-1"><span class="book-author">Robert Paul Bowman, Paulo Coelho</span></p>
+                                </div>
+                                <button class="order-saleBook-btn"><a href="aboutSaleBook.html?bookSid=1"><i class="fa-solid fa-arrow-up"></i>View Book</a></button>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="saleBook-container">
+                            <div class="saleBook">
+                            <div class="saleBook-cover-holder">
+                                <img src="https://media-cldnry.s-nbcnews.com/image/upload/t_fit-320w,f_auto,q_auto:best/rockcms/2024-12/71dZkTxmnQL-5a6ee5.jpg" class="saleBook-src" alt="Discount Book">
+                            </div>
+                            <div class="card-body"> 
+                                <div class="card-name">
+                                <p class="saleBook-title">The Alchemist greatest of all the time</p>
+                                </div>
+                                <div class="card-book-type book-genre-holder">
+                                <p class="book-type book-genre">Romance, Fiction</p>
+                                </div>
+                                <div class="card-book-price card-book-author-holder">
+                                <p class="mb-1"><span class="book-author">Robert Paul Bowman, Paulo Coelho</span></p>
+                                </div>
+                                <button class="order-saleBook-btn"><a href="aboutSaleBook.html?bookSid=1"><i class="fa-solid fa-arrow-up"></i>View Book</a></button>
+                            </div>
+                            </div>
+                        </div>
+                        
+                        <div class="saleBook-container">
+                            <div class="saleBook">
+                            <div class="saleBook-cover-holder">
+                                <img src="https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1729098091i/218559595.jpg" class="saleBook-src" alt="Free Book">
+                            </div>
+                            <div class="card-body"> 
+                                <div class="card-name">
+                                <p class="saleBook-title">The Alchemist greatest of all the time</p>
+                                </div>
+                                <div class="card-book-type book-genre-holder">
+                                <p class="book-type book-genre">Romance, Fiction</p>
+                                </div>
+                                <div class="card-book-price card-book-author-holder">
+                                <p class="mb-1"><span class="book-author">Robert Paul Bowman, Paulo Coelho</span></p>
+                                </div>
+                                <button class="order-saleBook-btn"><a href="aboutSaleBook.html?bookSid=1"><i class="fa-solid fa-arrow-up"></i>View Book</a></button>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="saleBook-container">
+                            <div class="saleBook">
+                            <div class="saleBook-cover-holder">
+                                <img src="https://media-cldnry.s-nbcnews.com/image/upload/t_fit-320w,f_auto,q_auto:best/rockcms/2024-12/71dZkTxmnQL-5a6ee5.jpg" class="saleBook-src" alt="Discount Book">
+                            </div>
+                            <div class="card-body"> 
+                                <div class="card-name">
+                                <p class="saleBook-title">The Alchemist greatest of all the time</p>
+                                </div>
+                                <div class="card-book-type book-genre-holder">
+                                <p class="book-type book-genre">Romance, Fiction</p>
+                                </div>
+                                <div class="card-book-price card-book-author-holder">
+                                <p class="mb-1"><span class="book-author">Robert Paul Bowman, Paulo Coelho</span></p>
+                                </div>
+                                <button class="order-saleBook-btn"><a href="aboutSaleBook.html?bookSid=1"><i class="fa-solid fa-arrow-up"></i>View Book</a></button>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="saleBook-container">
+                            <div class="saleBook">
+                            <div class="saleBook-cover-holder">
+                                <img src="https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1720712855i/216223604.jpg" class="saleBook-src" alt="Premium Book">
+                            </div>
+                            <div class="card-body">
+                                <p class="saleBook-title">The Alchemist</p>
+                                <p class="book-type">AUDIOBOOK</p>
+                                <p class="mb-1"><span class="fw-bold ">$25</span></p>
+                                <button class="order-saleBook-btn"><a href="aboutSaleBook.html?bookSid=3"><i class="fa-solid fa-arrow-up"></i>View Book</a></button>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+                 <div id="user-post-display">
+                    <!-- <p class="label">Recent posts</p> -->
+                     <div class="d-flex flex-row justify-content-between w-100" style="padding-right: 5px;">
+                            <p class="label">Recent posts</p>
+                            <p><a href="">See all</a></p>
+                    </div>
+                    <div id="message-container">
+                        <div class="post" data-id="113"><div class="post-header"><a href="aboutUser?memberId=TBS000001M"><img src="../../assets/img/pf.jpg" alt="user-profile" class="userProfile"></a><div class="post-header-child-right"><div class="post-header-child-right-top"><p class="username" style="cursor: pointer; margin: 0px;">Meanleap Hak</p><p class="feelingDisplay">is feeling 😩 overwhelmed</p></div><div class="post-header-child-right-bottom"><p class="postAt">12 days ago</p></div></div><div class="dropdown absolute-top-right"><i class="fa-solid fa-ellipsis" data-bs-toggle="dropdown" aria-hidden="true" style="cursor: pointer;"></i><ul class="dropdown-menu">
+                            <li class="li-opt"><a class="dropdown-item report-option"><i class="fa-solid fa-flag" aria-hidden="true"></i> Report</a></li>
+                            <li class="li-opt"><a class="dropdown-item copy-option" href="#"><i class="fa-solid fa-link" aria-hidden="true"></i> Copy link</a></li>
+                            </ul></div></div><div class="post-body"><p class="post-text">meanleaphaTheGreat</p><div class="post-thumbnail position-relative"><div class="carousel slide" id="carousel-113" data-bs-ride="carousel" data-bs-interval="8000"><div class="carousel-inner"><div class="carousel-item active"><div class="blur-wrapper" style="--bg-url: url(https://the-book-sourcing-2025.s3.ap-southeast-1.amazonaws.com/community/1762764520354-Screenshot%202024-12-26%20142506.png);"><div class="media-container"><img src="https://the-book-sourcing-2025.s3.ap-southeast-1.amazonaws.com/community/1762764520354-Screenshot%202024-12-26%20142506.png" class="post-thumbnail-img" style="cursor: pointer;"></div></div></div><div class="carousel-item"><div class="blur-wrapper" style="--bg-url: url(https://the-book-sourcing-2025.s3.ap-southeast-1.amazonaws.com/community/1762764521502-Screenshot%202024-12-26%20142637.png);"><div class="media-container"><img src="https://the-book-sourcing-2025.s3.ap-southeast-1.amazonaws.com/community/1762764521502-Screenshot%202024-12-26%20142637.png" class="post-thumbnail-img" style="cursor: pointer;"></div></div></div><div class="carousel-item"><div class="blur-wrapper" style="--bg-url: url(https://the-book-sourcing-2025.s3.ap-southeast-1.amazonaws.com/community/1762764521853-Screenshot%202024-12-26%20144242.png);"><div class="media-container"><img src="https://the-book-sourcing-2025.s3.ap-southeast-1.amazonaws.com/community/1762764521853-Screenshot%202024-12-26%20144242.png" class="post-thumbnail-img" style="cursor: pointer;"></div></div></div><div class="carousel-item"><div class="blur-wrapper" style="--bg-url: url(https://the-book-sourcing-2025.s3.ap-southeast-1.amazonaws.com/community/1762764522530-Screenshot%202024-12-26%20145108.png);"><div class="media-container"><img src="https://the-book-sourcing-2025.s3.ap-southeast-1.amazonaws.com/community/1762764522530-Screenshot%202024-12-26%20145108.png" class="post-thumbnail-img" style="cursor: pointer;"></div></div></div><div class="carousel-item"><div class="blur-wrapper" style="--bg-url: url(https://the-book-sourcing-2025.s3.ap-southeast-1.amazonaws.com/community/1762764522883-Screenshot%202024-12-26%20160435.png);"><div class="media-container"><img src="https://the-book-sourcing-2025.s3.ap-southeast-1.amazonaws.com/community/1762764522883-Screenshot%202024-12-26%20160435.png" class="post-thumbnail-img" style="cursor: pointer;"></div></div></div></div></div><div class="carousel-counter position-absolute">1/5</div><button class="carousel-control-prev" type="button" data-bs-target="#carousel-113" data-bs-slide="prev"><span class="carousel-control-prev-icon"></span></button><button class="carousel-control-next" type="button" data-bs-target="#carousel-113" data-bs-slide="next"><span class="carousel-control-next-icon"></span></button></div><div class="post-media-count">
+                            <div>
+                            <p><span class="post-like-count">1</span> Likes</p>
+                            </div>
+                            <div class="post-media-count-child-right">
+                            <p><span class="post-comment-count">0</span> comments</p>
+                            <p><span class="post-repost-count">0</span> reposts</p>
+                            </div>
+                        </div><div class="post-media-button"><button class="likeBtn media-btn" data-id="113"><i class="fa-solid fa-heart" aria-hidden="true"></i> <span style="color: grey;">Like</span></button><button class="favBtn media-btn" data-id="113"><i class="fa-solid fa-bookmark" aria-hidden="true"></i> <span style="color: grey;">Favorites<span></span></span></button><button class="commentBtn media-btn" data-id="113"><i class="fa-solid fa-comment" aria-hidden="true"></i> <span style="color: grey;">Comment</span></button><button class="repostBtn media-btn" data-id="113"><i class="fa-solid fa-share-from-square" aria-hidden="true"></i> <span style="color: grey;">Repost</span></button></div></div></div>
+                        <div class="post" data-id="112"><div class="post-header"><a href="aboutUser?memberId=TBS000001M"><img src="../../assets/img/pf.jpg" alt="user-profile" class="userProfile"></a><div class="post-header-child-right"><div class="post-header-child-right-top"><p class="username" style="cursor: pointer; margin: 0px;">Meanleap Hak</p></div><div class="post-header-child-right-bottom"><p class="postAt">14 days ago</p></div></div><div class="dropdown absolute-top-right"><i class="fa-solid fa-ellipsis" data-bs-toggle="dropdown" aria-hidden="true" style="cursor: pointer;"></i><ul class="dropdown-menu">
+                            <li class="li-opt"><a class="dropdown-item report-option"><i class="fa-solid fa-flag" aria-hidden="true"></i> Report</a></li>
+                            <li class="li-opt"><a class="dropdown-item copy-option" href="#"><i class="fa-solid fa-link" aria-hidden="true"></i> Copy link</a></li>
+                            </ul></div></div><div class="post-body"><p class="post-text">bruh</p><div class="repost-wrapper"><div class="repost-header"><a href="aboutUser?memberId=TBS000001M"><img src="../../assets/img/pf.jpg" alt="repost-user" class="repost-userProfile"></a><div class="repost-header-right"><div class="repost-header-child-right-top"><p class="repost-username">Meanleap Hak</p></div><div class="repost-header-child-right-bottom"><p class="repost-time">17 days ago</p></div></div></div><div class="repost-body"><p class="repost-text"></p><div class="repost-thumbnail position-relative"><div class="repost-blur-wrapper" style="--bg-url: url(https://the-book-sourcing-2025.s3.ap-southeast-1.amazonaws.com/community/1762309977977-otthorD.png);"><div class="repost-media-container"><img src="https://the-book-sourcing-2025.s3.ap-southeast-1.amazonaws.com/community/1762309977977-otthorD.png" class="repost-img" style="cursor: pointer;"></div></div></div></div></div><div class="post-media-count">
+                            <div>
+                            <p><span class="post-like-count">0</span> Likes</p>
+                            </div>
+                            <div class="post-media-count-child-right">
+                            <p><span class="post-comment-count">0</span> comments</p>
+                            <p><span class="post-repost-count">0</span> reposts</p>
+                            </div>
+                        </div><div class="post-media-button"><button class="likeBtn media-btn" data-id="112"><i class="fa-solid fa-heart" aria-hidden="true"></i> <span style="color: grey;">Like</span></button><button class="favBtn media-btn" data-id="112"><i class="fa-solid fa-bookmark" aria-hidden="true"></i> <span style="color: grey;">Favorites<span></span></span></button><button class="commentBtn media-btn" data-id="112"><i class="fa-solid fa-comment" aria-hidden="true"></i> <span style="color: grey;">Comment</span></button><button class="repostBtn media-btn" data-id="112"><i class="fa-solid fa-share-from-square" aria-hidden="true"></i> <span style="color: grey;">Repost</span></button></div></div></div>
+                    </div>
+                 </div>
+                 <div id="user-product-display">
+                    <!-- <p class="label">Products</p> -->
+                     <div class="d-flex flex-row justify-content-between w-100" style="padding-right: 10px;">
+                            <p class="label">Products</p>
+                            <p><a href="">See all</a></p>
+                    </div>
+                    <div class="BookContent">
+                        <!-- Free Book -->
+                        <div class="saleBook-container">
+                            <div class="saleBook">
+                            <div class="saleBook-cover-holder">
+                                <div class="badge-promotion free-type"><span class="sale-type">Free</span></div>
+                                <img src="https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1729098091i/218559595.jpg" class="saleBook-src" alt="Free Book">
+                            </div>
+                            <div class="card-body"> 
+                                <div class="card-name">
+                                <p class="saleBook-title">The Alchemist greatest of all the time</p>
+                                </div>
+                                <div class="card-book-type">
+                                <p class="book-type">EBOOK</p>
+                                </div>
+                                <div class="card-book-price">
+                                <p class="mb-1"><span class="fw-bold ">$0</span></p>
+                                </div>
+                                <button class="order-saleBook-btn"><a href="aboutSaleBook.html?bookSid=1"><i class="fa-solid fa-arrow-up"></i>View Book</a></button>
+                            </div>
+                            </div>
+                        </div>
+
+                        <!-- Discount Book -->
+                        <div class="saleBook-container">
+                            <div class="saleBook">
+                            <div class="saleBook-cover-holder">
+                                <div class="badge-promotion discount-type"><span class="sale-type">-20%</span></div>
+                                <img src="https://media-cldnry.s-nbcnews.com/image/upload/t_fit-320w,f_auto,q_auto:best/rockcms/2024-12/71dZkTxmnQL-5a6ee5.jpg" class="saleBook-src" alt="Discount Book">
+                            </div>
+                            <div class="card-body">
+                                <p class="saleBook-title">The Alchemist</p>
+                                <p class="book-type">HARDCOVER</p>
+                                <p class="mb-1">
+                                <span class="fw-bold ">$8</span>
+                                <small class="text-decoration-line-through text-danger ms-2">$10</small>
+                                </p>
+                                <button class="order-saleBook-btn"><a href="aboutSaleBook.html?bookSid=2"><i class="fa-solid fa-arrow-up"></i>View Book</a></button>
+                            </div>
+                            </div>
+                        </div>
+                        <!-- Premium Book -->
+                        <div class="saleBook-container">
+                            <div class="saleBook">
+                            <div class="saleBook-cover-holder">
+                                <img src="https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1720712855i/216223604.jpg" class="saleBook-src" alt="Premium Book">
+                            </div>
+                            <div class="card-body">
+                                <p class="saleBook-title">The Alchemist</p>
+                                <p class="book-type">AUDIOBOOK</p>
+                                <p class="mb-1"><span class="fw-bold ">$25</span></p>
+                                <button class="order-saleBook-btn"><a href="aboutSaleBook.html?bookSid=3"><i class="fa-solid fa-arrow-up"></i>View Book</a></button>
+                            </div>
+                            </div>
+                        </div>
+                        <!-- Regular Book -->
+                        <div class="saleBook-container">
+                            <div class="saleBook">
+                            <div class="saleBook-cover-holder">
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_BuyUI-RPbFEVZEN0Qz-Hmw8Emlmc6KasYoJxIsgQ11S64L-lNvcRi_Z3vuCCHDMGqkc&usqp=CAU" class="saleBook-src" alt="Regular Book">
+                            </div>
+                            <div class="card-body">
+                                <p class="saleBook-title">The Alchemist</p>
+                                <p class="book-type">PAPERBACK</p>
+                                <p class="mb-1"><span class="fw-bold ">$12</span></p>
+                                <button class="order-saleBook-btn"><a href="aboutSaleBook.html?bookSid=4"><i class="fa-solid fa-arrow-up"></i>View Book</a></button>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="saleBook-container">
+                            <div class="saleBook">
+                            <div class="saleBook-cover-holder">
+                                <div class="badge-promotion discount-type"><span class="sale-type">-4$</span></div>
+                                <img src="https://media-cldnry.s-nbcnews.com/image/upload/t_fit-320w,f_auto,q_auto:best/rockcms/2024-12/71dZkTxmnQL-5a6ee5.jpg" class="saleBook-src" alt="Discount Book">
+                            </div>
+                            <div class="card-body">
+                                <p class="saleBook-title">The Alchemist</p>
+                                <p class="book-type">HARDCOVER</p>
+                                <p class="mb-1">
+                                <span class="fw-bold ">$8</span>
+                                <small class="text-decoration-line-through text-danger ms-2">$10</small>
+                                </p>
+                                <button class="order-saleBook-btn"><a href="aboutSaleBook.html?bookSid=2"><i class="fa-solid fa-arrow-up"></i>View Book</a></button>
+                            </div>
+                            </div>
+                        </div>
+                        <!-- Free Book -->
+                        <div class="saleBook-container">
+                            <div class="saleBook">
+                            <div class="saleBook-cover-holder">
+                                <div class="badge-promotion free-type"><span class="sale-type">Free</span></div>
+                                <img src="https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1729098091i/218559595.jpg" class="saleBook-src" alt="Free Book">
+                            </div>
+                            <div class="card-body"> 
+                                <div class="card-name">
+                                <p class="saleBook-title">The Alchemist greatest of all the time</p>
+                                </div>
+                                <div class="card-book-type">
+                                <p class="book-type">EBOOK</p>
+                                </div>
+                                <div class="card-book-price">
+                                <p class="mb-1"><span class="fw-bold ">$15</span></p>
+                                </div>
+                                <button class="order-saleBook-btn"><a href="aboutSaleBook.html?bookSid=1"><i class="fa-solid fa-arrow-up"></i>View Book</a></button>
+                            </div>
+                            </div>
+                        </div>
+
+                        <!-- Discount Book -->
+                        <div class="saleBook-container">
+                            <div class="saleBook">
+                            <div class="saleBook-cover-holder">
+                                <div class="badge-promotion discount-type"><span class="sale-type">-20%</span></div>
+                                <img src="https://media-cldnry.s-nbcnews.com/image/upload/t_fit-320w,f_auto,q_auto:best/rockcms/2024-12/71dZkTxmnQL-5a6ee5.jpg" class="saleBook-src" alt="Discount Book">
+                            </div>
+                            <div class="card-body">
+                                <p class="saleBook-title">The Alchemist</p>
+                                <p class="book-type">HARDCOVER</p>
+                                <p class="mb-1">
+                                <span class="fw-bold ">$8</span>
+                                <small class="text-decoration-line-through text-danger ms-2">$10</small>
+                                </p>
+                                <button class="order-saleBook-btn"><a href="aboutSaleBook.html?bookSid=2"><i class="fa-solid fa-arrow-up"></i>View Book</a></button>
+                            </div>
+                            </div>
+                        </div>
+                        <!-- Premium Book -->
+                        <div class="saleBook-container">
+                            <div class="saleBook">
+                            <div class="saleBook-cover-holder">
+                                <img src="https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1720712855i/216223604.jpg" class="saleBook-src" alt="Premium Book">
+                            </div>
+                            <div class="card-body">
+                                <p class="saleBook-title">The Alchemist</p>
+                                <p class="book-type">AUDIOBOOK</p>
+                                <p class="mb-1"><span class="fw-bold ">$25</span></p>
+                                <button class="order-saleBook-btn"><a href="aboutSaleBook.html?bookSid=3"><i class="fa-solid fa-arrow-up"></i>View Book</a></button>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+                 <div id="user-fimiliar-display">
+                    <p class="label">Fimiliar users</p>
+                 </div>
+            </div>
+        </div>
+    </div>
+    <!-- <script>
+        const imgBanner = document.getElementById('bannerImage').src;
+        document.getElementById('bannerPreview').style.setProperty('--bg-img', `url(${imgBanner})`);
+    </script> -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="assets/js/account/account.js"></script>
+</body>
+</html>
