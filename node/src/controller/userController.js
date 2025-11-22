@@ -574,7 +574,8 @@ const getFullRegisterDataByQid = async (req,res) => {
           websiteUrl,
           bio,
           authorQid,
-          ghostQid
+          ghostQid,
+          memberQid
           FROM users 
           WHERE memberQid = ?
        `,
