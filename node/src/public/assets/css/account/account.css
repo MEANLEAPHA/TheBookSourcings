@@ -497,6 +497,38 @@ height: auto;
 .user-pf-href p{
  font-size: small;
 }
+
+
+
+/* Mood color classes */
+.mood-yellow {
+  box-shadow: yellow 0px 0px 5px 1px;
+  border: 1px solid yellow;
+}
+.mood-green {
+  box-shadow: green 0px 0px 5px 1px;
+  border: 1px solid green;
+}
+.mood-blue {
+  box-shadow: blue 0px 0px 5px 1px;
+  border: 1px solid blue;
+}
+.mood-purple {
+  box-shadow: purple 0px 0px 5px 1px;
+  border: 1px solid purple;
+}
+.mood-red {
+  box-shadow: red 0px 0px 5px 1px;
+  border: 1px solid red;
+}
+.mood-pink {
+  box-shadow: rgb(255, 105, 130) 0px 0px 5px 1px;
+  border: 1px solid rgb(255, 105, 130);
+}
+.mood-orange {
+  box-shadow: var(--primary-color) 0px 0px 5px 1px;
+  border: 1px solid var(--primary-color);
+}
 @media screen and (max-width:1290px){
  
  .BookContent .saleBook-container{

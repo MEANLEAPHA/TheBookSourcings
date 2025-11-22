@@ -14,21 +14,17 @@
                 $('#website').val(data.websiteUrl || '');
                 $('#website').attr('href', data.websiteUrl || '');
                 $('#quirkyTag').val(data.playfulLabel || '');
-                $('#occupation').val(`${data.workRol}} at ${data.workPlace}` || '');
+                $('#occupation').val(`${data.workRole} at ${data.workPlace}` || '');
                 $('#memberQid').val(data.memberQid || '');
                 $('#authorQid').val(data.authorQid || '');
 
                 $('#bannerImage').attr('src', data.bannerUrl || '');
-                $('#bannerImage').style.setProperty('--bg-img', `url(${data.bannerUrl || ''})`);
+                $('#bannerImage').css('--bg-img', `url(${data.bannerUrl || ''})`);
 
                 $('#profileImage').attr('src', data.pfUrl || '');
-                $('#profileImage').classList.add(`mood-${data.mood}`);
+                $('#profileImage').addClass(`mood-${data.mood}`);
 
-                // const profileUpload = document.getElementById("profilePreview");
-                // if (data.mood) {
-                //     profileUpload.className = profileUpload.className.replace(/\bmood-\w+\b/g, "").trim();
-                //     profileUpload.classList.add(`mood-${data.mood}`);
-                // }
+            
             
             },
             error: function(err) {
