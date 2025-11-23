@@ -34,6 +34,153 @@ const getFollowDetailsWithStatus = async (req, res) => {
   }
 };
 
+// const toggleFollowLogic = async (followerQid, followedQid) => {
+//   if (followerQid === followedQid) {
+//     throw new Error("You cannot follow yourself");
+//   }
+
+//   // Check if record exists
+//   const [rows] = await db.query(
+//     "SELECT followed, notified FROM user_follow_status WHERE followerQid = ? AND followedQid = ?",
+//     [followerQid, followedQid]
+//   );
+
+//   let followed;
+
+//   if (rows.length > 0) {
+//     // Toggle follow
+//     followed = rows[0].followed ? 0 : 1;
+
+//     await db.query(
+//       "UPDATE user_follow_status SET followed = ?, updated_at = NOW() WHERE followerQid = ? AND followedQid = ?",
+//       [followed, followerQid, followedQid]
+//     );
+
+//     if (followed === 0) {
+//       // 🧩 Unfollow: clear mutual + notified
+//       await db.query(
+//         "UPDATE user_follow_status SET is_mutual = 0, notified = 0 WHERE (followerQid = ? AND followedQid = ?) OR (followerQid = ? AND followedQid = ?)",
+//         [followerQid, followedQid, followedQid, followerQid]
+//       );
+
+//       // 🧩 Delete the old follow notification
+//       await db.query(
+//         "DELETE FROM notifications WHERE senderQid = ? AND receiverQid = ? AND type = 'follow'",
+//         [followerQid, followedQid]
+//       );
+//        await db.query(
+//         `UPDATE chatRooms 
+//         SET soft_deleted_by = ? 
+//         WHERE ((buyerQid = ? AND sellerQid = ?) OR (buyerQid = ? AND sellerQid = ?))
+//           AND type = 'friend' AND soft_deleted_by IS NULL`,
+//         [followerQid, followerQid, followedQid, followedQid, followerQid]
+//       );
+
+//       // Check if both already unfollowed (mutual 0)
+//       const [bothUnfollow] = await db.query(
+//         `SELECT * FROM user_follow_status 
+//         WHERE ((followerQid = ? AND followedQid = ?) OR (followerQid = ? AND followedQid = ?))
+//           AND followed = 1`,
+//         [followerQid, followedQid, followedQid, followerQid]
+//       );
+
+//       if (bothUnfollow.length === 0) {
+//         // Both unfollowed → hard delete chat room
+//         await db.query(
+//           `DELETE FROM chatRooms 
+//           WHERE ((buyerQid = ? AND sellerQid = ?) OR (buyerQid = ? AND sellerQid = ?))
+//             AND type = 'friend'`,
+//           [followerQid, followedQid, followedQid, followerQid]
+//         );
+//   }
+//     } 
+//     else if (rows[0].notified === 0) {
+//       // 🧩 Re-follow: send notification again
+//       const [sender] = await db.query(
+//         "SELECT username FROM users WHERE memberQid = ?",
+//         [followerQid]
+//       );
+
+//       const senderName = sender.length > 0 ? sender[0].username : "Someone";
+
+//       await db.query(
+//         `INSERT INTO notifications (senderQid, receiverQid, type, message)
+//          VALUES (?, ?, 'follow', ?)`,
+//         [followerQid, followedQid, `👋 ${senderName} started following you!`]
+//       );
+
+//       await db.query(
+//         "UPDATE user_follow_status SET notified = 1 WHERE followerQid = ? AND followedQid = ?",
+//         [followerQid, followedQid]
+//       );
+//     }
+
+//   } else {
+//     // 🧩 First-time follow
+//     followed = 1;
+//     await db.query(
+//       "INSERT INTO user_follow_status (followerQid, followedQid, followed, notified) VALUES (?, ?, 1, 0)",
+//       [followerQid, followedQid]
+//     );
+
+//     const [sender] = await db.query(
+//       "SELECT username FROM users WHERE memberQid = ?",
+//       [followerQid]
+//     );
+
+//     const senderName = sender.length > 0 ? sender[0].username : "Someone";
+
+//     await db.query(
+//       `INSERT INTO notifications (senderQid, receiverQid, type, message)
+//        VALUES (?, ?, 'follow', ?)`,
+//       [followerQid, followedQid, `👋 ${senderName} started following you!`]
+//     );
+
+//     await db.query(
+//       "UPDATE user_follow_status SET notified = 1 WHERE followerQid = ? AND followedQid = ?",
+//       [followerQid, followedQid]
+//     );
+//   }
+
+//   // 🧩 Update follower/following counts
+//   await db.query(
+//     "UPDATE users SET followingCount = GREATEST(followingCount + ?, 0) WHERE memberQid = ?",
+//     [followed ? 1 : -1, followerQid]
+//   );
+//   await db.query(
+//     "UPDATE users SET followerCount = GREATEST(followerCount + ?, 0) WHERE memberQid = ?",
+//     [followed ? 1 : -1, followedQid]
+//   );
+
+//   // 🧩 Mutual check
+//   let is_mutual = 0;
+//   if (followed) {
+//     const [mutualCheck] = await db.query(
+//       "SELECT followed FROM user_follow_status WHERE followerQid = ? AND followedQid = ? AND followed = 1",
+//       [followedQid, followerQid]
+//     );
+
+//     if (mutualCheck.length > 0) {
+//       await db.query(
+//         `UPDATE user_follow_status 
+//          SET is_mutual = 1 
+//          WHERE (followerQid = ? AND followedQid = ?) 
+//             OR (followerQid = ? AND followedQid = ?)`,
+
+//         [followerQid, followedQid, followedQid, followerQid]
+//       );
+//       is_mutual = 1;
+//       try {
+//         await ensureChatRoom(followerQid, followedQid, "friend");
+//       } catch (err) {
+//         console.error("Failed to create friend chat room:", err);
+//       }
+//     }
+//   }
+
+//   return { followed, is_mutual };
+// };
+
 const toggleFollowLogic = async (followerQid, followedQid) => {
   if (followerQid === followedQid) {
     throw new Error("You cannot follow yourself");
@@ -68,33 +215,44 @@ const toggleFollowLogic = async (followerQid, followedQid) => {
         "DELETE FROM notifications WHERE senderQid = ? AND receiverQid = ? AND type = 'follow'",
         [followerQid, followedQid]
       );
-       await db.query(
+
+      // 🧩 Soft delete for current user
+      await db.query(
         `UPDATE chatRooms 
-        SET soft_deleted_by = ? 
-        WHERE ((buyerQid = ? AND sellerQid = ?) OR (buyerQid = ? AND sellerQid = ?))
-          AND type = 'friend' AND soft_deleted_by IS NULL`,
+         SET soft_deleted_by = ? 
+         WHERE ((buyerQid = ? AND sellerQid = ?) OR (buyerQid = ? AND sellerQid = ?))
+           AND type = 'friend' AND soft_deleted_by IS NULL`,
         [followerQid, followerQid, followedQid, followedQid, followerQid]
       );
 
       // Check if both already unfollowed (mutual 0)
       const [bothUnfollow] = await db.query(
         `SELECT * FROM user_follow_status 
-        WHERE ((followerQid = ? AND followedQid = ?) OR (followerQid = ? AND followedQid = ?))
-          AND followed = 1`,
+         WHERE ((followerQid = ? AND followedQid = ?) OR (followerQid = ? AND followedQid = ?))
+           AND followed = 1`,
         [followerQid, followedQid, followedQid, followerQid]
       );
 
       if (bothUnfollow.length === 0) {
-        // Both unfollowed → hard delete chat room
+        // Both unfollowed → delete messages first, then chat room
         await db.query(
-          `DELETE FROM chatRooms 
-          WHERE ((buyerQid = ? AND sellerQid = ?) OR (buyerQid = ? AND sellerQid = ?))
-            AND type = 'friend'`,
+          `DELETE FROM messages 
+           WHERE roomId IN (
+             SELECT roomId FROM chatRooms 
+             WHERE ((buyerQid = ? AND sellerQid = ?) OR (buyerQid = ? AND sellerQid = ?))
+               AND type = 'friend'
+           )`,
           [followerQid, followedQid, followedQid, followerQid]
         );
-  }
-    } 
-    else if (rows[0].notified === 0) {
+
+        await db.query(
+          `DELETE FROM chatRooms 
+           WHERE ((buyerQid = ? AND sellerQid = ?) OR (buyerQid = ? AND sellerQid = ?))
+             AND type = 'friend'`,
+          [followerQid, followedQid, followedQid, followerQid]
+        );
+      }
+    } else if (rows[0].notified === 0) {
       // 🧩 Re-follow: send notification again
       const [sender] = await db.query(
         "SELECT username FROM users WHERE memberQid = ?",
@@ -114,7 +272,6 @@ const toggleFollowLogic = async (followerQid, followedQid) => {
         [followerQid, followedQid]
       );
     }
-
   } else {
     // 🧩 First-time follow
     followed = 1;
@@ -180,6 +337,7 @@ const toggleFollowLogic = async (followerQid, followedQid) => {
 
   return { followed, is_mutual };
 };
+
 
 // ===========================
 // 🚀 toggleFollow Controller
