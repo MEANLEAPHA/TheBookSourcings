@@ -65,6 +65,7 @@ async function loadChannelInfo(followedQid) {
   }
 }
 
+
 async function toggleFollowActivity(followedQid) {
   try {
     const res = await fetch(`https://thebooksourcings.onrender.com/api/channel/follow/${followedQid}`, {

@@ -2,13 +2,22 @@
 const urlParams = new URLSearchParams(window.location.search);
 const memberQid = urlParams.get("memberQid");
 
-const userInfoDisplay = document.getElementById("user-info-display");
+const token = localStorage.getItem("token");
+let userMemberQid = null;
+
+
+if (token) {
+  const decoded = parseJwt(token);
+  userMemberQid = decoded?.memberQid || null;
+  
+}
+
 // Run when DOM is ready
 document.addEventListener("DOMContentLoaded", function () {
     fetch(`https://thebooksourcings.onrender.com/getFullRegisterDataByQid/${memberQid}`, {
         method: "GET",
         headers: {
-            "Authorization": "Bearer " + localStorage.getItem("token")
+            "Authorization": "Bearer " + token
         }
     })
     .then(response => {
@@ -19,31 +28,24 @@ document.addEventListener("DOMContentLoaded", function () {
     })
     .then(data => {
         if (!data) return;
-
+        const userInfoDisplay = document.getElementById("user-info-display");
         const bio = document.createElement('p');
         const bioSpan = document.createElement('span');
-
         const quirkyTag = document.createElement('p');
         const quirkyTagI = document.createElement('i');
         const quirkyTagA = document.createElement('a');
-
         const occupation = document.createElement('p');
         const occupationI = document.createElement('i');
         const occupationA = document.createElement('a');
-        
         const website = document.createElement('p');
         const websiteI = document.createElement('i');
         const websiteA = document.createElement('a');
-
         const memberQid = document.createElement('p');
         const memberQidI = document.createElement('i');
         const memberQidA = document.createElement('a');
-
         const authorQid = document.createElement('p');
         const authorQidI = document.createElement('i');
         const authorQidA = document.createElement('a');
-        
-
         const label = document.createElement('p');
         label.className = "label";
         label.textContent = 'Introduction';
@@ -53,7 +55,6 @@ document.addEventListener("DOMContentLoaded", function () {
             bioSpan.textContent = data.bio;
             bio.appendChild(bioSpan);
         }
-
         if(data.playfulLabel){
             quirkyTagI.className = "fa-solid fa-tag";
             quirkyTagA.id = "quirkyTag";
@@ -61,7 +62,6 @@ document.addEventListener("DOMContentLoaded", function () {
             quirkyTag.appendChild(quirkyTagI);
             quirkyTag.appendChild(quirkyTagA);
         }
-
         if(data.workRole && data.workPlace){
             occupationI.className = "fa-solid fa-suitcase";
             occupationA.id = "occupation";
@@ -74,8 +74,6 @@ document.addEventListener("DOMContentLoaded", function () {
            occupation.appendChild(occupationI);
            occupation.appendChild(occupationA); 
         }
-
-
         if(data.websiteUrl){
             websiteI.className = "fa-solid fa-globe";
             websiteA.id = "website";
@@ -84,7 +82,6 @@ document.addEventListener("DOMContentLoaded", function () {
             website.appendChild(websiteI);
             website.appendChild(websiteA);
         }
-
         if(data.memberQid){
             memberQidI.className = "fa-regular fa-address-card";
             memberQidA.id = "memberQid";
@@ -92,17 +89,13 @@ document.addEventListener("DOMContentLoaded", function () {
             memberQid.appendChild(memberQidI);
             memberQid.appendChild(memberQidA);
         }
-
         if(data.authorQid){
             authorQidI.className = "fa-regular fa-address-card";
             authorQidA.id = "authorQid";
             authorQidA.textContent = `Author id : ${data.authorQid}`;
             authorQid.appendChild(authorQidI);
             authorQid.appendChild(authorQidA);
-        }
-           
-
-
+        }   
         userInfoDisplay.appendChild(label);
         userInfoDisplay.appendChild(bio);
         userInfoDisplay.appendChild(quirkyTag);
@@ -110,29 +103,97 @@ document.addEventListener("DOMContentLoaded", function () {
         userInfoDisplay.appendChild(website);
         userInfoDisplay.appendChild(memberQid);
         userInfoDisplay.appendChild(authorQid);
-
-
-       
         document.getElementById("username").textContent = data.username || "";
         document.getElementById("usernickname").textContent = `@${data.nickname || "noNicknameYet"}`;
         document.getElementById("userFollow").textContent = `${data.followerCount || "No followers yet"} followers`;
-        // document.getElementById("bio").textContent = data.bio || "";
-        // document.getElementById("website").textContent = data.websiteUrl || "";
-        // document.getElementById("website").setAttribute("href", data.websiteUrl || "");
-        // document.getElementById("quirkyTag").textContent = data.playfulLabel || "";
-        // document.getElementById("occupation").textContent = `${data.workRole} at ${data.workPlace}` || "";
-        // document.getElementById("memberQid").textContent = data.memberQid || "";
-        // document.getElementById("authorQid").textContent = data.authorQid || "";
-
-        // Update images
         document.getElementById("bannerImage").setAttribute("src", data.bannerUrl || "");
         document.getElementById("bannerPreview").style.setProperty("--bg-img", `url(${data.bannerUrl || ""})`);
-
         const profileImage = document.getElementById("profileImage");
         profileImage.setAttribute("src", data.pfUrl || "");
         if (data.mood) {
             profileImage.classList.add(`mood-${data.mood}`);
         }
+
+
+
+        const followHolder = document.getElementById('follow-holder');
+
+        const completeBtn = document.createElement('button'); // if !data.authorQid && !data.ghostQid for user admin
+
+        const editBtn = document.createElement('button'); // for user admin
+
+        const followBtn = document.createElement('button');
+
+        const moreBtn = document.createElement('button');
+        const moreBtnI = document.createElement('i');
+        moreBtnI.className = "fa-solid fa-ellipsis-vertical";
+        moreBtn.id = "btn-more";
+        moreBtn.className = "dropdown";
+        moreBtn.setAttribute("data-bs-toggle", "dropdown");
+        moreBtn.setAttribute("aria-hidden", "true");
+
+        const dropdownMenu = document.createElement('ul');
+        dropdownMenu.className = "dropdown-menu";
+        // moreBtn.appendChild(moreBtnI);
+        if(userMemberQid === data.memberQid){
+            if(!data.authorQid && !data.ghostQid){
+            completeBtn.id = "btn-complete";
+            completeBtn.textContent = "Complete Profile";
+            completeBtn.onclick("href", `/accountEdit.html`);
+            followHolder.appendChild(completeBtn);
+            }
+            else if(data.authorQid && data.ghostQid){
+                editBtn.id = "btn-edit";
+                editBtn.textContent = "Edit Profile";
+                editBtn.onclick("href", `/accountEdit.html`);
+                followHolder.appendChild(editBtn);
+            }
+            const liOpt1 = document.createElement('li');
+            liOpt1.className = "li-opt";
+            const reportA = document.createElement('a');
+            reportA.className = "dropdown-item report-option";
+
+            const reportAI = document.createElement('i');
+            reportAI.className = "fa-solid fa-flag";
+            reportAI.setAttribute('aria-hidden', "true");
+
+            const reportAS = document.createElement('span');
+            reportAS.textContent = 'Report Issue';
+
+            reportA.appendChild(reportAI);
+            reportA.appendChild(reportAS);
+            liOpt1.appendChild(reportA);
+
+            const liOpt2 = document.createElement('li');
+            liOpt2.className = "li-opt";
+            const copyA = document.createElement('a');
+            copyA.className = "dropdown-item copy-option";
+            const copyAI = document.createElement('i');
+            copyAI.className = "fa-solid fa-link";
+            copyAI.setAttribute('aria-hidden', "true");
+
+            const copyAS = document.createElement('span');
+            copyAS.textContent = 'Copy profile link';
+
+            copyA.appendChild(copyAI);
+            copyA.appendChild(copyAS);
+
+            liOpt2.appendChild(copyA);
+
+            dropdownMenu.appendChild(liOpt1);
+            dropdownMenu.appendChild(liOpt2);
+
+            moreBtn.appendChild(moreBtnI);
+            moreBtn.appendChild(dropdownMenu);
+        }
+        else{
+            followBtn.id = "btn-follow";
+            followBtn.textContent = "Follow";
+            followHolder.appendChild(followBtn);
+
+        }
+        
+
     })
     .catch(err => {
         console.error("Error fetching user:", err);
