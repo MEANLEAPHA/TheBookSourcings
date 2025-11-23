@@ -1,7 +1,13 @@
 // Grab query parameter
 const urlParams = new URLSearchParams(window.location.search);
 const memberQid = urlParams.get("memberQid");
-
+ function parseJwt (token) {
+  try {
+    return JSON.parse(atob(token.split('.')[1]));
+  } catch (e) {
+    return null;
+  }
+}
 const token = localStorage.getItem("token");
 let userMemberQid = null;
 
