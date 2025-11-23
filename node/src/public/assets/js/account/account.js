@@ -10,6 +10,7 @@
                 if (!data) return;
                 $('#username').text(data.username || '');
                 $('#usernickname').text(`@${data.nickname || ''}`);
+                $('#userFollow').text(`${data.followerCount || 0 } followers`);
                 $('#bio').text(data.bio || '');
                 $('#website').text(data.websiteUrl || '');
                 $('#website').attr('href', data.websiteUrl || '');
@@ -17,7 +18,7 @@
                 $('#occupation').text(`${data.workRole} at ${data.workPlace}` || '');
                 $('#memberQid').text(data.memberQid || '');
                 $('#authorQid').text(data.authorQid || '');
-
+                
                 $('#bannerImage').attr('src', data.bannerUrl || '');
                 $('#bannerImage').css('--bg-img', `url(${data.bannerUrl || ''})`);
 
