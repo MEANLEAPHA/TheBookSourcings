@@ -311,7 +311,7 @@ async function toggleFollowActivity(followedQid) {
       return; // stop here
     }
 
-    followBtn.textContent = data.followed ? "unFollow" : "Follow";
+    followBtn.textContent = data.userStatus.followed ? "unFollow" : "Follow";
 
     // Safer: re-fetch updated count instead of manual increment
     await loadChannelInfo(followedQid);
