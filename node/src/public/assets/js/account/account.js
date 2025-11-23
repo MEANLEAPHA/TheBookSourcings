@@ -193,17 +193,105 @@ document.addEventListener("DOMContentLoaded", function () {
 
             moreBtn.appendChild(moreBtnI);
             moreBtn.appendChild(dropdownMenu);
+
+            followHolder.appendChild(moreBtn);
         }
         else{
+            loadChannelInfo(data.memberQid);
             followBtn.id = "btn-follow";
             followBtn.textContent = "Follow";
-            followHolder.appendChild(followBtn);
+            followBtn.addEventListener("click", () => {
+                toggleFollowActivity(data.memberQid)
+            })
+            const liOpt1 = document.createElement('li');
+            liOpt1.className = "li-opt";
+            const reportA = document.createElement('a');
+            reportA.className = "dropdown-item report-option";
 
+            const reportAI = document.createElement('i');
+            reportAI.className = "fa-solid fa-flag";
+            reportAI.setAttribute('aria-hidden', "true");
+
+            const reportAS = document.createElement('span');
+            reportAS.textContent = 'Report Issue';
+
+            reportA.appendChild(reportAI);
+            reportA.appendChild(reportAS);
+            liOpt1.appendChild(reportA);
+
+            const liOpt2 = document.createElement('li');
+            liOpt2.className = "li-opt";
+            const copyA = document.createElement('a');
+            copyA.className = "dropdown-item copy-option";
+            const copyAI = document.createElement('i');
+            copyAI.className = "fa-solid fa-link";
+            copyAI.setAttribute('aria-hidden', "true");
+
+            const copyAS = document.createElement('span');
+            copyAS.textContent = 'Copy profile link';
+
+            copyA.appendChild(copyAI);
+            copyA.appendChild(copyAS);
+
+            liOpt2.appendChild(copyA);
+
+            dropdownMenu.appendChild(liOpt1);
+            dropdownMenu.appendChild(liOpt2);
+
+            moreBtn.appendChild(moreBtnI);
+            moreBtn.appendChild(dropdownMenu);
+
+            followHolder.appendChild(followBtn);
+            followHolder.appendChild(moreBtn);
+            
         }
-        
 
     })
     .catch(err => {
         console.error("Error fetching user:", err);
     });
 });
+
+async function loadChannelInfo(followedQid) {
+  try {
+    const res = await fetch(`https://thebooksourcings.onrender.com/api/followStatus/${followedQid}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+    if (!res.ok) throw new Error("Failed to fetch follow status");
+
+    const data = await res.json();
+
+    // followIcon.style.color = data.userStatus.followed ? "gold" : "black";
+    followBtn.textContent = data.userStatus.followed ? "Following" : "Follow";
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function toggleFollowActivity(followedQid) {
+  try {
+    const res = await fetch(`https://thebooksourcings.onrender.com/api/channel/follow/${followedQid}`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
+    });
+    if (!res.ok) throw new Error(`Failed to toggle follow`);
+
+    const data = await res.json();
+
+    // // Update UI with returned state
+    // followIcon.style.color = data.followed ? "gold" : "black";
+
+    followBtn.textContent = data.followed ? "Following" : "Follow";
+
+    // Safer: re-fetch updated count instead of manual increment
+    await loadChannelInfo(followedQid);
+
+  } catch (err) {
+    console.error(err);
+  }
+}

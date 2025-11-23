@@ -195,12 +195,14 @@ object-fit:cover;
 #form-div-pf #follow-holder button{
    padding: 5px 8px 5px 8px;
 }
+
 #form-div-pf #follow-holder #btn-friend,#btn-following{
    background: none;
    border: none;
    opacity: 0.7;;
 }
-#form-div-pf #follow-holder #btn-message,#btn-follow,#btn-more{
+
+#form-div-pf #follow-holder #btn-message,#btn-follow,#btn-more,#btn-complete,#btn-edit{
    background: none;
    border: 1px solid var(--primary-color);
    border-radius: 5px;
