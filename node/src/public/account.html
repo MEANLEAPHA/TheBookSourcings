@@ -11,7 +11,108 @@
     <link rel="stylesheet" href="assets/css/account/account.css">
 </head>
 <body>
-    <div id="account-form">
+
+ <header id="header">
+    <div id="headerLeft"> 
+        <i class="fa-solid fa-bars"></i>
+        <a href="#top"><img src="../../assets/img/TheBookSourcingLogo-removebg-preview.png" alt="RentWell-Logo" id="logo"></a>
+    </div>
+    <div id="headerMiddle">
+        <input type="text" placeholder="Search TheBookSourcing" id="searchTBS">
+        <i class="fa-solid fa-magnifying-glass" id="searchIcon"></i>
+    </div>
+    <div id="headerRight">
+        <i class="fa-solid fa-magnifying-glass" id="searchIcons"></i>
+        <div id="create">
+          <a style="display: flex;align-items: center; gap: 10px;" id="post-btn">
+            <i class="fa-solid fa-plus"></i> 
+            <div id="post-span"> Post</div>
+          </a>
+        </div>
+        <i class="fa-solid fa-bell"  id="liveNotiBtn"></i>
+        <i class="fa-solid fa-user" id="liveFriBtn"></i>
+        <img  class="userPf" alt="user" class="dropdown-item"  id="liveToastBtn">
+    </div>
+  </header>   
+  <div id="phoneSearch">
+    <div id="phoneSearchLeft"><i class="fa-solid fa-arrow-left"></i></div>
+    <div id="headerMiddle2">
+            <input type="text" placeholder="Search" id="searchTBS">
+            <i class="fa-solid fa-magnifying-glass" id="searchIcon"></i>
+    </div>
+  </div>
+  <main>   
+     <div class="smallCollape">
+                <ul>
+                    <li><i class="fa-solid fa-house"></i></li>
+                    <li><i class="fa-solid fa-newspaper"></i></li>
+                    <li><i class="fa-solid fa-shop"></i></li>
+                    <li><i class="fa-solid fa-users"></i></li>
+                    <li><i class="fa-solid fa-paper-plane"></i></li>
+                    <li><i class="fa-solid fa-circle-user"></i></li>
+                    <li><i class="fa-solid fa-fire"></i></li>
+                    <li><i class="fa-solid fa-ghost"></i></li>
+                    <li><i class="fa-solid fa-medal"></i></li>
+                </ul>
+            </div>
+            <div class="collapse">
+                <ul id="u1">    
+                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-house"></i>Home</a></li>
+                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-newspaper"></i>Articles</a></li>
+                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-shop"></i>Market Place</a></li>
+                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-users"></i>Community</a></li>
+                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-paper-plane"></i>Message</a></li>
+                </ul>
+                <ul id="u2">    
+                    <li class="liTop"><Big>You > </Big></li>
+                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-clock-rotate-left"></i>History</a></li>
+                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-lines-leaning"></i>Your Library</a></li>
+                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-book"></i>Your Book</a></li>
+                    <li><a href="userShop.html"><i class="fa-solid fa-dollar-sign"></i>Your Shop</a></li>
+                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-bookmark fav-fav"></i>Favorite</a></li>
+                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-thumbs-up"></i>Liked</a></li>
+                </ul>
+                <ul id="u3">    
+                    <li class="liTop"><Big>Following</Big></li>
+                </ul>
+                <div class="following">
+                    <div class="displayUserFollowing">
+                 
+                    </div>
+                    <li id="allFollowing"><a href="userBook/yourBookTest.html"><i class="fa-solid fa-list"></i>All Following</a></li>
+                    <li id="showMoreFollow"><a><i class="fa-solid fa-chevron-down"></i>Show More</a></li>
+                    <li id="showLessFollow"><a><i class="fa-solid fa-chevron-up"></i>Show Less</a></li>
+                </div>
+                <ul id="u4">    
+                    <li class="liTop"><Big>Explore</Big></li>
+                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-fire"></i>What's Hot</a></li>
+                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-ghost"></i> Nobody’s Secret</a></li>
+                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-medal"></i> Hall of Fame</a></li>
+                </ul>
+                <ul id="u5">    
+                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-gear"></i>Settings</a></li>
+                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-flag"></i>Report</a></li>
+                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-circle-question"></i>Help</a></li>
+                    <li class="feedBackBtn2"><a href="userBook/yourBookTest.html"><i class="fa-solid fa-comment-dots"></i>Send Feedback</a></li>
+                </ul>
+                <ul id="uLast">
+                    <li>About</li>
+                    <li>Contact</li>
+                    <li>Advertise</li>
+                    <li>Terms</li>
+                    <li>Privacy</li>
+                    <li>Policy</li>
+                </ul>
+                <ul id="uLast2">
+                    <li>
+                    <a>
+                        © 2025 TheBookSourcing. All rights reserved
+                    </a>
+                    </li>
+                </ul>
+            </div>
+    <div class="content">
+        <div id="account-form">
         <div class="account-form-header">
             <div id="form-div-pf">
                     <div id="banner">
@@ -443,7 +544,197 @@
             </div>
         </div>
     </div>
+       
+    </div>
+    <!-- account tool collapse -->
+    <div class="toast-container position-fixed  end-0 p-3">
+      <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" >
+        <div class="toast-header">
+            <img src=""  class="userPf-collapse">
+            <div class="userDetails">
+              <p class="userName-collapse"></p>
+              <p class="nickName-collapse"></p>
+              <a href="../../userAccount.html" style="color:#fd7648;">View Account</a>
+          </div>
+        </div>
+        <div class="toast-header">
+          <button onclick="settingLink()" class="btn-col-acc"><a><i class="fa-solid fa-gear"></i> Settings</a></button>
+        </div>
+        <div class="toast-header" id="themeSwitchSection">
+            <button class="theme-switch">
+              <i class="fa-solid fa-sun"></i>
+              <i class="fa-solid fa-moon"></i>
+            </button>
+            <p id="theme-switch-word" class="theme-switch">
+              <span class="fa-sun-word" >Light mode</span>
+              <span class="fa-moon-word" >Dark mode</span>
+            </p>
+        </div>
+        <div class="toast-header">
+          <button onclick="helpLink()" class="btn-col-acc"><a><i class="fa-solid fa-circle-question"></i> Help</a></button>
+        </div>
+        <div class="toast-header"  >
+          <!-- <a class="feedBackBtn2"><i class="fa-solid fa-comment-dots"></i> Feedback</a> -->
+          <button onclick="showFeedBackToast()" class="btn-col-acc"><a><i class="fa-solid fa-comment-dots"></i> Feedback</a></button>
+        </div>
+        <div class="toast-body log-in-out">
+          <button onclick="login()" id="loginButton" class="btn-col-acc"><a><i class="fa-solid fa-arrow-right-to-bracket"></i> Login</a></button>
+          <button onclick="logout()" id="logoutButton" class="btn-col-acc"><a><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a></button>
+        </div>
+      </div>
+    </div>
+    <!-- feedback collapse -->
+    <div class="toast-containers w-500">
+      <div id="liveToast2" class="toast" role="alert" aria-live="assertive" aria-atomic="true" >
+        <div class="toast-header">
+            <div>Send Feedback to TheBookSourcing</div>
+            <button type="button" data-bs-target="#liveToast2" data-bs-dismiss="toast" aria-label="Close" id="btnCloseFBToast"><i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+        <div class="toast-body">
+          <form action="">
+            <label> Please give us your feedback (required)</label>
+            <input type="text" name="feedbackInput" required id="feedbackInput">
+            <br>
+            <br>
+            <label >A screenshot will help us to understand more about your feedback (optional)</label>
+            <br>
+            <label class="custom-file">
+              <input type="file" id="fileUpload">
+              <span>  <i class="fa-solid fa-camera"></i> Capture screenshot</span>
+            </label>
+            <div>
+              <img src="camera.png" id="screenshot" >
+            </div>
+            <br>
+            <div id="allowEmailUpdate">
+              <input type="checkbox" name="" id=""><label>We may email you for more updates</label>
+            </div>
+            <p id="smallWarning" ><i class="fa-solid fa-circle-exclamation text-warning" ></i> Please do not include any sensitive information! Sensitive information is any data that should be protected. Please do not include passwords, credit card numbers, or personal detail.</p>
+            <button type="submit" onclick="closeFeedBackToast()">Cancel</button>
+            <button type="submit" id="feedbackSubmit" name="feedbackSubmit">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+   <!-- Bootstrap Toast for editing -->
+    <div id="editToastWrapper">
+      <div id="editToast" class="toast align-items-center text-bg-light border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-body">
+          <input type="text" id="editMessageInput" class="form-control mb-2">
+          <div class="d-flex justify-content-end w-100">
+            <button id="cancelEditBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
+            <button id="saveEditBtn" type="button" class="btn btn-sm btn-primary">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <!-- Bootstrap Toast for deleting -->
+<div id="deleteToastWrapper">
+  <div id="deleteToast" class="toast align-items-center text-bg-light border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-body">
+      <p>Are you sure you want to delete this message?</p>
+      <div class="d-flex justify-content-end w-100">
+        <button id="cancelDeleteBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
+        <button id="confirmDeleteBtn" type="button" class="btn btn-sm btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Report Toast -->
+<div id="reportToastWrapper">
+  <div id="reportToast" class="toast align-items-center text-bg-light border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-body">
+      <h6>Report Post</h6>
+      <textarea id="reportReasonInput" class="form-control mb-2" placeholder="Reason..."></textarea>
+      <div class="d-flex justify-content-end w-100">
+        <button id="cancelReportBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
+        <button id="submitReportBtn" type="button" class="btn btn-sm btn-danger">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Full Image Viewer -->
+  <div id="imageToastWrapper" class="position-fixed top-50 start-50 left-50 translate-middle" style="width: 100%; height: 100%;z-index: 2000; pointer-events: none;">
+    <div id="imgToast" class="toast  border-0 w-100 h-100" role="alert" aria-live="assertive" aria-atomic="true" style="border-radius: 0p;">
+      <div class="toast-body w-100 align-items-center h-100 d-flex justify-content-center" >
+          <button id="toastCloseBtn"  type="button"><i class="fa-solid fa-circle-xmark"></i></button>
+          <img id="toastImage"  alt="Full view" >
+    </div>
+  </div>
+  </div>
+ 
+
+
+ 
+    <!-- Notication Toast -->
+    <div class="toast-container position-fixed  end-0 p-3 noti-toast">
+      <div id="liveNoti" class="toast" role="alert" aria-live="assertive" aria-atomic="true" >
+        <div class="noti-head">
+          <span>Notication</span>
+          <button id="btn-clear-noti">Clear All</button>
+        </div>
+        <p class="notiUpdateSystem-span">System</p>
+        <div class="notiUpdateSystem">
+        </div>
+        <p class="notiUpdateConnection-span">Connection</p>
+        <div class="notiUpdateConnection">
+        </div>
+         <p class="notiUpdateMarket-span">Market</p>
+        <div class="notiUpdateMarket">
+        </div>
+        <div id="dev-no-otter-noti">
+          <i class="fa-solid fa-otter" ></i>
+          <p class="no-noti-span">No notification!</p>
+        </div>
+      </div>
+    </div>
+
+    <!--Friend toast -->
+    <div class="toast-container position-fixed  end-0 p-3 fri-toast">
+      <div id="liveFri" class="toast" role="alert" aria-live="assertive" aria-atomic="true" >
+        <div class="fri-head">
+          <span>Friend shortcut</span>
+          <span id="see-all-con"><a href="../../userConnection.html">See all</a></span>
+        </div>
+        <div class="append-fri">
+        </div>
+        <div id="dev-no-otter-fri">
+          <i class="fa-solid fa-otter" ></i>
+          <p class="no-fri-span">No Friend yet!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast container for logib/signup-->
+    <div class="position-fixed" style="z-index: 1100; right: 10px;bottom: 10px;">
+      <div id="errorToast" class="toast align-items-center text-bg-warning border-0 p-8" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex flex-column" style="padding: 10px;">
+          <div class="d-flex justify-content-between w-100 gap-2" >
+            <div  id="errorToastBody">
+            Unauthorized. Please log in / sign up first. It takes a few seconds :)
+            </div>
+            <button type="button" class="btn-close btn-close-white " data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+          
+          <button type="button" class="close-btn-no-token btn btn-success border-0 mt-1" style="border-radius: 5px;width: 45%;font-size: small;"><a href="../../userSign/login.html">Log in / sign up</a></button>
+        </div>
+      </div>
+    </div>
+
     <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
     <script src="assets/js/account/account.js"></script>
+      <script src="assets/js/index/darkmode.js" defer></script>
+  <script src="assets/js/index/collapseResponsive.js"></script>
+  <script src="assets/js/index/followingAcc.js"></script>
+  <script src="assets/js/index/accountToast.js"></script>
+  <!-- <script src="assets/js/index/navNewFeed.js"></script> -->
+  <script src="assets/js/index/feedbackToast.js"></script>
+  <script src="assets/js/index/headerSearch.js"></script>
+  <!-- <script src="assets/js/userUploadBook/userDisplayBook.js"></script> -->
+  <script src="assets/js/notification/notification.js"></script>
 </body>
 </html>

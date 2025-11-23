@@ -17,10 +17,11 @@ body{
     padding: 0;
     background-color: var(--background-color);
 }
+
 #account-form{
-    width: 85%;
+    width: 95%;
     height: auto;
-    margin: auto;
+    margin: 10px auto;
 }
 .account-form-header{
  background-color: var(--back-con);
@@ -268,7 +269,7 @@ object-fit:cover;
 }
 .sticky{
 position:sticky;
-    top: 10px; 
+    top: 80px; 
     
 }
 #user-info-display, #user-connection-display, #user-post-display, #user-book-display, #user-product-display, #user-fimiliar-display{
