@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const editBtn = document.createElement('button'); // for user admin
         const followBtn = document.createElement('button');
         const followingBtn = document.createElement('button');
-        let followingStatus;
+        // let followingStatus;
     fetch(`https://thebooksourcings.onrender.com/getFullRegisterDataByQid/${memberQid}`, {
         method: "GET",
         headers: {
@@ -241,11 +241,11 @@ document.addEventListener("DOMContentLoaded", function () {
             moreBtn.appendChild(moreBtnI);
             moreBtn.appendChild(dropdownMenu);
 
-            if(followingStatus === 1){
-                followingBtn.id = "btn-following";
-                followingBtn.textContent = "Following";
-                followHolder.appendChild(followingBtn);
-            }
+            // if(followingStatus === 1){
+            //     followingBtn.id = "btn-following";
+            //     followingBtn.textContent = "Following";
+            //     followHolder.appendChild(followingBtn);
+            // }
             followHolder.appendChild(followBtn);
             followHolder.appendChild(moreBtn);
             
@@ -269,10 +269,10 @@ async function loadChannelInfo(followedQid) {
     const data = await res.json();
 
     if(data.userStatus.followed === 1){
-        followingStatus = 1;
-        // followingBtn.id = "btn-following";
-        // followingBtn.textContent = "Following";
-        // followHolder.appendChild(followingBtn); 
+        // followingStatus = 1;
+        followingBtn.id = "btn-following";
+        followingBtn.textContent = "Following";
+        followHolder.insertBefore(followingBtn, followBtn); 
     }
     followBtn.textContent = data.userStatus.followed ? "unFollow" : "Follow";
   } catch (err) {
