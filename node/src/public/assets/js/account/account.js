@@ -20,6 +20,12 @@ if (token) {
 
 // Run when DOM is ready
 document.addEventListener("DOMContentLoaded", function () {
+
+        const followHolder = document.getElementById('follow-holder');
+        const completeBtn = document.createElement('button'); // if !data.authorQid && !data.ghostQid for user admin
+        const editBtn = document.createElement('button'); // for user admin
+        const followBtn = document.createElement('button');
+        const followingBtn = document.createElement('button');
     fetch(`https://thebooksourcings.onrender.com/getFullRegisterDataByQid/${memberQid}`, {
         method: "GET",
         headers: {
@@ -122,13 +128,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-        const followHolder = document.getElementById('follow-holder');
-
-        const completeBtn = document.createElement('button'); // if !data.authorQid && !data.ghostQid for user admin
-
-        const editBtn = document.createElement('button'); // for user admin
-
-        const followBtn = document.createElement('button');
 
         const moreBtn = document.createElement('button');
         const moreBtnI = document.createElement('i');
@@ -250,7 +249,7 @@ document.addEventListener("DOMContentLoaded", function () {
     .catch(err => {
         console.error("Error fetching user:", err);
     });
-});
+
 
 async function loadChannelInfo(followedQid) {
   try {
@@ -263,8 +262,12 @@ async function loadChannelInfo(followedQid) {
 
     const data = await res.json();
 
-    // followIcon.style.color = data.userStatus.followed ? "gold" : "black";
-    followBtn.textContent = data.userStatus.followed ? "Following" : "Follow";
+    if(data.userStatus.followed === 1){
+        followingBtn.id = "btn-following";
+        followingBtn.textContent = "Following";
+        followHolder.appendChild(followingBtn); 
+    }
+    followBtn.textContent = data.userStatus.followed ? "unFollow" : "Follow";
   } catch (err) {
     console.error(err);
   }
@@ -283,10 +286,9 @@ async function toggleFollowActivity(followedQid) {
 
     const data = await res.json();
 
-    // // Update UI with returned state
-    // followIcon.style.color = data.followed ? "gold" : "black";
+  
 
-    followBtn.textContent = data.followed ? "Following" : "Follow";
+    followBtn.textContent = data.followed ? "unFollow" : "Follow";
 
     // Safer: re-fetch updated count instead of manual increment
     await loadChannelInfo(followedQid);
@@ -295,3 +297,8 @@ async function toggleFollowActivity(followedQid) {
     console.error(err);
   }
 }
+
+
+
+});
+
