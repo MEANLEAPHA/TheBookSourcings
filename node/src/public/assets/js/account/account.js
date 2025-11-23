@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const editBtn = document.createElement('button'); // for user admin
         const followBtn = document.createElement('button');
         const followingBtn = document.createElement('button');
-      
+        // let followingStatus;
     fetch(`https://thebooksourcings.onrender.com/getFullRegisterDataByQid/${memberQid}`, {
         method: "GET",
         headers: {
@@ -241,6 +241,11 @@ document.addEventListener("DOMContentLoaded", function () {
             moreBtn.appendChild(moreBtnI);
             moreBtn.appendChild(dropdownMenu);
 
+            // if(followingStatus === 1){
+            //     followingBtn.id = "btn-following";
+            //     followingBtn.textContent = "Following";
+            //     followHolder.appendChild(followingBtn);
+            // }
             followHolder.appendChild(followBtn);
             followHolder.appendChild(moreBtn);
             
@@ -250,76 +255,6 @@ document.addEventListener("DOMContentLoaded", function () {
     .catch(err => {
         console.error("Error fetching user:", err);
     });
-async function loadChannelInfo(followedQid) {
-  try {
-    const res = await fetch(`https://thebooksourcings.onrender.com/api/followStatus/${followedQid}`, {
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
-    });
-    if (!res.ok) throw new Error("Failed to fetch follow status");
-
-    const data = await res.json();
-
-    // --- mutual check ---
-    if (data.userStatus.is_mutual === 1) {
-      const friendBtn = document.createElement("button");
-      friendBtn.id = "btn-friend";
-      friendBtn.textContent = "Friend";
-      // friendBtn.className = "btn btn-success"; 
-      followHolder.insertBefore(friendBtn, followBtn);
-      followBtn.style.display = "none"; // hide follow/unfollow when mutual
-      return; // stop here, no need to render followingBtn
-    }
-
-    if (data.userStatus.followed === 1) {
-      followingBtn.id = "btn-following";
-      followingBtn.textContent = "Following";
-      followHolder.insertBefore(followingBtn, followBtn); 
-    }
-    followBtn.textContent = data.userStatus.followed ? "unFollow" : "Follow";
-    followBtn.style.display = "inline-block";
-  } catch (err) {
-    console.error(err);
-  }
-}
-
-async function toggleFollowActivity(followedQid) {
-  try {
-    const res = await fetch(`https://thebooksourcings.onrender.com/api/channel/follow/${followedQid}`, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
-      }
-    });
-    if (!res.ok) throw new Error(`Failed to toggle follow`);
-
-    const data = await res.json();
-
-    // --- instant mutual check ---
-    if (data.userStatus?.is_mutual === 1) {
-      if (followHolder.contains(followingBtn)) {
-        followHolder.removeChild(followingBtn);
-      }
-      const friendBtn = document.createElement("button");
-      friendBtn.id = "btn-friend";
-      friendBtn.textContent = "Friend";
-      // friendBtn.className = "btn btn-success";
-      followHolder.insertBefore(friendBtn, followBtn);
-      followBtn.style.display = "none";
-      return; // stop here
-    }
-
-    followBtn.textContent = data.userStatus.followed ? "unFollow" : "Follow";
-
-    // Safer: re-fetch updated count instead of manual increment
-    await loadChannelInfo(followedQid);
-
-  } catch (err) {
-    console.error(err);
-  }
-}
 
 
 // async function loadChannelInfo(followedQid) {
@@ -334,6 +269,7 @@ async function toggleFollowActivity(followedQid) {
 //     const data = await res.json();
 
 //     if(data.userStatus.followed === 1){
+//         // followingStatus = 1;
 //         followingBtn.id = "btn-following";
 //         followingBtn.textContent = "Following";
 //         followHolder.insertBefore(followingBtn, followBtn); 
@@ -344,6 +280,118 @@ async function toggleFollowActivity(followedQid) {
 //   }
 // }
 
+async function loadChannelInfo(followedQid) {
+  try {
+    const res = await fetch(`https://thebooksourcings.onrender.com/api/followStatus/${followedQid}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+    if (!res.ok) throw new Error("Failed to fetch follow status");
+
+    const data = await res.json();
+
+    // Always clean up first
+    if (followHolder.contains(followingBtn)) {
+      followHolder.removeChild(followingBtn);
+    }
+
+    if (data.userStatus.is_mutual === 1) {
+  const oldFriendBtn = document.getElementById("btn-friend");
+  if (oldFriendBtn) followHolder.removeChild(oldFriendBtn);
+
+  const btnFriend = document.createElement("button");
+  btnFriend.id = "btn-friend";
+  btnFriend.textContent = "Friends";
+  btnFriend.className = "btn btn-success";
+  followHolder.insertBefore(btnFriend, followBtn);
+
+  followBtn.style.display = "none";
+} else if (data.userStatus.followed === 1) {
+  followingBtn.id = "btn-following";
+  followingBtn.textContent = "Following";
+  followHolder.insertBefore(followingBtn, followBtn);
+  followBtn.textContent = "Unfollow";
+  followBtn.style.display = "inline-block";
+} else {
+  followBtn.textContent = "Follow";
+  followBtn.style.display = "inline-block";
+}
+
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function toggleFollowActivity(followedQid) {
+  try {
+    // Optimistic UI update: flip immediately
+    const isCurrentlyFollowing = followBtn.textContent.toLowerCase() === "unfollow";
+    followBtn.textContent = isCurrentlyFollowing ? "Follow" : "Unfollow";
+
+    if (isCurrentlyFollowing && followHolder.contains(followingBtn)) {
+      followHolder.removeChild(followingBtn);
+    } else if (!isCurrentlyFollowing) {
+      followingBtn.id = "btn-following";
+      followingBtn.textContent = "Following";
+      followHolder.insertBefore(followingBtn, followBtn);
+    }
+
+    // Then sync with server
+    const res = await fetch(`https://thebooksourcings.onrender.com/api/channel/follow/${followedQid}`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
+    });
+    if (!res.ok) throw new Error(`Failed to toggle follow`);
+
+   const data = await res.json();
+
+// --- mutual check first ---
+if (data.is_mutual === 1) {
+  // remove any old followingBtn if it exists
+  if (followHolder.contains(followingBtn)) {
+    followHolder.removeChild(followingBtn);
+  }
+  // also remove any old friendBtn before creating a new one
+  const oldFriendBtn = document.getElementById("btn-friend");
+  if (oldFriendBtn) {
+    followHolder.removeChild(oldFriendBtn);
+  }
+
+  const btnFriend = document.createElement("button");
+  btnFriend.id = "btn-friend";
+  btnFriend.textContent = "Friends";
+  btnFriend.className = "btn btn-success"; // optional styling
+  followHolder.insertBefore(btnFriend, followBtn);
+
+  followBtn.style.display = "none"; // hide follow/unfollow in mutual case
+}
+// --- otherwise fall back to follow/unfollow ---
+else if (data.followed === 1) {
+  followBtn.textContent = "Unfollow";
+  if (!followHolder.contains(followingBtn)) {
+    followingBtn.id = "btn-following";
+    followingBtn.textContent = "Following";
+    followHolder.insertBefore(followingBtn, followBtn);
+  }
+  followBtn.style.display = "inline-block";
+} else {
+  followBtn.textContent = "Follow";
+  if (followHolder.contains(followingBtn)) {
+    followHolder.removeChild(followingBtn);
+  }
+  followBtn.style.display = "inline-block";
+}
+
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+
 // async function toggleFollowActivity(followedQid) {
 //   try {
 //     const res = await fetch(`https://thebooksourcings.onrender.com/api/channel/follow/${followedQid}`, {
@@ -356,109 +404,14 @@ async function toggleFollowActivity(followedQid) {
 //     if (!res.ok) throw new Error(`Failed to toggle follow`);
 
 //     const data = await res.json();
+
+  
 
 //     followBtn.textContent = data.followed ? "unFollow" : "Follow";
 
 //     // Safer: re-fetch updated count instead of manual increment
 //     await loadChannelInfo(followedQid);
 
-//   } catch (err) {
-//     console.error(err);
-//   }
-// }
-
-// async function loadChannelInfo(followedQid) {
-//   try {
-//     const res = await fetch(`https://thebooksourcings.onrender.com/api/followStatus/${followedQid}`, {
-//       headers: {
-//         "Authorization": `Bearer ${token}`
-//       }
-//     });
-//     if (!res.ok) throw new Error("Failed to fetch follow status");
-
-//     const data = await res.json();
-
-//     // Always clean up first
-//     if (followHolder.contains(followingBtn)) {
-//       followHolder.removeChild(followingBtn);
-//     }
-//     if (followHolder.contains(friendBtn)) {
-//       followHolder.removeChild(friendBtn);
-//     }
-
-//     // --- add mutual check here ---
-//     if (data.userStatus.is_mutual === 1) {
-//       const friendBtn = document.createElement("button");
-//       friendBtn.id = "btn-friend";
-//       friendBtn.textContent = "Friend";
-   
-//       followHolder.insertBefore(friendBtn, followBtn);
-//       followBtn.style.display = "none"; // hide follow/unfollow in mutual case
-//     } else if (data.userStatus.followed === 1) {
-//       followingBtn.id = "btn-following";
-//       followingBtn.textContent = "Following";
-//       followHolder.insertBefore(followingBtn, followBtn);
-//       followBtn.textContent = "Unfollow";
-//       followBtn.style.display = "inline-block";
-//     } else {
-//       followBtn.textContent = "Follow";
-//       followBtn.style.display = "inline-block";
-//     }
-//   } catch (err) {
-//     console.error(err);
-//   }
-// }
-
-// async function toggleFollowActivity(followedQid) {
-//   try {
-//     // Optimistic UI update: flip immediately
-//     const isCurrentlyFollowing = followBtn.textContent.toLowerCase() === "unfollow";
-//     followBtn.textContent = isCurrentlyFollowing ? "Follow" : "Unfollow";
-
-//     if (isCurrentlyFollowing && followHolder.contains(followingBtn)) {
-//       followHolder.removeChild(followingBtn);
-//     } else if (!isCurrentlyFollowing) {
-//       followingBtn.id = "btn-following";
-//       followingBtn.textContent = "Following";
-//       followHolder.insertBefore(followingBtn, followBtn);
-//     }
-
-//     // Then sync with server
-//     const res = await fetch(`https://thebooksourcings.onrender.com/api/channel/follow/${followedQid}`, {
-//       method: "POST",
-//       headers: {
-//         "Authorization": `Bearer ${token}`,
-//         "Content-Type": "application/json"
-//       }
-//     });
-//     if (!res.ok) throw new Error(`Failed to toggle follow`);
-
-//     const data = await res.json();
-
-//     // --- add mutual check here ---
-//     if (data.userStatus?.is_mutual === 1) {
-//       if (followHolder.contains(followingBtn)) {
-//         followHolder.removeChild(followingBtn);
-//       }
-//       const friendBtn = document.createElement("button");
-//       friendBtn.id = "btn-friend";
-//       friendBtn.textContent = "Friend";
-      
-//       followHolder.insertBefore(friendBtn, followBtn);
-//       followBtn.style.display = "none";
-//     } else if (data.followed) {
-//       followBtn.textContent = "Unfollow";
-//       if (!followHolder.contains(followingBtn)) {
-//         followHolder.insertBefore(followingBtn, followBtn);
-//       }
-//       followBtn.style.display = "inline-block";
-//     } else {
-//       followBtn.textContent = "Follow";
-//       if (followHolder.contains(followingBtn)) {
-//         followHolder.removeChild(followingBtn);
-//       }
-//       followBtn.style.display = "inline-block";
-//     }
 //   } catch (err) {
 //     console.error(err);
 //   }
