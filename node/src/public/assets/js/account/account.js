@@ -297,8 +297,6 @@ document.addEventListener("DOMContentLoaded", function () {
 //   }
 // }
 
-
-
 async function loadChannelInfo(followedQid) {
   try {
     const res = await fetch(`https://thebooksourcings.onrender.com/api/followStatus/${followedQid}`, {
@@ -323,11 +321,9 @@ async function loadChannelInfo(followedQid) {
       const friendBtn = document.createElement("button");
       friendBtn.id = "btn-friend";
       friendBtn.textContent = "Friend";
-      // friendBtn.className = "btn btn-success"; 
+   
       followHolder.insertBefore(friendBtn, followBtn);
-      followBtn.textContent = "Unfollow";
-      followBtn.style.display = "inline-block";
-      // followBtn.style.display = "none";
+      followBtn.style.display = "none"; // hide follow/unfollow in mutual case
     } else if (data.userStatus.followed === 1) {
       followingBtn.id = "btn-following";
       followingBtn.textContent = "Following";
@@ -377,7 +373,7 @@ async function toggleFollowActivity(followedQid) {
       const friendBtn = document.createElement("button");
       friendBtn.id = "btn-friend";
       friendBtn.textContent = "Friend";
-      friendBtn.className = "btn btn-success";
+      
       followHolder.insertBefore(friendBtn, followBtn);
       followBtn.style.display = "none";
     } else if (data.followed) {
@@ -397,6 +393,7 @@ async function toggleFollowActivity(followedQid) {
     console.error(err);
   }
 }
+
 
 
 });
