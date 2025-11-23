@@ -70,9 +70,9 @@ const toggleFollowLogic = async (followerQid, followedQid) => {
       );
        await db.query(
         `UPDATE chatRooms 
-        SET soft_delete_by = ? 
+        SET soft_deleted_by = ? 
         WHERE ((buyerQid = ? AND sellerQid = ?) OR (buyerQid = ? AND sellerQid = ?))
-          AND type = 'friend' AND soft_delete_by IS NULL`,
+          AND type = 'friend' AND soft_deleted_by IS NULL`,
         [followerQid, followerQid, followedQid, followedQid, followerQid]
       );
 
