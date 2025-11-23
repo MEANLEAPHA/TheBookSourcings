@@ -145,13 +145,13 @@ document.addEventListener("DOMContentLoaded", function () {
             if(!data.authorQid && !data.ghostQid){
             completeBtn.id = "btn-complete";
             completeBtn.textContent = "Complete Profile";
-            completeBtn.onclick("href", `/accountEdit.html`);
+            completeBtn.onclick('location.href', `/accountEdit.html`);
             followHolder.appendChild(completeBtn);
             }
             else if(data.authorQid && data.ghostQid){
                 editBtn.id = "btn-edit";
                 editBtn.textContent = "Edit Profile";
-                editBtn.onclick("href", `/accountEdit.html`);
+                editBtn.onclick('location.href', `/accountEdit.html`);
                 followHolder.appendChild(editBtn);
             }
             const liOpt1 = document.createElement('li');
