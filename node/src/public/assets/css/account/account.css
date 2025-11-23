@@ -19,7 +19,7 @@ body{
 }
 
 #account-form{
-    width: 95%;
+    width: 98%;
     height: auto;
     margin: 10px auto;
 }
@@ -195,6 +195,7 @@ object-fit:cover;
 }
 #form-div-pf #follow-holder button{
    padding: 5px 8px 5px 8px;
+   color: var(--font-color);
 }
 
 #form-div-pf #follow-holder #btn-friend,#btn-following,#btn-friend{
@@ -244,12 +245,14 @@ object-fit:cover;
     margin-top: 10px;
     padding: 10px 0px 10px 0px;
     border-top: 1px solid var(--secondary-color);
+    color: var(--font-color);
 
 }
 #btn-2-fetch button{
     background: none;
     border: none;
     cursor: pointer;
+     color: var(--font-color);
 }
 #div-all-content{
     display:flex;

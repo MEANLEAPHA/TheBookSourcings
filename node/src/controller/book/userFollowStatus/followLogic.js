@@ -456,6 +456,31 @@ const getMutual = async (req, res) => {
     res.status(500).json({ message: "Error at controller: getMutual" });
   }
 };
+const getMutualByMemberQid = async (req, res) => {
+  try {
+    const {memberQid} = req.params;
+    const [rows] = await db.query(
+      `SELECT u.memberQid, u.username, u.nickname, u.pfUrl AS friendPf
+       FROM users u
+       JOIN user_follow_status f1 
+         ON f1.followerQid = u.memberQid AND f1.followedQid = ?
+       JOIN user_follow_status f2 
+         ON f2.followerQid = ? AND f2.followedQid = u.memberQid
+       WHERE f1.is_mutual = 1 AND f2.is_mutual = 1
+       LIMIT 6`,
+      [memberQid, memberQid]
+    ); 
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "No mutual friends found" });
+    }
+
+    res.json({ mutual: rows });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error at controller: getMutual" });
+  }
+};
 
 
 // ===============================
@@ -542,5 +567,6 @@ module.exports = {
   clearTheNotification,
   getFollowing,
   getFollowers,
-  getMutual
+  getMutual,
+  getMutualByMemberQid 
 };

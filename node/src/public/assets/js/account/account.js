@@ -414,5 +414,51 @@ async function toggleFollowActivity(followedQid) {
 }
 
 
+fetch(`https://thebooksourcings.onrender.com/display/mutual/${memberQid}`, {
+  method: "GET",
+  headers: {
+    "Authorization": "Bearer " + token
+  }
+})
+.then(response => {
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+  return response.json();
+})
+.then(data => {
+  if (!data || !data.mutual) return;
+
+  const container = document.getElementById("user-connected");
+  container.innerHTML = ""; // clear old content if needed
+
+  data.mutual.forEach(friend => {
+    // create anchor
+    const a = document.createElement("a");
+    a.href = `/account?memberQid=${friend.memberQid}`; 
+    a.className = "user-pf-href";
+
+    // create image
+    const img = document.createElement("img");
+    img.src = friend.friendPf || "https://bootdey.com/img/Content/avatar/avatar1.png";
+    img.className = "user-pf";
+
+    // create username paragraph
+    const p = document.createElement("p");
+    p.textContent = friend.username || friend.nickname || "Unknown";
+
+    // assemble
+    a.appendChild(img);
+    a.appendChild(p);
+    container.appendChild(a);
+  });
+})
+.catch(err => {
+  console.error("Error fetching mutual:", err);
+});
+
+
+
+
 });
 

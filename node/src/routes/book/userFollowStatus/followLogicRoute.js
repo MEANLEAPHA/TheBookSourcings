@@ -10,7 +10,8 @@ const {
   getFollowing,
   clearOneNotificationById,
   clearTheNotification,
-  getMutual
+  getMutual,
+  getMutualByMemberQid
 } = require("../../../controller/book/userFollowStatus/followLogic");
 
 router.get("/followStatus/:followedQid", authMiddleware, getFollowDetailsWithStatus);
@@ -31,5 +32,7 @@ router.get("/followers", authMiddleware, getFollowers);
 router.get("/following", authMiddleware, getFollowing);
 
 router.get("/display/mutual", authMiddleware, getMutual);
+
+router.get("/display/mutual/:memberQid", authMiddleware, getMutualByMemberQid);
 
 module.exports = router;
