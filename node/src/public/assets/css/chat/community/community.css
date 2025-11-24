@@ -100,7 +100,7 @@ header{
     padding-left: 10px;
     padding-top: 3px;
     color: var(--font-color);
-    z-index: 2;
+    /* z-index: 2; */
     font-size: 15px;
 }
 #searchTBS:focus{
@@ -221,8 +221,8 @@ header{
   max-height: 150px;
   overflow-y: auto;
   display: none;
-  bottom: -75px;
-  z-index: 1;
+  top: 40px;
+  /* z-index: 1; */
   border-radius: 0 0 6px 6px;
 }
 .container-result a{

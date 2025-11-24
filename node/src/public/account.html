@@ -753,7 +753,7 @@ searchTBS.addEventListener("input", async () => {
 
   suggestions.innerHTML = data.map(item => `
   <div class="container-result">
-    <a href="/account?memberQid=${item.memberQid}" class="user-pf-href">
+    <a href="/account.html?memberQid=${item.memberQid}" class="user-pf-href">
     <img src="${item.pfUrl || "https://i.pinimg.com/736x/9e/83/75/9e837528f01cf3f42119c5aeeed1b336.jpg"}" class="result-cover">
     <div class="container-result-info">
       <p class="result-info-name">${item.username}</p>
