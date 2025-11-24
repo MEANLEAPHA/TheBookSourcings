@@ -87,6 +87,7 @@ header{
     background-color: var(--secondary-color);
     align-items: center;
     justify-content: space-between;
+    position: relative;
 }
 #searchTBS{
     width: 90%;
@@ -99,6 +100,7 @@ header{
     padding-left: 10px;
     padding-top: 3px;
     color: var(--font-color);
+    z-index: 2;
     font-size: 15px;
 }
 #searchTBS:focus{
@@ -115,7 +117,7 @@ header{
     font-size: 20px;
     color: var(--font-color);
     cursor: pointer;
-  
+  z-index: 2;
     border-top-right-radius: 35px;
 
 }
@@ -210,8 +212,8 @@ header{
 #suggestions {
   position: absolute;
   width: 100%;
-  background: white;
-  border: 1px solid #ccc;
+  background: var(--background-color);
+  border: 1px solid var(--secondary-color);
   border-top: none;
   list-style: none;
   margin: 0;
@@ -219,19 +221,22 @@ header{
   max-height: 150px;
   overflow-y: auto;
   display: none;
+  bottom: -75px;
+  z-index: 1;
   border-radius: 0 0 6px 6px;
 }
-.container-result{
+.container-result a{
   display: flex;
   height: auto;
   justify-content: start;
   gap: 10px;
+  flex-direction: row;
   padding: 10px;
   align-items: center;
 }
 .result-cover{
-  width: 50px;
-  height: 50px;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
   overflow: hidden;
   object-fit: cover;
