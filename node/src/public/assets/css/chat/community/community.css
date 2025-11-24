@@ -153,6 +153,7 @@ header{
         color: var(--font-color);
         cursor: pointer;
     }
+
  
     #headerMiddle2{
         width: 75%;
@@ -201,6 +202,67 @@ header{
         width: 35%;
         gap: 20px;
     }
+
+
+
+
+/* search result  */
+#suggestions {
+  position: absolute;
+  width: 100%;
+  background: white;
+  border: 1px solid #ccc;
+  border-top: none;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 150px;
+  overflow-y: auto;
+  display: none;
+  border-radius: 0 0 6px 6px;
+}
+.container-result{
+  display: flex;
+  height: auto;
+  justify-content: start;
+  gap: 10px;
+  padding: 10px;
+  align-items: center;
+}
+.result-cover{
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  overflow: hidden;
+  object-fit: cover;
+}
+.result-info-name{
+  margin: 0;
+  font-family: monospace;
+  font-size: large;
+}
+.result-info-nickname{
+  margin: 0;
+  font-family: monospace;
+  font-size: small;
+  color: #ccc;
+}
+#suggestions li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+#suggestions li:hover {
+  background: #f0f0f0;
+}
+
+
+
+
+
+
+
+
     #create{
         height: 35px;
         border-radius: 15px;

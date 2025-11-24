@@ -20,17 +20,17 @@ body {
 
 .container {
   width: 80%;
-  background: white;
+
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
-.search-box {
+.headerMiddle {
   position: relative;
 }
 
-#searchInput {
+#searchTBS {
   width: 100%;
   padding: 10px;
   border-radius: 6px;
@@ -90,22 +90,25 @@ body {
 </head>
 <body>
     
-  <div class="container">
-    <h2>Search Products</h2>
-    <div class="search-box">
-      <input type="text" id="searchInput" placeholder="Type to search...">
+
+    <div class="headerMiddle">
+      <input type="text" id="searchTBS" placeholder="Type to search...">
+      <i class="fa-solid fa-magnifying-glass" id="searchIcon"></i>
       <div id="suggestions"></div>
     </div>
-  </div>
+  
  
-
+<div id="headerMiddle">
+        <input type="text" placeholder="Search TheBookSourcing" id="searchTBS">
+        <i class="fa-solid fa-magnifying-glass" id="searchIcon"></i>
+    </div>
 
   <script>
-const searchInput = document.getElementById("searchInput");
+const searchTBS = document.getElementById("searchTBS");
 const suggestions = document.getElementById("suggestions");
 
-searchInput.addEventListener("input", async () => {
-  const query = searchInput.value.trim();
+searchTBS.addEventListener("input", async () => {
+  const query = searchTBS.value.trim();
   if (query.length === 0) {
     suggestions.innerHTML = "";
     suggestions.style.display = "none";
@@ -140,7 +143,7 @@ searchInput.addEventListener("input", async () => {
 // Fill input when clicking a suggestion
 suggestions.addEventListener("click", e => {
   if (e.target.tagName === "LI") {
-    searchInput.value = e.target.textContent;
+    searchTBS.value = e.target.textContent;
     suggestions.innerHTML = "";
     suggestions.style.display = "none";
   }

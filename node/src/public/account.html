@@ -17,9 +17,14 @@
         <i class="fa-solid fa-bars"></i>
         <a href="#top"><img src="../../assets/img/TheBookSourcingLogo-removebg-preview.png" alt="RentWell-Logo" id="logo"></a>
     </div>
-    <div id="headerMiddle">
+    <!-- <div id="headerMiddle">
         <input type="text" placeholder="Search TheBookSourcing" id="searchTBS">
         <i class="fa-solid fa-magnifying-glass" id="searchIcon"></i>
+    </div> -->
+    <div id="headerMiddle">
+      <input type="text" id="searchTBS" placeholder="Type to search...">
+      <i class="fa-solid fa-magnifying-glass" id="searchIcon"></i>
+      <div id="suggestions"></div>
     </div>
     <div id="headerRight">
         <i class="fa-solid fa-magnifying-glass" id="searchIcons"></i>
@@ -725,6 +730,54 @@
       </div>
     </div>
 
+     <script>
+const searchTBS = document.getElementById("searchTBS");
+const suggestions = document.getElementById("suggestions");
+
+searchTBS.addEventListener("input", async () => {
+  const query = searchTBS.value.trim();
+  if (query.length === 0) {
+    suggestions.innerHTML = "";
+    suggestions.style.display = "none";
+    return;
+  }
+
+  const res = await fetch(`https://thebooksourcings.onrender.com/api/search/${encodeURIComponent(query)}`);
+  const data = await res.json();
+
+  if (data.length === 0) {
+    suggestions.innerHTML = "";
+    suggestions.style.display = "none";
+    return;
+  }
+
+  suggestions.innerHTML = data.map(item => `
+  <div class="container-result">
+    <a href="/account?memberQid=${item.memberQid}" class="user-pf-href">
+    <img src="${item.pfUrl || "https://i.pinimg.com/736x/9e/83/75/9e837528f01cf3f42119c5aeeed1b336.jpg"}" class="result-cover">
+    <div class="container-result-info">
+      <p class="result-info-name">${item.username}</p>
+      <p class="result-info-nickname">@${item.nickname}</p>
+    </div>
+    </a>
+  </div>
+
+  `
+).join("");
+  suggestions.style.display = "block";
+});
+
+// Fill input when clicking a suggestion
+suggestions.addEventListener("click", e => {
+  if (e.target.tagName === "LI") {
+    searchTBS.value = e.target.textContent;
+    suggestions.innerHTML = "";
+    suggestions.style.display = "none";
+  }
+});
+
+
+  </script>
     <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
     <script src="assets/js/account/account.js"></script>
       <script src="assets/js/index/darkmode.js" defer></script>
