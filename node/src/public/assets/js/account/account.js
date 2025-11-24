@@ -119,10 +119,10 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("username").textContent = data.username || "";
         document.getElementById("usernickname").textContent = `@${data.nickname || "noNicknameYet"}`;
         document.getElementById("userFollow").textContent = `${data.followerCount || "No followers yet"} followers`;
-        document.getElementById("bannerImage").setAttribute("src", data.bannerUrl || "");
-        document.getElementById("bannerPreview").style.setProperty("--bg-img", `url(${data.bannerUrl || ""})`);
+        document.getElementById("bannerImage").setAttribute("src", data.bannerUrl || "https://www.guardianoffshore.com.au/wp-content/themes/guardian-offshore/lib/image_resize.php?src=https://www.guardianoffshore.com.au/wp-content/themes/guardian-offshore/images/default-blog.jpg&w=800&h=225&zc=1");
+        document.getElementById("bannerPreview").style.setProperty("--bg-img", `url(${data.bannerUrl || "https://www.guardianoffshore.com.au/wp-content/themes/guardian-offshore/lib/image_resize.php?src=https://www.guardianoffshore.com.au/wp-content/themes/guardian-offshore/images/default-blog.jpg&w=800&h=225&zc=1"})`);
         const profileImage = document.getElementById("profileImage");
-        profileImage.setAttribute("src", data.pfUrl || "");
+        profileImage.setAttribute("src", data.pfUrl || "https://d1nhio0ox7pgb.cloudfront.net/_img/o_collection_png/green_dark_grey/512x512/plain/user.png");
         if (data.mood) {
             profileImage.classList.add(`mood-${data.mood}`);
         }
