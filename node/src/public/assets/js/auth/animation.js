@@ -14,27 +14,27 @@ const gifMap = {
   "1-1": "../assets/img/OtthorGIF/apple.gif",
   "1-2": "../assets/img/OtthorGIF/dvd.gif",
   "1-3": "../assets/img/OtthorGIF/drinking.gif",
-  "1-4": "../assets/img/OtthorGIF/dvd.gif",
-  "1-5": "../assets/img/OtthorGIF/drinking.gif",
+  "1-4": "../assets/img/OtthorGIF/poker.gif",
+  "1-5": "../assets/img/OtthorGIF/animation.gif",
   "2-1": "../assets/img/OtthorGIF/newspaper.gif",
   "2-2": "../assets/img/OtthorGIF/lap.gif",
-  "2-3": "../assets/img/OtthorGIF/newspaper.gif",
-  "2-4": "../assets/img/OtthorGIF/lap.gif",
+  "2-3": "../assets/img/OtthorGIF/eatFish.gif",
+  "2-4": "../assets/img/OtthorGIF/flying.gif",
   "3-1": "../assets/img/OtthorGIF/Happy.gif",
-  "3-2": "../assets/img/OtthorGIF/Happy.gif",
-  "3-3": "../assets/img/OtthorGIF/Happy.gif",
+  "3-2": "../assets/img/OtthorGIF/gamingConsole.gif",
+  "3-3": "../assets/img/OtthorGIF/VR.gif",
   "4-1": "../assets/img/OtthorGIF/phone.gif",
   "4-2": "../assets/img/OtthorGIF/ipad.gif",
-  "4-3": "../assets/img/OtthorGIF/phone.gif",
-  "4-4": "../assets/img/OtthorGIF/ipad.gif",
-  "5-1": "../assets/img/OtthorGIF/takePhoto.gif",
+  "4-3": "../assets/img/OtthorGIF/popcorn.gif",
+  "4-4": "../assets/img/OtthorGIF/sleepingPur.gif",
+  "5-1": "../assets/img/OtthorGIF/bitcoin.gif",
   "5-2": "../assets/img/OtthorGIF/cokkingEgg.gif",
   "5-3": "../assets/img/OtthorGIF/dancing.gif",
-  "5-4": "../assets/img/OtthorGIF/cokkingEgg.gif",
-  "5-5": "../assets/img/OtthorGIF/dancing.gif"
+  "5-4": "../assets/img/OtthorGIF/takePhoto.gif",
+  "5-5": "../assets/img/OtthorGIF/writingBook.gif"
 };
 
-// Helper: get GIF path for a holder
+
 function getGif(holder) {
   const box = holder.parentElement; // .container-box
   const boxIndex = Array.from(box.parentElement.children).indexOf(box) + 1;

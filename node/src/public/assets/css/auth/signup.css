@@ -46,48 +46,48 @@
             background-size: cover;
         }
         .container .container-box:nth-child(1) .container-box-holder:nth-child(1):hover{
-            background-image: url('../assets/img/OtthorGIF/apple.gif');
+            background-image: url('../../assets/img/OtthorGIF/apple.gif');
            
             background-repeat: no-repeat;
             
         }
         .container .container-box:nth-child(1) .container-box-holder:nth-child(2):hover{
-            background-image: url('../assets/img/OtthorGIF/dvd.gif');
+            background-image: url('../../assets/img/OtthorGIF/dvd.gif');
         }
         .container .container-box:nth-child(1) .container-box-holder:nth-child(3):hover{
-            background-image: url('../assets/img/OtthorGIF/drinking.gif');
+            background-image: url('../../assets/img/OtthorGIF/drinking.gif');
         }
          .container .container-box:nth-child(1) .container-box-holder:nth-child(4):hover{
-            background-image: url('../assets/img/OtthorGIF/dvd.gif');
+            background-image: url('../../img/OtthorGIF/animation.gif');
         }
         .container .container-box:nth-child(1) .container-box-holder:nth-child(5):hover{
-            background-image: url('../assets/img/OtthorGIF/drinking.gif');
+            background-image: url('../../img/OtthorGIF/gamingConsole.gif');
         }
 
          .container .container-box:nth-child(2) .container-box-holder:nth-child(1):hover{
-            background-image: url('../assets/img/OtthorGIF/newspaper.gif');
+            background-image: url('../../assets/img/OtthorGIF/newspaper.gif');
         }
         .container .container-box:nth-child(2) .container-box-holder:nth-child(2):hover{
-            background-image: url('../assets/img/OtthorGIF/lap.gif');
+            background-image: url('../../assets/img/OtthorGIF/lap.gif');
         }
 
         .container .container-box:nth-child(2) .container-box-holder:nth-child(3):hover{
-            background-image: url('../assets/img/OtthorGIF/newspaper.gif');
+            background-image: url('../../img/OtthorGIF/poker.gif');
         }
         .container .container-box:nth-child(2) .container-box-holder:nth-child(4):hover{
-            background-image: url('../assets/img/OtthorGIF/lap.gif');
+            background-image: url('../../img/OtthorGIF/flying.gif');
         }
 
         .container .container-box:nth-child(3) .container-box-holder:nth-child(1):hover{
-            background-image: url('../assets/img/OtthorGIF/Happy.gif');
+            background-image: url('../../assets/img/OtthorGIF/Happy.gif');
             
         }
         .container .container-box:nth-child(3) .container-box-holder:nth-child(2):hover{
-            background-image: url('../assets/img/OtthorGIF/Happy.gif');
+            background-image: url('../../img/OtthorGIF/VR.gif');
           
         }
         .container .container-box:nth-child(3) .container-box-holder:nth-child(3):hover{
-            background-image: url('../assets/img/OtthorGIF/Happy.gif');
+            background-image: url('../../img/OtthorGIF/sleepingPur.gif');
    
         }
        
@@ -96,36 +96,36 @@
         }
 
          .container .container-box:nth-child(4) .container-box-holder:nth-child(1):hover{
-            background-image: url('../assets/img/OtthorGIF/phone.gif');
+            background-image: url('../../assets/img/OtthorGIF/phone.gif');
             border-top: none;
         }
         .container .container-box:nth-child(4) .container-box-holder:nth-child(2):hover{
-            background-image: url('../assets/img/OtthorGIF/ipad.gif');
+            background-image: url('../../assets/img/OtthorGIF/ipad.gif');
             
         }
          .container .container-box:nth-child(4) .container-box-holder:nth-child(3):hover{
-            background-image: url('../assets/img/OtthorGIF/phone.gif');
+            background-image: url('../../img/OtthorGIF/writingBook.gif');
             border-top: none;
         }
         .container .container-box:nth-child(4) .container-box-holder:nth-child(4):hover{
-            background-image: url('../assets/img/OtthorGIF/ipad.gif');
+            background-image: url('../../img/OtthorGIF/bitcoin.gif');
             
         }
          .container .container-box:nth-child(5) .container-box-holder:nth-child(1):hover{
-            background-image: url('../assets/img/OtthorGIF/takePhoto.gif');
+            background-image: url('../../img/OtthorGIF/eatFish.gif');
             border-top: none;
         }
         .container .container-box:nth-child(5) .container-box-holder:nth-child(2):hover{
-            background-image: url('../assets/img/OtthorGIF/cokkingEgg.gif');
+            background-image: url('../../assets/img/OtthorGIF/cokkingEgg.gif');
         }
         .container .container-box:nth-child(5) .container-box-holder:nth-child(3):hover{
-            background-image: url('../assets/img/OtthorGIF/dancing.gif');
+            background-image: url('../../assets/img/OtthorGIF/dancing.gif');
         }
         .container .container-box:nth-child(5) .container-box-holder:nth-child(4):hover{
-            background-image: url('../assets/img/OtthorGIF/cokkingEgg.gif');
+            background-image: url('../../img/OtthorGIF/popcorn.gif');
         }
         .container .container-box:nth-child(5) .container-box-holder:nth-child(5):hover{
-            background-image: url('../assets/img/OtthorGIF/dancing.gif');
+            background-image: url('../../img/OtthorGIF/poker.gif');
         }
 
 .container .container-box .container-box-holder {
