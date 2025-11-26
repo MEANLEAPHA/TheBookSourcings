@@ -1,0 +1,50 @@
+@media (max-width: 1024px) {
+     #formLogin{
+        margin-top: 180px; 
+    }
+  }
+  @media (max-width: 768px) {
+    #formLogin{
+    width: 70%;
+    height: auto;
+    margin: auto;
+    padding-right: 10px;
+    margin-top: 15px;
+}
+.container .container-box:nth-child(1), .container .container-box:nth-child(2), .container .container-box:nth-child(3){
+    width: 20%;
+}
+.container .container-box:nth-child(5){
+width: 100%;
+}
+.container .container-box:nth-child(4){
+width: 100%;
+
+}
+
+
+.container .container-box:nth-child(5) .container-box-holder:nth-child(2), .container .container-box:nth-child(5) .container-box-holder:nth-child(3), .container .container-box:nth-child(5) .container-box-holder:nth-child(4){
+ border-top:none;
+}
+.container .container-box:nth-child(1) .container-box-holder:nth-child(5), .container .container-box:nth-child(2) .container-box-holder:nth-child(4), .container .container-box:nth-child(3) .container-box-holder:nth-child(3){
+    width: 100%;
+}
+.container .container-box:nth-child(1) .container-box-holder:nth-child(1), .container .container-box:nth-child(1) .container-box-holder:nth-child(2), .container .container-box:nth-child(1) .container-box-holder:nth-child(3),.container .container-box:nth-child(1) .container-box-holder:nth-child(4),
+.container .container-box:nth-child(2) .container-box-holder:nth-child(1), .container .container-box:nth-child(2) .container-box-holder:nth-child(2), .container .container-box:nth-child(2) .container-box-holder:nth-child(3),
+.container .container-box:nth-child(3) .container-box-holder:nth-child(1), .container .container-box:nth-child(3) .container-box-holder:nth-child(2)
+{
+    display: none;
+}
+.container .container-box:nth-child(5) .container-box-holder:nth-child(1), .container .container-box:nth-child(5) .container-box-holder:nth-child(2){
+    display: block;
+}
+.container .container-box:nth-child(5) .container-box-holder:nth-child(1){
+    border-left: none;
+}
+.container .container-box:nth-child(4) .container-box-holder:nth-child(1), .container .container-box:nth-child(4) .container-box-holder:nth-child(2), .container .container-box:nth-child(4) .container-box-holder:nth-child(3){
+  display: block;
+}
+.container .container-box:nth-child(4) .container-box-holder:nth-child(1), .container .container-box:nth-child(4) .container-box-holder:nth-child(2), .container .container-box:nth-child(4) .container-box-holder:nth-child(3), .container .container-box:nth-child(4) .container-box-holder:nth-child(4){
+    width: 19.9%;
+}
+}

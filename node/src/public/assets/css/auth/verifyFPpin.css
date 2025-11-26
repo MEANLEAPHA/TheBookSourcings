@@ -1,0 +1,326 @@
+
+   html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      color: white;
+      font-family: monospace;
+    }
+
+
+    body {
+      margin: 0;
+      height: 100vh;
+         background-color: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+ 
+    .header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 1rem;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 10;
+    }
+
+
+    .overlay-text {
+      position: absolute;
+      top: 50%;
+      left: 15%;
+      transform: translateY(-50%);
+      text-align: left;
+      z-index: 2;
+      font-size: 35px;
+      font-weight: 400;
+      mix-blend-mode: difference;
+      color: grey;
+      max-width: 50%;
+      line-height: 1.3;
+      pointer-events: none;
+    }
+
+    .color-change {
+      color: inherit;
+    }
+    .containers
+{
+
+    height: auto;
+    position: absolute;
+    margin: 10px;
+  justify-content: center;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+    margin-top: 10px;
+   background: rgba(199, 199, 199, 0.197); /* semi-transparent for glass look */
+  padding: 40px 30px;
+
+z-index: 100;
+
+  max-width: 350px;
+  width: 90%;
+  position: absolute;
+
+  /* Glass blur effect */
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px); /* iOS Safari support */
+
+  /* Optional: subtle border for glass edge */
+
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    
+}
+    #logNsign{
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+ #createAcc{
+    text-align: center;
+    font-family: monospace;
+    font-size: 14px;
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+    
+}
+ p {
+      margin-bottom: 20px;
+      color:   #fd7648;
+      font-size: x-large;
+      font-weight: bold;
+      margin: 0;
+      margin-bottom: 8px;
+    }
+
+
+
+
+
+ #member-form #email,#password{
+    width: 75%;
+    height: 30px;
+    border-radius: 10px;
+    color: white;
+    font-family: monospace;
+    background:transparent;
+   border: 0.5px solid rgb(117, 117, 113);
+    padding: 3px 3px 3px 5px;
+}
+
+   #pinInput {
+      width: 80%;
+      padding: 12px 15px;
+      margin-bottom: 20px;
+      border: 1px solid rgb(117, 117, 113);
+      background: none;
+      transition: border-color 0.3s ease;
+      color: white;
+    }
+#pinInput:focus{
+    outline: #fd7648 solid 1px;
+}
+
+    #verifyPinBtn {
+      background-color:#FCD999;
+      color: black;
+      padding: 12px 20px;
+      border: none;
+      
+      cursor: pointer;
+      width: 89%;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+#verifyPinBtn:hover{
+  transform: scale(0.9);
+background: none;
+ color:#FCD999;
+ border: 1px solid #FCD999;
+}
+   
+
+
+
+
+  .message {
+    margin-top: 10px;
+    color: red;
+  }
+  .resend{
+    cursor: pointer;
+  
+  }
+  #timerBt{
+    width: 75%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  font-size: 15px;
+  padding: 3px;
+  font-family: monospace;
+    margin-top: 10px;
+    opacity: 0.7;
+  }
+    .container{
+            width: 100%;
+            display: flex;
+            height: 99.9vh;
+            flex-direction: column;
+            align-items: end;
+          
+            margin: 0;
+           
+        }
+        .container .container-box{
+            width: 50%;
+            height: calc(100%/5);
+            margin: 0;
+      
+            padding: 0;
+              display: flex;
+            flex-direction: row;
+            justify-content: end;
+        }
+        .container .container-box .container-box-holder{
+            width: calc(100%/5);
+            height: 100%;
+            transition: background 1s ease; 
+            border-left: 1px solid #fd7648;
+            border-bottom: 1px solid #fd7648;
+        }
+        .container .container-box:nth-child(4) .container-box-holder:nth-child(1){
+            border-top: 1px solid #fd7648;
+        }
+        .container .container-box:nth-child(5) .container-box-holder:nth-child(1){
+            border-top: 1px solid #fd7648;
+        }
+         .container .container-box:nth-child(5) .container-box-holder{
+            border-bottom: none;
+         }
+        .container .container-box .container-box-holder:hover{
+            border: none;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        .container .container-box:nth-child(1) .container-box-holder:nth-child(1):hover{
+            background-image: url('../assets/img/OtthorGIF/apple.gif');
+           
+            background-repeat: no-repeat;
+            
+        }
+         .container .container-box:nth-child(1) .container-box-holder:nth-child(1),.container .container-box:nth-child(2) .container-box-holder:nth-child(1),
+         .container .container-box:nth-child(4) .container-box-holder:nth-child(1),.container .container-box:nth-child(5) .container-box-holder:nth-child(1)
+         {
+        border-left: none;
+        }
+        .container .container-box:nth-child(1) .container-box-holder:nth-child(2):hover{
+            background-image: url('../assets/img/OtthorGIF/dvd.gif');
+        }
+        .container .container-box:nth-child(1) .container-box-holder:nth-child(3):hover{
+            background-image: url('../assets/img/OtthorGIF/drinking.gif');
+        }
+         .container .container-box:nth-child(1) .container-box-holder:nth-child(4):hover{
+            background-image: url('../assets/img/OtthorGIF/dvd.gif');
+        }
+        .container .container-box:nth-child(1) .container-box-holder:nth-child(5):hover{
+            background-image: url('../assets/img/OtthorGIF/drinking.gif');
+        }
+
+         .container .container-box:nth-child(2) .container-box-holder:nth-child(1):hover{
+            background-image: url('../assets/img/OtthorGIF/newspaper.gif');
+        }
+        .container .container-box:nth-child(2) .container-box-holder:nth-child(2):hover{
+            background-image: url('../assets/img/OtthorGIF/lap.gif');
+        }
+
+        .container .container-box:nth-child(2) .container-box-holder:nth-child(3):hover{
+            background-image: url('../assets/img/OtthorGIF/newspaper.gif');
+        }
+        .container .container-box:nth-child(2) .container-box-holder:nth-child(4):hover{
+            background-image: url('../assets/img/OtthorGIF/lap.gif');
+        }
+
+        .container .container-box:nth-child(3) .container-box-holder:nth-child(1):hover{
+            background-image: url('../assets/img/OtthorGIF/Happy.gif');
+            
+        }
+        .container .container-box:nth-child(3) .container-box-holder:nth-child(2):hover{
+            background-image: url('../assets/img/OtthorGIF/Happy.gif');
+          
+        }
+        .container .container-box:nth-child(3) .container-box-holder:nth-child(3):hover{
+            background-image: url('../assets/img/OtthorGIF/Happy.gif');
+   
+        }
+       
+         .container .container-box:nth-child(4) .container-box-holder:nth-child(2) {
+            border-top: 1px solid #fd7648;
+        }
+
+         .container .container-box:nth-child(4) .container-box-holder:nth-child(1):hover{
+            background-image: url('../assets/img/OtthorGIF/phone.gif');
+            border-top: none;
+        }
+        .container .container-box:nth-child(4) .container-box-holder:nth-child(2):hover{
+            background-image: url('../assets/img/OtthorGIF/ipad.gif');
+            
+        }
+         .container .container-box:nth-child(4) .container-box-holder:nth-child(3):hover{
+            background-image: url('../assets/img/OtthorGIF/phone.gif');
+            border-top: none;
+        }
+        .container .container-box:nth-child(4) .container-box-holder:nth-child(4):hover{
+            background-image: url('../assets/img/OtthorGIF/ipad.gif');
+            
+        }
+         .container .container-box:nth-child(5) .container-box-holder:nth-child(1):hover{
+            background-image: url('../assets/img/OtthorGIF/takePhoto.gif');
+            border-top: none;
+        }
+        .container .container-box:nth-child(5) .container-box-holder:nth-child(2):hover{
+            background-image: url('../assets/img/OtthorGIF/cokkingEgg.gif');
+        }
+        .container .container-box:nth-child(5) .container-box-holder:nth-child(3):hover{
+            background-image: url('../assets/img/OtthorGIF/dancing.gif');
+        }
+        .container .container-box:nth-child(5) .container-box-holder:nth-child(4):hover{
+            background-image: url('../assets/img/OtthorGIF/cokkingEgg.gif');
+        }
+        .container .container-box:nth-child(5) .container-box-holder:nth-child(5):hover{
+            background-image: url('../assets/img/OtthorGIF/dancing.gif');
+        }
+
+.container .container-box .container-box-holder {
+    transition: opacity 1s ease;
+}
+
+.container .container-box .container-box-holder.active {
+    opacity: 1;
+}
+
+.container .container-box .container-box-holder.fade-out {
+    opacity: 0;
+}
+
+
+    .container .container-box{
+            width: 100%;
+            height: calc(100%/5);
+            margin: 0;
+      
+            padding: 0;
+              display: flex;
+            flex-direction: row;
+            justify-content: end;
+        }
+        .container .container-box .container-box-holder:hover{
+            background-color: #fd7648;
+        }
+   

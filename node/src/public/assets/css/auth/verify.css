@@ -1,0 +1,239 @@
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      margin: 0;
+      height: 100vh;
+         background-color: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .verify-container {
+  background: rgba(199, 199, 199, 0.197); /* semi-transparent for glass look */
+  padding: 40px 30px;
+
+  text-align: center;
+  max-width: 350px;
+  width: 90%;
+  position: absolute;
+  z-index: 100;
+  /* Glass blur effect */
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px); /* iOS Safari support */
+
+  /* Optional: subtle border for glass edge */
+
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+    p {
+      margin-bottom: 20px;
+      color:   #fd7648;
+      font-size: x-large;
+      font-family: monospace;
+      font-weight: bold;
+    }
+
+    #verifyPin {
+      width: 100%;
+      padding: 12px 15px;
+      margin-bottom: 20px;
+      border: 1px solid rgb(117, 117, 113);
+      background: none;
+      transition: border-color 0.3s ease;
+      color: white;
+    }
+#verifyPin:focus{
+    outline: #fd7648 solid 1px;
+}
+
+    #verifyPinBtn {
+      background-color:#FCD999;
+      color: black;
+      padding: 12px 20px;
+      border: none;
+      
+      cursor: pointer;
+      width: 100%;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+#verifyPinBtn:hover{
+  transform: scale(0.9);
+background: none;
+ color:#FCD999;
+ border: 1px solid #FCD999;
+}
+    
+
+    .spaced {
+      margin-top: 10px;
+      background: none;
+      border: none;
+      color: white;
+      opacity: 0.8;
+      font-family: sans-serif;
+      text-decoration: underline;
+    }
+  .container{
+            width: 100%;
+            display: flex;
+            height: 99.9vh;
+            flex-direction: column;
+            align-items: end;
+          
+            margin: 0;
+           
+        }
+        .container .container-box{
+            width: 50%;
+            height: calc(100%/5);
+            margin: 0;
+      
+            padding: 0;
+              display: flex;
+            flex-direction: row;
+            justify-content: end;
+        }
+        .container .container-box .container-box-holder{
+            width: calc(100%/5);
+            height: 100%;
+            transition: background 1s ease; 
+            border-left: 1px solid #fd7648;
+            border-bottom: 1px solid #fd7648;
+        }
+        .container .container-box:nth-child(4) .container-box-holder:nth-child(1){
+            border-top: 1px solid #fd7648;
+        }
+        .container .container-box:nth-child(5) .container-box-holder:nth-child(1){
+            border-top: 1px solid #fd7648;
+        }
+         .container .container-box:nth-child(5) .container-box-holder{
+            border-bottom: none;
+         }
+        .container .container-box .container-box-holder:hover{
+            border: none;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        .container .container-box:nth-child(1) .container-box-holder:nth-child(1):hover{
+            background-image: url('../assets/img/OtthorGIF/apple.gif');
+           
+            background-repeat: no-repeat;
+            
+        }
+         .container .container-box:nth-child(1) .container-box-holder:nth-child(1),.container .container-box:nth-child(2) .container-box-holder:nth-child(1),
+         .container .container-box:nth-child(4) .container-box-holder:nth-child(1),.container .container-box:nth-child(5) .container-box-holder:nth-child(1)
+         {
+        border-left: none;
+        }
+        .container .container-box:nth-child(1) .container-box-holder:nth-child(2):hover{
+            background-image: url('../assets/img/OtthorGIF/dvd.gif');
+        }
+        .container .container-box:nth-child(1) .container-box-holder:nth-child(3):hover{
+            background-image: url('../assets/img/OtthorGIF/drinking.gif');
+        }
+         .container .container-box:nth-child(1) .container-box-holder:nth-child(4):hover{
+            background-image: url('../assets/img/OtthorGIF/dvd.gif');
+        }
+        .container .container-box:nth-child(1) .container-box-holder:nth-child(5):hover{
+            background-image: url('../assets/img/OtthorGIF/drinking.gif');
+        }
+
+         .container .container-box:nth-child(2) .container-box-holder:nth-child(1):hover{
+            background-image: url('../assets/img/OtthorGIF/newspaper.gif');
+        }
+        .container .container-box:nth-child(2) .container-box-holder:nth-child(2):hover{
+            background-image: url('../assets/img/OtthorGIF/lap.gif');
+        }
+
+        .container .container-box:nth-child(2) .container-box-holder:nth-child(3):hover{
+            background-image: url('../assets/img/OtthorGIF/newspaper.gif');
+        }
+        .container .container-box:nth-child(2) .container-box-holder:nth-child(4):hover{
+            background-image: url('../assets/img/OtthorGIF/lap.gif');
+        }
+
+        .container .container-box:nth-child(3) .container-box-holder:nth-child(1):hover{
+            background-image: url('../assets/img/OtthorGIF/Happy.gif');
+            
+        }
+        .container .container-box:nth-child(3) .container-box-holder:nth-child(2):hover{
+            background-image: url('../assets/img/OtthorGIF/Happy.gif');
+          
+        }
+        .container .container-box:nth-child(3) .container-box-holder:nth-child(3):hover{
+            background-image: url('../assets/img/OtthorGIF/Happy.gif');
+   
+        }
+       
+         .container .container-box:nth-child(4) .container-box-holder:nth-child(2) {
+            border-top: 1px solid #fd7648;
+        }
+
+         .container .container-box:nth-child(4) .container-box-holder:nth-child(1):hover{
+            background-image: url('../assets/img/OtthorGIF/phone.gif');
+            border-top: none;
+        }
+        .container .container-box:nth-child(4) .container-box-holder:nth-child(2):hover{
+            background-image: url('../assets/img/OtthorGIF/ipad.gif');
+            
+        }
+         .container .container-box:nth-child(4) .container-box-holder:nth-child(3):hover{
+            background-image: url('../assets/img/OtthorGIF/phone.gif');
+            border-top: none;
+        }
+        .container .container-box:nth-child(4) .container-box-holder:nth-child(4):hover{
+            background-image: url('../assets/img/OtthorGIF/ipad.gif');
+            
+        }
+         .container .container-box:nth-child(5) .container-box-holder:nth-child(1):hover{
+            background-image: url('../assets/img/OtthorGIF/takePhoto.gif');
+            border-top: none;
+        }
+        .container .container-box:nth-child(5) .container-box-holder:nth-child(2):hover{
+            background-image: url('../assets/img/OtthorGIF/cokkingEgg.gif');
+        }
+        .container .container-box:nth-child(5) .container-box-holder:nth-child(3):hover{
+            background-image: url('../assets/img/OtthorGIF/dancing.gif');
+        }
+        .container .container-box:nth-child(5) .container-box-holder:nth-child(4):hover{
+            background-image: url('../assets/img/OtthorGIF/cokkingEgg.gif');
+        }
+        .container .container-box:nth-child(5) .container-box-holder:nth-child(5):hover{
+            background-image: url('../assets/img/OtthorGIF/dancing.gif');
+        }
+
+.container .container-box .container-box-holder {
+    transition: opacity 1s ease;
+}
+
+.container .container-box .container-box-holder.active {
+    opacity: 1;
+}
+
+.container .container-box .container-box-holder.fade-out {
+    opacity: 0;
+}
+
+
+    .container .container-box{
+            width: 100%;
+            height: calc(100%/5);
+            margin: 0;
+      
+            padding: 0;
+              display: flex;
+            flex-direction: row;
+            justify-content: end;
+        }
+        .container .container-box .container-box-holder:hover{
+            background-color: #fd7648;
+        }
+   
