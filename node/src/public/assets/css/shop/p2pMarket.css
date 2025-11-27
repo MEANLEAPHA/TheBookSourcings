@@ -1,0 +1,388 @@
+ :root{
+    --background-color:white;
+    --primary-color:#fd7648;
+    --secondary-color: gainsboro;
+    --font-color:rgb(65, 65, 65);
+    --back-con:rgb(245, 245, 245);
+}
+.dark-theme{
+    --background-color:rgb(32, 32, 32);
+    --primary-color:#fd7648;
+    --secondary-color: rgba(220, 220, 220, 0.318);
+    --font-color:rgb(255, 255, 255);
+     --back-con:rgb(40, 40, 40);
+}
+ .content{
+        display: block;   
+    }
+.nav-wrapper{
+    width: 98%;
+    margin: auto;
+    padding: 10px;
+    margin: 0;
+}
+#filterForm{
+ display: flex;
+ flex-direction: row;
+ gap: 10px;
+ flex-wrap: wrap;
+ align-items: center;
+
+}
+/* Chrome, Safari, Edge, Opera */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Optional: for consistency */
+input[type=number] {
+  appearance: textfield; /* modern standard */
+}
+
+
+.my-col {
+
+  width: calc(100%/4.5);
+}
+.filter-btn{
+    width: 5%;
+}
+.filter-btn-collapse{
+    display: none;
+  
+}
+.btn-filter-collape{
+    background-color: var(--back-con);
+    color: var(--font-color);
+}
+.btn-filter-collape:hover{
+    color: var(--primary-color);
+}
+.form-control{
+    background-color: var(--background-color);
+    color: var(--font-color);
+     border: 1px solid var(--primary-color);
+}
+#priceMin,#priceMax{
+    color: var(--font-color);
+}
+.input-group-text{
+  background-color: var(--primary-color);
+  color: var(--font-color);
+  border: 1px solid var(--primary-color);
+}
+.form-select{
+    background-color: var(--background-color);
+    color: var(--font-color);
+    border: 1px solid var(--primary-color);
+}
+
+.btn-filter{
+    background-color: var(--primary-color);
+    height: 100%;
+    color: white;
+}
+.btn-filter:hover{
+    color: var(--primary-color);
+    background-color: none;
+    border: 1px solid var(--primary-color);
+}
+.form-control:focus{
+    outline: none !important;
+    box-shadow: none !important;
+      border: 1px solid var(--primary-color);
+    background-color: var(--background-color) !important;
+}
+.form-select:focus{
+    outline: none !important;
+    box-shadow: none !important;
+      border: 1px solid var(--primary-color);
+    background-color: var(--background-color) !important;
+}
+/* @media (min-width: 576px) {
+
+  .my-col {
+    width: 50%; 
+  }
+}
+
+@media (min-width: 768px) {
+ 
+  .my-col {
+    width: 33.3333%; 
+  }
+} */
+
+#closeNopen{
+    display: none;
+}
+
+
+
+
+#BookContent{
+   
+      height: auto;
+      display: flex;
+      justify-content: start;
+      flex-wrap: wrap;
+      /* border: 1px solid black; */
+      padding: 0;
+      gap: 10px;
+      margin: 0;
+      
+      align-items: flex-start;
+    
+    }
+     #BookContent .saleBook-container{
+      width: calc(100%/4.2);
+      height:auto;
+      overflow: hidden;
+      padding-bottom: 3px;
+    }
+    .saleBook-cover-holder{
+      width: 100%;
+      height:280px;
+      position: relative;
+   
+    }
+    
+     .card-name,.card-book-author-holder,.book-genre-holder{
+        width: 100%;
+        height: 30px;
+        margin: 0;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+        }
+    .card-book-type{
+      width: 100%;
+      height: 25px;
+   
+      padding-top: 10px;
+    }
+    .card-book-price{
+      width: 100%;
+      height: 30px;
+      padding-top: 4px;
+    
+    }
+
+    .saleBook-cover-holder:hover .badge-promotion{
+      visibility: hidden;
+      transition: opacity 1s ease-out;
+    }
+    .badge-promotion{
+      position: absolute;
+      top: 10px;
+      right: -35px;
+      transform: rotate(35deg);
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      padding: 3px 10px 3px 10px;
+      width: 155px;
+      text-align: center;
+      transition: opacity 1s ease-out;
+    }
+    .free-type{
+      background-color: rgba(0, 255, 85, 0.808);
+    }
+    .discount-type{
+      background-color: rgba(255, 0, 0, 0.808);
+    }
+
+    .saleBook-src{
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+    .saleBook-title{
+      font-family: monospace;
+      font-size: large;
+      font-weight: bold;
+      margin: 8px 0;
+    }
+    .book-type{
+      font-size: x-small;
+      margin: 0;
+      color: gray;
+      font-family: sans-serif;
+    }
+
+    .order-saleBook-btn{
+      border: none;
+      background:none;
+      padding: 0;
+      margin-top: 2px;
+      
+    }
+    .order-saleBook-btn:hover{
+      background-color:var(--primary-color);
+      padding-right: 10px;
+      border-radius: 25px;
+      color: white;
+    }
+    .order-saleBook-btn:hover a{
+      color: white;
+    }
+    .order-saleBook-btn a{
+      color: grey;
+      text-decoration: none;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+        transition: gap 0.3s ease; /* animate the gap */
+    }
+    .order-saleBook-btn a i{
+      transform: rotate(40deg);
+      background-color: var(--primary-color);
+      padding: 10px;
+      width: 35px;
+       transition: transform 0.3s ease, background-color 0.3s ease;
+      height: 35px;
+      border-radius: 50%;
+      color: white;
+    }
+    .order-saleBook-btn:hover a  {
+     gap: 0px;
+}
+    .order-saleBook-btn:hover a i {
+  transform: rotate(90deg); 
+  background:none;/* rotate to 90deg on hover */
+}
+#user-info-display .label{
+  font-size: medium;
+  color: var(--primary-color);
+}
+.label{
+  font-size: medium;
+  color: var(--primary-color);
+}
+.user-pf-href p{
+ font-size: small;
+}
+
+@media screen and (max-width:1290px){
+ 
+ #BookContent .saleBook-container{
+      width: calc(100%/4.3);
+      height:auto;    
+      overflow: hidden;
+    }
+    .saleBook-cover-holder{
+      width: 100%;
+      height:250px;
+      position: relative;
+   
+    }
+}
+@media screen and (max-width:1150px){
+    .saleBook-cover-holder{
+      height:200px;
+     
+    }
+
+}
+@media screen and (max-width:1024px) {
+    #closeNopen{
+    display: block;
+}
+    .nav-wrapper{
+        margin: auto;
+        margin-top: 0px;
+        background-color: var(--back-con);
+        padding-top: 10px;
+        width: 100%;
+    }
+    #filterForm{
+        justify-content: center;
+        margin: auto;
+   
+    }
+.my-col {
+
+  width: calc(100%/2.05);
+}
+.filter-btn{
+    width: 99%;
+}
+.filter-btn-collapse{
+    display: block;
+    width: 99%;
+   
+}
+.form-control,.form-select{
+    font-size: medium;
+}
+#BookContent .saleBook-container{
+      width: calc(100%/4.2);
+    }
+    .saleBook-cover-holder{
+      width: 100%;
+      height:250px;
+      position: relative;
+   
+    }
+}
+@media screen and (max-width:900px){
+ 
+#BookContent .saleBook-container{
+      width: calc(100%/4.2);
+    }
+    .saleBook-cover-holder{
+      width: 100%;
+      height:230px;
+      position: relative;
+   
+    }
+
+}
+@media screen and (max-width:768px) {
+    .nav-wrapper{
+        margin: auto;
+        margin-top: 0px;
+        background-color: var(--back-con);
+        padding-top: 10px;
+        width: 100%;
+    }
+    #filterForm{
+        justify-content: center;
+        margin: auto;
+   
+    }
+    .my-col {
+
+  width: calc(100%/2.1);
+}
+.filter-btn{
+    width: 97%;
+}
+.filter-btn-collapse{
+    display: block;
+    width: 97%;
+   
+}
+.form-control,.form-select{
+    font-size: small;
+}
+#BookContent .saleBook-container{
+      width: calc(100%/3.15);
+      height: auto;
+      overflow: hidden;
+    }
+    .saleBook-cover-holder{
+      width: 100%;
+      height:290px;
+      position: relative;
+   
+    }
+}

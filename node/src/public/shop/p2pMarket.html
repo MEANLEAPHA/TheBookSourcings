@@ -3,63 +3,67 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
+        <link rel="icon" href="https://the-book-sourcing-2025.s3.ap-southeast-1.amazonaws.com/community/1764132220875-8mx5v0.png">
+        <title>Otther - market place p2p</title>
         <script src="https://kit.fontawesome.com/ec7a51a641.js" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://kit.fontawesome.com/ec7a51a641.js" crossorigin="anonymous"></script>
         <link rel="icon" href="assets/img/ThebooksorucingsIcon-removebg-preview.png">
-        <link rel="stylesheet" href="../components/ui/global.css">
-      
+        <link rel="stylesheet" href="../assets/css/chat/community/community.css">
+        <link rel="stylesheet" href="../assets/css/shop/p2pMarket.css">
     </head>
     <body>
         <header id="header">
-            <div id="headerLeft"> 
-                <i class="fa-solid fa-bars"></i>
-                <a href="#top"><img src=""  id="logo"></a>
-            </div>
-            <div id="headerMiddle">
-                <input type="text" placeholder="Search" id="searchTBS">
-                <i class="fa-solid fa-magnifying-glass" id="searchIcon"></i>
-            </div>
-            <div id="headerRight">
-                <i class="fa-solid fa-magnifying-glass" id="searchIcons"></i>
-                <div id="create">
-                <a href="uploadSale.html" style="display: flex;align-items: center;gap: 5px;margin: 0;">
-                    <div>Sell book</div>
-                </a>
-                </div>
-                <button id="enableNotif">Enable notifications</button>
-                <i class="fa-solid fa-bell" id="liveNotiBtn"></i>
-                <i class="fa-solid fa-paper-plane" id="liveChatBtn"></i>
-                <img src="../assets/img/pf.jpg" class="userPf" alt="user" class="dropdown-item" style='color: rgb(60, 60, 60);font-family: "Reenie Beanie", cursive;font-weight: 599;font-size: large;' id="liveToastBtn">
-            </div>
-        </header>
-        <div id="phoneSearch">
-            <div id="phoneSearchLeft"><i class="fa-solid fa-arrow-left"></i></div>
-            <div id="headerMiddle2">
-                    <input type="text" placeholder="Search" id="searchTBS">
-                    <i class="fa-solid fa-magnifying-glass" id="searchIcon"></i>
-            </div>
+    <div id="headerLeft"> 
+        <i class="fa-solid fa-bars"></i>
+        <a href="#top"><img src="../../assets/img/TheBookSourcingLogo-removebg-preview.png" alt="RentWell-Logo" id="logo"></a>
+    </div>
+    <div id="headerMiddle">
+        <input type="text" placeholder="Search TheBookSourcing" id="searchTBS">
+        <i class="fa-solid fa-magnifying-glass" id="searchIcon"></i>
+    </div>
+    <div id="headerRight">
+        <i class="fa-solid fa-magnifying-glass" id="searchIcons"></i>
+        <div id="create">
+          <a style="display: flex;align-items: center; gap: 10px;" id="sale-btn">
+            <i class="fa-solid fa-plus"></i> 
+            <div id="post-span"> Sale</div>
+          </a>
         </div>
-        <main>
-            <div class="smallCollape">
+        <i class="fa-solid fa-bell"  id="liveNotiBtn"></i>
+        <i class="fa-solid fa-user" id="liveFriBtn"></i>
+        <img  class="userPf" alt="user" class="dropdown-item"  id="liveToastBtn">
+    </div>
+  </header>   
+  <div id="phoneSearch">
+    <div id="phoneSearchLeft"><i class="fa-solid fa-arrow-left"></i></div>
+    <div id="headerMiddle2">
+            <input type="text" placeholder="Search" id="searchTBS">
+            <i class="fa-solid fa-magnifying-glass" id="searchIcon"></i>
+    </div>
+  </div>
+  <main>   
+  <div class="smallCollape">
                 <ul>
                     <li><i class="fa-solid fa-house"></i></li>
                     <li><i class="fa-solid fa-newspaper"></i></li>
                     <li><i class="fa-solid fa-shop"></i></li>
                     <li><i class="fa-solid fa-users"></i></li>
-                    <li><i class="fa-solid fa-gamepad"></i></li>
+                    <li><i class="fa-solid fa-paper-plane"></i></li>
                     <li><i class="fa-solid fa-circle-user"></i></li>
+                    <li><i class="fa-solid fa-fire"></i></li>
+                    <li><i class="fa-solid fa-ghost"></i></li>
+                    <li><i class="fa-solid fa-medal"></i></li>
                 </ul>
-            </div>
+    </div>
             <div class="collapse">
                 <ul id="u1">    
                     <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-house"></i>Home</a></li>
                     <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-newspaper"></i>Articles</a></li>
                     <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-shop"></i>Market Place</a></li>
                     <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-users"></i>Community</a></li>
-                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-gamepad"></i>Games</a></li>
+                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-paper-plane"></i>Message</a></li>
                 </ul>
                 <ul id="u2">    
                     <li class="liTop"><Big>You > </Big></li>
@@ -67,29 +71,25 @@
                     <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-lines-leaning"></i>Your Library</a></li>
                     <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-book"></i>Your Book</a></li>
                     <li><a href="userShop.html"><i class="fa-solid fa-dollar-sign"></i>Your Shop</a></li>
-                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-bookmark"></i>Favorite</a></li>
+                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-bookmark fav-fav"></i>Favorite</a></li>
                     <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-thumbs-up"></i>Liked</a></li>
                 </ul>
                 <ul id="u3">    
                     <li class="liTop"><Big>Following</Big></li>
                 </ul>
                 <div class="following">
-                    <div class="followingChild"><img src="dog.png" class="followingPf"><p class="followingName">Golden Ramsy</p></div>
-                    <div class="followingChild"><img src="dog.png" class="followingPf"><p class="followingName">Morgen Housel</p></div>
-                    <div class="followingChild"><img src="dog.png" class="followingPf"><p class="followingName">Yuval Noah Harari</p></div>
-                    <div class="followingChild"><img src="dog.png" class="followingPf"><p class="followingName">Meanleap Ha</p></div>
-                    <div class="followingChild"><img src="dog.png" class="followingPf"><p class="followingName">Yuval Noah Harari</p></div>
+                    <div class="displayUserFollowing">
+                 
+                    </div>
                     <li id="allFollowing"><a href="userBook/yourBookTest.html"><i class="fa-solid fa-list"></i>All Following</a></li>
                     <li id="showMoreFollow"><a><i class="fa-solid fa-chevron-down"></i>Show More</a></li>
                     <li id="showLessFollow"><a><i class="fa-solid fa-chevron-up"></i>Show Less</a></li>
                 </div>
                 <ul id="u4">    
                     <li class="liTop"><Big>Explore</Big></li>
-                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-masks-theater"></i>Novel</a></li>
-                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-mask"></i>Comic Book</a></li>
-                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-user-ninja"></i>Manga</a></li>
-                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-lightbulb"></i>Literature</a></li>
-                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-feather-pointed"></i>Poetry</a></li>
+                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-fire"></i>What's Hot</a></li>
+                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-ghost"></i> Nobody’s Secret</a></li>
+                    <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-medal"></i> Hall of Fame</a></li>
                 </ul>
                 <ul id="u5">    
                     <li><a href="userBook/yourBookTest.html"><i class="fa-solid fa-gear"></i>Settings</a></li>
@@ -116,9 +116,9 @@
             <div class="content">
                 <!-- The filter option-->
                 <div class="nav-wrapper">
-                    <form id="filterForm" class="row g-3 align-items-center">
+                    <form id="filterForm">
                         <!-- 💰 Price Range -->
-                        <div class="col-md-4 col-sm-6">
+                        <div class="my-col">
                             <div class="input-group">
                             <input
                                 type="number"
@@ -140,7 +140,7 @@
 
                         <!-- 🏷️ Sale Type -->
                          
-                        <div class="col-md-2 col-sm-6">
+                        <div class="my-col ">
                             <select id="saleType" class="form-select">
                             <option value="">All Sale Types</option>
                             <option value="normal">Normal Sale</option>
@@ -150,7 +150,7 @@
                         </div>
 
                         <!-- 💸 Discount Type -->
-                        <div class="col-md-2 col-sm-6">
+                        <div class="my-col">
                             <select id="discountType" class="form-select">
                             <option value="">All Discounts</option>
                             <option value="percent">Percentage</option>
@@ -159,7 +159,7 @@
                         </div>
 
                         <!-- 🧾 Book Type -->
-                        <div class="col-md-2 col-sm-6">
+                        <div class="my-col">
                             <select id="bookType" class="form-select">
                             <option value="">All Book Types</option>
                             <option value="ebook">E-Book</option>
@@ -168,12 +168,27 @@
                         </div>
 
                         <!-- 🎯 Apply Filter -->
-                        <div class="col-md-1 col-sm-6 text-end">
-                            <button type="submit" class="btn btn-primary w-100">
+                         
+                           <div class="my-col filter-btn">
+                            <button type="submit" class="btn-filter w-100 btn">
                             <i class="fa-solid fa-filter"></i>
                             </button>
                         </div>
                     </form>  
+                    <div id="closeNopen">
+                    <div class="my-col filter-btn-collapse filter-btn-collapse-open">
+                            <button  class="btn-filter-collape w-100 btn">
+                            <i class="fa-solid fa-chevron-down"></i>
+                            </button>
+                        </div>
+                         <div class="my-col filter-btn-collapse filter-btn-collapse-close">
+                            <button  class="btn-filter-collape w-100 btn">
+                            <i class="fa-solid fa-chevron-up"></i>
+                            </button>
+                        </div>
+
+                         </div>
+                     
                 </div>
                 <!-- Sale book will display here  -->
                 <div id="BookContent">
@@ -183,7 +198,7 @@
         </main>
 
     <!-- chat collape -->
-    <div class="toast-container-chat ">
+    <!-- <div class="toast-container-chat ">
       <div id="liveChat" class="toast" role="alert" aria-live="assertive" aria-atomic="true" >
         <div class="toast-header-chat">
             <img src="dog.png"  class="userPf">
@@ -207,7 +222,7 @@
            </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- Notication collape -->
     <div class="toast-container position-fixed  end-0 p-3">
@@ -218,19 +233,19 @@
       </div>
     </div>
 
-        <!-- account tool collapse -->
+     <!-- account tool collapse -->
     <div class="toast-container position-fixed  end-0 p-3">
       <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" >
         <div class="toast-header">
-            <img src="dog.png"  class="userPf">
+            <img src=""  class="userPf-collapse">
             <div class="userDetails">
-              <p>Name</p>
-              <p>@Nickname</p>
-              <a href="#" style="color: #275791;">View channel</a>
+              <p class="userName-collapse"></p>
+              <p class="nickName-collapse"></p>
+              <a href="../../userAccount.html" style="color:#fd7648;">View Account</a>
           </div>
         </div>
         <div class="toast-header">
-          <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
+          <button onclick="settingLink()" class="btn-col-acc"><a><i class="fa-solid fa-gear"></i> Settings</a></button>
         </div>
         <div class="toast-header" id="themeSwitchSection">
             <button class="theme-switch">
@@ -243,13 +258,15 @@
             </p>
         </div>
         <div class="toast-header">
-          <a href="#"><i class="fa-solid fa-circle-question"></i> Help</a>
+          <button onclick="helpLink()" class="btn-col-acc"><a><i class="fa-solid fa-circle-question"></i> Help</a></button>
         </div>
         <div class="toast-header"  >
-          <a class="feedBackBtn2"><i class="fa-solid fa-comment-dots"></i> Feedback</a>
+          <!-- <a class="feedBackBtn2"><i class="fa-solid fa-comment-dots"></i> Feedback</a> -->
+          <button onclick="showFeedBackToast()" class="btn-col-acc"><a><i class="fa-solid fa-comment-dots"></i> Feedback</a></button>
         </div>
-        <div class="toast-body " >
-          <a href="userSign/login.html"><i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Login</span></a>
+        <div class="toast-body log-in-out">
+          <button onclick="login()" id="loginButton" class="btn-col-acc"><a><i class="fa-solid fa-arrow-right-to-bracket"></i> Login</a></button>
+          <button onclick="logout()" id="logoutButton" class="btn-col-acc"><a><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a></button>
         </div>
       </div>
     </div>
@@ -305,391 +322,20 @@
   <button id="confirmDelete">Yes</button>
   <button id="cancelDelete">Cancel</button>
 </div>
-    <script>
-    document.addEventListener("DOMContentLoaded", () => {
-    const filterForm = document.getElementById("filterForm");
-    const BookContent = document.getElementById("BookContent");
 
-    // 🌐 API base (adjust path if needed)
-    const API_URL = "https://thebooksourcings.onrender.com/api/shop/displaySaleBook";
 
-    // 🧩 Fetch and display books
-    async function fetchBooks(filters = {}) {
-    try {
-        const queryString = new URLSearchParams(filters).toString();
-        const res = await fetch(`${API_URL}?${queryString}`);
-        const data = await res.json();
-
-        if (!data.Result || !data.books) {
-        BookContent.innerHTML = `<p class="text-muted text-center mt-3">No books found.</p>`;
-        return;
-        }
-
-        // 🎨 Render book cards
-        renderBooks(data.books);
-    } catch (err) {
-        console.error("Error fetching books:", err);
-        BookContent.innerHTML = `<p class="text-danger text-center mt-3">Failed to load books.</p>`;
-    }
-    }
-
-    // 🧱 Render books in cards
-    function renderBooks(books) {
-    BookContent.innerHTML = books
-        .map((book) => {
-        const img = book.bookImg || (book.imgPreview?.[0] ?? "https://via.placeholder.com/150");
-        const discountTag =
-            book.discount_type && book.discount_price
-            ? `<span class="badge bg-danger ms-2">${book.discount_type === "percent" ? `-${book.discount_price}%` : `-${book.discount_price}$`}</span>`
-            : "";
-        const saleType =
-            book.sale_type === "free"
-            ? `<span class="badge bg-success ms-2">Free</span>`
-            : book.sale_type === "discount"
-            ? `<span class="badge bg-warning text-dark ms-2">Discount</span>`
-            : "";
-
-        return `
-            <div class="col-lg-3 col-md-4 col-sm-6">
-            <div class="card h-100 shadow-sm border-0">
-                <div class="ratio ratio-1x1">
-                <img src="${img}" class="card-img-top rounded-top" alt="${book.title}">
-                </div>
-                <div class="card-body">
-                <h6 class="fw-bold text-truncate">${book.title || "Untitled"} ${discountTag} ${saleType}</h6>
-                <p class="text-muted small mb-1">${book.book_type?.toUpperCase() || "Unknown Type"}</p>
-                <p class="mb-0">
-                    ${book.price ? `<span class="fw-bold text-primary">$${book.price}</span>` : ""}
-                    ${book.original_price && book.original_price > book.price
-                    ? `<small class="text-decoration-line-through text-muted ms-2">$${book.original_price}</small>`
-                    : ""}
-                </p>
-                <button><a href='aboutSaleBook.html?bookSid=${book.bookSid}'>View Book</a></button>
-                </div>
-            </div>
-            </div>
-        `;
-        })
-        .join("");
-    }
-
-    // 🧮 Handle form submission
-    filterForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    const filters = {
-        minPrice: document.getElementById("priceMin").value,
-        maxPrice: document.getElementById("priceMax").value,
-        saleType: document.getElementById("saleType").value,
-        discountType: document.getElementById("discountType").value,
-        bookType: document.getElementById("bookType").value,
-    };
-
-    fetchBooks(filters);
-    });
-
-    // 🚀 Load all books on first load
-    fetchBooks();
-    });
-    </script>
-    
-    <script src="../assets/js/index/darkmode.js" defer></script>
-    <script src="../assets/js/index/collapseResponsive.js"></script>
-    <script src="../assets/js/index/followingAcc.js"></script>
-    <script src="../assets/js/index/accountToast.js"></script>
-    <script src="../assets/js/index/navNewFeed.js"></script>
-    <script src="../assets/js/index/feedbackToast.js"></script>
-    <script src="../assets/js/index/headerSearch.js"></script>
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
-
-    <!-- room chat script -->
-     <script>
-const token = localStorage.getItem("token");
-if (!token) {
-  alert("Login required");
-  window.location.href = "/login.html";
-}
-
-const currentUser = JSON.parse(atob(token.split('.')[1])).memberQid;
-const socket = io("https://thebooksourcings.onrender.com", {
-  auth: { token },
-  transports: ["websocket"]
-});
-
-const roomList = document.getElementById("roomList");
-const chatContent = document.getElementById("chatContent");
-let activeRoomId = null;
-
-// 🔹 Load Chat Rooms
-async function loadChatRooms() {
-  try {
-    const res = await axios.get("https://thebooksourcings.onrender.com/api/chat/rooms", {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    const rooms = res.data.rooms || [];
-    roomList.innerHTML = "";
-
-    if (!rooms.length) {
-      roomList.innerHTML = `<p class='no-room'>No chats yet.</p>`;
-      return;
-    }
-
-    rooms.forEach(room => {
-      const div = document.createElement("div");
-      div.className = "room-item";
-      div.innerHTML = `
-        <img src="${room.otherProfileImg || 'default.png'}" class="room-avatar">
-        <div class="room-info">
-          <p class="room-name">${room.otherUsername}</p>
-          <p class="room-last">${room.lastMessage || 'No messages yet'}</p>
-        </div>
-      `;
-      div.addEventListener("click", () => openRoom(room.roomId));
-      roomList.appendChild(div);
-    });
-  } catch (err) {
-    console.error("Failed to load chat rooms:", err);
-  }
-}
-
-// 🔹 Load Messages of Selected Room
-async function openRoom(roomId) {
-  activeRoomId = roomId;
-  chatContent.innerHTML = `
-    <div id="chatBox" class="chat-box"></div>
-    <div class="chat-input">
-      <input type="text" id="messageInput" placeholder="Type a message..." />
-      <button id="sendBtn"><i class="fa-solid fa-paper-plane"></i></button>
-    </div>
-  `;
-
-  const chatBox = document.getElementById("chatBox");
-  const messageInput = document.getElementById("messageInput");
-  const sendBtn = document.getElementById("sendBtn");
-
-  socket.emit("joinRoom", roomId);
-
-  // Fetch and display chat history
-  try {
-    const res = await axios.get(`https://thebooksourcings.onrender.com/api/chat/${roomId}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    const messages = res.data.messages || [];
-    chatBox.innerHTML = "";
-
-    messages.forEach(msg => appendMessage(msg, msg.senderQid === currentUser));
-    chatBox.scrollTop = chatBox.scrollHeight;
-
-    // Mark as seen when room opened
-    // socket.emit("messageSeen", { roomId });
-    socket.emit("markRoomSeen", { roomId });
-
-  } catch (err) {
-    console.error("Failed to load messages:", err);
-  }
-
-sendBtn.onclick = () => {
-  const text = messageInput.value.trim();
-  if (!text) return;
-
-  const tempId = "temp_" + Date.now();
-  // show a pending UI that uses the tempId exactly
-  appendMessage({ messageId: tempId, message: text, senderQid: currentUser, status: "pending" }, true);
-
-  socket.emit("sendMessage", { roomId, message: text, tempId });
-  messageInput.value = "";
-};
-
-
-}
-
-// 🔹 Append message function (with status icon)
-function appendMessage(msg, isMe = false) {
-  const chatBox = document.getElementById("chatBox");
-  if (!chatBox) return;
-
-  const msgDiv = document.createElement("div");
-  msgDiv.className = isMe ? "message me" : "message other";
-  msgDiv.dataset.messageId = msg.messageId;
-
-  const textSpan = document.createElement("span");
-  textSpan.className = "message-text";
-  textSpan.textContent = msg.message;
-  msgDiv.appendChild(textSpan);
-
-  // ✅ Add status icons for your messages only
-  if (isMe) {
-    const status = document.createElement("span");
-    status.className = "status";
-    status.style.marginLeft = "6px";
-
-    if (msg.status === "pending") status.innerHTML = `<i class="fa-solid fa-clock"></i>`;
-    else if (msg.status === "sent") status.innerHTML = `<i class="fa-solid fa-check"></i>`;
-    else if (msg.status === "delivered") status.innerHTML = `<i class="fa-solid fa-check-double"></i>`;
-    else if (msg.status === "seen") status.innerHTML = `<i class="fa-solid fa-check-double" style="color:#0d6efd"></i>`;
-
-    msgDiv.appendChild(status);
-  }
-
-  // ⚙️ Add edit/delete for sender
-  if (isMe) {
-    const threeDots = document.createElement("span");
-    threeDots.textContent = "⋮";
-    threeDots.className = "three-dots";
-    msgDiv.appendChild(threeDots);
-    threeDots.addEventListener("click", () => showEditDeleteToast(msgDiv, msg.messageId));
-  }
-
-  chatBox.appendChild(msgDiv);
-  chatBox.scrollTop = chatBox.scrollHeight;
-}
-
-// 🔹 Update message status visually
-function updateMessageStatus(messageId, status) {
-  const msgDiv = document.querySelector(`[data-message-id="${messageId}"]`);
-  if (!msgDiv) return;
-  const statusEl = msgDiv.querySelector(".status");
-  if (!statusEl) return;
-
-  if (status === "sent") statusEl.innerHTML = `<i class="fa-solid fa-check"></i>`;
-  if (status === "delivered") statusEl.innerHTML = `<i class="fa-solid fa-check-double"></i>`;
-  if (status === "seen") statusEl.innerHTML = `<i class="fa-solid fa-check-double" style="color:#0d6efd"></i>`;
-}
-
-// 🔹 Real-time message receiving
-socket.on("receiveMessage", (msg) => {
-  const isMe = msg.senderQid === currentUser;
-  appendMessage(msg, isMe);
-
-  if (!isMe) {
-    // mark as delivered immediately
-    socket.emit("messageDelivered", { messageId: msg.messageId, roomId: msg.roomId });
-
-    // 🩵 Fix: when you’re already in same room, mark as seen immediately
-    if (activeRoomId === msg.roomId && document.visibilityState === "visible") {
-      socket.emit("markRoomSeen", { roomId: msg.roomId });
-    }
-  }
-});
-
-// 🔹 Message seen updates (make all blue)
-socket.on("messageSeen", ({ messageId, roomId }) => {
-  if (roomId !== activeRoomId) return;
-  updateMessageStatus(messageId, "seen");
-});
-
-socket.on("messageSent", (msg) => {
-  // server includes tempId if client sent one
-  const { tempId } = msg || {};
-  if (tempId) {
-    // find the exact element with that tempId
-    const tempMsg = document.querySelector(`[data-message-id="${tempId}"]`);
-    if (tempMsg) {
-      tempMsg.dataset.messageId = msg.messageId; // replace id
-      const statusEl = tempMsg.querySelector(".status");
-      if (statusEl) statusEl.innerHTML = `<i class="fa-solid fa-check"></i>`; // sent
-      return;
-    }
-  }
-
-  // fallback — append the saved message if we didn't find a temp element
-  appendMessage(msg, msg.senderQid === currentUser);
-});
-
-
-
-// 🔹 Delivered confirmation
-socket.on("messageDelivered", ({ messageIds }) => {
-  if (!Array.isArray(messageIds)) return;
-  messageIds.forEach(id => updateMessageStatus(id, "delivered"));
-});
-
-
-// 🔹 Edit / Delete logic remains same
-socket.on("messageEdited", (data) => {
-  const msgDiv = document.querySelector(`[data-message-id="${data.messageId}"]`);
-  if (msgDiv) msgDiv.querySelector(".message-text").textContent = data.newMessage;
-});
-
-socket.on("messageDeleted", (data) => {
-  const msgDiv = document.querySelector(`[data-message-id="${data.messageId}"]`);
-  if (msgDiv) msgDiv.remove();
-});
-
-socket.on("roomMessagesSeen", ({ messageIds }) => {
-  if (!Array.isArray(messageIds)) return;
-  messageIds.forEach(id => updateMessageStatus(id, "seen"));
-});
-
-
-// ---------- Toast logic ----------
-function showEditDeleteToast(msgDiv, messageId) {
-  const toast = document.getElementById("editDeleteToast");
-  toast.style.display = "block";
-
-  const editBtn = toast.querySelector("#editBtn");
-  const deleteBtn = toast.querySelector("#deleteBtn");
-  const closeBtn = toast.querySelector("#closeToast");
-
-  editBtn.onclick = () => {
-    toast.style.display = "none";
-    showEditMessageToast(msgDiv, messageId);
-  };
-  deleteBtn.onclick = () => {
-    toast.style.display = "none";
-    showDeleteMessageToast(messageId);
-  };
-  closeBtn.onclick = () => {
-    toast.style.display = "none";
-  };
-}
-
-function showEditMessageToast(msgDiv, messageId) {
-  const toast = document.getElementById("editMessageToast");
-  const input = toast.querySelector("#editInput");
-  const submit = toast.querySelector("#submitEdit");
-  const cancel = toast.querySelector("#cancelEdit");
-
-  input.value = msgDiv.querySelector(".message-text").textContent;
-  toast.style.display = "block";
-
-  submit.onclick = () => {
-    const newMessage = input.value.trim();
-    if (!newMessage) return;
-    socket.emit("editMessage", { roomId: activeRoomId, messageId, newMessage });
-    toast.style.display = "none";
-  };
-  cancel.onclick = () => (toast.style.display = "none");
-}
-
-function showDeleteMessageToast(messageId) {
-  const toast = document.getElementById("deleteMessageToast");
-  const confirm = toast.querySelector("#confirmDelete");
-  const cancel = toast.querySelector("#cancelDelete");
-
-  toast.style.display = "block";
-  confirm.onclick = () => {
-    socket.emit("deleteMessage", { roomId: activeRoomId, messageId });
-    toast.style.display = "none";
-  };
-  cancel.onclick = () => (toast.style.display = "none");
-}
-
-loadChatRooms();
-// 🔹 When user switches back to the chat tab, mark messages as seen
-document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "visible" && activeRoomId) {
-    socket.emit("markRoomSeen", { roomId: activeRoomId });
-  }
-});
-
-</script>
-
-<script src="../assets/js/notification/notification.js"></script>
-   
-<script src="../assets/js/index/chatAppToast.js"></script>
-<script src="../SunS.js"></script>
+  <script src="../assets/js/shop/filter.js"></script>
+  <script src="../assets/js/index/darkmode.js" defer></script>
+  <script src="../assets/js/index/collapseResponsive.js"></script>
+  <script src="../assets/js/index/followingAcc.js"></script>
+  <script src="../assets/js/index/accountToast.js"></script>
+  <script src="../assets/js/index/navNewFeed.js"></script>
+  <script src="../assets/js/index/feedbackToast.js"></script>
+  <script src="../assets/js/index/headerSearch.js"></script>
+  <!-- <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> -->
+  <script src="../assets/js/notification/notification.js"></script>
+  <!-- <script src="../assets/js/index/chatAppToast.js"></script> -->
+  <script src="../SunS.js"></script>
     </body>
 </html>
