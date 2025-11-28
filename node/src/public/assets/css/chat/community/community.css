@@ -397,6 +397,7 @@ main{
     position: sticky;
     top: 70px;
     scrollbar-width: none;
+    z-index: 1000;
 }
 
 
