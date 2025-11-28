@@ -24,7 +24,7 @@
   z-index: 100;
   /* Glass blur effect */
   backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px); /* iOS Safari support */
+  -webkit-backdrop-filter: blur(5px);  /* iOS Safari support */
 
   /* Optional: subtle border for glass edge */
 
