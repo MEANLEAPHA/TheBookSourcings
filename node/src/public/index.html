@@ -182,15 +182,15 @@
     <div class="toast-container position-fixed  end-0 p-3">
       <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" >
         <div class="toast-header">
-            <img src="dog.png"  class="userPf">
+            <img src=""  class="userPf-collapse">
             <div class="userDetails">
-              <p>Name</p>
-              <p>@Nickname</p>
-              <a href="#" style="color: #275791;">View channel</a>
+              <p class="userName-collapse"></p>
+              <p class="nickName-collapse"></p>
+              <a href="../../userAccount.html" style="color:#fd7648;">View Account</a>
           </div>
         </div>
         <div class="toast-header">
-          <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
+          <button onclick="settingLink()" class="btn-col-acc"><a><i class="fa-solid fa-gear"></i> Settings</a></button>
         </div>
         <div class="toast-header" id="themeSwitchSection">
             <button class="theme-switch">
@@ -203,13 +203,15 @@
             </p>
         </div>
         <div class="toast-header">
-          <a href="#"><i class="fa-solid fa-circle-question"></i> Help</a>
+          <button onclick="helpLink()" class="btn-col-acc"><a><i class="fa-solid fa-circle-question"></i> Help</a></button>
         </div>
         <div class="toast-header"  >
-          <a class="feedBackBtn2"><i class="fa-solid fa-comment-dots"></i> Feedback</a>
+          <!-- <a class="feedBackBtn2"><i class="fa-solid fa-comment-dots"></i> Feedback</a> -->
+          <button onclick="showFeedBackToast()" class="btn-col-acc"><a><i class="fa-solid fa-comment-dots"></i> Feedback</a></button>
         </div>
-        <div class="toast-body " >
-          <a href="userSign/login.html"><i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Login</span></a>
+        <div class="toast-body log-in-out">
+          <button onclick="login()" id="loginButton" class="btn-col-acc"><a><i class="fa-solid fa-arrow-right-to-bracket"></i> Login</a></button>
+          <button onclick="logout()" id="logoutButton" class="btn-col-acc"><a><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a></button>
         </div>
       </div>
     </div>
@@ -245,13 +247,67 @@
         </div>
       </div>
     </div>
-    <!-- <a href="#top" ><button id="btnTop"><i class="fa-solid fa-chevron-up"></i></button></a> -->
+     <!-- Notication Toast -->
+    <div class="toast-container position-fixed  end-0 p-3 noti-toast">
+      <div id="liveNoti" class="toast" role="alert" aria-live="assertive" aria-atomic="true" >
+        <div class="noti-head">
+          <span>Notication</span>
+          <button id="btn-clear-noti">Clear All</button>
+        </div>
+        <p class="notiUpdateSystem-span">System</p>
+        <div class="notiUpdateSystem">
+        </div>
+        <p class="notiUpdateConnection-span">Connection</p>
+        <div class="notiUpdateConnection">
+        </div>
+         <p class="notiUpdateMarket-span">Market</p>
+        <div class="notiUpdateMarket">
+        </div>
+        <div id="dev-no-otter-noti">
+          <i class="fa-solid fa-otter" ></i>
+          <p class="no-noti-span">No notification!</p>
+        </div>
+      </div>
+    </div>
+
+    <!--Friend toast -->
+    <div class="toast-container position-fixed  end-0 p-3 fri-toast">
+      <div id="liveFri" class="toast" role="alert" aria-live="assertive" aria-atomic="true" >
+        <div class="fri-head">
+          <span>Friend shortcut</span>
+          <span id="see-all-con"><a href="../../userConnection.html">See all</a></span>
+        </div>
+        <div class="append-fri">
+        </div>
+        <div id="dev-no-otter-fri">
+          <i class="fa-solid fa-otter" ></i>
+          <p class="no-fri-span">No Friend yet!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast container for logib/signup-->
+    <div class="position-fixed" style="z-index: 1100; right: 10px;bottom: 10px;">
+      <div id="errorToast" class="toast align-items-center text-bg-warning border-0 p-8" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex flex-column" style="padding: 10px;">
+          <div class="d-flex justify-content-between w-100 gap-2" >
+            <div  id="errorToastBody">
+            Unauthorized. Please log in / sign up first. It takes a few seconds :)
+            </div>
+            <button type="button" class="btn-close btn-close-white " data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+          
+          <button type="button" class="close-btn-no-token btn btn-success border-0 mt-1" style="border-radius: 5px;width: 45%;font-size: small;"><a href="../../userSign/login.html">Log in / sign up</a></button>
+        </div>
+      </div>
+    </div>
+
   </main>
-  <footer>
-  </footer>
+ 
 
 
   <script src="assets/js/index/index.js"></script>
+  <script src="assets/js/accInfo.js"></script>
   <script src="assets/js/index/darkmode.js" defer></script>
   <script src="assets/js/index/collapseResponsive.js"></script>
   <script src="assets/js/index/followingAcc.js"></script>
@@ -260,7 +316,7 @@
   <script src="assets/js/index/feedbackToast.js"></script>
   <script src="assets/js/index/headerSearch.js"></script>
   <script src="assets//js//userUploadBook/userDisplayBook.js"></script>
-  <script src="SunS.js"></script>
+  <!-- <script src="SunS.js"></script> -->
   <!-- <script src="assets/js/index/scrollTop.js"></script> -->
 </body>
 </html>

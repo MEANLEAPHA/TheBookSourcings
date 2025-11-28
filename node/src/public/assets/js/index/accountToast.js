@@ -21,11 +21,11 @@ document.addEventListener('click', function (event) {
 
   function logout() {
     localStorage.removeItem('token');
-    window.location.href = "login.html";
+    window.location.href = "https://thebooksourcings.onrender.com/auth/login.html";
   }
 
   function login() {
-    window.location.href = "login.html";
+    window.location.href = "https://thebooksourcings.onrender.com/auth/login.html";
   }
 
   function helpLink(){

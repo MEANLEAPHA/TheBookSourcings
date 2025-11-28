@@ -150,7 +150,7 @@ input[type=number] {
       padding: 0;
       gap: 10px;
       width: 95%;
-      justify-content: space-between;
+      justify-content: start;
       margin: auto;
       margin-top: 10px;
       align-items: flex-start;
