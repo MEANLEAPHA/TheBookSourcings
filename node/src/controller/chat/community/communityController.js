@@ -107,7 +107,7 @@ const getAllMessagesByMemberQid = async (req, res) => {
           u.username
        FROM community c
        JOIN users u ON c.memberQid = u.memberQid
-       WHERE memberQid = ? AND c.deleted_at IS NULL
+       WHERE c.memberQid = ? AND c.deleted_at IS NULL
        ORDER BY c.created_at DESC
     `, 
      [memberQid]
