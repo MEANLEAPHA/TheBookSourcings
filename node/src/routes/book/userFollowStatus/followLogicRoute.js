@@ -33,6 +33,6 @@ router.get("/following", authMiddleware, getFollowing);
 
 router.get("/display/mutual", authMiddleware, getMutual);
 
-router.get("/display/mutual/:memberQid", authMiddleware, getMutualByMemberQid);
+router.get("/display/mutual/:memberQid", getMutualByMemberQid);
 
 module.exports = router;

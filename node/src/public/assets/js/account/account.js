@@ -415,10 +415,7 @@ async function toggleFollowActivity(followedQid) {
 
 
 fetch(`https://thebooksourcings.onrender.com/api/display/mutual/${memberQid}`, {
-  method: "GET",
-  headers: {
-    "Authorization": "Bearer " + token
-  }
+  method: "GET"
 })
 .then(response => {
   if (!response.ok) {
