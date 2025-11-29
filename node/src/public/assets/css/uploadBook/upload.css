@@ -269,3 +269,13 @@
         .toggle-switch input:checked + label::before {
             left: 25px;
         }
+        .toast-container-error{
+          position: absolute;
+          top: 0;
+          width: 100%;
+          height: 100vh;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+          
+        }

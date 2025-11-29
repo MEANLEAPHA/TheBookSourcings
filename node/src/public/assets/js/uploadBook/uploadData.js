@@ -1,4 +1,20 @@
-  $(document).ready(function() {
+  const token = localStorage.getItem('token'); 
+  if (!token) {
+  showErrorToast("    Unauthorized. Please log in / sign up first.It takes a few seconds :)");
+  document.body.style.pointerEvents = "none"; // disables all clicks
+     // optional: dim the page
+}
+
+function showErrorToast(message) {
+  const toastEl = document.getElementById('errorToast');
+  const toastBody = document.getElementById('errorToastBody');
+  toastBody.textContent = message;
+
+  const toast = new bootstrap.Toast(toastEl);
+  toast.show();
+}
+
+$(document).ready(function() {
  
    $('#bookForm').on('submit', function(e) {
     e.preventDefault();
@@ -40,7 +56,7 @@
         url: 'https://thebooksourcings.onrender.com/uploadBook',
         method: 'POST',
         headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('token')
+            'Authorization': 'Bearer ' + token
         },
         data: formData,
         processData: false,  // important

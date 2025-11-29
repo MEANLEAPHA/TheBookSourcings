@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Book Upload Wizard</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="../assets/css/uploadBook/upload.css">
@@ -55,27 +57,38 @@
           </div>
 
           <!-- Step 2: Basic Info -->
-          <div class="step-section" id="step-2">
-            <h5 class="mb-3">Fill the Book main information</h5>
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label class="form-label">Title</label>
-                <input type="text" class="form-control" required placeholder="Enter book title" id="title">
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Subtitle (Optional)</label>
-                <input type="text" class="form-control" placeholder="Enter subtitle" id="subtitle">
-              </div>
-              <div class="col-12">
-                <label class="form-label">Summary</label>
-                <textarea class="form-control" rows="3" required id="summary" placeholder="Enter book summary"></textarea>
-              </div>
-              <div class="col-12">
-                <label class="form-label">Author</label>
-                <textarea class="form-control" rows="3" required placeholder="Author 1, Author 2, etc." id="authorName"></textarea>
-              </div>
-            </div>
-          </div>
+          <!-- Step 2: Basic Info -->
+<div class="step-section" id="step-2">
+  <h5 class="mb-3">Fill the Book main information</h5>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <label class="form-label">Title</label>
+      <input type="text" class="form-control" required placeholder="Enter book title" id="title">
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Subtitle (Optional)</label>
+      <input type="text" class="form-control" placeholder="Enter subtitle" id="subtitle">
+    </div>
+    <div class="col-12">
+      <label class="form-label">Summary</label>
+      <textarea class="form-control" rows="3" required id="summary" placeholder="Enter book summary"></textarea>
+    </div>
+
+    <!-- 👇 New Author Section -->
+    <div class="col-12">
+      <label class="form-label">Authors</label>
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <input type="number" class="form-control w-auto" id="authorCount" min="1" max="5" placeholder="Number (1–5)">
+        <button type="button" class="btn btn-success" id="generateAuthors">Generate</button>
+      </div>
+      <div id="authorInputs" class="d-flex flex-column gap-2"></div>
+      <!-- Hidden real data for DB -->
+      <textarea id="authorName" class="form-control"></textarea>
+      <textarea id="authorId"  class="form-control "></textarea>
+    </div>
+  </div>
+</div>
+
 
           <!-- Step 3: More Details -->
           <div class="step-section" id="step-3">
@@ -203,7 +216,7 @@
                       <label for="share"></label>
                   </div>
               </div>
-              <div class="toggleForThree">
+               <div class="toggleForThree">
                   <label class="form-label">Allow other author with full control : </label>
                   <div class="toggle-switch">
                       <input type="checkbox" id="full-control" checked>
@@ -222,6 +235,128 @@
       </div>
     </div>
   </div>
+
+   <div class="toast-container-error">
+      <div id="errorToast" class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true"  data-bs-autohide="false">
+        <div class="d-flex flex-column" style="padding: 10px;">
+          <div class="d-grid justify-content-center">
+            <i class="fa-solid fa-otter"></i>
+            <div  id="errorToastBody">
+            Unauthorized. Please log in / sign up first.It takes a few seconds :)
+            </div>
+          </div>
+          <div class="d-flex justify-content-start w-100 mt-1 m-0 p-0">
+          <a href="../index.html"><button type="button" class="close-btn-no-token btn btn-success border-0 mt-1" style="border-radius: 5px;font-size: small;">Go back</button></a>
+         <a href="../auth/login.html"><button type="button" class="close-btn-no-token btn btn-success border-0 mt-1" style="border-radius: 5px;font-size: small;">Log in / sign up</button></a>
+          </div>
+        </div>
+      </div>
+    </div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const authorCountInput = document.getElementById("authorCount");
+  const generateBtn = document.getElementById("generateAuthors");
+  const authorInputsContainer = document.getElementById("authorInputs");
+  const authorNameTextarea = document.getElementById("authorName");
+  const authorIdTextarea = document.getElementById("authorId");
+
+  // 🎯 Generate author inputs dynamically
+  generateBtn.addEventListener("click", () => {
+    const count = parseInt(authorCountInput.value);
+    if (isNaN(count) || count < 1 || count > 5) {
+      alert("Please enter a number between 1 and 5.");
+      return;
+    }
+
+    // Clear old inputs and textarea values when regenerating
+    authorInputsContainer.innerHTML = "";
+    authorNameTextarea.value = "";
+    authorIdTextarea.value = "";
+
+    for (let i = 1; i <= count; i++) {
+      const row = document.createElement("div");
+      row.className = "row g-2 align-items-center";
+
+      row.innerHTML = `
+        <div class="col-md-6">
+          <input type="text" class="form-control author-name" placeholder="Author ${i} Name">
+        </div>
+        <div class="col-md-6">
+          <input type="text" class="form-control author-id" placeholder="Author ${i} ID (optional)">
+        </div>
+      `;
+
+      authorInputsContainer.appendChild(row);
+    }
+
+    // Attach live sync again for new inputs
+    attachLiveSync();
+  });
+
+  // 💡 Function: Sync textarea live as user types
+  function attachLiveSync() {
+    const authorNameInputs = document.querySelectorAll(".author-name");
+    const authorIdInputs = document.querySelectorAll(".author-id");
+
+    const updateTextareas = () => {
+      const names = [...authorNameInputs].map(a => a.value.trim()).filter(Boolean);
+      const ids = [...authorIdInputs].map(a => a.value.trim()).filter(Boolean);
+      authorNameTextarea.value = names.join(", ");
+      authorIdTextarea.value = ids.join(", ");
+    };
+
+    authorNameInputs.forEach(input => input.addEventListener("input", updateTextareas));
+    authorIdInputs.forEach(input => input.addEventListener("input", updateTextareas));
+  }
+});
+</script>
+
+
+<!-- <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const authorCountInput = document.getElementById("authorCount");
+  const generateBtn = document.getElementById("generateAuthors");
+  const authorInputsContainer = document.getElementById("authorInputs");
+  const authorNameTextarea = document.getElementById("authorName");
+  const authorIdTextarea = document.getElementById("authorId");
+
+  generateBtn.addEventListener("click", () => {
+    const count = parseInt(authorCountInput.value);
+    if (isNaN(count) || count < 1 || count > 5) {
+      alert("Please enter a number between 1 and 5.");
+      return;
+    }
+
+    authorInputsContainer.innerHTML = ""; // clear old
+
+    for (let i = 1; i <= count; i++) {
+      const row = document.createElement("div");
+      row.className = "row g-2 align-items-center";
+
+      row.innerHTML = `
+        <div class="col-md-6">
+          <input type="text" class="form-control author-name" placeholder="Author ${i} Name">
+        </div>
+        <div class="col-md-6">
+          <input type="text" class="form-control author-id" placeholder="Author ${i} ID (e.g. TB19265S)">
+        </div>
+      `;
+
+      authorInputsContainer.appendChild(row);
+    }
+  });
+
+  // 🧩 Sync hidden textareas before submitting form
+  const bookForm = document.getElementById("bookForm");
+  bookForm.addEventListener("submit", () => {
+    const authorNames = [...document.querySelectorAll(".author-name")].map(input => input.value.trim()).filter(Boolean);
+    const authorIds = [...document.querySelectorAll(".author-id")].map(input => input.value.trim()).filter(Boolean);
+
+    authorNameTextarea.value = authorNames.join(", ");
+    authorIdTextarea.value = authorIds.join(", ");
+  });
+});
+</script> -->
 
 <script src="../assets/js/jquery.js"></script>
 <script src="../assets/js/uploadBook/upload.js"></script>

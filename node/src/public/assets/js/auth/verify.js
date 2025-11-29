@@ -1,5 +1,5 @@
  
-    const token = localStorage.getItem('verify_token'); // Store this token after signup response
+    const token = localStorage.getItem('verify_token'); 
 
     if (!token) {
       alert("Token missing! Please sign up again.");
