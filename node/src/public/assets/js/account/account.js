@@ -618,7 +618,7 @@ const reportReasonInput = document.getElementById("reportReasonInput");
 // repost 
 let repost_id = null;
 
-
+const socket = io(API_URL, { auth: { token } });
 // ====== SOCKET LISTENERS ======
 socket.on("connect", () => console.log("Connected:", socket.id));
 
