@@ -7,7 +7,7 @@ const { upload } = require("../../middleware/AWSuploadMiddleware");
 const { saleUpload } = require("../../controller/shop/saleUploadController");
 const { updateBookForSale } = require("../../controller/shop/saleUpdateController");
 const { deleteBook } = require("../../controller/shop/saleDeleteController");
-const { displayBooksForSale, displayBooksBySidForSale, getMySaleBook  } = require("../../controller/shop/saleQueryController");
+const { displayBooksForSale, displayBooksBySidForSale, getMySaleBook, getUserSaleBook  } = require("../../controller/shop/saleQueryController");
 const {deleteBookFile} = require("../../controller/shop/deleteBookFileController");
 const { clearBookFile } = require('../../controller/shop/clearBookFileController');
 // 📘 Display all or filtered books for sale
@@ -17,7 +17,7 @@ router.get("/displaySaleBookBySid/:bookSid", displayBooksBySidForSale);
 
 router.get("/displayUserSaleBook", authMiddleware, getMySaleBook);
 
-
+router.get("/displayUserSaleBook/:memberQid", getUserSaleBook);
 
 // 🆕 Upload a new book for sale
 router.post(

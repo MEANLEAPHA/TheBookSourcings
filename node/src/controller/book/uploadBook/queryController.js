@@ -4,7 +4,8 @@ const db = require("../../../config/db");
 const getBookByQid = async (req, res) => {
   try {
     const { bookQid } = req.params;
-    const member_id = req.user.user_id;
+ 
+    const memberQid = req.user.memberQid;
     const authorQid = req.user.authorQid;
     if (!bookQid) {
       return res.status(400).json({ message: "Missing bookQid" });
@@ -14,10 +15,10 @@ const getBookByQid = async (req, res) => {
      `SELECT * 
        FROM uploadBook 
        WHERE bookQid = ? 
-       AND (member_id = ? 
+       AND (memberQid  = ? 
          OR (JSON_CONTAINS(authorId, JSON_QUOTE(?)) 
              AND fullController = 'active'))`,
-      [bookQid, member_id, authorQid]
+      [bookQid, memberQid , authorQid]
     );
 
     if (rows.length === 0) {
@@ -65,7 +66,7 @@ const getMyBooks = async (req, res) => {
 // --- Get all books for the logged-in user
 // const getMyBooks = async (req, res) => {
 //   try {
-//     const member_id = req.user.user_id;
+//     const memberQid  = req.user.user_id;
 //     const authorQid = req.user.authorQid;
 
 //     const [rows] = await db.query(
@@ -73,7 +74,7 @@ const getMyBooks = async (req, res) => {
 //       SELECT * FROM uploadBook
 //       WHERE JSON_CONTAINS(authorId, JSON_QUOTE(?))
 //     `,
-//       [member_id]
+//       [memberQid ]
 //     );
 
 //     res.json(rows);

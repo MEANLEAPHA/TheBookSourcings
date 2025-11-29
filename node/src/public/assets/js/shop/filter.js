@@ -51,7 +51,7 @@
     }
     }
 
-    // 🧱 Render books in cards
+    // 🧱 Render books in card
     function renderBooks(books) {
     BookContent.innerHTML = books
         .map((book) => {

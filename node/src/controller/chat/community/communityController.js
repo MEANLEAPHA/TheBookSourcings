@@ -6,40 +6,6 @@ const { uploadToS3, deleteFromS3 } = require("../../../middleware/AWSuploadMiddl
 
 dayjs.extend(relativeTime);
 
-// 📌 Display all messages
-// const getAllMessages = async (req, res) => {
-//   try {
-//     const [rows] = await db.query(
-//       `SELECT 
-//           c.message_id, 
-//           c.message_text AS message, 
-//           c.feeling,
-//           c.media_type,
-//           c.media_url,
-//           c.like_count,
-//           c.comment_count,
-//           c.repost_count,
-//           c.memberQid, 
-//           c.created_at,
-//           u.username
-//        FROM community c
-//        JOIN users u ON c.memberQid = u.memberQid
-//        WHERE c.deleted_at IS NULL
-//        ORDER BY c.created_at ASC`
-//     );
- 
-//     const messages = rows.map(row => ({
-//       ...row,
-//       createFormNow: dayjs(row.created_at).fromNow(),
-//       media_url: row.media_url ? JSON.parse(row.media_url) : [],
-//       media_type: row.media_type ? JSON.parse(row.media_type) : []
-//     }));
-
-//     res.json(messages);
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// };
 const getAllMessages = async (req, res) => {
   try {
     const [rows] = await db.query(`
@@ -122,7 +88,89 @@ const getAllMessages = async (req, res) => {
 };
 
 
+const getAllMessagesByMemberQid = async (req, res) => {
+  try {
+    const { memberQid } = req.params;
+    const [rows] = await db.query(`
+      SELECT 
+          c.message_id, 
+          c.message_text AS message, 
+          c.feeling,
+          c.media_type,
+          c.media_url,
+          c.like_count,
+          c.comment_count,
+          c.repost_count,
+          c.repost_id,
+          c.memberQid, 
+          c.created_at,
+          u.username
+       FROM community c
+       JOIN users u ON c.memberQid = u.memberQid
+       WHERE memberQid = ? AND c.deleted_at IS NULL
+       ORDER BY c.created_at DESC
+    `, 
+     [memberQid]
+    );
 
+    const messages = await Promise.all(rows.map(async row => {
+      let repostData = null;
+
+      // If this message is a repost, get the original post info
+      if (row.repost_id) {
+        const [repostRows] = await db.query(`
+          SELECT 
+              c.message_id,
+              c.message_text AS repostText, 
+              c.feeling,
+              c.media_type,
+              c.media_url,
+              c.memberQid,
+              c.created_at,
+              u.username
+           FROM community c
+           JOIN users u ON c.memberQid = u.memberQid
+           WHERE c.message_id = ?
+        `, [row.repost_id]);
+
+         if (repostRows.length > 0) {
+          const repost = repostRows[0];
+          repostData = {
+            message_id: repost.message_id,
+            message: repost.repostText,
+            feeling: repost.feeling,
+            media_type: repost.media_type ? JSON.parse(repost.media_type) : [],
+            media_url: repost.media_url ? JSON.parse(repost.media_url) : [],
+            memberQid: repost.memberQid,
+            username: repost.username,
+            createFormNow: dayjs(repost.created_at).fromNow(), // 👈 Add this
+          };
+        }
+      }
+
+      return {
+        message_id: row.message_id,
+        message: row.message,
+        feeling: row.feeling,
+        media_type: row.media_type ? JSON.parse(row.media_type) : [],
+        media_url: row.media_url ? JSON.parse(row.media_url) : [],
+        like_count: row.like_count,
+        comment_count: row.comment_count,
+        repost_count: row.repost_count,
+        repost_id: row.repost_id,
+        repostData, 
+        username: row.username,
+        memberQid: row.memberQid,
+        createFormNow: dayjs(row.created_at).fromNow()
+      };
+    }));
+
+    res.json(messages);
+  } catch (err) {
+    console.error("getAllMessages error:", err);
+    res.status(500).json({ error: err.message });
+  }
+};
 // 📌 Send message with multiple media
 const sendMessage = async (req, res) => {
   try {
@@ -297,6 +345,7 @@ const deleteMessage = async (req, res) => {
 
 module.exports = {
   getAllMessages,
+  getAllMessagesByMemberQid,
   sendMessage,
   editMessage,
   deleteMessage

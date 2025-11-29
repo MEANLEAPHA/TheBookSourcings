@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { 
   getAllMessages, 
+  getAllMessagesByMemberQid,
   sendMessage, 
   editMessage, 
   deleteMessage 
@@ -11,7 +12,7 @@ const { upload } = require("../../../middleware/AWSuploadMiddleware");
 
 // Get all messages
 router.get("/display", getAllMessages);
-
+router.get("/display/:memberQid", getAllMessagesByMemberQid);
 // Send message with optional photo/video
 // Accepts "media" field (image or video file)
 // Send message with multiple photos/videos

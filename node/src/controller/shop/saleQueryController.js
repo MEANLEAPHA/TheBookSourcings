@@ -171,5 +171,33 @@ const getMySaleBook = async (req, res) => {
     });
   }
 }
+const getUserSaleBook = async (req, res) => {
+  try{
+    const { memberQid } = req.params; 
 
-module.exports = { displayBooksForSale, displayBooksBySidForSale, getMySaleBook };
+    const [rows] = await db.query(
+      "SELECT * FROM bookForsale WHERE memberQid = ?",
+      [memberQid]
+    )
+
+    if(rows.length === 0){
+      return res.status(404).json(
+        {
+          message : 'no book found or unauthorized'
+        }
+      )
+    }
+    res.status(200).json(
+      { message: "Books retrieved successfully.", books: rows }
+    );
+  }
+  catch(error){
+    console.error(error);
+    res.status(500).json({
+      message: "Internal Server Error",
+      error: error.message
+    });
+  }
+}
+
+module.exports = { displayBooksForSale, displayBooksBySidForSale, getMySaleBook, getUserSaleBook };

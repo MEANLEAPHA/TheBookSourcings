@@ -653,126 +653,6 @@ if (msg.media_url && msg.media_url.length > 0) {
   body.appendChild(mediaWrapper);
 }
 
-// if (msg.media_url && msg.media_url.length > 0) {
-//   const mediaWrapper = document.createElement("div");
-//   mediaWrapper.className = "post-thumbnail position-relative"; // allow overlay
-
-//   const carouselId = `carousel-${msg.message_id}`;
-
-//   if (msg.media_url.length === 1) {
-//     const type = msg.media_type[0];
-//     const itemWrapper = document.createElement("div");
-//     itemWrapper.className = "blur-wrapper";
-
-//     const mediaContainer = document.createElement("div");
-//     mediaContainer.className = "media-container";
-
-//     if (type === "image") {
-//       const img = document.createElement("img");
-//       img.src = msg.media_url[0];
-//       img.className = "post-thumbnail-img";
-//       mediaContainer.appendChild(img);
-
-//       itemWrapper.style.setProperty("--bg-url", `url(${msg.media_url[0]})`);
-//     } else if (type === "video") {
-//       const video = document.createElement("video");
-//       video.src = msg.media_url[0];
-//       video.controls = true;
-//       video.muted = true;
-//       video.loop = true;
-//       video.className = "post-thumbnail-video";
-//       mediaContainer.appendChild(video);
-//       observeVideo(video);
-
-//       itemWrapper.style.background = "rgba(0,0,0,0.8)";
-//     }
-
-//     itemWrapper.appendChild(mediaContainer);
-//     mediaWrapper.appendChild(itemWrapper);
-//   } else {
-//     // --- Multiple files -> Bootstrap carousel ---
-//     const carousel = document.createElement("div");
-//     carousel.className = "carousel slide";
-//     carousel.id = carouselId;
-//     carousel.setAttribute("data-bs-ride", "carousel");
-//     carousel.setAttribute("data-bs-interval", "8000");
-
-//     const inner = document.createElement("div");
-//     inner.className = "carousel-inner";
-
-//    msg.media_url.forEach((url, index) => {
-//   const item = document.createElement("div");
-//   item.className = index === 0 ? "carousel-item active" : "carousel-item";
-
-//   const blurWrapper = document.createElement("div");
-//   blurWrapper.className = "blur-wrapper";
-
-//   const mediaContainer = document.createElement("div");
-//   mediaContainer.className = "media-container";
-
-//   if (msg.media_type[index] === "image") {
-//     const img = document.createElement("img");
-//     img.src = url;
-//     img.className = "post-thumbnail-img";
-//     mediaContainer.appendChild(img);
-
-//     // ✅ set --bg-url for blur
-//     blurWrapper.style.setProperty("--bg-url", `url(${url})`);
-//   } else if (msg.media_type[index] === "video") {
-//     const video = document.createElement("video");
-//     video.src = url;
-//     video.controls = true;
-//     video.muted = true;
-//     video.loop = true;
-//     video.className = "post-thumbnail-video";
-//     mediaContainer.appendChild(video);
-//     observeVideo(video);
-
-//     // ✅ fallback for blur: set --bg-url to a dark transparent color
-//     blurWrapper.style.setProperty("--bg-url", `linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8))`);
-//   }
-
-//   blurWrapper.appendChild(mediaContainer);
-//   item.appendChild(blurWrapper);
-//   inner.appendChild(item);
-// });
-
-//     carousel.appendChild(inner);
-//     mediaWrapper.appendChild(carousel);
-
-//     // --- Modern counter ---
-//     const counter = document.createElement("div");
-//     counter.className = "carousel-counter position-absolute";
-//     counter.textContent = `1/${msg.media_url.length}`;
-//     mediaWrapper.appendChild(counter);
-
-//     // Prev/Next buttons
-//     const prevBtn = document.createElement("button");
-//     prevBtn.className = "carousel-control-prev";
-//     prevBtn.type = "button";
-//     prevBtn.setAttribute("data-bs-target", `#${carouselId}`);
-//     prevBtn.setAttribute("data-bs-slide", "prev");
-//     prevBtn.innerHTML = `<span class="carousel-control-prev-icon"></span>`;
-
-//     const nextBtn = document.createElement("button");
-//     nextBtn.className = "carousel-control-next";
-//     nextBtn.type = "button";
-//     nextBtn.setAttribute("data-bs-target", `#${carouselId}`);
-//     nextBtn.setAttribute("data-bs-slide", "next");
-//     nextBtn.innerHTML = `<span class="carousel-control-next-icon"></span>`;
-
-//     mediaWrapper.appendChild(prevBtn);
-//     mediaWrapper.appendChild(nextBtn);
-
-//     // Update counter on slide change
-//     carousel.addEventListener("slid.bs.carousel", () => {
-//       const activeIndex = Array.from(inner.children).findIndex(c => c.classList.contains("active"));
-//       counter.textContent = `${activeIndex + 1}/${msg.media_url.length}`;
-//     });
-//   }
-
-//   body.appendChild(mediaWrapper);
-// }
 // --- REPOST SECTION ---
 if (msg.repostData) {
   const repost = msg.repostData;
@@ -831,12 +711,7 @@ if (msg.repostData) {
   const repostBody = document.createElement("div");
   repostBody.className = "repost-body";
 
-  // if (repost.repostText) {
-  //   const repostText = document.createElement("p");
-  //   repostText.className = "repost-text";
-  //   repostText.textContent = repost.repostText;
-  //   repostBody.appendChild(repostText);
-  // }
+
 
    if (repost.message) {
   const textP = document.createElement("p");

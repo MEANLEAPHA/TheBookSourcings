@@ -40,7 +40,7 @@ async function userDisplayBook() {
           genres = book.genre.split(",").map(g => g.trim());
         }
       }
-
+ 
       const card = `     
         <div class="Book-card">
             <a href='aboutBook.html?bookId=${bookQid}'>

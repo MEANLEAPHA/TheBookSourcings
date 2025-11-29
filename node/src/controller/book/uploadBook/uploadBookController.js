@@ -3,7 +3,8 @@ const { upload, uploadToS3, deleteFromS3 } = require("../../../middleware/AWSupl
 
 const uploadBook = async (req, res) => {
   try {
-    const userId = req.user.user_id; 
+    // const userId = req.user.user_id; 
+    const memberQid = req.user.memberQid;
     const userEmail = req.user.email;
 
     const { title, subtitle, summary, author, authorId ,category, genre, language, pageCount, isbn10, isbn13, publisher, publishedDate, comment, download, share, fullControl } = req.body;
@@ -22,8 +23,8 @@ const uploadBook = async (req, res) => {
     try {
       // Save in DB
       const [result] = await db.query(
-        "INSERT INTO uploadBook (member_id, member_email, title, subTitle, author, authorId, summary, mainCategory, genre, language, pageCount, ISBN10, ISBN13, publisher, publishDate, comment, download, share, fullController, bookCover, bookFile) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        [userId, userEmail, title, subtitle, JSON.stringify(authorArr), JSON.stringify(authorIdArr), summary, category, genre, language, pageCount, isbn10, isbn13, publisher, publishedDate, comment, download, share, fullControl, bookCoverUrl, bookFileUrl]
+        "INSERT INTO uploadBook (memberQid, member_email, title, subTitle, author, authorId, summary, mainCategory, genre, language, pageCount, ISBN10, ISBN13, publisher, publishDate, comment, download, share, fullController, bookCover, bookFile) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        [memberQid, userEmail, title, subtitle, JSON.stringify(authorArr), JSON.stringify(authorIdArr), summary, category, genre, language, pageCount, isbn10, isbn13, publisher, publishedDate, comment, download, share, fullControl, bookCoverUrl, bookFileUrl]
       );
 
       res.json({ message: "Upload Book successfully" });

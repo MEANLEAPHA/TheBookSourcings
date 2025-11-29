@@ -48,7 +48,8 @@ const deleteBook = async (req, res) => {
   try {
     const { bookQid } = req.params;
     const authorQid = req.user.authorQid; // from JWT
-    const userId = req.user.user_id;
+    // const userId = req.user.user_id;
+    const memberQid = req.user.memberQid;
 
     if (!bookQid) {
       return res.status(400).json({ message: "Missing bookQid", Result: "False" });
@@ -69,7 +70,7 @@ const deleteBook = async (req, res) => {
     const book = books[0];
 
     // Case 1: Only the main author can delete
-    if (book.fullController === "inactive" && book.member_id !== userId) {
+    if (book.fullController === "inactive" && book.memberQid !== memberQid) {
       return res.status(403).json({ 
         message: "You don’t have permission to delete this book.", 
         Result: "False" 

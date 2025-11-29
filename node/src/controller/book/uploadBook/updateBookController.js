@@ -65,6 +65,7 @@ const updateBook = async (req, res) => {
   try {
     const { bookQid } = req.params;
     const member_id = req.user.user_id;
+    const memberQid = req.user.memberQid;
     const authorQid = req.user.authorQid; // if your user table has it
 
     // 🔍 Step 1: Check if user is uploader OR has full control
@@ -72,10 +73,10 @@ const updateBook = async (req, res) => {
       `SELECT * 
        FROM uploadBook 
        WHERE bookQid = ? 
-       AND (member_id = ? 
+       AND (memberQid = ? 
          OR (JSON_CONTAINS(authorId, JSON_QUOTE(?)) 
              AND fullController = 'active'))`,
-      [bookQid, member_id, authorQid]
+      [bookQid, memberQid, authorQid]
     );
 
     if (books.length === 0) {

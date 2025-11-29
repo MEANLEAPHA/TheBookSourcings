@@ -310,7 +310,8 @@ margin-top: 10px;
     display: flex;
     width: 100%;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: start;
+    
 }
 #user-connected a{
     width: calc(100%/3.1);
@@ -362,6 +363,20 @@ height: auto;
  
 .div-all-content-child:last-child .BookContent{
    
+      height: auto;
+      display: flex;
+      justify-content: start;
+      flex-wrap: wrap;
+      /* border: 1px solid black; */
+      padding: 0;
+      gap: 10px;
+      margin: 0;
+      
+      align-items: flex-start;
+    
+    }
+    .productContent{
+         
       height: auto;
       display: flex;
       justify-content: start;
