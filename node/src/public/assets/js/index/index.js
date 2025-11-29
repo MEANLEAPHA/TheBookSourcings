@@ -29,8 +29,7 @@ async function fetchTrendingBooks() {
       // get boook id
       const bookId = book.bookId;
 
-      // ✅ Tags: only first 4
-      const tags = (book.categories && book.categories.length ? book.categories.slice(0, 4) : ["General"]);
+
 
       // ✅ Build HTML
       const card = `
@@ -47,9 +46,7 @@ async function fetchTrendingBooks() {
                 <div class="avatar"></div>
                 <div class="channel-name">${source}</div>
               </div>
-              <div class="tags">
-                ${tags.map(tag => `<div class="tag">#${tag}</div>`).join("")}
-              </div>
+             
             </div>
           </a>
         </div>
@@ -64,3 +61,10 @@ async function fetchTrendingBooks() {
 
 // Load on page
 fetchTrendingBooks();
+
+
+      // ✅ Tags: only first 4
+      // const tags = (book.categories && book.categories.length ? book.categories.slice(0, 4) : ["General"]);
+// <div class="tags">
+//                 ${tags.map(tag => `<div class="tag">#${tag}</div>`).join("")}
+//               </div>
