@@ -471,10 +471,18 @@ book(memberQid);
 async function book(memberQid){
     try{
       const res = await fetch(`${API_URL}/api/books/userBookByMemberQid/${memberQid}`, {
-        method: 'GET'
-      });
+  method: 'GET'
+    });
 
-      if(!res.ok) throw new Error('failed to fetch the book');
+    if (res.status === 404) {
+      // User has no books
+      const displayDiv = document.querySelector(".BookContent");
+      displayDiv.innerHTML = `<p>User has not uploaded any book yet</p>`;
+      return;
+    }
+
+    if (!res.ok) throw new Error('failed to fetch the book');
+
 
       const response = await res.json();
       const books = response.data || [];
@@ -538,13 +546,20 @@ async function product(memberQid){
         method: 'GET'
       });
 
+      
+    if (res.status === 404) {
+      // User has no books
+        const displayDiv = document.querySelector(".productContent");
+      displayDiv.innerHTML = `<p>User has not uploaded any product yet</p>`;
+      return;
+    }
       if(!res.ok) throw new Error('failed to fetch the book');
 
     
       const response = await res.json();
       const books = response.books || [];
 
-      const displayDiv = document.querySelector(".productContent");
+    
       displayDiv.innerHTML = ""; 
 
     if (books.length === 0) {
