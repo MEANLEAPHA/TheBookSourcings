@@ -502,7 +502,7 @@ const API_URL = "https://thebooksourcings.onrender.com";
         userInfoDisplay.appendChild(quirkyTag);
         userInfoDisplay.appendChild(occupation);
         userInfoDisplay.appendChild(website);
-        userInfoDisplay.appendChild(memberQid);
+        userInfoDisplay.appendChild(memberQidp);
         userInfoDisplay.appendChild(authorQid);
         document.getElementById("username").textContent = data.username || "";
         document.getElementById("usernickname").textContent = `@${data.nickname || "noNicknameYet"}`;
