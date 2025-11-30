@@ -321,7 +321,7 @@ margin-top: 10px;
     text-decoration: none;
     color: var(--font-color);
     font-family: sans-serif;
-    margin-bottom: 25px;
+    
     object-fit: cover;
 }
 #user-connected a p{
