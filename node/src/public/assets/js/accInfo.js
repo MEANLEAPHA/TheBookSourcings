@@ -21,6 +21,7 @@ const userPfHeader = document.querySelector('.userPf'); // on header
 const usernameCol = document.querySelector('.userName-collapse');
 const nicknameCol = document.querySelector('.nickName-collapse');
 const userPf = document.querySelector('.userPf-collapse');
+const viewAccount = document.querySelector('.viewAccount-collapse');
 
 async function loadUserInfo() {
   try {
@@ -36,6 +37,7 @@ async function loadUserInfo() {
       nicknameCol.textContent = `@${data.user.nickname}` || data.user.nickname || '@WelcomeMyGuest';
       userPf.src = data.user.pfUrl;
       userPfHeader.src = data.user.pfUrl;
+      viewAccount.href = `/account.html?memberQid=${userMemberQid }`
     }
   } catch (error) {
     console.error('Error fetching user info:', error);
