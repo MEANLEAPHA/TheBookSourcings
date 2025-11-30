@@ -472,6 +472,9 @@ const bookBtnLabel = document.getElementById('bookBtn');
  bookBtnLabel.style.color='white';
   productBtnLabel.style.color='white';
   postsBtnLabel.style.color='white';
+    book(memberQid);
+  product(memberQid);
+  loadMessages(memberQid);
 
  booksDisplay.style.display = 'block';
  productDisplay.style.display = 'block';
