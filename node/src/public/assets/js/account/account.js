@@ -690,10 +690,10 @@ async function productAll(memberQid){
         method: 'GET'
       });
 
-      
+       const displayDiv = document.querySelector(".productContent");
     if (res.status === 404) {
       // User has no books
-        const displayDiv = document.querySelector(".productContent");
+       
       displayDiv.innerHTML = `<p>User has not uploaded any product yet</p>`;
       return;
     }
@@ -764,10 +764,10 @@ async function product(memberQid){
         method: 'GET'
       });
 
-      
+       const displayDiv = document.querySelector(".productContent");
     if (res.status === 404) {
       // User has no books
-        const displayDiv = document.querySelector(".productContent");
+       
       displayDiv.innerHTML = `<p>User has not uploaded any product yet</p>`;
       return;
     }
