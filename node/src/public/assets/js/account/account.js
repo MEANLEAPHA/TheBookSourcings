@@ -457,10 +457,10 @@ const productDisplay = document.getElementById('user-product-display');
 const postDisplay = document.getElementById('user-post-display');
 const fimilarUserDisplay = document.getElementById('user-fimiliar-display');
 
-const profileBtn = document.querySelectorAll('profileBtn');
-const postsBtn = document.querySelectorAll('postsBtn');
-const productBtn = document.querySelectorAll('productBtn');
-const bookBtn = document.querySelectorAll('bookBtn');
+const profileBtn = document.querySelectorAll('.profileBtn');
+const postsBtn = document.querySelectorAll('.postsBtn');
+const productBtn = document.querySelectorAll('.productBtn');
+const bookBtn = document.querySelectorAll('.bookBtn');
 
 
 const profileBtnLabel = document.getElementById('profileBtn');
@@ -481,7 +481,7 @@ const bookBtnLabel = document.getElementById('bookBtn');
  fimilarUserDisplay.style.display = 'block';
  postDisplay.style.display = 'block';
 
-profileBtn.forEach(btn => btn.addEventListener('click', ()=>{
+profileBtn.forEach(btn => btn.onclick = ()=>{
   booksDisplay.style.display = 'block';
   productDisplay.style.display = 'block';
   fimilarUserDisplay.style.display = 'block';
@@ -493,9 +493,9 @@ profileBtn.forEach(btn => btn.addEventListener('click', ()=>{
   book(memberQid);
   product(memberQid);
   loadMessages(memberQid);
-}));
+});
 
-bookBtn.forEach(btn => btn.addEventListener('click', ()=>{
+bookBtn.forEach(btn => btn.onclick =()=>{
   profileBtnLabel.style.color='white';
   productBtnLabel.style.color='white';
   postsBtnLabel.style.color='white';
@@ -506,8 +506,8 @@ bookBtn.forEach(btn => btn.addEventListener('click', ()=>{
   productDisplay.style.display = 'none';
   fimilarUserDisplay.style.display = 'none';
   postDisplay.style.display = 'none';
-}) );
-productBtn.forEach(btn => btn.addEventListener('click', ()=>{
+});
+productBtn.forEach(btn => btn.onclick =()=>{
   profileBtnLabel.style.color='white';
   productBtnLabel.style.color='red';
   postsBtnLabel.style.color='white';
@@ -518,8 +518,8 @@ productBtn.forEach(btn => btn.addEventListener('click', ()=>{
   booksDisplay.style.display = 'none';
   fimilarUserDisplay.style.display = 'none';
   postDisplay.style.display = 'none';
-}));
-postsBtn.forEach(btn => btn.addEventListener('click', ()=>{
+});
+postsBtn.forEach(btn => btn.onclick =()=>{
   profileBtnLabel.style.color='white';
   productBtnLabel.style.color='white';
   postsBtnLabel.style.color='red';
@@ -529,7 +529,7 @@ postsBtn.forEach(btn => btn.addEventListener('click', ()=>{
   productDisplay.style.display = 'none';
   fimilarUserDisplay.style.display = 'none';
   loadMessagesAll(memberQid);
-}));
+});
 
 // async function profile(memberQid ){
 //   try{
