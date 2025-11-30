@@ -500,7 +500,7 @@ bookBtn.forEach(btn => btn.onclick =()=>{
   productBtnLabel.style.color='white';
   postsBtnLabel.style.color='white';
   bookBtnLabel.style.color='red';
-  document.querySelector('book-label').style.display = 'none';
+  document.querySelector('.book-label').style.display = 'none';
   booksDisplay.style.display = 'block';
   bookAll(memberQid);
   productDisplay.style.display = 'none';
@@ -512,7 +512,7 @@ productBtn.forEach(btn => btn.onclick =()=>{
   productBtnLabel.style.color='red';
   postsBtnLabel.style.color='white';
   bookBtnLabel.style.color='white';
-  document.querySelector('product-label').style.display = 'none';
+  document.querySelector('.product-label').style.display = 'none';
   productDisplay.style.display = 'block';
   productAll(memberQid);
   booksDisplay.style.display = 'none';
@@ -524,7 +524,7 @@ postsBtn.forEach(btn => btn.onclick =()=>{
   productBtnLabel.style.color='white';
   postsBtnLabel.style.color='red';
   bookBtnLabel.style.color='white';
-  document.querySelector('post-label').style.display = 'none';
+  document.querySelector('.post-label').style.display = 'none';
   booksDisplay.style.display = 'none';
   productDisplay.style.display = 'none';
   fimilarUserDisplay.style.display = 'none';
