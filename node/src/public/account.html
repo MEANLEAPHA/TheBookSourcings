@@ -139,10 +139,10 @@
                     </div>  
             </div>
             <div id="btn-2-fetch">
-                <button>Profile</button>
-                <button>Books</button>
-                <button>Posts</button>
-                <button>Products</button>
+                <button id="profileBtn" class="profileBtn">Profile</button>
+                <button id="bookBtn" class="bookBtn">Books</button>
+                <button id="postsBtn" class="postsBtn">Posts</button>
+                <button id="productBtn" class="productBtn">Products</button>
             </div>
         </div>    
         <div id="div-all-content">
@@ -155,22 +155,23 @@
                             <p class="label">Connections</p>
                             <p><a href="">See all</a></p>
                         </div>
-                  <div id="user-connected">
+                  <!-- <div id="user-connected">
                     <a href="/account.html?memberQid=TBS000001M" class="user-pf-href"><img src="https://the-book-sourcing-2025.s3.ap-southeast-1.amazonaws.com/userPf/1763906563483-pqsyym.jpg" class="user-pf"><p>Jeff bazos</p></a><a href="/account.html?memberQid=TBS50M" class="user-pf-href"><img src="https://the-book-sourcing-2025.s3.ap-southeast-1.amazonaws.com/userPf/1763954015594-8vp42i.jpg" class="user-pf"><p>meanleap ha</p></a>
                   <a href="/account.html?memberQid=TBS000001M" class="user-pf-href"><img src="https://the-book-sourcing-2025.s3.ap-southeast-1.amazonaws.com/userPf/1763906563483-pqsyym.jpg" class="user-pf"><p>Jeff bazos</p></a><a href="/account.html?memberQid=TBS50M" class="user-pf-href"><img src="https://the-book-sourcing-2025.s3.ap-southeast-1.amazonaws.com/userPf/1763954015594-8vp42i.jpg" class="user-pf"><p>meanleap ha</p></a>
-                <a href="/account.html?memberQid=TBS000001M" class="user-pf-href"><img src="https://the-book-sourcing-2025.s3.ap-southeast-1.amazonaws.com/userPf/1763906563483-pqsyym.jpg" class="user-pf"><p>Jeff bazos</p></a><a href="/account.html?memberQid=TBS50M" class="user-pf-href"><img src="https://the-book-sourcing-2025.s3.ap-southeast-1.amazonaws.com/userPf/1763954015594-8vp42i.jpg" class="user-pf"><p>meanleap ha</p></a></div>
-                        <!-- <div id="user-connected">
+                <a href="/account.html?memberQid=TBS000001M" class="user-pf-href"><img src="https://the-book-sourcing-2025.s3.ap-southeast-1.amazonaws.com/userPf/1763906563483-pqsyym.jpg" class="user-pf"><p>Jeff bazos</p></a><a href="/account.html?memberQid=TBS50M" class="user-pf-href"><img src="https://the-book-sourcing-2025.s3.ap-southeast-1.amazonaws.com/userPf/1763954015594-8vp42i.jpg" class="user-pf"><p>meanleap ha</p></a></div> -->
+                        <div id="user-connected">
                           
-                        </div> -->
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="div-all-content-child">
+            <!-- for fetch -->
+            <div class="div-all-content-child div-all-content-fetch"> 
                 <div id="user-book-display">
                     <!-- <p class="label">Books</p> -->
-                     <div class="d-flex flex-row justify-content-between w-100" style="padding-right: 10px;">
+                     <div class="d-flex flex-row justify-content-between w-100 book-label" style="padding-right: 10px;">
                             <p class="label">Books</p>
-                            <p><a href="">See all</a></p>
+                            <p class="bookBtn"><a href="">See all</a></p>
                     </div>
                    <div class="BookContent">
 
@@ -178,9 +179,9 @@
                  </div>
                  <div id="user-post-display">
                     <!-- <p class="label">Recent posts</p> -->
-                     <div class="d-flex flex-row justify-content-between w-100" style="padding-right: 5px;">
+                     <div class="d-flex flex-row justify-content-between w-100 post-label" style="padding-right: 5px;">
                             <p class="label">Recent posts</p>
-                            <p><a href="">See all</a></p>
+                            <p class="postsBtn"><a href="">See all</a></p>
                     </div>
                    <div id="message-container">
 
@@ -188,16 +189,18 @@
                  </div>
                  <div id="user-product-display">
                     <!-- <p class="label">Products</p> -->
-                     <div class="d-flex flex-row justify-content-between w-100" style="padding-right: 10px;">
+                     <div class="d-flex flex-row justify-content-between w-100 product-label" style="padding-right: 10px;">
                             <p class="label">Products</p>
-                            <p><a href="">See all</a></p>
+                            <p class="productBtn"><a href="">See all</a></p>
                     </div>
                    <div class="productContent">
 
                    </div>
                  </div>
                  <div id="user-fimiliar-display">
-                    <p class="label">Fimiliar users</p>
+                  <div class="d-flex flex-row justify-content-between w-100 fimiliar-label" style="padding-right: 10px;">
+                       <p class="label">Fimiliar users</p>
+                  </div>
                  </div>
             </div>
         </div>
@@ -502,8 +505,8 @@
           </select>
           <input type="file" id="mediaInput" accept="image/*,video/*" multiple hidden>
         <div class="d-flex justify-content-end mt-3 w-100">
-          <button id="cancelPostBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
-          <button id="submitPostBtn" type="submit" class="btn btn-sm btn-success">Post</button>
+          <button id="cancels" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
+          <button id="submits" type="submit" class="btn btn-sm btn-success">Post</button>
         </div>
       </div>
     </form>

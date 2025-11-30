@@ -451,7 +451,82 @@ fetch(`https://thebooksourcings.onrender.com/api/display/mutual/${memberQid}`, {
 
 
 
+const fetchBydiv = document.querySelector('.div-all-content-fetch');
+const booksDisplay = document.getElementById('user-book-display');
+const productDisplay = document.getElementById('user-product-display');
+const postDisplay = document.getElementById('user-post-display');
+const fimilarUserDisplay = document.getElementById('user-fimiliar-display');
 
+const profileBtn = document.querySelectorAll('profileBtn');
+const postsBtn = document.querySelectorAll('postsBtn');
+const productBtn = document.querySelectorAll('productBtn');
+const bookBtn = document.querySelectorAll('bookBtn');
+
+
+const profileBtnLabel = document.getElementById('profileBtn');
+const postsBtnLabel = document.getElementById('postsBtn');
+const productBtnLabel = document.getElementById('productBtn');
+const bookBtnLabel = document.getElementById('bookBtn');
+
+ profileBtnLabel.style.color='red';
+ bookBtnLabel.style.color='white';
+  productBtnLabel.style.color='white';
+  postsBtnLabel.style.color='white';
+
+ booksDisplay.style.display = 'block';
+ productDisplay.style.display = 'block';
+ fimilarUserDisplay.style.display = 'block';
+ postDisplay.style.display = 'block';
+
+profileBtn.forEach(btn => btn.addEventListener('click', ()=>{
+  booksDisplay.style.display = 'block';
+  productDisplay.style.display = 'block';
+  fimilarUserDisplay.style.display = 'block';
+  postDisplay.style.display = 'block';
+  profileBtnLabel.style.color='red';
+  bookBtnLabel.style.color='white';
+  productBtnLabel.style.color='white';
+  postsBtnLabel.style.color='white';
+  book(memberQid);
+  product(memberQid);
+  loadMessages(memberQid);
+}));
+
+bookBtn.forEach(btn => btn.addEventListener('click', ()=>{
+  profileBtnLabel.style.color='white';
+  productBtnLabel.style.color='white';
+  postsBtnLabel.style.color='white';
+  bookBtnLabel.style.color='red';
+  document.querySelector('book-label').style.display = 'none';
+  booksDisplay.style.display = 'block';
+  bookAll(memberQid);
+  productDisplay.style.display = 'none';
+  fimilarUserDisplay.style.display = 'none';
+  postDisplay.style.display = 'none';
+}) );
+productBtn.forEach(btn => btn.addEventListener('click', ()=>{
+  profileBtnLabel.style.color='white';
+  productBtnLabel.style.color='red';
+  postsBtnLabel.style.color='white';
+  bookBtnLabel.style.color='white';
+  document.querySelector('product-label').style.display = 'none';
+  productDisplay.style.display = 'block';
+  productAll(memberQid);
+  booksDisplay.style.display = 'none';
+  fimilarUserDisplay.style.display = 'none';
+  postDisplay.style.display = 'none';
+}));
+postsBtn.forEach(btn => btn.addEventListener('click', ()=>{
+  profileBtnLabel.style.color='white';
+  productBtnLabel.style.color='white';
+  postsBtnLabel.style.color='red';
+  bookBtnLabel.style.color='white';
+  document.querySelector('post-label').style.display = 'none';
+  booksDisplay.style.display = 'none';
+  productDisplay.style.display = 'none';
+  fimilarUserDisplay.style.display = 'none';
+  loadMessagesAll(memberQid);
+}));
 
 // async function profile(memberQid ){
 //   try{
@@ -467,7 +542,75 @@ fetch(`https://thebooksourcings.onrender.com/api/display/mutual/${memberQid}`, {
 //   }
   
 // }
-book(memberQid);
+async function bookAll(memberQid){
+    try{
+      const res = await fetch(`${API_URL}/api/books/userBookByMemberQid/${memberQid}`, {
+  method: 'GET'
+    });
+
+    if (res.status === 404) {
+      // User has no books
+      const displayDiv = document.querySelector(".BookContent");
+      displayDiv.innerHTML = `<p>User has not uploaded any book yet</p>`;
+      return;
+    }
+
+    if (!res.ok) throw new Error('failed to fetch the book');
+
+
+      const response = await res.json();
+      const books = response.data || [];
+
+      const displayDiv = document.querySelector(".BookContent");
+      displayDiv.innerHTML = ""; 
+
+    if (books.length === 0) {
+      displayDiv.innerHTML = `<p>User has not uploaded any book yet</p>`;
+      return;
+    }
+
+    books.forEach(book => {
+      const cover = book.cover || "default.jpg";
+      const author = book.author || "Unknown Author";
+      const bookQid = book.bookQid;
+      const title = book.title || "Untitled";
+      const subtitle = book.subtitle ? `: ${book.subtitle}` : "";
+      // const view = book.view || 0;
+      // const uploadDate = book.uploaded;
+      let authors = [];
+      if (author) {
+        if (Array.isArray(author)) {
+          authors = author;
+        } else {
+          authors = author.split(",").map(a => a.trim());
+        }
+      }
+    
+      const card = `     
+        <div class="saleBook-container">
+                <div class="saleBook-cover-holder">      
+                  <img src="${cover}" class="saleBook-src" >
+                </div>
+                <div class="card-body"> 
+                  <div class="card-name">
+                    <p class="saleBook-title">${title} ${subtitle}</p>
+                  </div>
+                  <div class="card-book-price card-book-author-holder">
+                    <p class="mb-1"><span class="book-author">${authors.map(a => `${a}`).join(", ")}</span></p>
+                  </div>
+                    <button class="order-saleBook-btn"><a href="aboutBook.html?bookQid=${bookQid}"><i class="fa-solid fa-arrow-up"></i>View Book</a></button>
+                  </div>
+        </div>
+      `;
+
+      displayDiv.insertAdjacentHTML("beforeend", card);
+    });
+
+    }
+    catch(err){
+      console.error(err);
+    }
+}
 async function book(memberQid){
     try{
       const res = await fetch(`${API_URL}/api/books/userBookByMemberQid/${memberQid}`, {
@@ -538,8 +681,80 @@ async function book(memberQid){
     }
 }
 
+async function productAll(memberQid){
+   try{
+      const res = await fetch(`https://thebooksourcings.onrender.com/api/shop/displayUserSaleBook/${memberQid}`, {
+        method: 'GET'
+      });
 
-product(memberQid);
+      
+    if (res.status === 404) {
+      // User has no books
+        const displayDiv = document.querySelector(".productContent");
+      displayDiv.innerHTML = `<p>User has not uploaded any product yet</p>`;
+      return;
+    }
+      if(!res.ok) throw new Error('failed to fetch the book');
+
+    
+      const response = await res.json();
+      const books = response.books || [];
+
+    
+      displayDiv.innerHTML = ""; 
+
+    if (books.length === 0) {
+      displayDiv.innerHTML = `<p>User has not uploaded any book yet</p>`;
+      return;
+    }
+
+    books.slice(0,6).forEach(book => {
+
+      const img = book.bookImg || (book.imgPreview?.[0] ?? "https://via.placeholder.com/150");
+        const discountTag =
+            book.discount_type && book.discount_price
+            ? `<span class="sale-type">${book.discount_type === "percent" ? `${book.discount_price}%` : `${book.discount_price}$`}</span>`
+            : `<span class="sale-type">Free</span>`;
+        const saleType = //  class="badge-promotion free-type" => $saleType
+            book.sale_type === "free"
+            ? `class="badge-promotion free-type"`
+            : book.sale_type === "discount"
+            ? `class="badge-promotion discount-type"`
+            : `class="badge-promotion normal-type"`;
+    
+      const card = `     
+        <div class="saleBook-container">
+                        <div class="saleBook-cover-holder">
+                            <div ${saleType}>${discountTag}</div>
+                            <img src="${img}" class="saleBook-src" alt="${book.title}">
+                        </div>
+                        <div class="card-body"> 
+                            <div class="card-name">
+                                <p class="saleBook-title">${book.title || "Untitled"}</p>
+                            </div>
+                            <div class="card-book-type">
+                                <p class="book-type">${book.book_type?.toUpperCase() || "Unknown Type"}</p>
+                            </div>
+                            <div class="card-book-price">
+                                <p class="mb-1">${book.price ? `<span class="fw-bold">$${book.price}</span>` : ""}
+                                    ${book.original_price && book.original_price > book.price
+                                    ? `<small class="text-decoration-line-through text-muted ms-2">$${book.original_price}</small>`
+                                    : ""}
+                                </p>
+                            </div>
+                            <button class="order-saleBook-btn"><a href="aboutSaleBook.html?bookSid=${book.bookSid}"><i class="fa-solid fa-arrow-up"></i>View Book</a></button>
+                        </div>
+                </div>
+      `;
+
+      displayDiv.insertAdjacentHTML("beforeend", card);
+    });
+   }
+   catch(err){
+    console.error(err);
+   }
+}
+
 async function product(memberQid){
    try{
       const res = await fetch(`https://thebooksourcings.onrender.com/api/shop/displayUserSaleBook/${memberQid}`, {
@@ -668,12 +883,21 @@ async function loadMessages(memberQid) {
     const res = await fetch(`${API_URL}/api/community/display/${memberQid}`);
     if (!res.ok) throw new Error("Failed to fetch messages");
     const msgs = await res.json();
+    msgs.slice(0,6).forEach(userPost);
+  } catch (err) {
+    console.error("Error loading messages:", err);
+  }
+}
+async function loadMessagesAll(memberQid) {
+  try {
+    const res = await fetch(`${API_URL}/api/community/display/${memberQid}`);
+    if (!res.ok) throw new Error("Failed to fetch messages");
+    const msgs = await res.json();
     msgs.forEach(userPost);
   } catch (err) {
     console.error("Error loading messages:", err);
   }
 }
-loadMessages(memberQid);
 
 // ====== SEND MESSAGE ======
 const form = document.getElementById("form");
