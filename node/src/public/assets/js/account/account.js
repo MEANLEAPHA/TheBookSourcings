@@ -508,6 +508,7 @@ bookBtn.forEach(btn => btn.onclick =()=>{
   postDisplay.style.display = 'none';
 });
 productBtn.forEach(btn => btn.onclick =()=>{
+  
   profileBtnLabel.style.color='white';
   productBtnLabel.style.color='red';
   postsBtnLabel.style.color='white';
@@ -517,7 +518,7 @@ productBtn.forEach(btn => btn.onclick =()=>{
   productAll(memberQid);
   booksDisplay.style.display = 'none';
   fimilarUserDisplay.style.display = 'none';
-  postDisplay.style.display = 'none';
+  postDisplay.style.display = 'block';
 });
 postsBtn.forEach(btn => btn.onclick =()=>{
   profileBtnLabel.style.color='white';
