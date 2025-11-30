@@ -1,8 +1,13 @@
+const e = require("express");
+
   const token = localStorage.getItem('token'); 
   if (!token) {
   showErrorToast("    Unauthorized. Please log in / sign up first.It takes a few seconds :)");
   document.body.style.pointerEvents = "none"; // disables all clicks
      // optional: dim the page
+}
+else {
+  document.body.style.pointerEvents = "auto";
 }
 
 function showErrorToast(message) {
