@@ -1,13 +1,13 @@
-const e = require("express");
 
+  document.getElementById("bookForm").style.pointerEvents = "all";
   const token = localStorage.getItem('token'); 
   if (!token) {
-  showErrorToast("    Unauthorized. Please log in / sign up first.It takes a few seconds :)");
-  document.body.style.pointerEvents = "none"; // disables all clicks
+  showErrorToast(" Unauthorized. Please log in / sign up first.It takes a few seconds :)");
+  document.getElementById("bookForm").style.pointerEvents = "none"; // disables all clicks
      // optional: dim the page
 }
 else {
-  document.body.style.pointerEvents = "auto";
+  document.getElementById("bookForm").style.pointerEvents = "all";
 }
 
 function showErrorToast(message) {
