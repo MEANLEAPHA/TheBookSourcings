@@ -11,9 +11,7 @@
     .progress-bar{
       background-color: #275792;
     }
-   #bookForm{
-    pointer-events: all;
-   }
+  
        .form-section {
        width: 35%;
       padding: 10px;
