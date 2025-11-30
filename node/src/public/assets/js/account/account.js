@@ -426,7 +426,7 @@ fetch(`https://thebooksourcings.onrender.com/api/display/mutual/${memberQid}`, {
   data.mutual.forEach(friend => {
     // create anchor
     const a = document.createElement("a");
-    a.href = `/account?memberQid=${friend.memberQid}`; 
+    a.href = `/account.html?memberQid=${friend.memberQid}`; 
     a.className = "user-pf-href";
 
     // create image
