@@ -1,9 +1,8 @@
   const token = localStorage.getItem('token'); 
-  if (!token) {
-  showErrorToast("    Unauthorized. Please log in / sign up first.It takes a few seconds :)");
- 
-     // optional: dim the page
-}
+//   if (!token) {
+//   showErrorToast("Unauthorized. Please log in / sign up first.It takes a few seconds :)");
+//      // optional: dim the page
+// }
 
 function showErrorToast(message) {
   const toastEl = document.getElementById('errorToast');
