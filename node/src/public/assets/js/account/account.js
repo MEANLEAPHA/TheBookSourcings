@@ -46,20 +46,20 @@ const urlParams = new URLSearchParams(window.location.search);
 const memberQid = urlParams.get("memberQid");
 
 
-let userMemberQid = null;
+// let userMemberQid = null;
 
-function parseJwt (token) {
-  try {
-    return JSON.parse(atob(token.split('.')[1]));
-  } catch (e) {
-    return null;
-  }
-}
-if (token) {
-  const decoded = parseJwt(token);
-  userMemberQid = decoded?.memberQid || null;
+// function parseJwt (token) {
+//   try {
+//     return JSON.parse(atob(token.split('.')[1]));
+//   } catch (e) {
+//     return null;
+//   }
+// }
+// if (token) {
+//   const decoded = parseJwt(token);
+//   userMemberQid = decoded?.memberQid || null;
   
-}
+// }
 
 
 document.addEventListener("DOMContentLoaded", function () {
