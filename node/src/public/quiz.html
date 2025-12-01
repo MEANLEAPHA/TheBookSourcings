@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://kit.fontawesome.com/ec7a51a641.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icons/6.7.0/css/flag-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="assets/css/signup/accountEdit.css">
+</head>
+<body>
+    <div id="form-div">
+        <form id="authorForm" enctype="multipart/form-data">
+            
+            <div id="form-div-pf">
+                <div  id="banner">
+                   <div class="banner-upload" id="bannerPreview">
+                        <img id="bannerImage">
+                        <label for="bannerInput" id="bannerInputLabel">Edit Banner</label>
+                        <input type="file" id="bannerInput" accept="image/*" class="form-control">
+                    </div>
+
+                </div>
+                 <div class="profile-section-right text-center profile">
+                    <div class="profile-upload" id="profilePreview">
+                        <img id="profileImage">
+                        <input type="file" id="profileInput" accept="image/*" class="form-control">
+                        <span class="edit-profile-span" id="input-pen">Edit Profile</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="div-4-2">
+                <div>
+                    <label for="fullname">Fullname</label>
+                     <div class="input-group">
+                        <input type="text" class="form-control" id="fullname" required aria-describedby="input-pen" maxlength="30">
+                        <span class="input-group-text " id="input-pen-username"><i class="fa-regular fa-pen-to-square"></i></span>
+                     </div>
+                </div>
+                <div>
+                    <label for="address">Address</label>
+                    <div class="input-group">
+                        <span class="input-group-text input-group-text2" id="address-addon"><i class="fa-solid fa-house"></i></span>
+                        <input type="text" id="address" class="form-control form-control-nickname" aria-describedby="input-pen nickname-addon" maxlength="15" placeholder="">
+                        <span class="input-group-text" id="input-pen"><i class="fa-regular fa-pen-to-square"></i></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="div-4-2">
+                <div>
+                    <label for="Id">Id</label>
+                     <div class="input-group">
+                        <input type="number" class="form-control" id="id" required aria-describedby="input-pen" maxlength="30">
+                        <span class="input-group-text " id="input-pen-username"><i class="fa-regular fa-pen-to-square"></i></span>
+                     </div>
+                </div>
+                <div>
+                    <label for="salary">Salary</label>
+                    <div class="input-group">
+                        <span class="input-group-text input-group-text2" id="salary-addon">$</span>
+                        <input type="number" id="salary" class="form-control form-control-nickname" aria-describedby="input-pen nickname-addon" maxlength="15" >
+                        <span class="input-group-text" id="input-pen"><i class="fa-regular fa-pen-to-square"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="div-4-2">
+                <div>
+                    <label for="dob" >Date of Birth</label>
+                    <div class="input-group">
+                        <input type="date" class="form-control" id="DOB">
+                    </div>
+                </div>
+                <div>
+                     <label for="gender">Gender</label>
+                        <select class="form-select" id="gender">
+                            <option value="" disabled selected></option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                </div>
+            </div>
+             <div class="div-4-2">
+                <div>
+                    <label for="sd" >Start Date</label>
+                    <div class="input-group">
+                        <input type="date" class="form-control" id="SD">
+                    </div>
+                </div>
+                <div>
+                    <label for="role">Role</label>
+                    <div class="input-group">
+                        <span class="input-group-text input-group-text2" id="role-addon"><i class="fa-solid fa-briefcase"></i></span>
+                        <input type="text" id="role" class="form-control form-control-nickname" aria-describedby="input-pen nickname-addon" maxlength="15" >
+                        <span class="input-group-text" id="input-pen"><i class="fa-regular fa-pen-to-square"></i></span>
+                    </div>
+                </div>
+            </div>
+            
+             <div class="div-4-2">
+                <div>
+                    <label for="phonenumber">Phone Number</label>
+                     <div class="input-group">
+                        <input type="number" class="form-control" id="phonenumber" required aria-describedby="input-pen" maxlength="30">
+                        <span class="input-group-text" id="input-pen"><i class="fa-regular fa-pen-to-square"></i></span>
+                     </div>
+                </div>
+                
+            </div>
+    <div>
+        <button type="submit" class="btn btn-primary" id="submiteBtn">Save</button>
+    </div>
+
+
+
+
+
+
+
+        </form>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        // === Profile Upload Preview ===
+        const profileInput = document.getElementById('profileInput');
+        const profilePreview = document.getElementById('profilePreview');
+        const profileImage = document.getElementById('profileImage');
+        profilePreview.addEventListener('click', () => profileInput.click());
+        profileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                profileImage.src = event.target.result || 'assets/img/aUser.png';
+            };
+            reader.readAsDataURL(file);
+            }
+        });
+        // === Banner Upload Preview ===
+        const bannerInput = document.getElementById("bannerInput");
+        const bannerImage = document.getElementById("bannerImage");
+        const bannerPreview = document.getElementById("bannerPreview");
+        bannerInput.addEventListener("change", function () {
+            const file = this.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const imgURL = e.target.result;
+                bannerImage.src = imgURL;
+                bannerPreview.style.setProperty("--bg-img", `url(${imgURL})`);
+            };
+            reader.readAsDataURL(file);
+        });
+
+
+
+//         // === Load user info (for edit mode) ===
+//         $.ajax({
+//             url: `https://thebooksourcings.onrender.com/getFullRegisterData`,
+//             type: 'GET',
+//             headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+//             success: function(data) {
+//             if (!data) return;
+//             $('#fullname').val(data.username || '');
+//             $('#nickname').val(data.nickname || '');
+//             $('#bio').val(data.bio || '');
+//             $('#websiteLink').val(data.websiteUrl || '');
+//             $('#mood').val(data.mood || '');
+//             $('#playfulLabel').val(data.playfulLabel || '');
+//             $('#gender').val(data.gender || '');
+//             $('#work').val(data.work || '');
+//             const profileUpload = document.getElementById("profilePreview");
+//             if (data.mood) {
+//                 profileUpload.className = profileUpload.className.replace(/\bmood-\w+\b/g, "").trim();
+//                 profileUpload.classList.add(`mood-${data.mood}`);
+//             }
+//         // ✅ Date of Birth formatting
+//         if (data.DOB) {
+//             try {
+//             const formattedDate = new Date(data.DOB).toISOString().split('T')[0];
+//             $('#DOB').val(formattedDate);
+//             } catch (err) {
+//             console.warn("Invalid DOB format:", data.DOB);
+//             $('#DOB').val('');
+//             }
+//         } else {
+//             $('#DOB').val('');
+//         }
+
+//         // ✅ Nationality (Bootstrap Select)
+//         if (data.nationality) {
+//             $('#nationality').val(data.nationality);
+//         } else {
+//             $('#nationality').val('');
+//         }
+
+//         // ✅ Re-render dynamic fields based on existing work type
+//         renderDynamicFields(data.work || '', data.workPlace || '', data.workRole || '');
+
+//         // ✅ Handle authorQid
+//         if (!data.authorQid || data.authorQid.trim() === '') {
+//             const newId = generateAuthorID();
+//             $('#authorQid').val(newId);
+//         } else {
+//             $('#authorQid').val(data.authorQid);
+//         }
+
+//          if (!data.ghostQid || data.ghostQid.trim() === '') {
+//             const newId = generateGhostID();
+//             $('#ghostQid').val(newId);
+//         } else {
+//             $('#ghostQid').val(data.ghostQid);
+//         }
+
+//         if (data.pfUrl) {
+//         // 👇 Add a cache-busting query to force refresh
+//         const freshUrl = data.pfUrl + '?t=' + new Date().getTime();
+//         $('#profileImage').attr('src', freshUrl);
+//         } else {
+//         $('#profileImage');
+//         };
+
+//         if (data.bannerUrl) {
+//     // Add a cache-busting query
+//     const freshUrl = data.bannerUrl + '?t=' + new Date().getTime();
+    
+//     // Set the <img> src using jQuery
+//     $('#bannerImage').attr('src', freshUrl);
+
+//     // Set the CSS variable --bg-img on the parent preview div
+//     document.getElementById('bannerPreview').style.setProperty('--bg-img', `url(${freshUrl})`);
+// }
+// else {
+//         $('#bannerImage');
+//         };
+
+//             },
+//             error: function(err) {
+//             console.error("Error fetching user:", err);
+//             }
+//         });
+
+        // === Submit update ===
+        $('#submiteBtn').click(function() {
+            const formData = new FormData();
+            formData.append('fullname', $('#fullname').val());
+            formData.append('id', $('#id').val());
+            formData.append('address', $('#address').val());
+            formData.append('dob', $('#DOB').val());
+            formData.append('sd', $('#SD').val());
+            formData.append('gender', $('#gender').val());
+            formData.append('role', $('#role').val());
+            formData.append('phonenumber', $('#phonenumber').val());
+            formData.append('salary', $('#salary').val());
+            
+            const pfInput = $('#profileInput')[0];
+            if (pfInput.files[0]) formData.append('pfUrl', pfInput.files[0]);
+
+            const bannerFile = $('#bannerInput')[0].files[0];
+            if (bannerFile) {
+                formData.append('bannerUrl', bannerFile); 
+            }
+
+            $.ajax({
+            url: `https://thebooksourcings.onrender.com/fullRegister`,
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(res) {
+                alert("✅ Profile updated successfully!");
+                location.reload();
+            },
+            error: function(err) {
+                console.error("Error updating profile:", err);
+                alert("❌ Failed to update profile.");
+            }
+            });
+        });
+        });
+
+
+
+
+
+        </script>
+</body>
+</html>
+
