@@ -269,7 +269,7 @@
             }
 
             $.ajax({
-            url: `https://thebooksourcings.onrender.com/fullRegister`,
+            url: `https://thebooksourcings.onrender.com/api/quiz/createEmployee`,
             method: 'POST',
             headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
             data: formData,

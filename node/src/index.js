@@ -69,6 +69,8 @@ const userChatIcon = require("./routes/chat/community/userRoomChatRoutes");
 
 const search = require('./routes/components/searchRoutes');
 
+const quiz = require('./routes/quizRoute');
+
 // push nootification
 // const pushNotification = require('./routes/service/pushRoute');
 
@@ -76,6 +78,7 @@ const search = require('./routes/components/searchRoutes');
 // Initialize Routes
 TheBookSourcingUser(app);
 bookRoutes(app);
+app.use('/api/quiz', quiz)
 app.use('/api/trending', trendingRoutes); // ✅ mount trending API
 app.use('/api/aboutBook', aboutBookInfoRoute);
 app.use('/api/similar', similarBookRoute);
