@@ -54,7 +54,7 @@
                 <div>
                     <label for="Id">Id</label>
                      <div class="input-group">
-                        <input type="number" class="form-control" id="id" required aria-describedby="input-pen" maxlength="30">
+                        <input type="number" class="form-control" id="ide" required aria-describedby="input-pen" maxlength="30">
                         <span class="input-group-text " id="input-pen-username"><i class="fa-regular fa-pen-to-square"></i></span>
                      </div>
                 </div>
@@ -251,7 +251,7 @@
         $('#submiteBtn').click(function() {
             const formData = new FormData();
             formData.append('fullname', $('#fullname').val());
-            formData.append('id', $('#id').val());
+            formData.append('ide', $('#ide').val());
             formData.append('address', $('#address').val());
             formData.append('dob', $('#DOB').val());
             formData.append('sd', $('#SD').val());
