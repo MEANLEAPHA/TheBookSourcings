@@ -7,7 +7,7 @@
    position: sticky;  /* stays inside .content */
   width: 100%;
   padding: 10px;
-  height: 50px;
+  height: 65px;
   top: 60px;
   background-color: rgba(88, 88, 88, 0.307);
   backdrop-filter: blur(10px);
