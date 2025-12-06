@@ -1,5 +1,45 @@
 const { fetchJson } = require("../../../util/apiClient");
 
+const db = require("../../../config/db");
+
+
+async function getAuthorInfoByQid(req, res) {
+  try {
+    const {authorQid} = req.params;
+    if (!authorQid) {
+      return res.status(400).json({ error: "Author QID required" });
+    }
+
+    // Split QIDs (example: "Q123,Q456,Q789")
+    const authorQids = authorQid.split(",");
+
+    // Make SQL placeholders: (?, ?, ?, ...)
+    const placeholders = authorQids.map(() => "?").join(",");
+
+    // Query DB
+    const [rows] = await db.query(
+      `SELECT *
+       FROM users 
+       WHERE authorQid IN (${placeholders})`,
+      authorQids
+    );
+
+    // If no authors found
+    if (!rows || rows.length === 0) {
+      return res.json({ authors: [] });
+    }
+
+    // Return in frontend-compatible format
+    res.json({ authors: rows });
+  } catch (err) {
+    console.error("getAuthorInfoByQid error:", err.message);
+    res.status(500).json({ error: "Failed to fetch author info by QID" });
+  }
+}
+
+
+
+
 // --- Search Wikidata by author name
 async function fetchWikidataId(name) {
   const searchUrl = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(name)}&language=en&format=json&origin=*`;
@@ -73,4 +113,4 @@ async function getAuthorInfo(req, res) {
   }
 }
 
-module.exports = { getAuthorInfo };
+module.exports = { getAuthorInfo, getAuthorInfoByQid };

@@ -11,14 +11,15 @@
 
 
   // DOM elements
-const likeBtn = document.querySelector('.like');
+
+
+
+// as favorite
 const readLaterBtn = document.querySelector('.readLater');
-const likeIcon = document.querySelector('.likeIcon');
 const readLaterIcon = document.querySelector('.readLaterIcon');
-const likeCount = document.querySelector('.likeCount');
 const readLaterCount = document.querySelector('.readLaterCount');
 
-// Helper to fetch book status
+
 async function fetchBookStatus() {
     try {
         const res = await fetch(`https://thebooksourcings.onrender.com/api/LAFbook/status/${bookId}`, {
@@ -30,14 +31,12 @@ async function fetchBookStatus() {
         const data = await res.json();
         const { book, userStatus } = data;
 
+        
         // Update counts
-        likeCount.textContent = book.likeCount;
         readLaterCount.textContent = book.favoriteCount;
-
-        // Update icon colors based on user status
-        likeIcon.style.color = userStatus.liked ? "gold" : "black";
         readLaterIcon.style.color = userStatus.favorited ? "gold" : "black";
-    } catch (err) {
+    } 
+    catch (err) {
         console.error(err);
     }
 }
@@ -117,7 +116,6 @@ async function toggleActivity(type) {
 }
 
 // Event listeners
-likeBtn.addEventListener("click", () => toggleActivity("like"));
 readLaterBtn.addEventListener("click", () => toggleActivity("favorite"));
 
 // Initial load
@@ -254,33 +252,19 @@ function renderBook(data) {
     seemore.style.display = "none";
     seeless.style.display = "none";
   };
-
-
-
-
-
-
-
-
-
   const firstCategory = Array.isArray(book.categories)
     ? (book.categories[0] || "")
     : (book.categories || "");
-
   const categoryToUse = (firstCategory && String(firstCategory).trim()) ? firstCategory : "fiction";
 
   // call the loader with that category
   loadSimilarBooks(categoryToUse);
 
-
  const firstAuthor = Array.isArray(book.authors)
   ? (book.authors[0] || "") 
   : (book.authors || "");
-
   const authorNameToUse = (firstAuthor && String(firstAuthor).trim()) ? firstAuthor : "William Shakespeare";
   loadOtherBookByAuthor(authorNameToUse);
-
-
 
 const authorNames = Array.isArray(book.authors) ? book.authors : [book.authors || 'William Shakespeare'];
 loadAuthorInfo(authorNames);

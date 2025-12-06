@@ -2,7 +2,7 @@
 const {getGoogleBookById} = require("./aboutGoogleController")
 const {getOpenLibraryBookById} = require("./aboutOpenLibraryController")
 const {getGutenbergBookById} = require("./aboutGutenbergController")
-const {getTheBookSourcingById} = require("./aboutTheBooksourcingController")
+const {getOtthorById} = require("./aboutOtthorController")
 
 
 
@@ -15,8 +15,8 @@ const {getTheBookSourcingById} = require("./aboutTheBooksourcingController")
         }
 
     switch (source.toLowerCase()) {
-      case "thebooksourcing":
-        return await getTheBookSourcingById(req, res);
+      case "otthor":
+        return await getotthorById(req, res);
       case "google":
         return await getGoogleBookById(req, res);
       case "openlibrary":
@@ -30,7 +30,6 @@ const {getTheBookSourcingById} = require("./aboutTheBooksourcingController")
     res.status(500).json({ error: "Failed to fetch book" });
   }
 };
-
 
 module.exports = {allAboutBook};
 

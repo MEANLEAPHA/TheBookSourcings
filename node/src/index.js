@@ -78,12 +78,19 @@ const quiz = require('./routes/quizRoute');
 // Initialize Routes
 TheBookSourcingUser(app);
 bookRoutes(app);
+
+// minday quiz
 app.use('/api/quiz', quiz)
+
+
 app.use('/api/trending', trendingRoutes); // ✅ mount trending API
 app.use('/api/aboutBook', aboutBookInfoRoute);
 app.use('/api/similar', similarBookRoute);
+
 app.use('/api/bookByAuthor', bookByAuthorRoute);
+
 app.use('/api/aboutAuthor', aboutAuthorInfo);
+
 app.use('/api/author', aboutAuthorDetails);
 app.use('/api/authors/similar', similarAuthorDetail);
 app.use('/api/authors/notableWork', notableWork);
@@ -231,9 +238,64 @@ io.on("connection", (socket) => {
 
 
 
-  console.log("🟢 User connected:", socket.user?.memberQid);
 
 
+
+// Book review 
+  socket.on("send-review", (data) => {
+    if(!socket.user) return;
+    const broadcastData = {
+      rate_id : data.rate_id,
+      memeberQid:socket.user.memberQid,
+      username:data.username,
+      nickname:data.nickname,
+      review_text: data.review_text || null,
+      rate_star: data.rate_star || null,
+      createFormNow: data.createFormNow || "just now",
+      updateFormNow: data.updateFormNow || "just now"
+    };
+    socket.broadcast.emit("receive-comment", broadcastData)
+  })
+
+  socket.on("edit-review", (data) => {
+    if(!socket.user) return;
+    io.emit("review-updated", data)
+  });
+
+  socket.on("delete-review", (data) => {
+    if(!socket.user) return;
+    io.emit("review-deleted", data)
+  });
+
+
+   // Book reply to comment-review
+  socket.on("send-reply-review", (data) => {
+    if(!socket.user) return;
+    const broadcastData = {
+      reply_id : data.reply_id,
+      memeberQid:socket.user.memberQid,
+      username:data.username,
+      nickname:data.nickname,
+      reply_text: data.reply_text || null,
+      replyBackTo_id: data.replyBackTo_id,
+      createFormNow: data.createFormNow || "just now",
+      updateFormNow: data.updateFormNow || "just now"
+    };
+    socket.broadcast.emit("receive-reply-review", broadcastData)
+  })
+
+  socket.on("edit-reply-review", (data) => {
+    if(!socket.user) return;
+    io.emit("reply-review-updated", data)
+  });
+
+  socket.on("delete-reply-review", (data) => {
+    if(!socket.user) return;
+    io.emit("reply-deleted-review", data)
+  });
+
+
+console.log("🟢 User connected:", socket.user?.memberQid);
 // ✅ User joins a chat room
 socket.on("joinRoom", async (roomId) => {
   if (!socket.user) return;

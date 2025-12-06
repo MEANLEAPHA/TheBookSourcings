@@ -4,7 +4,7 @@ const relativeTime = require("dayjs/plugin/relativeTime");
 
 dayjs.extend(relativeTime);
 
-const getTheBookSourcingById = async (req, res) => {
+const getOtthorById = async (req, res) => {
   try {
     const { bookId } = req.params;
 
@@ -83,4 +83,4 @@ const getTheBookSourcingById = async (req, res) => {
   }
 };
 
-module.exports = { getTheBookSourcingById };
+module.exports = { getOtthorById };
