@@ -9,14 +9,14 @@ const {getOtthorById} = require("./aboutOtthorController")
  async function allAboutBook(req, res){
   const { source, bookId } = req.params;
   try {
-            const allowedSources = ["google", "openlibrary", "gutenberg", "thebooksourcing"];
+            const allowedSources = ["google", "openlibrary", "gutenberg", "otthor"];
         if (!allowedSources.includes(source.toLowerCase())) {
         return res.status(400).json({ error: "Unknown source" });
         }
 
     switch (source.toLowerCase()) {
       case "otthor":
-        return await getotthorById(req, res);
+        return await getOtthorById(req, res);
       case "google":
         return await getGoogleBookById(req, res);
       case "openlibrary":

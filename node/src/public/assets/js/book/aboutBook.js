@@ -1,20 +1,20 @@
-function parseJwt (token) {
-  try {
-    return JSON.parse(atob(token.split('.')[1]));
-  } catch (e) {
-    return null;
-  }
-}
+// function parseJwt (token) {
+//   try {
+//     return JSON.parse(atob(token.split('.')[1]));
+//   } catch (e) {
+//     return null;
+//   }
+// }
 
-const token = localStorage.getItem("token");
-let userMemberQid = null;
-let username = null;
+// const token = localStorage.getItem("token");
+// let userMemberQid = null;
+// let username = null;
 
-if (token) {
-  const decoded = parseJwt(token);
-  userMemberQid = decoded?.memberQid || null;
-  username = decoded?.username || null;
-}
+// if (token) {
+//   const decoded = parseJwt(token);
+//   userMemberQid = decoded?.memberQid || null;
+//   username = decoded?.username || null;
+// }
 
 
 // redirect the source
