@@ -30,7 +30,9 @@ const getOtthorById = async (req, res) => {
         b.publisher,
         b.bookFile,
         u.username,
-        u.memberQid
+        u.memberQid,
+        u.pfUrl,
+        u.followerCount
       FROM uploadBook b
       JOIN users u ON b.memberQid = u.memberQid
       WHERE b.bookQid = ?`,
@@ -47,6 +49,8 @@ const getOtthorById = async (req, res) => {
     const bookRow = rows[0];
 
     const book = {
+      pfUrl : bookRow.pfUrl,
+      followerCount : bookRow.followerCount,
       bookQid: bookRow.bookQid,
       title: bookRow.title,
       subtitle: bookRow.subTitle,

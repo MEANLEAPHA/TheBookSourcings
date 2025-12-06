@@ -94,6 +94,10 @@ async function loadBookInfo() {
     document.querySelector(".BookUrl").src = book.cover;
     document.querySelector(".title").textContent = book.title;
 
+    document.querySelector("#channelPf").src = book.pfUrl;
+    document.querySelector("#channelName").textContent = book.username;
+    document.querySelector(".followCount").textContent = `${book.followerCount} Followers`;
+
     // Description
     const fullText = book.description || "No description available.";
     if (fullText.length > 1000) {
@@ -150,7 +154,7 @@ async function loadBookInfo() {
                 <span class="btn-text">Follow</span>
                 `;
                 followBtn.addEventListener("click", () => {
-                    toggleFollowActivity(data.memberQid)
+                    toggleFollowActivity(data.channel)
                 })
                 followHolder.appendChild(followBtn);
     }
