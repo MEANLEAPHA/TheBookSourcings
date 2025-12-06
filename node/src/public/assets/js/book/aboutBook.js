@@ -50,7 +50,7 @@ const followBtn = document.createElement('button');
 const followingBtn = document.createElement('button');
 
 async function loadBookInfo() {
-  const res = await fetch(`https://thebooksourcings.onrender.com/api/loadBooksInfo/${source}/${bookId}`);
+  const res = await fetch(`https://thebooksourcings.onrender.com/api/aboutBook/${source}/${bookId}`);
   if (!res.ok) throw new Error("Failed to fetch Load Book Info");
 
   const data = await res.json();
