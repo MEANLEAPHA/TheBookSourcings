@@ -12,6 +12,7 @@ const getOtthorById = async (req, res) => {
     const [rows] = await db.query(
       `SELECT 
         b.bookQid,
+        b.memberQid,
         b.author,
         b.bookCover,
         b.title,
@@ -31,7 +32,7 @@ const getOtthorById = async (req, res) => {
         u.username,
         u.memberQid
       FROM uploadBook b
-      JOIN users u ON b.member_id = u.user_id
+      JOIN users u ON b.memberQid = u.memberQid
       WHERE b.bookQid = ?`,
       [bookId]
     );
@@ -50,6 +51,7 @@ const getOtthorById = async (req, res) => {
       title: bookRow.title,
       subtitle: bookRow.subTitle,
       author: bookRow.author,
+      authorIdsd : bookRow.authorId,
       description: bookRow.summary,
       cover: bookRow.bookCover,
       categories: bookRow.mainCategory,
