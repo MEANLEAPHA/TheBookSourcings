@@ -83,24 +83,29 @@ async function bookByAuthorByQid(req, res) {
     }
 
     const authorQids = authorQid.split(",");
-    const placeholders = authorQids.map(() => "?").join(",");
+
+    // Build WHERE b.authorId LIKE '%QID%' OR '%QID2%'
+    const whereClauses = authorQids.map(() => `b.authorId LIKE ?`).join(" OR ");
+    const likeValues = authorQids.map(qid => `%${qid}%`);
 
     const [rows] = await db.query(
-      `SELECT 
-         b.bookQid AS bookQid,
-         b.bookCover AS bookCover,
-         b.title AS title,
-         b.subTitle AS subTitle,
-         b.author AS author,
-         b.authorId AS authorId,
-         u.username,
-         u.memberQid,
-         u.authorQid
-       FROM uploadBook b
-       JOIN users u ON b.authorId = u.authorQid
-       WHERE u.authorQid IN (${placeholders})
-       ORDER BY b.UploadAt DESC`,
-      authorQids
+      `
+      SELECT 
+        b.bookQid, 
+        b.bookCover,
+        b.title, 
+        b.subTitle, 
+        b.author, 
+        u.authorQid,
+        u.username,
+        u.memberQid
+      FROM uploadBook b
+      LEFT JOIN users u 
+        ON u.authorQid IN (${authorQids.map(() => "?").join(",")})
+      WHERE ${whereClauses}
+      ORDER BY b.UploadAt DESC
+      `,
+      [...authorQids, ...likeValues]
     );
 
     return res.json({ authors: rows });
