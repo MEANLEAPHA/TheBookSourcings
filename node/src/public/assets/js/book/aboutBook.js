@@ -719,7 +719,7 @@ function renderAuthorInfoByQid(authors) {
     const html = `
       <a href="aboutAuthor.html?memberQId=${memberQId}">
         <div class="aboutAuthor">
-          <img src="${pfUrl}" class="aboutPf" alt="${username}">
+          <img src="${author.pfUrl}" class="aboutPf" alt="${username}">
           <div class="authorInfo">
             <p class="authorName">${username}</p>
             <p class="authorProfession">5 Books - ${author.followerCount} Followers</p>

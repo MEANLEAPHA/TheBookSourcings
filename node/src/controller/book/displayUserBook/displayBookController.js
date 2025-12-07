@@ -45,7 +45,7 @@ const displayAllBook = async (req, res) => {
       genre: book.genre,
       view: book.viewCount,
       username: book.username,
-      uploaded: dayjs(book.UploadAt).fromNow(), // e.g., "5 minutes ago"
+      uploaded: dayjs(book.UploadAt).fromNow(), 
             }
         )
     );

@@ -63,25 +63,5 @@ const getMyBooks = async (req, res) => {
 };
 
 
-// --- Get all books for the logged-in user
-// const getMyBooks = async (req, res) => {
-//   try {
-//     const memberQid  = req.user.user_id;
-//     const authorQid = req.user.authorQid;
-
-//     const [rows] = await db.query(
-//     `
-//       SELECT * FROM uploadBook
-//       WHERE JSON_CONTAINS(authorId, JSON_QUOTE(?))
-//     `,
-//       [memberQid ]
-//     );
-
-//     res.json(rows);
-//   } catch (err) {
-//     console.error("getMyBooks error:", err.message);
-//     res.status(500).json({ message: "Internal server error", error: err.message });
-//   }
-// };
 
 module.exports = { getBookByQid, getMyBooks };
