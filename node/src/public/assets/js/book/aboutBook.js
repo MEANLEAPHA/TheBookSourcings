@@ -708,7 +708,7 @@ function renderAuthorInfoByQid(authors) {
   authors.forEach((author, idx) => {
     const memberQId = author.memberQid || '';
     const username = author.username || 'Unknown Author';
-    const bio = '';
+    let bio = '';
      if(author.work === "worker"){
     bio = `${username} is a ${author.workRole} at ${author.workPlace}. ${author.bio}`;
     }
