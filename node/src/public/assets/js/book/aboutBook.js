@@ -802,7 +802,7 @@ function renderOtherBookByQid(author){
       otherBookByAuthorList.innerHTML += `
         <div class="books">
           <a href='aboutBook.html?bookId=${book.bookQid}'>
-              <img src="${book.Bookcover || 'assets/img/noCoverFound.png'}" 
+              <img src="${book.bookCover || 'assets/img/noCoverFound.png'}" 
                    alt="${book.title}" 
                    class="bookImg lazyload" 
                    loading="lazy" 

@@ -87,14 +87,15 @@ async function bookByAuthorByQid(req, res) {
 
     const [rows] = await db.query(
       `SELECT 
-         b.bookQid AS bookQid, 
-         b.bookCover AS bookCover, 
-         b.title AS title, 
-         b.subTitle AS subTitle, 
-         b.author AS author, 
-         u.authorQid,
+         b.bookQid AS bookQid,
+         b.bookCover AS bookCover,
+         b.title AS title,
+         b.subTitle AS subTitle,
+         b.author AS author,
+         b.authorId AS authorId,
          u.username,
-         u.memberQid
+         u.memberQid,
+         u.authorQid
        FROM uploadBook b
        JOIN users u ON b.authorId = u.authorQid
        WHERE u.authorQid IN (${placeholders})
@@ -108,6 +109,7 @@ async function bookByAuthorByQid(req, res) {
     res.status(500).json({ error: "Failed to fetch books by author QID" });
   }
 }
+
 
 
 
