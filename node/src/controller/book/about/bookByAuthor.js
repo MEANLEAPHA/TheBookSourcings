@@ -1,5 +1,5 @@
 const { fetchJson } = require("../../../util/apiClient");
-
+const db = require("../../../config/db");
 // Controller: Get similar books from 3 sources
 async function bookByAuthor(req, res) {
   const authorName = req.params.authorName;
