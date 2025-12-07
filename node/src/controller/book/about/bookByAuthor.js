@@ -87,12 +87,16 @@ async function bookByAuthorByQid(req, res) {
 
     const [rows] = await db.query(
       `SELECT 
-         b.*, 
+         b.bookQid AS bookQid, 
+         b.bookCover AS bookCover, 
+         b.title AS title, 
+         b.subTitle AS subTitle, 
+         b.author AS author, 
          u.authorQid,
          u.username,
          u.memberQid
        FROM uploadBook b
-       JOIN users u ON b.memberQid = u.memberQid
+       JOIN users u ON b.authorId = u.authorQid
        WHERE u.authorQid IN (${placeholders})
        ORDER BY b.UploadAt DESC`,
       authorQids
