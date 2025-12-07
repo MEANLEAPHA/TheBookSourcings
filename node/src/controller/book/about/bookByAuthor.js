@@ -94,7 +94,7 @@ async function bookByAuthorByQid(req, res) {
        FROM uploadBook b
        JOIN users u ON b.memberQid = u.memberQid
        WHERE u.authorQid IN (${placeholders})
-       ORDER BY UploadAt DESC`,
+       ORDER BY b.UploadAt DESC`,
       authorQids
     );
 
