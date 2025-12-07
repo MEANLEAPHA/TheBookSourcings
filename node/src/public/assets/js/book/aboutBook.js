@@ -801,15 +801,16 @@ function renderOtherBookByQid(author){
     author.forEach(book => {
       otherBookByAuthorList.innerHTML += `
         <div class="books">
-          <a href='aboutBook.html?bookId=${book.bookId}'>
-              <img src="${book.cover || 'assets/img/noCoverFound.png'}" 
+          <a href='aboutBook.html?bookId=${book.bookQid}'>
+              <img src="${book.Bookcover || 'assets/img/noCoverFound.png'}" 
                    alt="${book.title}" 
                    class="bookImg lazyload" 
                    loading="lazy" 
                    onerror="this.src='assets/img/noCoverFound.png'">
               <div class="bookInfo">
                   <a id="OtherbookTitle">${book.title}</a>
-                  <a id="OtherbookSubTitle">${book.author}</a>
+                  <a id="OtherbookAuthor">${book.author}</a>
+                  <a id="OtherbookSubTitle">${book.subTitle}</a>
               </div>
           </a>
         </div>
