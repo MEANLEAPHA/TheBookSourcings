@@ -783,7 +783,7 @@ async function loadOtherBookByAuthorQid(authorQid) {
   showSkeletonOtherBookByQid(4);
 
   try {
-    const res = await fetch(`https://thebooksourcings.onrender.com/api/otherBook/ByQid/${encodeURIComponent(joinedQid)}`);
+    const res = await fetch(`https://thebooksourcings.onrender.com/api/bookByAuthor/ByQid/${encodeURIComponent(joinedQid)}`);
     if (!res.ok) throw new Error('Network response not ok');
     const { authors } = await res.json();
 

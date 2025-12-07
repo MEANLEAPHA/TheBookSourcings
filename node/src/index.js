@@ -99,7 +99,7 @@ app.use('/api/getMyBooks', getMyBooksRoutes);
 app.use('/api/books', displayUserUploadBookRoute);
 app.use('/api/books/view', viewRoute);
 app.use('/api/books', RDSroute);
-app.use('/api/LAFbook', LAF);
+app.use('/api/LAFbook', LAF);  
 // app.use('/api', followRoute); old follow route
 app.use('/api', followLogicRoute);
 app.use("/api/community", communityRoutes);
