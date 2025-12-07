@@ -75,5 +75,37 @@ async function bookByAuthor(req, res) {
     res.status(500).json({ error: err.message });
   }
 }
+async function bookByAuthorByQid(req, res) {
+  try {
+    const { authorQid } = req.params;
+    if (!authorQid) {
+      return res.status(400).json({ error: "Author QID required" });
+    }
 
-module.exports = { bookByAuthor };
+    const authorQids = authorQid.split(",");
+    const placeholders = authorQids.map(() => "?").join(",");
+
+    const [rows] = await db.query(
+      `SELECT 
+         b.*, 
+         u.authorQid,
+         u.username,
+         u.memberQid
+       FROM uploadBook b
+       JOIN users u ON b.memberQid = u.memberQid
+       WHERE u.authorQid IN (${placeholders})
+       ORDER BY UploadAt DESC`,
+      authorQids
+    );
+
+    return res.json({ authors: rows });
+  } catch (err) {
+    console.error("bookByAuthorByQid error:", err.message);
+    res.status(500).json({ error: "Failed to fetch books by author QID" });
+  }
+}
+
+
+
+
+module.exports = { bookByAuthor, bookByAuthorByQid };

@@ -35,7 +35,7 @@ async function getAuthorInfoByQid(req, res) {
     console.error("getAuthorInfoByQid error:", err.message);
     res.status(500).json({ error: "Failed to fetch author info by QID" });
   }
-}
+};
 
 
 

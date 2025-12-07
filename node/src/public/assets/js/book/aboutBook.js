@@ -123,13 +123,7 @@ async function loadBookInfo() {
     };
 
 
-    // other book by author
-    const firstAuthor = Array.isArray(book.authors)
-    ? (book.authors[0] || "") 
-    : (book.authors || "");
-    const authorNameToUse = (firstAuthor && String(firstAuthor).trim()) ? firstAuthor : "William Shakespeare";
     
-    loadOtherBookByAuthor(authorNameToUse);
 
     // similar book
 
@@ -162,14 +156,20 @@ async function loadBookInfo() {
 
   const authorNames = Array.isArray(book.authors) ? book.authors : [book.authors || 'William Shakespeare'];
   const authorQids = Array.isArray(book.authorIds) ? book.authorIds : [book.authorIds];
+// other book by author
+    const firstAuthor = Array.isArray(book.authors)
+    ? (book.authors[0] || "") 
+    : (book.authors || "");
+    const authorNameToUse = (firstAuthor && String(firstAuthor).trim()) ? firstAuthor : "William Shakespeare";
 
   if(book.authorIds){
     loadAuthorInfoByQids(authorQids); // for otthor user
+    loadOtherBookByAuthorQid(authorQids); // otthor
   }
   else{
     loadAuthorInfo(authorNames); // for googlebook, gutenberg and openlibrary
+    loadOtherBookByAuthor(authorNameToUse);// googlebook, openlibrary, gutenberg
   }
-
 
 }
 
@@ -309,132 +309,6 @@ async function toggleFollowActivity(followedQid) {
   }
 }
 
-
-// --- Skeleton Loader (3 placeholders) for otherBookByAuthor---
-function showSkeletonOBBA(count = 3){
-    otherBookByAuthorList.innerHTML = "";
-    for(let j=0 ; j<count ; j++){
-      otherBookByAuthorList.innerHTML +=`
-        <div class="skeleton-books">
-          <div class="skeleton skeleton-bookImg"></div>
-          <div class="skeleton-info">
-            <div class="skeleton skeleton-title"></div>
-            <div class="skeleton skeleton-author"></div>
-          </div>
-      </div>
-      `;
-    }
-}
-
-
-
-// --- Cache helper OBBA---
-function getCachedSimilarOBBA(authors) {
-  const cached = localStorage.getItem(`name_${authors}`);
-  if (!cached) return null;
-
-  const { data, expiry } = JSON.parse(cached);
-  if (Date.now() > expiry) {
-    localStorage.removeItem(`name_${authors}`);
-    return null;
-  }
-  return data;
-}
-
-
-
-// set CachedSimilarOBBA 
-function setCachedSimilarOBBA(authors, data) {
-  localStorage.setItem(
-    `name_${authors}`,
-    JSON.stringify({
-      data,
-      expiry: Date.now() + 1000 * 60 * 30 // cache 30 mins
-    })
-  );
-}
-// --- Fetch & Render --- obba
-async function loadOtherBookByAuthor(authorName){
-   const cached = getCachedSimilarOBBA(authorName);
-   if(cached){
-      renderSimilarOBBA(cached);
-      return;
-   }
-   // show skeleton
-   showSkeletonOBBA();
-   try{
-      const res = await fetch(`https://thebooksourcings.onrender.com/api/bookByAuthor/${encodeURIComponent(authorName)}`);
-      if (!res.ok) throw new Error("Network response not ok");
-
-      const { results } = await res.json();
-      setCachedSimilarOBBA(authorName, results);
-
-      renderSimilarOBBA(results);
-   }
-   catch(err){
-      console.error(err);
-      // only show message if results are truly empty or error
-      otherBookByAuthorList.innerHTML = "<p>Failed to load book. Please try again.</p>";
-   }
-}
-// renderSimilarOBBA
-function renderSimilarOBBA(author){
-  otherBookByAuthorList.innerHTML = "";
-
-  if(author.length > 0){
-    author.forEach(book => {
-      otherBookByAuthorList.innerHTML += `
-        <div class="books">
-          <a href='aboutBook.html?bookId=${book.bookId}'>
-              <img src="${book.cover || 'assets/img/noCoverFound.png'}" 
-                   alt="${book.title}" 
-                   class="bookImg lazyload" 
-                   loading="lazy" 
-                   onerror="this.src='assets/img/noCoverFound.png'">
-              <div class="bookInfo">
-                  <a id="OtherbookTitle">${book.title}</a>
-                  <a id="OtherbookSubTitle">${book.author}</a>
-              </div>
-          </a>
-        </div>
-      `;
-    });
-
-    // ✅ Show more / Show less logic
-    const showLessBook = document.getElementById("showLessBook");
-    const showAllBook = document.getElementById("showAllBook");
-    const books = document.querySelectorAll('.books');
-
-    if(books.length > 3){
-      for(let i = 3; i < books.length; i++){
-        books[i].style.display = 'none';
-      }
-
-      showLessBook.style.display = 'none';
-      showAllBook.style.display = 'flex';
-
-      showAllBook.onclick = () => {
-        books.forEach(book => book.style.display = 'flex');
-        showAllBook.style.display = 'none';
-        showLessBook.style.display = 'flex';
-      };
-
-      showLessBook.onclick = () => {
-        for(let i = 3; i < books.length; i++){
-          books[i].style.display = 'none';
-        }
-        showAllBook.style.display = 'flex';
-        showLessBook.style.display = 'none';
-      };
-    } else {
-      showLessBook.style.display = 'none';
-      showAllBook.style.display = 'none';
-    }
-
-  } else {
-    otherBookByAuthorList.innerHTML = "<p>No similar books found.</p>";
-  }
-}
 
 
 // --- Skeleton Loader (5 placeholders) for similarBook---
@@ -735,4 +609,252 @@ function renderAuthorInfoByQid(authors) {
 }
 
 
+// --- Skeleton Loader (3 placeholders) for otherBookByAuthor---
+function showSkeletonOBBA(count = 3){
+    otherBookByAuthorList.innerHTML = "";
+    for(let j=0 ; j<count ; j++){
+      otherBookByAuthorList.innerHTML +=`
+        <div class="skeleton-books">
+          <div class="skeleton skeleton-bookImg"></div>
+          <div class="skeleton-info">
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-author"></div>
+          </div>
+      </div>
+      `;
+    }
+}
+
+
+
+// --- Cache helper OBBA---
+function getCachedSimilarOBBA(authors) {
+  const cached = localStorage.getItem(`name_${authors}`);
+  if (!cached) return null;
+
+  const { data, expiry } = JSON.parse(cached);
+  if (Date.now() > expiry) {
+    localStorage.removeItem(`name_${authors}`);
+    return null;
+  }
+  return data;
+}
+
+// set CachedSimilarOBBA 
+function setCachedSimilarOBBA(authors, data) {
+  localStorage.setItem(
+    `name_${authors}`,
+    JSON.stringify({
+      data,
+      expiry: Date.now() + 1000 * 60 * 30 // cache 30 mins
+    })
+  );
+}
+// --- Fetch & Render --- obba
+async function loadOtherBookByAuthor(authorName){
+   const cached = getCachedSimilarOBBA(authorName);
+   if(cached){
+      renderSimilarOBBA(cached);
+      return;
+   }
+   // show skeleton
+   showSkeletonOBBA();
+   try{
+      const res = await fetch(`https://thebooksourcings.onrender.com/api/bookByAuthor/${encodeURIComponent(authorName)}`);
+      if (!res.ok) throw new Error("Network response not ok");
+
+      const { results } = await res.json();
+      setCachedSimilarOBBA(authorName, results);
+
+      renderSimilarOBBA(results);
+   }
+   catch(err){
+      console.error(err);
+      // only show message if results are truly empty or error
+      otherBookByAuthorList.innerHTML = "<p>Failed to load book. Please try again.</p>";
+   }
+}
+// renderSimilarOBBA
+function renderSimilarOBBA(author){
+  otherBookByAuthorList.innerHTML = "";
+
+  if(author.length > 0){
+    author.forEach(book => {
+      otherBookByAuthorList.innerHTML += `
+        <div class="books">
+          <a href='aboutBook.html?bookId=${book.bookId}'>
+              <img src="${book.cover || 'assets/img/noCoverFound.png'}" 
+                   alt="${book.title}" 
+                   class="bookImg lazyload" 
+                   loading="lazy" 
+                   onerror="this.src='assets/img/noCoverFound.png'">
+              <div class="bookInfo">
+                  <a id="OtherbookTitle">${book.title}</a>
+                  <a id="OtherbookSubTitle">${book.author}</a>
+              </div>
+          </a>
+        </div>
+      `;
+    });
+
+    // ✅ Show more / Show less logic
+    const showLessBook = document.getElementById("showLessBook");
+    const showAllBook = document.getElementById("showAllBook");
+    const books = document.querySelectorAll('.books');
+
+    if(books.length > 3){
+      for(let i = 3; i < books.length; i++){
+        books[i].style.display = 'none';
+      }
+
+      showLessBook.style.display = 'none';
+      showAllBook.style.display = 'flex';
+
+      showAllBook.onclick = () => {
+        books.forEach(book => book.style.display = 'flex');
+        showAllBook.style.display = 'none';
+        showLessBook.style.display = 'flex';
+      };
+
+      showLessBook.onclick = () => {
+        for(let i = 3; i < books.length; i++){
+          books[i].style.display = 'none';
+        }
+        showAllBook.style.display = 'flex';
+        showLessBook.style.display = 'none';
+      };
+    } else {
+      showLessBook.style.display = 'none';
+      showAllBook.style.display = 'none';
+    }
+
+  } else {
+    otherBookByAuthorList.innerHTML = "<p>No other books found.</p>";
+  }
+}
+
+
+// othe book by author qid
+function showSkeletonOtherBookByQid(count = 1) {
+ otherBookByAuthorList.innerHTML = "";
+    for(let j=0 ; j<count ; j++){
+      otherBookByAuthorList.innerHTML +=`
+        <div class="skeleton-books">
+          <div class="skeleton skeleton-bookImg"></div>
+          <div class="skeleton-info">
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-author"></div>
+          </div>
+      </div>
+      `;
+    }
+}
+
+
+
+
+// Cache
+function getCachedOtherBookByQid(authorQid) {
+  const cached = localStorage.getItem(`author_${authorQid}`);
+  if (!cached) return null;
+  const { data, expiry } = JSON.parse(cached);
+  if (Date.now() > expiry) {
+    localStorage.removeItem(`author_${authorQid}`);
+    return null;
+  }
+  return data;
+  
+}
+
+function setCachedOtherBookByQid(authorQid, data) {
+  localStorage.setItem(`author_${authorQid}`, JSON.stringify({
+    data,
+    expiry: Date.now() + 1000 * 60 * 30 // 30 mins
+  }));
+}
+
+async function loadOtherBookByAuthorQid(authorQid) {
+  if (!authorQid || authorQid.length === 0) return;
+
+  const joinedQid = authorQid.join(',');
+  const cached = getCachedOtherBookByQid(joinedQid);
+  if (cached) return renderOtherBookByQid(cached);
+  
+  showSkeletonOtherBookByQid(4);
+
+  try {
+    const res = await fetch(`https://thebooksourcings.onrender.com/api/otherBook/ByQid/${encodeURIComponent(joinedQid)}`);
+    if (!res.ok) throw new Error('Network response not ok');
+    const { authors } = await res.json();
+
+    setCachedOtherBookByQid(joinedQid, authors);
+    renderOtherBookByQid(authors);
+  } catch (err) {
+    console.error(err);
+    authorCardBody.innerHTML = '<p>Failed to other book</p>';
+  }
+}
+
+function renderOtherBookByQid(author){
+  otherBookByAuthorList.innerHTML = "";
+  if(author.length > 0){
+    author.forEach(book => {
+      otherBookByAuthorList.innerHTML += `
+        <div class="books">
+          <a href='aboutBook.html?bookId=${book.bookId}'>
+              <img src="${book.cover || 'assets/img/noCoverFound.png'}" 
+                   alt="${book.title}" 
+                   class="bookImg lazyload" 
+                   loading="lazy" 
+                   onerror="this.src='assets/img/noCoverFound.png'">
+              <div class="bookInfo">
+                  <a id="OtherbookTitle">${book.title}</a>
+                  <a id="OtherbookSubTitle">${book.author}</a>
+              </div>
+          </a>
+        </div>
+      `;
+    });
+
+    // Show more / Show less logic
+    const showLessBook = document.getElementById("showLessBook");
+    const showAllBook = document.getElementById("showAllBook");
+    const books = document.querySelectorAll('.books');
+
+    if(books.length > 3){
+      for(let i = 3; i < books.length; i++){
+        books[i].style.display = 'none';
+      }
+
+      showLessBook.style.display = 'none';
+      showAllBook.style.display = 'flex';
+
+      showAllBook.onclick = () => {
+        books.forEach(book => book.style.display = 'flex');
+        showAllBook.style.display = 'none';
+        showLessBook.style.display = 'flex';
+      };
+
+      showLessBook.onclick = () => {
+        for(let i = 3; i < books.length; i++){
+          books[i].style.display = 'none';
+        }
+        showAllBook.style.display = 'flex';
+        showLessBook.style.display = 'none';
+      };
+    } else {
+      showLessBook.style.display = 'none';
+      showAllBook.style.display = 'none';
+    }
+
+  } else {
+    otherBookByAuthorList.innerHTML = "<p>No other books found.</p>";
+  }
+}
+
+
+
+
+
+// load book info
 loadBookInfo();
