@@ -163,7 +163,7 @@ async function loadBookInfo() {
   const authorNames = Array.isArray(book.authors) ? book.authors : [book.authors || 'William Shakespeare'];
   const authorQids = Array.isArray(book.authorIds) ? book.authorIds : [book.authorIds];
 
-  if(authorQids){
+  if(book.authorIds){
     loadAuthorInfoByQids(authorQids); // for otthor user
   }
   else{

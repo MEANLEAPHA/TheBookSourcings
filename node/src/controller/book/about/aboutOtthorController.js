@@ -30,6 +30,7 @@ const getOtthorById = async (req, res) => {
         b.publisher,
         b.bookFile,
         u.username,
+        u.authorQid,
         u.memberQid,
         u.pfUrl,
         u.followerCount
@@ -55,7 +56,7 @@ const getOtthorById = async (req, res) => {
       title: bookRow.title,
       subtitle: bookRow.subTitle,
       author: bookRow.author,
-      authorIdsd : bookRow.authorId,
+      authorIds : bookRow.authorQid,
       description: bookRow.summary,
       cover: bookRow.bookCover,
       categories: bookRow.mainCategory,
