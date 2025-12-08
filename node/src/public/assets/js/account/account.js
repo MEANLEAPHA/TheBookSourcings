@@ -97,7 +97,7 @@ const API_URL = "https://thebooksourcings.onrender.com";
           favBtnLabel.id = "favoriteBtn";
           favBtns.className = "favoriteBtn";
           favBtnLabel.textContent = "Favorite";
-          favBtns.appendChild(favBtns);
+          favBtns.appendChild(favBtnLabel);
 
           const likeBtns = document.createElement('button');
           const likeBtnLabel = document.createElement('p');
