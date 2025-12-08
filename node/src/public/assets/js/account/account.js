@@ -45,21 +45,12 @@ const feelingMap = {
 const urlParams = new URLSearchParams(window.location.search);
 const memberQid = urlParams.get("memberQid");
 
+const isLike = urlParams.get("isLike");
+const isFav = urlParams.get("isFav");
+const isBook = urlParams.get("isBook");
+const isPost = urlParams.get("isPost");
+const isProduct = urlParams.get("isProduct");
 
-// let userMemberQid = null;
-
-// function parseJwt (token) {
-//   try {
-//     return JSON.parse(atob(token.split('.')[1]));
-//   } catch (e) {
-//     return null;
-//   }
-// }
-// if (token) {
-//   const decoded = parseJwt(token);
-//   userMemberQid = decoded?.memberQid || null;
-  
-// }
  
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -518,11 +509,11 @@ profileBtn.forEach(btn => btn.onclick = ()=>{
   postDisplay.style.display = 'block';
   profileBtnLabel.style.backgroundColor='#fd7648';
   profileBtnLabel.style.opacity='0.7';
-  bookBtnLabel.style.backgroundColor='none';
+  bookBtnLabel.style.background='none';
   bookBtnLabel.style.opacity='1';
   productBtnLabel.style.background='none';
   productBtnLabel.style.opacity='1';
-  postsBtnLabel.style.backgroundColor='none';
+  postsBtnLabel.style.background ='none';
   postsBtnLabel.style.opacity='1';
   book(memberQid);
   product(memberQid);
@@ -545,6 +536,22 @@ bookBtn.forEach(btn => btn.onclick =()=>{
   fimilarUserDisplay.style.display = 'none';
   postDisplay.style.display = 'none';
 });
+if(isBook == "true"){
+  productBtnLabel.style.background='none';
+  productBtnLabel.style.opacity='1';
+  profileBtnLabel.style.background='none';
+  profileBtnLabel.style.opacity='1';
+  postsBtnLabel.style.background='none';
+  postsBtnLabel.style.opacity='1';
+  bookBtnLabel.style.backgroundColor='#fd7648';
+  bookBtnLabel.style.opacity='0.7';
+  document.querySelector('.book-label').style.display = 'none';
+  booksDisplay.style.display = 'block';
+  bookAll(memberQid);
+  productDisplay.style.display = 'none';
+  fimilarUserDisplay.style.display = 'none';
+  postDisplay.style.display = 'none';
+}
 productBtn.forEach(btn => btn.onclick =()=>{
   profileBtnLabel.style.background='none';
   profileBtnLabel.style.opacity='1';
@@ -561,6 +568,23 @@ productBtn.forEach(btn => btn.onclick =()=>{
   fimilarUserDisplay.style.display = 'none';
   postDisplay.style.display = 'none';
 });
+if(isProduct == "true"){
+  productBtnLabel.style.background='none';
+  productBtnLabel.style.opacity='1';
+  profileBtnLabel.style.background='none';
+  profileBtnLabel.style.opacity='1';
+  postsBtnLabel.style.background='none';
+  postsBtnLabel.style.opacity='1';
+  bookBtnLabel.style.background='none';
+  bookBtnLabel.style.opacity='1';
+  document.querySelector('.product-label').style.display = 'none';
+  productDisplay.style.display = 'block';
+  productAll(memberQid);
+  booksDisplay.style.display = 'none';
+  fimilarUserDisplay.style.display = 'none';
+  postDisplay.style.display = 'none';
+
+}
 postsBtn.forEach(btn => btn.onclick =()=>{
   profileBtnLabel.style.background='none'
   profileBtnLabel.style.opacity='1';
@@ -577,6 +601,22 @@ postsBtn.forEach(btn => btn.onclick =()=>{
 postDisplay.style.display = 'block';
   loadMessagesAll(memberQid);
 });
+if(isPost == "true"){
+  productBtnLabel.style.background='none';
+  productBtnLabel.style.opacity='1';
+  profileBtnLabel.style.background='none';
+  profileBtnLabel.style.opacity='1';
+  postsBtnLabel.style.background='none';
+  postsBtnLabel.style.opacity='1';
+  bookBtnLabel.style.background='none';
+  bookBtnLabel.style.opacity='1';
+  document.querySelector('.post-label').style.display = 'none';
+  booksDisplay.style.display = 'none';
+  productDisplay.style.display = 'none';
+  fimilarUserDisplay.style.display = 'none';
+  postDisplay.style.display = 'block';
+  loadMessagesAll(memberQid);
+}
 
 
 async function bookAll(memberQid){

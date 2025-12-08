@@ -1289,7 +1289,7 @@ a .sm-div{
   padding: 0px 15px 0px 15px;
 }
 .BookUrl{
-  width: 50%;
+  width: 55%;
   margin: 0;
 }
 #channelOpt{
@@ -1297,5 +1297,23 @@ a .sm-div{
  margin-top: 0px;
  gap: 10px;
 
+}
+#btnForRate{
+  width: 100%;
+  display: grid;
+  font-size: 22px;
+  justify-content: center;
+}
+#star-ratingr{
+  width: 45%;
+  display: flex;
+  margin: auto;
+}
+#rating-label{
+  font-size: medium;
+}
+#btnForRate i{
+  color: grey;
+  opacity: 0.6;
 }
 }

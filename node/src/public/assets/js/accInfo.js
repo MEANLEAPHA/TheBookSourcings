@@ -23,6 +23,14 @@ const nicknameCol = document.querySelector('.nickName-collapse');
 const userPf = document.querySelector('.userPf-collapse');
 const viewAccount = document.querySelector('.viewAccount-collapse');
 
+
+//account link
+
+const accountBook = document.getElementById('acc-book-link');
+const accountPost = document.getElementById('acc-post-link');
+const accountProduct = document.getElementById('acc-product-link');
+const accountFav = document.getElementById('acc-fav-link');
+const accountLike = document.getElementById('acc-like-link');
 async function loadUserInfo() {
   try {
     const response = await fetch(`https://thebooksourcings.onrender.com/loadUserInfo`, {
@@ -37,7 +45,13 @@ async function loadUserInfo() {
       nicknameCol.textContent = `@${data.user.nickname}` || data.user.nickname || '@WelcomeMyGuest';
       userPf.src = data.user.pfUrl;
       userPfHeader.src = data.user.pfUrl;
-      viewAccount.href = `/account.html?memberQid=${userMemberQid }`
+      viewAccount.href = `/account.html?memberQid=${userMemberQid }`;
+
+      accountBook.href = `/account.html?memberQid=${userMemberQid}&isBook=true`;
+      accountPost.href = `/account.html?memberQid=${userMemberQid}isPost=true`;
+      accountProduct.href = `/account.html?memberQid=${userMemberQid}$isProduct=true`;
+      accountFav.href = `/account.html?memberQid=${userMemberQid}&isFav=true`;
+      accountLike.href = `/account.html?memberQid=${userMemberQid}&isLike=true`;
     }
   } catch (error) {
     console.error('Error fetching user info:', error);
