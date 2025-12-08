@@ -558,7 +558,7 @@ const fimilarUserDisplay = document.getElementById('user-fimiliar-display');
  bookBtnLabel.style.color='white';
   productBtnLabel.style.color='white';
   postsBtnLabel.style.color='white';
-    book(memberQid);
+  book(memberQid);
   product(memberQid);
   loadMessages(memberQid);
 
@@ -567,7 +567,8 @@ const fimilarUserDisplay = document.getElementById('user-fimiliar-display');
  fimilarUserDisplay.style.display = 'block';
  postDisplay.style.display = 'block';
 
-profileBtns.forEach(btn => btn.onclick = ()=>{
+profileBtns.onclick = showProfile;
+function showProfile(){
   booksDisplay.style.display = 'block';
   productDisplay.style.display = 'block';
   fimilarUserDisplay.style.display = 'block';
@@ -583,9 +584,10 @@ profileBtns.forEach(btn => btn.onclick = ()=>{
   book(memberQid);
   product(memberQid);
   loadMessages(memberQid);
-});
+}
 
-bookBtns.forEach(btn => btn.onclick =()=>{
+bookBtns.onclick = showBook;
+function showBook(){
   profileBtnLabel.style.background='none';
   profileBtnLabel.style.opacity='1';  
   productBtnLabel.style.background='none';
@@ -600,7 +602,7 @@ bookBtns.forEach(btn => btn.onclick =()=>{
   productDisplay.style.display = 'none';
   fimilarUserDisplay.style.display = 'none';
   postDisplay.style.display = 'none';
-});
+}
 if(isBook == "true"){
    profileBtnLabel.style.background='none';
   profileBtnLabel.style.opacity='1';  
@@ -617,7 +619,8 @@ if(isBook == "true"){
   fimilarUserDisplay.style.display = 'none';
   postDisplay.style.display = 'none';
 }
-proBtns.forEach(btn => btn.onclick =()=>{
+proBtns.onclick = showProduct;
+function showProduct(){
   profileBtnLabel.style.background='none';
   profileBtnLabel.style.opacity='1';
   productBtnLabel.style.backgroundColor='#fd7648';
@@ -632,7 +635,7 @@ proBtns.forEach(btn => btn.onclick =()=>{
   booksDisplay.style.display = 'none';
   fimilarUserDisplay.style.display = 'none';
   postDisplay.style.display = 'none';
-});
+}
 if(isProduct == "true"){
   profileBtnLabel.style.background='none';
   profileBtnLabel.style.opacity='1';
@@ -649,7 +652,8 @@ if(isProduct == "true"){
   fimilarUserDisplay.style.display = 'none';
   postDisplay.style.display = 'none';
 }
-postBtns.forEach(btn => btn.onclick =()=>{
+postBtns.onclick = showPost;
+function showPost(){
   profileBtnLabel.style.background='none';
   profileBtnLabel.style.opacity='1';
   productBtnLabel.style.background='none';
@@ -662,11 +666,11 @@ postBtns.forEach(btn => btn.onclick =()=>{
   booksDisplay.style.display = 'none';
   productDisplay.style.display = 'none';
   fimilarUserDisplay.style.display = 'none';
-postDisplay.style.display = 'block';
+  postDisplay.style.display = 'block';
   loadMessagesAll(memberQid);
-});
+}
 if(isPost == "true"){
-profileBtnLabel.style.background='none';
+  profileBtnLabel.style.background='none';
   profileBtnLabel.style.opacity='1';
   productBtnLabel.style.background='none';
   productBtnLabel.style.opacity='1';
