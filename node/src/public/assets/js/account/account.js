@@ -49,7 +49,7 @@ const isLike = urlParams.get("isLike");
 const isFav = urlParams.get("isFav");
 const isBook = urlParams.get("isBook");
 const isPost = urlParams.get("isPost");
-const isProduct = urlParams.get("is");
+const isProduct = urlParams.get("isPro");
 
  
 
@@ -60,6 +60,8 @@ const API_URL = "https://thebooksourcings.onrender.com";
         const editBtn = document.createElement('button'); // for user admin
         const followBtn = document.createElement('button');
         const followingBtn = document.createElement('button');
+
+        const btn2fetch = document.getElementById('btn-2-fetch');
 
     fetch(`https://thebooksourcings.onrender.com/getFullRegisterDataByQid/${memberQid}`, {
         method: "GET",
@@ -96,6 +98,37 @@ const API_URL = "https://thebooksourcings.onrender.com";
         const label = document.createElement('p');
         label.className = "label";
         label.textContent = 'Introduction';
+
+
+         const profileBtn = document.createElement('button');
+          profileBtn.id = "profileBtn";
+          profileBtn.className = "profileBtn";
+          profileBtn.textContent = "Profile";
+
+          const bookBtns = document.createElement('button');
+          bookBtns.id = "bookBtn";
+          bookBtns.className = "bookBtn";
+          bookBtns.textContent = "Book";
+
+          const proBtns = document.createElement('button');
+          proBtns.id = "productBtn";
+          proBtns.className = "productBtn";
+          proBtns.textContent = "Product";
+
+          const postBtns = document.createElement('button');
+          postBtns.id = "postsBtn";
+          postBtns.className = "postsBtn";
+          postBtns.textContent = "Post";
+
+          const favBtns = document.createElement('button');
+          favBtns.id = "favoriteBtn";
+          favBtns.className = "favoriteBtn";
+          favBtns.textContent = "Favorite";
+
+          const likeBtns = document.createElement('button');
+          likeBtns.id = "likeBtn";
+          likeBtns.className = "likeBtn";
+          likeBtns.textContent = "Liked";
 
         if(data.bio){
             bioSpan.id = "bio";
@@ -176,6 +209,15 @@ const API_URL = "https://thebooksourcings.onrender.com";
         dropdownMenu.className = "dropdown-menu";
 
         if(userMemberQid === data.memberQid){
+          
+
+          btn2fetch.appendChild(profileBtn);
+          btn2fetch.appendChild(bookBtns);
+          btn2fetch.appendChild(postBtns);
+          btn2fetch.appendChild(proBtns);
+          btn2fetch.appendChild(favBtns);
+          btn2fetch.appendChild(likeBtns);
+
             if(!data.authorQid && !data.ghostQid){
             completeBtn.id = "btn-complete";
             completeBtn.textContent = "Complete Profile";
@@ -283,6 +325,14 @@ const API_URL = "https://thebooksourcings.onrender.com";
 
             followHolder.appendChild(followBtn);
             followHolder.appendChild(moreBtn);
+
+
+
+          btn2fetch.appendChild(profileBtn);
+          btn2fetch.appendChild(bookBtns);
+          btn2fetch.appendChild(postBtns);
+          btn2fetch.appendChild(proBtns);
+
             
         }
 
