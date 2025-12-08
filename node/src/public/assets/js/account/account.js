@@ -49,7 +49,7 @@ const isLike = urlParams.get("isLike");
 const isFav = urlParams.get("isFav");
 const isBook = urlParams.get("isBook");
 const isPost = urlParams.get("isPost");
-const isProduct = urlParams.get("isProduct");
+const isProduct = urlParams.get("is");
 
  
 

@@ -28,7 +28,9 @@
     justify-content: start;
   
 }
-
+.fa-heart{
+  color: var(--font-color);
+}
   .container{
     max-width:99%;
     margin-inline:auto;

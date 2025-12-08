@@ -48,8 +48,8 @@ async function loadUserInfo() {
       viewAccount.href = `/account.html?memberQid=${userMemberQid }`;
 
       accountBook.href = `/account.html?memberQid=${userMemberQid}&isBook=true`;
-      accountPost.href = `/account.html?memberQid=${userMemberQid}isPost=true`;
-      accountProduct.href = `/account.html?memberQid=${userMemberQid}$isProduct=true`;
+      accountPost.href = `/account.html?memberQid=${userMemberQid}&isPost=true`;
+      accountProduct.href = `/account.html?memberQid=${userMemberQid}$isPro=true`;
       accountFav.href = `/account.html?memberQid=${userMemberQid}&isFav=true`;
       accountLike.href = `/account.html?memberQid=${userMemberQid}&isLike=true`;
     }

@@ -156,7 +156,9 @@ header{
         cursor: pointer;
     }
 
- 
+ .fa-heart{
+  color: var(--font-color);
+}
     #headerMiddle2{
         width: 75%;
         border: 1px solid var(--secondary-color);

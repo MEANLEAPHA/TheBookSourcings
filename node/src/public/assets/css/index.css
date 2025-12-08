@@ -1,5 +1,7 @@
 
-
+.fa-heart{
+  color: var(--font-color);
+}
 /* nav bar in content */
 .nav-wrappers {
   display: flex;
