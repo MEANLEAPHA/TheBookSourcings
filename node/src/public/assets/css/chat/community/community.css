@@ -363,7 +363,7 @@ main{
     
     
 }
-.smallCollape li{
+.smallCollape li a{
     display: grid;
     justify-content: center;
     text-align: center;
