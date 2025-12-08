@@ -569,7 +569,7 @@ const fimilarUserDisplay = document.getElementById('user-fimiliar-display');
 
 profileBtns.onclick = showProfile;
 function showProfile(){
-  postDisplay.innerHTML = "";
+  document.getElementById("message-container").innerHTML = "";
   booksDisplay.style.display = 'block';
   productDisplay.style.display = 'block';
   fimilarUserDisplay.style.display = 'block';
