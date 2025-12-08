@@ -62,35 +62,49 @@ const API_URL = "https://thebooksourcings.onrender.com";
         const followingBtn = document.createElement('button');
 
         const btn2fetch = document.getElementById('btn-2-fetch');
-              const profileBtns = document.createElement('button');
-          profileBtns.id = "profileBtn";
+
+          const profileBtns = document.createElement('button');
+          const profileBtnLabel = document.createElement('p');
+          profileBtnLabel.textContent = "Profile";
+          profileBtnLabel.id = "profileBtn";
           profileBtns.className = "profileBtn";
-          profileBtns.textContent = "Profile";
+          profileBtns.appendChild(profileBtnLabel);
+         
 
           const bookBtns = document.createElement('button');
-          bookBtns.id = "bookBtn";
+          const bookBtnLabel = document.createElement('p');
+          bookBtnLabel.id = "bookBtn";
           bookBtns.className = "bookBtn";
-          bookBtns.textContent = "Book";
+          bookBtnLabel.textContent = "Book";
+          bookBtns.appendChild(bookBtnLabel);
 
           const proBtns = document.createElement('button');
-          proBtns.id = "productBtn";
+          const productBtnLabel = document.createElement('p');
+          productBtnLabel.id = "productBtn";
           proBtns.className = "productBtn";
-          proBtns.textContent = "Product";
+          productBtnLabel.textContent = "Product";
+          proBtns.appendChild(productBtnLabel);
 
           const postBtns = document.createElement('button');
-          postBtns.id = "postsBtn";
+          const postsBtnLabel = document.createElement('p');
+          postsBtnLabel.id = "postsBtn";
           postBtns.className = "postsBtn";
-          postBtns.textContent = "Post";
+          postsBtnLabel.textContent = "Post";
+          postBtns.appendChild(postsBtnLabel);
 
           const favBtns = document.createElement('button');
-          favBtns.id = "favoriteBtn";
+          const favBtnLabel = document.createElement('p');
+          favBtnLabel.id = "favoriteBtn";
           favBtns.className = "favoriteBtn";
-          favBtns.textContent = "Favorite";
+          favBtnLabel.textContent = "Favorite";
+          favBtns.appendChild(favBtns);
 
           const likeBtns = document.createElement('button');
-          likeBtns.id = "likeBtn";
+          const likeBtnLabel = document.createElement('p');
+          likeBtnLabel.id = "likeBtn";
           likeBtns.className = "likeBtn";
-          likeBtns.textContent = "Liked";
+          likeBtnLabel.textContent = "Liked";
+          likeBtns.appendChild(likeBtnLabel);
 
     fetch(`https://thebooksourcings.onrender.com/getFullRegisterDataByQid/${memberQid}`, {
         method: "GET",
@@ -522,22 +536,22 @@ fetch(`https://thebooksourcings.onrender.com/api/display/mutual/${memberQid}`, {
 
 
 
-const fetchBydiv = document.querySelector('.div-all-content-fetch');
+// const fetchBydiv = document.querySelector('.div-all-content-fetch');
 const booksDisplay = document.getElementById('user-book-display');
 const productDisplay = document.getElementById('user-product-display');
 const postDisplay = document.getElementById('user-post-display');
 const fimilarUserDisplay = document.getElementById('user-fimiliar-display');
 
-const profileBtn = document.querySelectorAll('.profileBtn');
-const postsBtn = document.querySelectorAll('.postsBtn');
-const productBtn = document.querySelectorAll('.productBtn');
-const bookBtn = document.querySelectorAll('.bookBtn');
+// const profileBtn = document.querySelectorAll('.profileBtn');
+// const postsBtn = document.querySelectorAll('.postsBtn');
+// const productBtn = document.querySelectorAll('.productBtn');
+// const bookBtn = document.querySelectorAll('.bookBtn');
 
 
-const profileBtnLabel = document.getElementById('profileBtn');
-const postsBtnLabel = document.getElementById('postsBtn');
-const productBtnLabel = document.getElementById('productBtn');
-const bookBtnLabel = document.getElementById('bookBtn');
+// const profileBtnLabel = document.getElementById('profileBtn');
+// const postsBtnLabel = document.getElementById('postsBtn');
+// const productBtnLabel = document.getElementById('productBtn');
+// const bookBtnLabel = document.getElementById('bookBtn');
 
  profileBtnLabel.style.backgroundColor='#fd7648';
  profileBtnLabel.style.opacity='0.7';
@@ -553,7 +567,7 @@ const bookBtnLabel = document.getElementById('bookBtn');
  fimilarUserDisplay.style.display = 'block';
  postDisplay.style.display = 'block';
 
-profileBtn.forEach(btn => btn.onclick = ()=>{
+profileBtns.forEach(btn => btn.onclick = ()=>{
   booksDisplay.style.display = 'block';
   productDisplay.style.display = 'block';
   fimilarUserDisplay.style.display = 'block';
@@ -571,7 +585,7 @@ profileBtn.forEach(btn => btn.onclick = ()=>{
   loadMessages(memberQid);
 });
 
-bookBtn.forEach(btn => btn.onclick =()=>{
+bookBtns.forEach(btn => btn.onclick =()=>{
   profileBtnLabel.style.background='none';
   profileBtnLabel.style.opacity='1';  
   productBtnLabel.style.background='none';
@@ -603,7 +617,7 @@ if(isBook == "true"){
   fimilarUserDisplay.style.display = 'none';
   postDisplay.style.display = 'none';
 }
-productBtn.forEach(btn => btn.onclick =()=>{
+proBtns.forEach(btn => btn.onclick =()=>{
   profileBtnLabel.style.background='none';
   profileBtnLabel.style.opacity='1';
   productBtnLabel.style.backgroundColor='#fd7648';
@@ -635,7 +649,7 @@ if(isProduct == "true"){
   fimilarUserDisplay.style.display = 'none';
   postDisplay.style.display = 'none';
 }
-postsBtn.forEach(btn => btn.onclick =()=>{
+postBtns.forEach(btn => btn.onclick =()=>{
   profileBtnLabel.style.background='none';
   profileBtnLabel.style.opacity='1';
   productBtnLabel.style.background='none';
