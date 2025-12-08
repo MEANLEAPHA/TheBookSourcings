@@ -569,6 +569,7 @@ const fimilarUserDisplay = document.getElementById('user-fimiliar-display');
 
 profileBtns.onclick = showProfile;
 function showProfile(){
+  postDisplay.innerHTML = "";
   booksDisplay.style.display = 'block';
   productDisplay.style.display = 'block';
   fimilarUserDisplay.style.display = 'block';
@@ -589,6 +590,7 @@ function showProfile(){
 bookBtns.onclick = showBook;
 document.querySelector('.seeAllBook').addEventListener('click', showBook);
 function showBook(){
+  
   profileBtnLabel.style.background='none';
   profileBtnLabel.style.opacity='1';  
   productBtnLabel.style.background='none';
@@ -689,7 +691,23 @@ if(isPost == "true"){
   loadMessagesAll(memberQid);
 }
 
+// async function favorite(memberQid) {
+//   try{
 
+//   }
+//   catch(err){
+//       console.error(err);
+//   }
+// }
+
+// async function like(memberQid) {
+//   try{
+
+//   }
+//   catch(err){
+//       console.error(err);
+//     }
+// }
 async function bookAll(memberQid){
     try{
       const res = await fetch(`${API_URL}/api/books/userBookByMemberQid/${memberQid}`, {
