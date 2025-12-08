@@ -587,6 +587,7 @@ function showProfile(){
 }
 
 bookBtns.onclick = showBook;
+document.querySelector('.seeAllBook').addEventListener('click', showBook);
 function showBook(){
   profileBtnLabel.style.background='none';
   profileBtnLabel.style.opacity='1';  
@@ -620,6 +621,7 @@ if(isBook == "true"){
   postDisplay.style.display = 'none';
 }
 proBtns.onclick = showProduct;
+document.querySelector('.seeAllProduct').addEventListener('click', showProduct);
 function showProduct(){
   profileBtnLabel.style.background='none';
   profileBtnLabel.style.opacity='1';
@@ -653,6 +655,7 @@ if(isProduct == "true"){
   postDisplay.style.display = 'none';
 }
 postBtns.onclick = showPost;
+document.querySelector('.seeAllPost').addEventListener('click', showPost);
 function showPost(){
   profileBtnLabel.style.background='none';
   profileBtnLabel.style.opacity='1';
