@@ -139,7 +139,9 @@ input[type=number] {
 }
 
 
-
+.fa-heart{
+  color: var(--font-color);
+}
 
 #BookContent{
       height: auto;

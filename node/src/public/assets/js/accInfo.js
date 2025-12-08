@@ -47,11 +47,11 @@ async function loadUserInfo() {
       userPfHeader.src = data.user.pfUrl;
       viewAccount.href = `/account.html?memberQid=${userMemberQid }`;
 
-      accountBook.href = `/account.html?memberQid=${userMemberQid}&isBook=true`;
-      accountPost.href = `/account.html?memberQid=${userMemberQid}&isPost=true`;
-      accountProduct.href = `/account.html?memberQid=${userMemberQid}$isPro=true`;
-      accountFav.href = `/account.html?memberQid=${userMemberQid}&isFav=true`;
-      accountLike.href = `/account.html?memberQid=${userMemberQid}&isLike=true`;
+      accountBook.href = `https://thebooksourcings.onrender.com/account.html?memberQid=${userMemberQid}&isBook=true`;
+      accountPost.href = `https://thebooksourcings.onrender.com/account.html?memberQid=${userMemberQid}&isPost=true`;
+      accountProduct.href = `https://thebooksourcings.onrender.com/account.html?memberQid=${userMemberQid}&isPro=true`;
+      accountFav.href = `https://thebooksourcings.onrender.com/account.html?memberQid=${userMemberQid}&isFav=true`;
+      accountLike.href = `https://thebooksourcings.onrender.com/account.html?memberQid=${userMemberQid}&isLike=true`;
     }
   } catch (error) {
     console.error('Error fetching user info:', error);

@@ -537,10 +537,10 @@ bookBtn.forEach(btn => btn.onclick =()=>{
   postDisplay.style.display = 'none';
 });
 if(isBook == "true"){
+   profileBtnLabel.style.background='none';
+  profileBtnLabel.style.opacity='1';  
   productBtnLabel.style.background='none';
   productBtnLabel.style.opacity='1';
-  profileBtnLabel.style.background='none';
-  profileBtnLabel.style.opacity='1';
   postsBtnLabel.style.background='none';
   postsBtnLabel.style.opacity='1';
   bookBtnLabel.style.backgroundColor='#fd7648';
@@ -569,10 +569,10 @@ productBtn.forEach(btn => btn.onclick =()=>{
   postDisplay.style.display = 'none';
 });
 if(isProduct == "true"){
-  productBtnLabel.style.background='none';
-  productBtnLabel.style.opacity='1';
   profileBtnLabel.style.background='none';
   profileBtnLabel.style.opacity='1';
+  productBtnLabel.style.backgroundColor='#fd7648';
+  productBtnLabel.style.opacity='0.7';
   postsBtnLabel.style.background='none';
   postsBtnLabel.style.opacity='1';
   bookBtnLabel.style.background='none';
@@ -583,10 +583,9 @@ if(isProduct == "true"){
   booksDisplay.style.display = 'none';
   fimilarUserDisplay.style.display = 'none';
   postDisplay.style.display = 'none';
-
 }
 postsBtn.forEach(btn => btn.onclick =()=>{
-  profileBtnLabel.style.background='none'
+  profileBtnLabel.style.background='none';
   profileBtnLabel.style.opacity='1';
   productBtnLabel.style.background='none';
   productBtnLabel.style.opacity='1';
@@ -602,12 +601,12 @@ postDisplay.style.display = 'block';
   loadMessagesAll(memberQid);
 });
 if(isPost == "true"){
+profileBtnLabel.style.background='none';
+  profileBtnLabel.style.opacity='1';
   productBtnLabel.style.background='none';
   productBtnLabel.style.opacity='1';
-  profileBtnLabel.style.background='none';
-  profileBtnLabel.style.opacity='1';
-  postsBtnLabel.style.background='none';
-  postsBtnLabel.style.opacity='1';
+  postsBtnLabel.style.backgroundColor='#fd7648';
+  postsBtnLabel.style.opacity='0.7';
   bookBtnLabel.style.background='none';
   bookBtnLabel.style.opacity='1';
   document.querySelector('.post-label').style.display = 'none';

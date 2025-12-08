@@ -495,6 +495,12 @@ font-size: 13px;
       margin: 0px 7px 0px 7px;
     padding: 0;
 }
+#u2 li a{
+    color: var(--font-color);
+}
+#u2 li a .heart-link{
+    color: var(--font-color);
+}
 #u2 li:last-child{
     border-bottom: 0.3px solid  var(--secondary-color)
   /* padding: 5px 0px 20px 0px; */
