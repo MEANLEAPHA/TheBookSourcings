@@ -265,9 +265,8 @@
         </div>
 <div class="card">
     <div class="card-body">
-    <form>
+    <form id="form-review">
       <h3 class="section-title">Rating & Review this book</h3>
-      
       <fieldset>
         <div class="form-row">
           <div class="avatars">
@@ -281,13 +280,13 @@
                         <i class="fa-regular fa-star"></i>
                         <i class="fa-regular fa-star"></i>
                 </div>
-            <textarea  class="input-message-review" placeholder="Your message" required=""></textarea>
+            <textarea  class="input-message-review" placeholder="Your message" required id="review-input"></textarea>
             <button type="submit" class="btn-sunmit-review">Submit</button>
           </div>
         </div>
       </fieldset>
     </form>
-   <div id="display-comment">
+   <div id="review-container">
 
    </div>
   </div>
@@ -335,15 +334,32 @@
                         <li><button class="dropdown-item shareBtn" type="button"><i class="fa-solid fa-share"></i> Share</button></li>
                       </ul>
                 <div id="btnForRate">
-                  <div id="star-rating">
-                        <i class="fa-regular fa-star"></i>
-                        <i class="fa-regular fa-star"></i>
-                        <i class="fa-regular fa-star"></i>
-                        <i class="fa-regular fa-star"></i>
-                        <i class="fa-regular fa-star"></i>
-                  </div>
+                  <form action="" id="rate-form1">
+                    <div id="star-rating">
+                      <label>
+                        <i class="fa-regular fa-star fa-star1"></i>
+                        <input type="radio" name="rating" value="1" hidden>
+                      </label>
+                      <label>
+                        <i class="fa-regular fa-star fa-star2"></i>
+                        <input type="radio" name="rating" value="2" hidden>
+                      </label>
+                      <label>
+                        <i class="fa-regular fa-star fa-star3"></i>
+                        <input type="radio" name="rating" value="3" hidden>
+                      </label>
+                      <label>
+                        <i class="fa-regular fa-star fa-star4"></i>
+                        <input type="radio" name="rating" value="4" hidden>
+                      </label>
+                      <label>
+                        <i class="fa-regular fa-star fa-star5"></i>
+                        <input type="radio" name="rating" value="5" hidden>
+                      </label>
+                    </div>
+                  </form>
                         <div id="rating-label">
-                          <i> rate this book</i>
+                           <i> rate this book</i>
                         </div>
                 </div>
                 
@@ -603,6 +619,107 @@
         <!-- Message will be set dynamically -->
       </div>
       <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Edit Toast of Review-->
+<div id="editToastWrapper">
+  <div id="editCommentToast" class="toast align-items-center text-bg-light border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-body">
+      <input type="text" id="editCommentInput" class="form-control mb-2">
+      <div class="d-flex justify-content-end">
+        <button id="cancelEditCommentBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
+        <button id="saveEditCommentBtn" type="button" class="btn btn-sm btn-primary">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Delete Toast of Review -->
+<div id="deleteToastWrapper">
+  <div id="deleteCommentToast" class="toast align-items-center text-bg-light border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-body">
+      <p>Are you sure you want to delete this message?</p>
+      <div class="d-flex justify-content-end">
+        <button id="cancelDeleteCommentBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
+        <button id="confirmDeleteCommentBtn" type="button" class="btn btn-sm btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Report Toast of Review-->
+<div id="reportToastWrapper">
+  <div id="reportCommentToast" class="toast align-items-center text-bg-light border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-body">
+      <h6>Report Post</h6>
+      <textarea id="reportReasonCommentInput" class="form-control mb-2" placeholder="Reason..."></textarea>
+      <div class="d-flex justify-content-end">
+        <button id="cancelReportCommentBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
+        <button id="submitReportCommentBtn" type="button" class="btn btn-sm btn-danger">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Upload  Reply-->
+<div id="ReplyToastWrapper">
+  <div id="ReplyToast" class="toast align-items-center text-bg-light border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+      <img src="../../assets/img/pf.jpg" class="userPfFromReply">
+      <p class="usernameFromReply"></p> 
+    </div>
+    <form id="form-Reply">
+      <div class="toast-body">
+        <p id="replyingToLabel" style="display:none; color:blue;"></p>
+        <textarea id="Reply-input" class="form-control mb-2" placeholder="Reply your thought on this post"></textarea>
+        <div class="d-flex justify-content-end w-100 mt-3">
+          <button id="cancelReplyBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
+          <button id="submitReplyBtn" type="submit" class="btn btn-sm btn-success">Reply</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+ <!-- Edit Toast of Reply-->
+<div id="editToastWrapper">
+  <div id="editReplyToast" class="toast align-items-center text-bg-light border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-body">
+      <input type="text" id="editReplyInput" class="form-control mb-2">
+      <div class="d-flex justify-content-end">
+        <button id="cancelEditReplyBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
+        <button id="saveEditReplyBtn" type="button" class="btn btn-sm btn-primary">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Delete Toast of Reply -->
+<div id="deleteToastWrapper">
+  <div id="deleteReplyToast" class="toast align-items-center text-bg-light border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-body">
+      <p>Are you sure you want to delete this message?</p>
+      <div class="d-flex justify-content-end">
+        <button id="cancelDeleteReplyBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
+        <button id="confirmDeleteReplyBtn" type="button" class="btn btn-sm btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Report Toast of Reply-->
+<div id="reportToastWrapper">
+  <div id="reportReplyToast" class="toast align-items-center text-bg-light border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-body">
+      <h6>Report Post</h6>
+      <textarea id="reportReasonReplyInput" class="form-control mb-2" placeholder="Reason..."></textarea>
+      <div class="d-flex justify-content-end">
+        <button id="cancelReportReplyBtn" type="button" class="btn btn-sm btn-secondary me-2">Cancel</button>
+        <button id="submitReportReplyBtn" type="button" class="btn btn-sm btn-danger">Submit</button>
+      </div>
     </div>
   </div>
 </div>

@@ -254,7 +254,7 @@ io.on("connection", (socket) => {
       createFormNow: data.createFormNow || "just now",
       updateFormNow: data.updateFormNow || "just now"
     };
-    socket.broadcast.emit("receive-comment", broadcastData)
+    socket.broadcast.emit("receive-review", broadcastData)
   })
 
   socket.on("edit-review", (data) => {
@@ -293,6 +293,9 @@ io.on("connection", (socket) => {
     if(!socket.user) return;
     io.emit("reply-deleted-review", data)
   });
+
+
+
 
 
 console.log("🟢 User connected:", socket.user?.memberQid);

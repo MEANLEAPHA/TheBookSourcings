@@ -1047,6 +1047,7 @@ document.getElementById("cancelReportBtn").onclick = () => {
 
 
 
+
 // POST COMMENT LOGICAL
 // get username to display on user comment form
 const usernameFromComment = document.querySelector(".usernameFromComment");

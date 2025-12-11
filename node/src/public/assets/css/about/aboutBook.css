@@ -607,7 +607,7 @@ cursor: pointer;
    gap: 5px;
    text-align: center;
    margin-bottom: 10px;
-   justify-content: center;
+  
 }
 #star-ratingr{
   width: 45%;
@@ -616,6 +616,12 @@ cursor: pointer;
 }
 #rating-label{
   font-size: medium;
+  margin: 0;
+  padding: 0;
+
+}
+#rating-label i {
+  margin: 0;
 }
 #btnForRate i{
   color: grey;
@@ -984,6 +990,42 @@ margin-top: 5px;
 
   outline: var(--primary-color) solid 1px;
 }
+
+
+
+/* rate and review */
+#rate-form1{
+  margin: 0;
+}
+#star-rating {
+  display: flex;
+  flex-direction: row-reverse;
+  width: 65%;
+  justify-content: center;
+  gap:10px;
+  margin: auto;
+
+  padding: 0;/* reverse order */
+}
+
+#star-rating label i {
+  font-family: "Font Awesome 6 Free";
+  font-weight: 400; /* regular */
+  color: gray;
+  cursor: pointer;
+}
+
+/* Hover effect: all stars up to the hovered one */
+#star-rating label:hover i,
+#star-rating label:hover ~ label i {
+  font-weight: 900; /* solid */
+  color: gold;
+}
+
+
+
+
+
 @media (max-width: 1180px){
  .count{
   font-size: 14px;
