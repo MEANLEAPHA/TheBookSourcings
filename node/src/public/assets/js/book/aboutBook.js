@@ -975,8 +975,8 @@ async function loadComment() {
   try {
     const res = await fetch(`${API_URL}/api/bookByAuthor/rating/displayAll/${bookId}`);
     if (!res.ok) throw new Error("Failed to fetch messages");
-    const cmts = await res.json();
-    cmts.forEach(displayComment);
+    const comments = await res.json();
+    comments.forEach(displayComment);
   } catch (err) {
     console.error("Error loading review:", err);
   }
