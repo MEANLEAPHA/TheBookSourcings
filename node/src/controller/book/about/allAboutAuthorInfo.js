@@ -1,7 +1,9 @@
 const { fetchJson } = require("../../../util/apiClient");
 
 const db = require("../../../config/db");
-
+const dayjs = require("dayjs");
+const relativeTime = require("dayjs/plugin/relativeTime");
+dayjs.extend(relativeTime);
 
 async function getAuthorInfoByQid(req, res) {
   try {
