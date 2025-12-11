@@ -145,7 +145,7 @@ async function getAllRate(req,res){
       ` SELECT
           b.rate_id AS comment_id,
           b.review_text AS comment,
-          b.CONCAT('COMM', rate_id, 'ENT') AS commentQid,
+          CONCAT('COMM', rate_id, 'ENT') AS commentQid,
           b.like_count,
           b.reply_count,
           b.memberQid,
@@ -154,7 +154,7 @@ async function getAllRate(req,res){
           u.pfUrl AS profile_url
         FROM book_rating b
         JOIN users u ON b.memberQid = u.memberQid
-        WHERE b.bookQid = ? AND b.deleted_at = NULL
+        WHERE b.bookQid = ? AND b.deleted_at IS NULL
         ORDER BY b.created_at ASC`,
         [bookQid]
       );

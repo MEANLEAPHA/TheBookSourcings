@@ -900,18 +900,20 @@ form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const text = commentInput.value.trim();
 
-  if (!text) return; // star wil be here too
+  if (!text) return; 
 
   try {
-    const formData = new FormData();
-    formData.append("bookQid", bookId);
-    if(text) formData.append("review_text", text);
-    // if(star) formData.append("rate_star", star);
-
+        const payload = {
+      bookQid: bookId,
+      review_text: text
+    };
     const res = await fetch(`${API_URL}/api/bookByAuthor/rating`, {
       method: "POST",
-      headers: { "Authorization": `Bearer ${token}` },
-      body: formData
+       headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}` 
+      },
+      body: JSON.stringify(payload)
     });
 
     if (!res.ok) throw new Error("Failed to review");
@@ -923,7 +925,7 @@ form.addEventListener("submit", async (e) => {
 
     // Reset form
     commentInput.value = "";
-    // star might not reset
+  
   } catch (err) {
     console.error(err);
   }
