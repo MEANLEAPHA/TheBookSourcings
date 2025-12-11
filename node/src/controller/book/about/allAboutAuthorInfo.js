@@ -173,11 +173,12 @@ async function getAllRate(req,res){
   }
 }
 async function uploadRate(req,res){
-  const { bookQid, review_text } = req.body;
-  const memberQid = req.user.memberQid;
-  const nickname = req.user.nickname;
-  const username = req.user.username;
+
   try{
+      const {bookQid, review_text } = req.body;
+      const memberQid = req.user.memberQid;
+      // const nickname = req.user.nickname;
+      const username = req.user.username;
     // Check if user already rated this book
     const [existing] = await db.query(
       'SELECT * FROM book_rating WHERE bookQid = ? AND memberQid = ?',
@@ -188,13 +189,13 @@ async function uploadRate(req,res){
       return res.status(400).json({ message: 'User already rated this book. Use update instead.' });
     }
 
-    if (!review_text && !rate_star && !bookQid) {
+    if (!review_text && !bookQid) {
         return res.status(400).json({ error: "Review or Rating is required" });
       }
 
     const [result] = await db.query(
       'INSERT INTO book_rating (bookQid, memberQid, username, nickname, review_text) VALUES (?, ?, ?, ?, ?)',
-      [bookQid, memberQid, username, nickname, review_text || null]
+      [bookQid, memberQid, username, null, review_text || null]
     );
     await db.query(
       "UPDATE uploadBook SET review_count = review_count + 1 WHERE bookQid = ?",

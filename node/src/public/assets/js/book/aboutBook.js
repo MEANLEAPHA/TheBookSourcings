@@ -30,6 +30,8 @@ const urlParams = new URLSearchParams(window.location.search);
 const bookId = urlParams.get("bookId");
 const source = detectSource(bookId);
 
+const API_URL = "https://thebooksourcings.onrender.com";
+const socket = io(API_URL, { auth: { token } });
 
 //declare all the div to append
 const bookInfoBody = document.getElementById('book-info-tb');
@@ -893,7 +895,7 @@ loadBookInfo();
 // ====== Form Declaration======
 const form = document.getElementById("form-review");
 const commentInput = document.getElementById("review-input");
-const API_URL = "https://thebooksourcings.onrender.com";
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const text = commentInput.value.trim();
