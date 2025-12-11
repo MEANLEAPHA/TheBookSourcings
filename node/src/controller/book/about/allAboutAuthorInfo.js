@@ -145,7 +145,7 @@ async function getAllRate(req,res){
       ` SELECT
           b.rate_id AS comment_id,
           b.review_text AS comment,
-          CONCAT('COMM', rate_id, 'ENT') AS commentQid,
+          CONCAT('COMM', b.rate_id, 'ENT') AS commentQid,
           b.like_count,
           b.reply_count,
           b.memberQid,
@@ -159,11 +159,11 @@ async function getAllRate(req,res){
         [bookQid]
       );
     if (rows.length === 0) {
-      return res.json({ message: 'No Review on this book yet!' });
+      return res.json([]);   // IMPORTANT FIX
     }
     const comments = rows.map(row => ({
           ...row,
-          createFormNow: dayjs(row.comment_at).fromNow(),
+          createFormNow: dayjs(row.created_at).fromNow(),
         }));
         res.json(comments);
   }
@@ -180,14 +180,14 @@ async function uploadRate(req,res){
       // const nickname = req.user.nickname;
       const username = req.user.username;
     // Check if user already rated this book
-    const [existing] = await db.query(
-      'SELECT * FROM book_rating WHERE bookQid = ? AND memberQid = ?',
-      [bookQid, memberQid]
-    );
+    // const [existing] = await db.query(
+    //   'SELECT * FROM book_rating WHERE bookQid = ? AND memberQid = ?',
+    //   [bookQid, memberQid]
+    // );
 
-    if (existing.length > 0) {
-      return res.status(400).json({ message: 'User already rated this book. Use update instead.' });
-    }
+    // if (existing.length > 0) {
+    //   return res.status(400).json({ message: 'User already rated this book. Use update instead.' });
+    // }
 
     if (!review_text && !bookQid) {
         return res.status(400).json({ error: "Review or Rating is required" });
