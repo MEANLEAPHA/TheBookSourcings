@@ -154,8 +154,7 @@ async function getAllRate(req,res){
           u.pfUrl AS profile_url
         FROM book_rating b
         JOIN users u ON b.memberQid = u.memberQid
-        WHERE b.bookQid = ? AND b.deleted_at IS NULL
-        ORDER BY b.created_at ASC`,
+        WHERE b.bookQid = ? ORDER BY b.created_at ASC`,
         [bookQid]
       );
     if (rows.length === 0) {
