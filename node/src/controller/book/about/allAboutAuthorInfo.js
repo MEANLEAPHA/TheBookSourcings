@@ -298,12 +298,12 @@ const displayAllReply = async (req,res)=>{
             END
           ) AS replyToUsername
        FROM book_rating_reply WHERE replyBackTo_id = ? AND deleted_at IS NULL
-       ORDER BY reply_at ASC`, 
+       ORDER BY created_at ASC`, 
        [typeOfQid]
     );
     const replys = rows.map(row => ({
           ...row,
-          createFormNow: dayjs(row.reply_at).fromNow(),
+          createFormNow: dayjs(row.created_at).fromNow(),
         }));
         res.json(replys);
   }
@@ -319,19 +319,15 @@ const sendReply = async (req,res)=>{
     try{
           const memberQid = req.user.memberQid;
           const username = req.user.username;
-          const nickname = req.user.nickname;
+          // const nickname = req.user.nickname;
           const { replyText, typeOfId} = req.body;
-      
-          
-      
-      
          if (!replyText &&!typeOfId) {
           return res.status(400).json({ error: "reply is required" });
         }
       
           const [result] = await db.query(
             "INSERT INTO book_rating_reply (replyBackTo_id, memberQid, reply_text, nickname, username) VALUES (?, ?, ?, ?, ?)",
-            [typeOfId, memberQid, replyText || null, nickname, username]
+            [typeOfId, memberQid, replyText || null, null, username]
           );
           // Find username of the person being replied to
           let [targetRows] = [];
