@@ -246,7 +246,7 @@ async function deleteRate(req,res){
   const memberQid = req.user.memberQid;
   try {
     const [rows] = await db.query(
-            "SELECT memberQid, bookQid FROM book_rating WHERE rate_id = ? AND deleted_at IS NULL",
+            "SELECT memberQid, bookQid FROM book_rating WHERE rate_id = ?",
             [comment_id]
           );
       
@@ -292,7 +292,7 @@ const displayAllReply = async (req,res)=>{
                 (SELECT u3.username
                 FROM book_rating cc
                 JOIN users u3 ON cc.memberQid = u3.memberQid
-                WHERE CONCAT('COMM', cc.comment_id, 'ENT') = replyBackTo_id
+                WHERE CONCAT('COMM', cc.rate_id, 'ENT') = replyBackTo_id
                 LIMIT 1)
               ELSE NULL
             END
