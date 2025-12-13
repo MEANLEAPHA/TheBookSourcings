@@ -1915,7 +1915,7 @@ starLabels.forEach((label, index) => {
     const selectedStar = index + 1;
 
     try {
-      const res = await fetch(`${API_URL}/api/star`, {
+      const res = await fetch(`${API_URL}/api/bookByAuthor/rating/star`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
