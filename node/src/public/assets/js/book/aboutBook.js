@@ -1891,28 +1891,43 @@ async function loadPreviousRating() {
 
 // ⭐ Highlight stars (UI function)
 function highlightStars(starCount) {
-  starLabels.forEach((label, idx) => {
-    const starIcon = label.querySelector("i");
+  starLabels.forEach(label => {
+    const icon = label.querySelector("i");
+    const value = Number(label.querySelector("input").value);
 
-    if (idx < starCount) {
-      // Solid gold star
-      starIcon.classList.remove("fa-regular");
-      starIcon.classList.add("fa-solid");
-      starIcon.style.color = "#FFD700";  // ⭐ gold
+    if (value <= starCount) {
+      icon.classList.add("active");
+      icon.classList.replace("fa-regular", "fa-solid");
     } else {
-      // Empty grey star
-      starIcon.classList.remove("fa-solid");
-      starIcon.classList.add("fa-regular");
-      starIcon.style.color = "#ccc";  // grey for unselected
+      icon.classList.remove("active");
+      icon.classList.replace("fa-solid", "fa-regular");
     }
   });
 }
 
+// function highlightStars(starCount) {
+//   starLabels.forEach((label, idx) => {
+//     const starIcon = label.querySelector("i");
 
-// ⭐ Submit rating
-starLabels.forEach((label, index) => {
+//     if (idx < starCount) {
+//       // Solid gold star
+//       starIcon.classList.remove("fa-regular");
+//       starIcon.classList.add("fa-solid");
+//       starIcon.style.color = "#FFD700";  // ⭐ gold
+//     } else {
+//       // Empty grey star
+//       starIcon.classList.remove("fa-solid");
+//       starIcon.classList.add("fa-regular");
+//       starIcon.style.color = "#ccc";  // grey for unselected
+//     }
+//   });
+// }
+
+
+starLabels.forEach(label => {
   label.addEventListener("click", async () => {
-    const selectedStar = index + 1;
+    const input = label.querySelector("input");
+    const selectedStar = Number(input.value); // ✅ ALWAYS CORRECT
 
     try {
       const res = await fetch(`${API_URL}/api/bookByAuthor/rating/star`, {
@@ -1922,22 +1937,49 @@ starLabels.forEach((label, index) => {
           "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({
-          bookQid: bookId,   // ✅ FIX
+          bookQid: bookId,
           rate_star: selectedStar
         })
       });
 
       const data = await res.json();
-      console.log(data);
-
-      // update frontend instantly
       highlightStars(selectedStar);
-
     } catch (err) {
       console.error("Rating error:", err);
     }
   });
 });
+
+
+// // ⭐ Submit rating
+// starLabels.forEach((label, index) => {
+//   label.addEventListener("click", async () => {
+//     const selectedStar = index + 1;
+
+//     try {
+//       const res = await fetch(`${API_URL}/api/bookByAuthor/rating/star`, {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//           "Authorization": `Bearer ${token}`
+//         },
+//         body: JSON.stringify({
+//           bookQid: bookId,   // ✅ FIX
+//           rate_star: selectedStar
+//         })
+//       });
+
+//       const data = await res.json();
+//       console.log(data);
+
+//       // update frontend instantly
+//       highlightStars(selectedStar);
+
+//     } catch (err) {
+//       console.error("Rating error:", err);
+//     }
+//   });
+// });
 
 // Load previous ratings on page load
 loadPreviousRating();
