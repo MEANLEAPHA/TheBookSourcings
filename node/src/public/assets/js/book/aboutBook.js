@@ -1922,7 +1922,7 @@ starLabels.forEach((label, index) => {
           "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({
-          bookId,
+          bookQid: bookId,   // ✅ FIX
           rate_star: selectedStar
         })
       });

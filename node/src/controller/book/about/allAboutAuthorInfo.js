@@ -677,9 +677,10 @@ const rateBook = async (req, res) => {
     const username = req.user.username;
   
 
-    if (!bookQid || !rate_star) {
+    if (!bookQid || rate_star == null) {
       return res.status(400).json({ message: "Missing rating data" });
     }
+
 
     // Check if rating exists already
     const [existing] = await db.query(
