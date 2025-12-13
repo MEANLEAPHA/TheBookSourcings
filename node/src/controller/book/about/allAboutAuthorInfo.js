@@ -426,7 +426,8 @@ const deleteReply = async (req,res)=>{
           if (rows[0].memberQid !== memberQid) return res.status(403).json({ error: "Not authorized to delete this reply" });
       
           await db.query("DELETE FROM book_rating_reply WHERE reply_id = ?", [reply_id]);
-
+          // ✅ declare FIRST
+          const replyBackToId = rows[0].replyBackTo_id;
           // If reply was to a reply, decrement parent reply's reply_count
           if (replyBackToId.startsWith("REP")) {
             const parentReplyId = parseInt(replyBackToId.replace("REP", "").replace("LY", ""));
@@ -435,8 +436,7 @@ const deleteReply = async (req,res)=>{
               [parentReplyId]
             );
           }
-          // If reply was to a comment, decrement reply_count
-          const replyBackToId = rows[0].replyBackTo_id;
+          
           if (replyBackToId.startsWith("COMM")) {
             const commentId = parseInt(replyBackToId.replace("COMM", "").replace("ENT", ""));
             await db.query(
