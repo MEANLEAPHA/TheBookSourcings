@@ -44,7 +44,7 @@ router.post("/rating/like/:commentId", authMiddleware, toggleReviewLike);
 
 // rate reply route
 router.get("/rating/reply/dipslayAll/:typeOfQid", displayAllReply);
-router.post("rating/reply", authMiddleware, sendReply);
+router.post("/rating/reply", authMiddleware, sendReply);
 router.put("/rating/reply/edit", authMiddleware, editReply);
 router.delete("/rating/reply/delete", authMiddleware,deleteReply );
 
