@@ -1013,14 +1013,14 @@ margin-top: 5px;
   transition: transform 0.15s ease, color 0.15s ease;
 }
 
-/* Hover effect */
+
 #star-rating label:hover i,
 #star-rating label:hover ~ label i {
   color: #FFD700;
   transform: scale(1.15);
 }
 
-/* Active (JS controlled) */
+
 #star-rating i.active {
   color: #FFD700;
 }
