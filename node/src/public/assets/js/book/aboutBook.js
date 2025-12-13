@@ -1737,7 +1737,7 @@ async function loadLikeInfoForReply(replyId, likeIcon, likeCount) {
 
     const data = await res.json();
     likeCount.textContent = data.reply.like_count;
-    likeIcon.style.color = data.userStatus.commentReplyLiked ? "red" : "gray";
+    likeIcon.style.color = data.userStatus.liked ? "red" : "gray";
   } catch (err) {
     console.error(err);
   }
