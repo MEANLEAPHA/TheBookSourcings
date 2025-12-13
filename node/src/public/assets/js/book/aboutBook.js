@@ -1730,7 +1730,7 @@ function findCommentFooterForParent(replyBackToId) {
 // ====== LIKE FUNCTIONS FOR COMMENT ======
 async function loadLikeInfoForReply(replyId, likeIcon, likeCount) {
   try {
-    const res = await fetch(`${API_URL}/api/bookByAuthor/reply/status/${replyId}`, {
+    const res = await fetch(`${API_URL}/api/bookByAuthor/rating/reply/status/${replyId}`, {
       headers: { "Authorization": `Bearer ${token}` }
     });
     if (!res.ok) throw new Error("Failed to fetch like status");
@@ -1745,7 +1745,7 @@ async function loadLikeInfoForReply(replyId, likeIcon, likeCount) {
 
 async function toggleLikeActivityForReply(replyId, likeIcon, likeCount) {
   try {
-    const res = await fetch(`${API_URL}/api/bookByAuthor/reply/like/${replyId}`, {
+    const res = await fetch(`${API_URL}/api/bookByAuthor/rating/reply/like/${replyId}`, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${token}`,

@@ -50,7 +50,7 @@ router.delete("/rating/reply/delete", authMiddleware,deleteReply );
 
 // rate reply like route
 
-// Get book details + user status
+
 router.get("/rating/reply/status/:replyId", authMiddleware, getReplyDetailsWithStatus);
 
 // Toggle like
