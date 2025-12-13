@@ -1367,16 +1367,21 @@ formReply.addEventListener("submit", async (e) => {
 
   const text = ReplyInput.value.trim();
 
-  if (!text ) return; // must have text or media
+  if (!text) return; // must have text or media
 
   try {
-    const formData = new FormData();
-    formData.append("replyText", text);
-    formData.append("typeOfId", typeOfId);  // this will accept the commentQid or replyQid when ever the click the reply 
+    const reply = {
+      replyText: text,
+      typeOfId: typeOfId
+    }
+     // this will accept the commentQid or replyQid when ever the click the reply 
     const res = await fetch(`${API_URL}/api/bookByAuthor/rating/reply`, {
       method: "POST",
-      headers: { "Authorization": `Bearer ${token}` },
-      body: formData
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+       },
+      body: JSON.stringify(reply)
     });
     if (!res.ok) throw new Error("Failed to send reply");
     const savedReply = await res.json();

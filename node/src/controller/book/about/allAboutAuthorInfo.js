@@ -320,7 +320,7 @@ const sendReply = async (req,res)=>{
           const memberQid = req.user.memberQid;
           const username = req.user.username;
           // const nickname = req.user.nickname;
-          const { replyText, typeOfId} = req.body;
+          const {replyText, typeOfId} = req.body;
          if (!replyText &&!typeOfId) {
           return res.status(400).json({ error: "reply is required" });
         }
