@@ -1093,10 +1093,6 @@ function displayComment(cmt) {
   const footer = document.createElement("div");
   footer.className = "comment-reply-footer";
 
-  
-  
-
-
   // Toggle reply buttons
   const showReply = document.createElement("p");
   showReply.className = "show-reply-toggle";
