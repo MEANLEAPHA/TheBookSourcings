@@ -245,14 +245,16 @@ io.on("connection", (socket) => {
   socket.on("send-review", (data) => {
     if(!socket.user) return;
     const broadcastData = {
-      comment_id : data.rate_id,
-      commentQid: `COMM${data.rate_id}ENT`,
-      memberQid:socket.user.memberQid,
-      username:data.username,
+      comment_id : data.comment_id,
+      commentQid: data.commentQid,
+      memberQid: data.memberQid,
+      username: data.username,
       comment: data.comment || null, 
-      rate_star: Number(data.rate_star) || 0, // ✅ safe
+      rate_star: datarate_star || 0, // ✅ safe
       createFormNow: data.createFormNow || "just now",
-      updateFormNow: data.updateFormNow || "just now"
+      updateFormNow: data.updateFormNow || "just now",
+      reply_count: data.reply_count || 0,
+      like_count: data.like_count || 0
     };
     socket.broadcast.emit("receive-review", broadcastData)
   })

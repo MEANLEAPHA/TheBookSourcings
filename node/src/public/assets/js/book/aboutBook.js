@@ -1184,7 +1184,7 @@ toggleWrapper.appendChild(unShowReply);
 
    const likeCounts = document.createElement("div");
    likeCounts.className = "comment-like-count";
-   likeCounts.textContent = `${cmt.like_count || 0} Likes`;
+   likeCounts.textContent = `${cmt.like_count || 0}`;
 
   btnRow.appendChild(postAt);
   btnRow.appendChild(replyBtn);
