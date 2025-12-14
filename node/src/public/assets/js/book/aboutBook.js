@@ -1870,7 +1870,7 @@ document.getElementById("cancelReportReplyBtn").onclick = () => {
   // star rating
 
   // DOM elements
-const starLabels = document.querySelectorAll("#star-rating label");
+const starLabels = document.querySelectorAll(".star-rating label");
 
 // ⭐ Load previous rating
 async function loadPreviousRating() {

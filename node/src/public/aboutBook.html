@@ -273,12 +273,31 @@
             <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="user avatar" id="user-pf">
           </div>
           <div class="input-box">
-            <div id="Rate-input">
-                        <i class="fa-regular fa-star"></i>
-                        <i class="fa-regular fa-star"></i>
-                        <i class="fa-regular fa-star"></i>
-                        <i class="fa-regular fa-star"></i>
-                        <i class="fa-regular fa-star"></i>
+            <div class="btnForRate">
+                  <form action="" class="rate-form1">
+                    <div class="star-rating">
+                      <label>
+                        <i class="fa-regular fa-star fa-star1"></i>
+                        <input type="radio" name="rating" value="5" hidden>
+                      </label>
+                      <label>
+                        <i class="fa-regular fa-star fa-star2"></i>
+                        <input type="radio" name="rating" value="4" hidden>
+                      </label>
+                      <label>
+                        <i class="fa-regular fa-star fa-star3"></i>
+                        <input type="radio" name="rating" value="3" hidden>
+                      </label>
+                      <label>
+                        <i class="fa-regular fa-star fa-star4"></i>
+                        <input type="radio" name="rating" value="2" hidden>
+                      </label>
+                      <label>
+                        <i class="fa-regular fa-star fa-star5"></i>
+                        <input type="radio" name="rating" value="1" hidden>
+                      </label>
+                    </div>
+                  </form>
                 </div>
             <textarea  class="input-message-review" placeholder="Your message" required id="review-input"></textarea>
             <button type="submit" class="btn-sunmit-review">Submit</button>
@@ -333,9 +352,9 @@
                         <li><button class="dropdown-item" type="button"><i class="fa-solid fa-flag"></i> Report</button></li>
                         <li><button class="dropdown-item shareBtn" type="button"><i class="fa-solid fa-share"></i> Share</button></li>
                       </ul>
-                <div id="btnForRate">
-                  <form action="" id="rate-form1">
-                    <div id="star-rating">
+                <div class="btnForRate">
+                  <form  class="rate-form1">
+                    <div class="star-rating">
                       <label>
                         <i class="fa-regular fa-star fa-star1"></i>
                         <input type="radio" name="rating" value="5" hidden>
