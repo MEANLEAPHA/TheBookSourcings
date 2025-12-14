@@ -903,10 +903,12 @@ form.addEventListener("submit", async (e) => {
   if (!text) return; 
 
   try {
-        const payload = {
-      bookQid: bookId,
-      review_text: text
-    };
+       const payload = {
+  bookQid: bookId,
+  review_text: text,
+  rate_star: currentRateStar || 0   // ✅ include the user's selected star rating
+};
+
     const res = await fetch(`${API_URL}/api/bookByAuthor/rating`, {
       method: "POST",
        headers: { 
@@ -919,7 +921,8 @@ form.addEventListener("submit", async (e) => {
     if (!res.ok) throw new Error("Failed to review");
 
     const savedCmt = await res.json();
-    savedCmt.createFormNow = "just now"; // instant display
+    savedCmt.createFormNow = "just now"; 
+    savedCmt.rate_star = currentRateStar || 0;
     displayComment(savedCmt);
     socket.emit("send-review", savedCmt);
 
@@ -1007,7 +1010,7 @@ function displayComment(cmt) {
 
 
 const starDiv = document.createElement("div");
-starDiv.className = "star-rating";
+starDiv.className = "star-ratingx";
 
 const starNum = Math.max(0, Math.min(5, Number(cmt.rate_star) || 0));
 
@@ -1894,8 +1897,9 @@ document.getElementById("cancelReportReplyBtn").onclick = () => {
 
   // DOM elements
 const starLabels = document.querySelectorAll(".star-rating label");
+let currentRateStar = 0; // 🌟 global
 
-// ⭐ Load previous rating
+
 async function loadPreviousRating() {
   if (!token) return;
 
@@ -1928,56 +1932,34 @@ function highlightStars(starCount) {
   });
 }
 
-// function highlightStars(starCount) {
-//   starLabels.forEach((label, idx) => {
-//     const starIcon = label.querySelector("i");
-
-//     if (idx < starCount) {
-//       // Solid gold star
-//       starIcon.classList.remove("fa-regular");
-//       starIcon.classList.add("fa-solid");
-//       starIcon.style.color = "#FFD700";  // ⭐ gold
-//     } else {
-//       // Empty grey star
-//       starIcon.classList.remove("fa-solid");
-//       starIcon.classList.add("fa-regular");
-//       starIcon.style.color = "#ccc";  // grey for unselected
-//     }
-//   });
-// }
-
-
 starLabels.forEach(label => {
   label.addEventListener("click", async () => {
     const input = label.querySelector("input");
-    const selectedStar = Number(input.value); // ✅ ALWAYS CORRECT
+    const selectedStar = Number(input.value);
 
-    try {
-      const res = await fetch(`${API_URL}/api/bookByAuthor/rating/star`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          bookQid: bookId,
-          rate_star: selectedStar
-        })
-      });
+    currentRateStar = selectedStar; // ✅ SAVE GLOBALLY
 
-      const data = await res.json();
-      highlightStars(selectedStar);
-    } catch (err) {
-      console.error("Rating error:", err);
-    }
+    await fetch(`${API_URL}/api/bookByAuthor/rating/star`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        bookQid: bookId,
+        rate_star: selectedStar
+      })
+    });
+
+    highlightStars(selectedStar);
   });
 });
 
 
-// // ⭐ Submit rating
-// starLabels.forEach((label, index) => {
+// starLabels.forEach(label => {
 //   label.addEventListener("click", async () => {
-//     const selectedStar = index + 1;
+//     const input = label.querySelector("input");
+//     const selectedStar = Number(input.value); // ✅ ALWAYS CORRECT
 
 //     try {
 //       const res = await fetch(`${API_URL}/api/bookByAuthor/rating/star`, {
@@ -1987,22 +1969,21 @@ starLabels.forEach(label => {
 //           "Authorization": `Bearer ${token}`
 //         },
 //         body: JSON.stringify({
-//           bookQid: bookId,   // ✅ FIX
+//           bookQid: bookId,
 //           rate_star: selectedStar
 //         })
 //       });
 
 //       const data = await res.json();
-//       console.log(data);
-
-//       // update frontend instantly
 //       highlightStars(selectedStar);
-
 //     } catch (err) {
 //       console.error("Rating error:", err);
 //     }
 //   });
 // });
+
+
+
 
 // Load previous ratings on page load
 loadPreviousRating();

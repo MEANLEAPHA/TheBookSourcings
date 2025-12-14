@@ -245,10 +245,10 @@ io.on("connection", (socket) => {
   socket.on("send-review", (data) => {
     if(!socket.user) return;
     const broadcastData = {
-      rate_id : data.rate_id,
+      comment_id : data.rate_id,
+      commentQid: `COMM${data.rate_id}ENT`,
       memberQid:socket.user.memberQid,
       username:data.username,
-      nickname:data.nickname,
       comment: data.review_text || null, 
       rate_star: Number(data.rate_star) || 0, // ✅ safe
       createFormNow: data.createFormNow || "just now",

@@ -218,50 +218,91 @@ async function getAllRate(req, res) {
 //     res.status(500).json({ error: "Failed to fetch getAllRate" });
 //   }
 // }
-async function uploadRate(req,res){
-
-  try{
-      const {bookQid, review_text } = req.body;
-      const memberQid = req.user.memberQid;
-      // const nickname = req.user.nickname;
-      const username = req.user.username;
-    // Check if user already rated this book
-    // const [existing] = await db.query(
-    //   'SELECT * FROM book_rating WHERE bookQid = ? AND memberQid = ?',
-    //   [bookQid, memberQid]
-    // );
-
-    // if (existing.length > 0) {
-    //   return res.status(400).json({ message: 'User already rated this book. Use update instead.' });
-    // }
+async function uploadRate(req, res) {
+  try {
+    const { bookQid, review_text, rate_star } = req.body;
+    const memberQid = req.user.memberQid;
+    const username = req.user.username;
 
     if (!review_text && !bookQid) {
-        return res.status(400).json({ error: "Review or Rating is required" });
-      }
+      return res.status(400).json({ error: "Review or Rating is required" });
+    }
 
+    // Insert review
     const [result] = await db.query(
       'INSERT INTO book_rating (bookQid, memberQid, username, nickname, review_text) VALUES (?, ?, ?, ?, ?)',
       [bookQid, memberQid, username, null, review_text || null]
     );
+
+    // Update book review count
     await db.query(
       "UPDATE uploadBook SET review_count = review_count + 1 WHERE bookQid = ?",
       [bookQid]
     );
-          const msgObj = {
-            comment_id: result.insertId,
-            memberQid,
-            username,
-            comment: review_text || "",
-            createFormNow: "just now",
-            like_count: 0
-          };
-      res.json(msgObj);
-  }
-  catch(err){
+
+    // Prepare object to return & broadcast
+    const msgObj = {
+      comment_id: result.insertId,
+      commentQid: `COMM${result.insertId}ENT`,
+      memberQid,
+      username,
+      comment: review_text || "",
+      rate_star: Number(rate_star) || 0, // ⭐ include the star rating
+      createFormNow: "just now",
+      like_count: 0,
+      reply_count: 0
+    };
+
+    // Send response to sender
+    res.json(msgObj);
+
+    // ✅ Broadcast to other users
+    if (req.io) {
+      req.io.emit("receive-review", msgObj);
+    }
+
+  } catch (err) {
     console.error("uploadRate error:", err.message);
     res.status(500).json({ error: "Failed to fetch uploadRate" });
   }
 }
+
+// async function uploadRate(req,res){
+
+//   try{
+//       const {bookQid, review_text } = req.body;
+//       const memberQid = req.user.memberQid;
+      
+//       const username = req.user.username;
+    
+
+//     if (!review_text && !bookQid) {
+//         return res.status(400).json({ error: "Review or Rating is required" });
+//       }
+
+//     const [result] = await db.query(
+//       'INSERT INTO book_rating (bookQid, memberQid, username, nickname, review_text) VALUES (?, ?, ?, ?, ?)',
+//       [bookQid, memberQid, username, null, review_text || null]
+//     );
+//     await db.query(
+//       "UPDATE uploadBook SET review_count = review_count + 1 WHERE bookQid = ?",
+//       [bookQid]
+//     );
+//           const msgObj = {
+//             comment_id: result.insertId,
+//             memberQid,
+//             username,
+//             comment: review_text || "",
+//             createFormNow: "just now",
+//             like_count: 0
+//           };
+//       res.json(msgObj);
+//   }
+//   catch(err){
+//     console.error("uploadRate error:", err.message);
+//     res.status(500).json({ error: "Failed to fetch uploadRate" });
+//   }
+// }
 
 async function updateRate(req,res){
     const { comment_id, newComment } = req.body;
