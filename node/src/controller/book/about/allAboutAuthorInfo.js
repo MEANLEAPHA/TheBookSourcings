@@ -248,7 +248,7 @@ async function uploadRate(req, res) {
       username,
       comment: review_text || "",
       rate_star: Number(rate_star) || 0, // ⭐ include the star rating
-      createFormNow: "just now",
+      createFormNow: "just now sec",
       like_count: 0,
       reply_count: 0
     };

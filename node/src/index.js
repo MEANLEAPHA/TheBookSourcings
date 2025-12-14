@@ -249,7 +249,7 @@ io.on("connection", (socket) => {
       commentQid: `COMM${data.rate_id}ENT`,
       memberQid:socket.user.memberQid,
       username:data.username,
-      comment: data.review_text || null, 
+      comment: data.comment || null, 
       rate_star: Number(data.rate_star) || 0, // ✅ safe
       createFormNow: data.createFormNow || "just now",
       updateFormNow: data.updateFormNow || "just now"
