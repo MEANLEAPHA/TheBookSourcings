@@ -1005,9 +1005,28 @@ function displayComment(cmt) {
   profileLink.href = `aboutUser?memberId=${cmt.memberQid}`; // user name on cmt div href to their account
   profileLink.appendChild(profileImg);
 
-  // Username link
-  
 
+const starDiv = document.createElement("div");
+starDiv.className = "star-rating";
+
+const starNum = Number(cmt.rate_star) || 0;
+
+for (let i = 1; i <= 5; i++) {
+  const star = document.createElement("i");
+  star.classList.add("fa-star");
+
+  if (i <= starNum) {
+    star.classList.add("fa-solid");
+    star.style.color = "#FFD700"; // optional gold
+  } else {
+    star.classList.add("fa-regular");
+    star.style.color = "#ccc"; // optional grey
+  }
+
+  starDiv.appendChild(star);
+}
+
+  // Username link
   const headerRight = document.createElement("div");
   headerRight.className = "comment-header-child-right";
 
@@ -1023,7 +1042,10 @@ function displayComment(cmt) {
   usernameLink.href = `aboutUser?memberId=${cmt.memberQid}`;
   usernameLink.textContent = cmt.username || "Unknown";
   usernameLink.className = "usernameComment";
+
+
   headerRightTop.appendChild(usernameLink);
+  headerRightBottom.appendChild(starDiv);
 
   if (cmt.comment) {
     const textP = document.createElement("p");

@@ -139,40 +139,85 @@ async function getUserRate(req,res){
     res.status(500).json({ error: "Failed to fetch getUserRate" });
   }
 }
-
-async function getAllRate(req,res){
+async function getAllRate(req, res) {
   const { bookQid } = req.params;
+
   try {
-     const [rows] = await db.query(
-      ` SELECT
-          b.rate_id AS comment_id,
-          b.review_text AS comment,
-          CONCAT('COMM', b.rate_id, 'ENT') AS commentQid,
-          b.like_count,
-          b.reply_count,
-          b.memberQid,
-          b.created_at,
-          b.username,
-          u.pfUrl AS profile_url
-        FROM book_rating b
-        JOIN users u ON b.memberQid = u.memberQid
-        WHERE b.bookQid = ? ORDER BY b.created_at ASC`,
-        [bookQid]
-      );
+    const [rows] = await db.query(
+      `
+      SELECT
+        b.rate_id AS comment_id,
+        b.review_text AS comment,
+        CONCAT('COMM', b.rate_id, 'ENT') AS commentQid,
+        b.like_count,
+        b.reply_count,
+        b.memberQid,
+        b.created_at,
+        b.username,
+        u.pfUrl AS profile_url,
+        sr.rate_star              -- ⭐ STAR RATING
+      FROM book_rating b
+      JOIN users u 
+        ON b.memberQid = u.memberQid
+      LEFT JOIN star_ratings sr 
+        ON sr.bookQid = b.bookQid 
+       AND sr.memberQid = b.memberQid
+      WHERE b.bookQid = ?
+      ORDER BY b.created_at ASC
+      `,
+      [bookQid]
+    );
+
     if (rows.length === 0) {
-      return res.json([]);   // IMPORTANT FIX
+      return res.json([]);
     }
+
     const comments = rows.map(row => ({
-          ...row,
-          createFormNow: dayjs(row.created_at).fromNow(),
-        }));
-        res.json(comments);
-  }
-  catch(err){
+      ...row,
+      rate_star: row.rate_star || 0, // safe fallback
+      createFormNow: dayjs(row.created_at).fromNow(),
+    }));
+
+    res.json(comments);
+  } catch (err) {
     console.error("getAllRate error:", err.message);
     res.status(500).json({ error: "Failed to fetch getAllRate" });
   }
 }
+
+// async function getAllRate(req,res){
+//   const { bookQid } = req.params;
+//   try {
+//      const [rows] = await db.query(
+//       ` SELECT
+//           b.rate_id AS comment_id,
+//           b.review_text AS comment,
+//           CONCAT('COMM', b.rate_id, 'ENT') AS commentQid,
+//           b.like_count,
+//           b.reply_count,
+//           b.memberQid,
+//           b.created_at,
+//           b.username,
+//           u.pfUrl AS profile_url
+//         FROM book_rating b
+//         JOIN users u ON b.memberQid = u.memberQid
+//         WHERE b.bookQid = ? ORDER BY b.created_at ASC`,
+//         [bookQid]
+//       );
+//     if (rows.length === 0) {
+//       return res.json([]);   // IMPORTANT FIX
+//     }
+//     const comments = rows.map(row => ({
+//           ...row,
+//           createFormNow: dayjs(row.created_at).fromNow(),
+//         }));
+//         res.json(comments);
+//   }
+//   catch(err){
+//     console.error("getAllRate error:", err.message);
+//     res.status(500).json({ error: "Failed to fetch getAllRate" });
+//   }
+// }
 async function uploadRate(req,res){
 
   try{
