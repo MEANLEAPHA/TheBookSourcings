@@ -246,11 +246,11 @@ io.on("connection", (socket) => {
     if(!socket.user) return;
     const broadcastData = {
       rate_id : data.rate_id,
-      memeberQid:socket.user.memberQid,
+      memberQid:socket.user.memberQid,
       username:data.username,
       nickname:data.nickname,
-      review_text: data.review_text || null,
-      rate_star: data.rate_star || null,
+      comment: data.review_text || null, 
+      rate_star: Number(data.rate_star) || 0, // ✅ safe
       createFormNow: data.createFormNow || "just now",
       updateFormNow: data.updateFormNow || "just now"
     };
