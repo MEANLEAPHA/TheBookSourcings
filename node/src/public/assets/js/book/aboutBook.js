@@ -898,22 +898,22 @@ const commentInput = document.getElementById("review-input");
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const text = commentInput.value.trim();
 
-  if (!text) return; 
+  const text = commentInput.value.trim();
+  if (!text) return;
 
   try {
-       const payload = {
-  bookQid: bookId,
-  review_text: text,
-  rate_star: currentRateStar || 0   // ✅ include the user's selected star rating
-};
+    const payload = {
+      bookQid: bookId,
+      review_text: text,
+      rate_star: currentRateStar // ✅ ALWAYS CORRECT NOW
+    };
 
     const res = await fetch(`${API_URL}/api/bookByAuthor/rating`, {
       method: "POST",
-       headers: { 
+      headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}` 
+        "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify(payload)
     });
@@ -921,18 +921,17 @@ form.addEventListener("submit", async (e) => {
     if (!res.ok) throw new Error("Failed to review");
 
     const savedCmt = await res.json();
-    // savedCmt.createFormNow = "just now"; 
-    // savedCmt.rate_star = currentRateStar || 0;
+
     displayComment(savedCmt);
     socket.emit("send-review", savedCmt);
 
-    // Reset form
     commentInput.value = "";
-  
+
   } catch (err) {
     console.error(err);
   }
 });
+
 
 
 // ====== DECLARATIONS FOR review======
@@ -1891,28 +1890,31 @@ document.getElementById("cancelReportReplyBtn").onclick = () => {
 
 
 
-  // star rating
-
-  // DOM elements
 const starLabels = document.querySelectorAll(".star-rating label");
-let currentRateStar = 0; // 🌟 global
+let currentRateStar = 0; 
 
 
 async function loadPreviousRating() {
   if (!token) return;
 
   try {
-    const res = await fetch(`${API_URL}/api/bookByAuthor/rating/getUserRating/${bookId}`, {
-      headers: { "Authorization": `Bearer ${token}` }
-    });
+    const res = await fetch(
+      `${API_URL}/api/bookByAuthor/rating/getUserRating/${bookId}`,
+      {
+        headers: { "Authorization": `Bearer ${token}` }
+      }
+    );
+
     const data = await res.json();
 
-    const prev = data.rate_star || 0;
-    highlightStars(prev);
+    currentRateStar = Number(data.rate_star) || 0; // ✅ FIX HERE
+    highlightStars(currentRateStar);
+
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
 }
+
 
 // ⭐ Highlight stars (UI function)
 function highlightStars(starCount) {
@@ -1930,12 +1932,12 @@ function highlightStars(starCount) {
   });
 }
 
+
 starLabels.forEach(label => {
   label.addEventListener("click", async () => {
-    const input = label.querySelector("input");
-    const selectedStar = Number(input.value);
+    const selectedStar = Number(label.querySelector("input").value);
 
-    currentRateStar = selectedStar; // ✅ SAVE GLOBALLY
+    currentRateStar = selectedStar; // ✅ UPDATE GLOBAL
 
     await fetch(`${API_URL}/api/bookByAuthor/rating/star`, {
       method: "POST",
@@ -1954,34 +1956,5 @@ starLabels.forEach(label => {
 });
 
 
-// starLabels.forEach(label => {
-//   label.addEventListener("click", async () => {
-//     const input = label.querySelector("input");
-//     const selectedStar = Number(input.value); // ✅ ALWAYS CORRECT
 
-//     try {
-//       const res = await fetch(`${API_URL}/api/bookByAuthor/rating/star`, {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//           "Authorization": `Bearer ${token}`
-//         },
-//         body: JSON.stringify({
-//           bookQid: bookId,
-//           rate_star: selectedStar
-//         })
-//       });
-
-//       const data = await res.json();
-//       highlightStars(selectedStar);
-//     } catch (err) {
-//       console.error("Rating error:", err);
-//     }
-//   });
-// });
-
-
-
-
-// Load previous ratings on page load
 loadPreviousRating();

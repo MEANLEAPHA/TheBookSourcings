@@ -246,7 +246,7 @@ async function uploadRate(req, res) {
       commentQid: `COMM${result.insertId}ENT`,
       memberQid,
       username,
-      comment: `${review_text} and star rating: ${rate_star}` || "",
+      comment: review_text || "",
       rate_star: Number(rate_star) || 0, // ⭐ include the star rating
       createFormNow: "just now",
       like_count: 0,
