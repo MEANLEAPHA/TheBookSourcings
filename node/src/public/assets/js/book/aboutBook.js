@@ -921,7 +921,7 @@ form.addEventListener("submit", async (e) => {
     if (!res.ok) throw new Error("Failed to review");
 
     const savedCmt = await res.json();
-    savedCmt.createFormNow = "just now"; 
+    savedCmt.createFormNow = "just nowss"; 
     savedCmt.rate_star = currentRateStar || 0;
     displayComment(savedCmt);
     socket.emit("send-review", savedCmt);
