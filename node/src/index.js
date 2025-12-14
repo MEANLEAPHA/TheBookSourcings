@@ -250,7 +250,7 @@ io.on("connection", (socket) => {
       memberQid: data.memberQid,
       username: data.username,
       comment: data.comment || null, 
-      rate_star: datarate_star || 0, // ✅ safe
+      rate_star: data.rate_star || 0, // ✅ safe
       createFormNow: data.createFormNow || "just now",
       updateFormNow: data.updateFormNow || "just now",
       reply_count: data.reply_count || 0,

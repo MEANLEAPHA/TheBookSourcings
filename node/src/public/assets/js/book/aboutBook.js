@@ -1013,8 +1013,6 @@ const starDiv = document.createElement("div");
 starDiv.className = "star-ratingx";
 
 const starNum = Math.max(0, Math.min(5, Number(cmt.rate_star) || 0));
-
-
 for (let i = 1; i <= 5; i++) {
   const star = document.createElement("i");
   star.classList.add("fa-star");
