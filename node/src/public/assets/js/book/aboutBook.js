@@ -1893,6 +1893,17 @@ document.getElementById("cancelReportReplyBtn").onclick = () => {
 const starLabels = document.querySelectorAll(".star-rating label");
 let currentRateStar = 0; 
 
+const ratinglabel = document.getElementById("rating-label");
+const i = document.createElement("i");
+i.textContent = "Rate this book";
+const i2 = document.createElement("i");
+const ie = document.createElement("i");
+ie.className = "fa-solid fa-pen-clip";
+const a = document.createElement("a");
+a.textContent = "Write a review";
+a.href = "#reviewreview-input";
+i2.appendChild(ie);
+i2.appendChild(a);
 
 async function loadPreviousRating() {
   if (!token) return;
@@ -1908,6 +1919,14 @@ async function loadPreviousRating() {
     const data = await res.json();
 
     currentRateStar = Number(data.rate_star) || 0; // ✅ FIX HERE
+
+    if(currentRateStar === 0){
+      ratinglabel.appendChild(i);
+    }
+    else
+    {
+      ratinglabel.appendChild(i2);
+    }
     highlightStars(currentRateStar);
 
   } catch (err) {
