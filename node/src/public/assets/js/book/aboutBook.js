@@ -1901,7 +1901,7 @@ const ie = document.createElement("i");
 ie.className = "fa-solid fa-pen-clip";
 const a = document.createElement("a");
 a.textContent = "Write a review";
-a.href = "#reviewreview-input";
+a.href = "#review-input";
 i2.appendChild(ie);
 i2.appendChild(a);
 
