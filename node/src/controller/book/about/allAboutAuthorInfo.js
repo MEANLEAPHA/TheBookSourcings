@@ -504,7 +504,7 @@ const deleteReply = async (req,res)=>{
           const { reply_id } = req.body;
       
           const [rows] = await db.query(
-            "SELECT memberQid FROM book_rating_reply WHERE reply_id = ? AND deleted_at IS NULL",
+            "SELECT memberQid, replyBackTo_id FROM book_rating_reply WHERE reply_id = ? AND deleted_at IS NULL",
             [reply_id]
           );
       
