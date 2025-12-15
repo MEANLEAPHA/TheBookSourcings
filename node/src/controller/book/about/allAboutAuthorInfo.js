@@ -39,9 +39,6 @@ async function getAuthorInfoByQid(req, res) {
   }
 };
 
-
-
-
 // --- Search Wikidata by author name
 async function fetchWikidataId(name) {
   const searchUrl = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(name)}&language=en&format=json&origin=*`;
@@ -185,39 +182,6 @@ async function getAllRate(req, res) {
   }
 }
 
-// async function getAllRate(req,res){
-//   const { bookQid } = req.params;
-//   try {
-//      const [rows] = await db.query(
-//       ` SELECT
-//           b.rate_id AS comment_id,
-//           b.review_text AS comment,
-//           CONCAT('COMM', b.rate_id, 'ENT') AS commentQid,
-//           b.like_count,
-//           b.reply_count,
-//           b.memberQid,
-//           b.created_at,
-//           b.username,
-//           u.pfUrl AS profile_url
-//         FROM book_rating b
-//         JOIN users u ON b.memberQid = u.memberQid
-//         WHERE b.bookQid = ? ORDER BY b.created_at ASC`,
-//         [bookQid]
-//       );
-//     if (rows.length === 0) {
-//       return res.json([]);   // IMPORTANT FIX
-//     }
-//     const comments = rows.map(row => ({
-//           ...row,
-//           createFormNow: dayjs(row.created_at).fromNow(),
-//         }));
-//         res.json(comments);
-//   }
-//   catch(err){
-//     console.error("getAllRate error:", err.message);
-//     res.status(500).json({ error: "Failed to fetch getAllRate" });
-//   }
-// }
 async function uploadRate(req, res) {
   try {
     const { bookQid, review_text, rate_star } = req.body;
@@ -266,43 +230,6 @@ async function uploadRate(req, res) {
     res.status(500).json({ error: "Failed to fetch uploadRate" });
   }
 }
-
-// async function uploadRate(req,res){
-
-//   try{
-//       const {bookQid, review_text } = req.body;
-//       const memberQid = req.user.memberQid;
-      
-//       const username = req.user.username;
-    
-
-//     if (!review_text && !bookQid) {
-//         return res.status(400).json({ error: "Review or Rating is required" });
-//       }
-
-//     const [result] = await db.query(
-//       'INSERT INTO book_rating (bookQid, memberQid, username, nickname, review_text) VALUES (?, ?, ?, ?, ?)',
-//       [bookQid, memberQid, username, null, review_text || null]
-//     );
-//     await db.query(
-//       "UPDATE uploadBook SET review_count = review_count + 1 WHERE bookQid = ?",
-//       [bookQid]
-//     );
-//           const msgObj = {
-//             comment_id: result.insertId,
-//             memberQid,
-//             username,
-//             comment: review_text || "",
-//             createFormNow: "just now",
-//             like_count: 0
-//           };
-//       res.json(msgObj);
-//   }
-//   catch(err){
-//     console.error("uploadRate error:", err.message);
-//     res.status(500).json({ error: "Failed to fetch uploadRate" });
-//   }
-// }
 
 async function updateRate(req,res){
     const { comment_id, newComment } = req.body;
@@ -821,6 +748,49 @@ const getUserRating = async (req, res) => {
   }
 };
 
+
+const getRatingSummary = async (req, res) => {
+  try {
+    const { bookQid } = req.params;
+
+    const [rows] = await db.query(`
+      SELECT
+        rate_star,
+        COUNT(*) AS count
+      FROM star_ratings
+      WHERE bookQid = ?
+      GROUP BY rate_star
+    `, [bookQid]);
+
+    // Init
+    const summary = {
+      total: 0,
+      average: 0,
+      stars: { 1:0, 2:0, 3:0, 4:0, 5:0 }
+    };
+
+    let totalScore = 0;
+
+    rows.forEach(r => {
+      summary.stars[r.rate_star] = r.count;
+      summary.total += r.count;
+      totalScore += r.rate_star * r.count;
+    });
+
+    summary.average = summary.total
+      ? (totalScore / summary.total).toFixed(1)
+      : "0.0";
+
+    res.json(summary);
+
+  } catch (err) {
+    console.error("getRatingSummary error:", err);
+    res.status(500).json({ error: "Failed to load rating summary" });
+  }
+};
+
+
+
     module.exports = {
       getAuthorInfo,
       getAuthorInfoByQid,
@@ -840,5 +810,6 @@ const getUserRating = async (req, res) => {
       reportReview,
       reportReply,
       rateBook,
-      getUserRating
+      getUserRating,
+      getRatingSummary
     };

@@ -1958,3 +1958,58 @@ starLabels.forEach(label => {
 
 
 loadPreviousRating();
+
+
+
+// sum rate
+
+
+function renderStars(containerId, rating) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = "";
+
+  for (let i = 1; i <= 5; i++) {
+    const star = document.createElement("i");
+
+    if (rating >= i) {
+      star.className = "fa-solid fa-star";
+    } else if (rating >= i - 0.5) {
+      star.className = "fa-solid fa-star-half-stroke";
+    } else {
+      star.className = "fa-regular fa-star";
+    }
+
+    star.style.color = "#FFD700";
+    el.appendChild(star);
+  }
+}
+
+
+async function loadRatingSummary() {
+  const res = await fetch(`${API_URL}/api/bookByAuthor/rating/summary/${bookId}`);
+  const data = await res.json();
+
+  // ⭐ Average
+  document.getElementById("average-text").innerText = data.average;
+  renderStars("average-stars", parseFloat(data.average));
+
+  // 📊 Progress bars
+  document.querySelectorAll(".progress-div").forEach(div => {
+    const star = Number(div.dataset.star);
+    const count = data.stars[star] || 0;
+    const percent = data.total
+      ? Math.round((count / data.total) * 100)
+      : 0;
+
+    const bar = div.querySelector(".progress-bar");
+    const text = div.querySelector(".star-text");
+
+    // Animate
+    requestAnimationFrame(() => {
+      bar.style.width = percent + "%";
+    });
+
+    text.innerText = `${count} (${percent}%)`;
+  });
+}
+loadRatingSummary();

@@ -1031,8 +1031,21 @@ margin-top: 5px;
   color: #FFD700;
 }
 
+/* sum rate progress */
+.progress {
+  height: 8px;
+  background: #eee;
+  border-radius: 6px;
+  overflow: hidden;
+}
 
-
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: #f5c518;
+  border-radius: 6px;
+  transition: width 0.8s ease;
+}
 
 
 

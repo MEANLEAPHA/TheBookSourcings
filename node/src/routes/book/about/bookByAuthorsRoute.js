@@ -19,7 +19,8 @@ const {
     reportReview,
     reportReply,
     rateBook,
-    getUserRating
+    getUserRating,
+    getRatingSummary
 } = require("../../../controller/book/about/allAboutAuthorInfo");
 // GET /api/books/bookByAuthor?authorName=MeanLeap Ha
 router.get("/:authorName", bookByAuthor);
@@ -64,6 +65,11 @@ router.post("/rating/reply/report", authMiddleware, reportReply);
 // star rate
 router.post("/rating/star", authMiddleware, rateBook);
 router.get("/rating/getUserRating/:bookQid", authMiddleware, getUserRating);
+
+
+
+//sum Rate
+router.get("/rating/summary/:bookQid", getRatingSummary);
 
 
 module.exports = router; 
