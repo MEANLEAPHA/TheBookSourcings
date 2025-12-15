@@ -1615,12 +1615,12 @@ function displayReply(rpy) {
 // ===== Reply Btn =====
   const replyBtn = document.createElement("button");
   replyBtn.className = "replyBtn media-btn-reply";
-  typeOfId = rpy.replyBackTo_id ? rpy.replyBackTo_id : rpy.replyQid;
+  typeOfId = rpy.replyQid;
   replyBtn.innerHTML = `<i class="fa-solid fa-reply"></i>`;
 
   // Show ReplyToast and set typeOfId
   replyBtn.addEventListener("click", () => {
-     typeOfId = rpy.replyBackTo_id || rpy.replyQid;
+     typeOfId =  rpy.replyQid;
       const username = rpy.username;
       showReplyTo(username); // show the @username label visually
       ReplyInput.focus();
