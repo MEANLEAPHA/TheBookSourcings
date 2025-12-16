@@ -870,10 +870,36 @@ const getPopularity = async (req, res) => {
       FROM user_book_status f
       JOIN users u 
         ON f.memberQid = u.memberQid
-      WHERE f.bookQid = ?
+      WHERE f.bookQid = ? AND f.favorited = 1
       `,
       [bookQid]
-    )
+    );
+
+    const [reads] = await db.query(
+      `
+      SELECT DISTINCT
+        r.memberQid,
+        u.pfUrl,
+        u.username
+      FROM user_book_activity r
+      JOIN users u 
+      WHERE r.activity_type = "read" AND bookQid = ?
+      `,
+      [bookQid]
+    );
+
+    const [downloads] = await db.query(
+      `
+      SELECT DISTINCT
+        r.memberQid,
+        u.pfUrl,
+        u.username
+      FROM user_book_activity r
+      JOIN users u 
+      WHERE r.activity_type = "download" AND bookQid = ?
+      `,
+      [bookQid]
+    );
 
     return res.json({
       // review
@@ -884,7 +910,13 @@ const getPopularity = async (req, res) => {
       users_rate:rates,    
       // favorite
       total_favorite:favorites.length,
-      users_favorite:favorites 
+      users_favorite:favorites,
+      // read 
+      total_read:reads.length,
+      users_read:reads,
+      //download
+      total_download:downloads.length,
+      users_download:downloads,
     });
 
   } catch (err) {
@@ -926,7 +958,7 @@ const addBookView = async (req, res) => {
 const recordActivity = async (req, res) => {
   try {
     const { bookQid, type } = req.params; 
-    const memberQId = req.user.memberQId; 
+    const memberQid = req.user.memberQid; 
 
     const allowedTypes = ["read", "download", "share"];
     if (!allowedTypes.includes(type)) {
@@ -936,7 +968,7 @@ const recordActivity = async (req, res) => {
     // Insert into activity table
     await db.query(
       `INSERT INTO user_book_activity (memberQid, bookQid, activity_type) VALUES (?,?,?)`,
-      [memberQId, bookQid, type]
+      [memberQid, bookQid, type]
     );
 
     // Update uploadBook counters (optional for fast display)

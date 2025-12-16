@@ -2102,3 +2102,68 @@ loadRatingSummary();
 
 
 
+// popularity append
+async function loadPopularity() {
+  const res = await fetch(`${API_URL}/api/bookByAuthor/rating/popularity/${bookId}`);
+  const data = await res.json();
+
+  const container = document.getElementById("popularity-container");
+  container.innerHTML = "";
+
+  createPopularityBlock(container, {
+    total: data.total_read,
+    users: data.users_read,
+    text: "People read this book"
+  });
+
+  createPopularityBlock(container, {
+    total: data.total_favorite,
+    users: data.users_favorite,
+    text: "People add Favorite"
+  });
+
+  createPopularityBlock(container, {
+    total: data.total_download,
+    users: data.users_download,
+    text: "People download this book"
+  });
+
+  createPopularityBlock(container, {
+    total: data.total_review,
+    users: data.users_review,
+    text: "People review this book"
+  });
+
+  createPopularityBlock(container, {
+    total: data.total_rate,
+    users: data.users_rate,
+    text: "People rate this book"
+  });
+}
+function createPopularityBlock(container, { total, users, text }) {
+  if (!total || total === 0) return; // ❌ don't render empty blocks
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "read-count count";
+
+  const imageStack = document.createElement("div");
+  imageStack.className = "image-stack";
+
+  users.slice(0, 3).forEach((user, index) => {
+    const img = document.createElement("img");
+    img.className = `img img${index + 1}`;
+    img.src = user.pfUrl || "/assets/img/default-user.png";
+    img.alt = "user";
+    imageStack.appendChild(img);
+  });
+
+  const textDiv = document.createElement("div");
+  textDiv.className = "list-count";
+  textDiv.innerHTML = `<span>${total}</span> ${text}`;
+
+  wrapper.appendChild(imageStack);
+  wrapper.appendChild(textDiv);
+
+  container.appendChild(wrapper);
+}
+loadPopularity();
