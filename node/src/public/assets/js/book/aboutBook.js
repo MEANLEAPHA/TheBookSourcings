@@ -2107,7 +2107,7 @@ async function loadPopularity() {
   const res = await fetch(`${API_URL}/api/bookByAuthor/rating/popularity/${bookId}`);
   const data = await res.json();
 
-  const container = document.getElementById("popularity-container");
+  const container = document.querySelector(".popularity-container");
   container.innerHTML = "";
 
   createPopularityBlock(container, {
