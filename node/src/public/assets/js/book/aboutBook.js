@@ -1,23 +1,8 @@
-// function parseJwt (token) {
-//   try {
-//     return JSON.parse(atob(token.split('.')[1]));
-//   } catch (e) {
-//     return null;
-//   }
-// }
+// params Url
+const urlParams = new URLSearchParams(window.location.search);
+const bookId = urlParams.get("bookId");
+const source = detectSource(bookId);
 
-// const token = localStorage.getItem("token");
-// let userMemberQid = null;
-// let username = null;
-
-// if (token) {
-//   const decoded = parseJwt(token);
-//   userMemberQid = decoded?.memberQid || null;
-//   username = decoded?.username || null;
-// }
-
-
-// redirect the source
 function detectSource(bookId) {
     if (/^TB\d+S$/.test(bookId)) return "otthor";
     if (/^OL\d+(W|M|A)$/.test(bookId)) return "openlibrary";
@@ -25,10 +10,67 @@ function detectSource(bookId) {
     return "google"; // fallback for Google Books
 }
 
-// params Url
-const urlParams = new URLSearchParams(window.location.search);
-const bookId = urlParams.get("bookId");
-const source = detectSource(bookId);
+   // View count
+    fetch(`https://thebooksourcings.onrender.com/api/bookByAuthor/viewBook/${bookId}`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json"
+      }
+    })
+    .then(res => res.json())
+    .then(data => console.log(data))
+    .catch(err => console.error("Error recording view:", err));
+
+     // READ, Share, Download
+    const read = document.getElementById("readBtn");
+    const download = document.getElementById("downloadBtn");
+
+    function recordActivity(type, bookId) {
+      fetch(`https://thebooksourcings.onrender.com/api/bookByAuthor/${type}/${bookId}`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json"
+        }
+      })
+        .then(res => res.json())
+        .then(data => console.log(`${type} recorded:`, data))
+        .catch(err => console.error(`Error recording ${type} activity:`, err));
+    }
+
+    if (read) read.addEventListener("click", () => recordActivity("read", bookId));
+    if (download) download.addEventListener("click", () => recordActivity("download", bookId));
+    
+
+
+    // favorite
+
+    const favoriteBtn = document.getElementById('favoriteBtn');
+    const favoriteIcon = document.getElementById('favoriteIcon');
+  
+    async function toggleActivity() {
+    try {
+        const res = await fetch(`https://thebooksourcings.onrender.com/api/bookByAuthor/rating/favorite/${bookId}`, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                    "Content-Type": "application/json"
+                }
+            });
+            if (!res.ok) throw new Error(`Failed to toggle ${type}`);
+            const data = await res.json();
+
+                favoriteIcon.style.color = data.favorited ? "gold" : "black";
+            
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    // Event listeners
+    favoriteBtn.addEventListener('click', toggleActivity);
+    
 
 const API_URL = "https://thebooksourcings.onrender.com";
 const socket = io(API_URL, { auth: { token } });
@@ -125,7 +167,32 @@ async function loadBookInfo() {
     };
 
 
-    
+    const readA = document.querySelector("#read-href");
+    const downloadA = document.querySelector("#download-href");
+
+    if (book.read) {
+      readA.href = book.read;
+    } else {
+      readA.removeAttribute("href");
+      if (book.source === "Open Library") {
+        readBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          showToast("❌ This book is not available to read.");
+        });
+      }
+    }
+
+    if (book.download) {
+      downloadA.href = book.download;
+    } else {
+      downloadA.removeAttribute("href");
+      if (data.source === "Open Library") {
+        downloadA.addEventListener("click", (e) => {
+          e.preventDefault();
+          showToast("❌ This book is not available for download.");
+        });
+      }
+    }
 
     // similar book
 
@@ -2032,3 +2099,6 @@ async function loadRatingSummary() {
   });
 }
 loadRatingSummary();
+
+
+

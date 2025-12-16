@@ -7,3 +7,4 @@ const {authMiddleware} = require('../../../middleware/authMiddleware');
 router.post("/:bookId", authMiddleware, addBookView);
 
 module.exports = router;
+ 

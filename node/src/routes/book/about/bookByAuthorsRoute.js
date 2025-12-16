@@ -20,7 +20,11 @@ const {
     reportReply,
     rateBook,
     getUserRating,
-    getRatingSummary
+    getRatingSummary,
+    getPopularity,
+    addBookView,
+    toggleFavorite,
+    recordActivity
 } = require("../../../controller/book/about/allAboutAuthorInfo");
 // GET /api/books/bookByAuthor?authorName=MeanLeap Ha
 router.get("/:authorName", bookByAuthor);
@@ -70,6 +74,18 @@ router.get("/rating/getUserRating/:bookQid", authMiddleware, getUserRating);
 
 //sum Rate
 router.get("/rating/summary/:bookQid", getRatingSummary);
+
+// view
+router.post("/viewBook/:bookQid", authMiddleware, addBookView);
+
+// sum popularity
+router.get("/rating/popularity/:bookQid", getPopularity);
+
+// Toggle favorite
+router.post("/rating/favorite/:bookQid", authMiddleware, toggleFavorite);
+
+// record activity
+router.post("/:type/:bookQid", authMiddleware, recordActivity)
 
 
 module.exports = router; 

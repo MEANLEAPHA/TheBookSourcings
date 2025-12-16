@@ -748,7 +748,6 @@ const getUserRating = async (req, res) => {
   }
 };
 
-
 const getRatingSummary = async (req, res) => {
   try {
     const { bookQid } = req.params;
@@ -790,6 +789,171 @@ const getRatingSummary = async (req, res) => {
 };
 
 
+const toggleFavorite = async (req, res) => {
+  try {
+    const { bookQid } = req.params;
+    const memberQid = req.user.user_id;
+
+    // Check current status
+    const [rows] = await db.query(
+      "SELECT favorited FROM user_book_status WHERE memberQid = ? AND bookQid = ?",
+      [memberQid, bookQid]
+    );
+
+    let favorited = 0;
+
+    if (rows.length > 0) {
+      favorited = rows[0].favorited ? 0 : 1;
+      await db.query(
+        "UPDATE user_book_status SET favorited = ?, updated_at = NOW() WHERE memberQid = ? AND bookQid = ?",
+        [favorited, memberQid, bookQid]
+      );
+    } else {
+      favorited = 1;
+      await db.query(
+        "INSERT INTO user_book_status (memberQid, bookQid, favorited) VALUES (?, ?, 1)",
+        [memberQid, bookQid]
+      );
+    }
+
+    // Update uploadBook count
+    await db.query(
+      "UPDATE uploadBook SET favoriteCount = (SELECT COUNT(*) FROM user_book_status WHERE bookQid = ? AND favorited = 1) WHERE bookQid = ?",
+      [bookQid, bookQid]
+    );
+
+    res.json({ favorited });
+  } catch (err) {
+    console.error("Error in toggleFavorite:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const getPopularity = async (req, res) => {
+  try {
+    const { bookQid } = req.params;
+
+    const [reviews] = await db.query(
+      `
+      SELECT DISTINCT
+        r.memberQid,
+        r.username,
+        u.pfUrl
+      FROM book_rating r
+      JOIN users u
+        ON r.memberQid = u.memberQid
+      WHERE r.bookQid = ?
+      `,
+      [bookQid]
+    );
+
+    const [rates] = await db.query(
+      `
+      SELECT DISTINCT
+        r.memberQid,
+        r.username,
+        u.pfUrl
+      FROM star_ratings r
+      JOIN users u
+        ON r.memberQid = u.memberQid
+      WHERE r.bookQid = ?
+      `,
+      [bookQid]
+    );
+
+    const [favorites] = await db.query(
+      `
+      SELECT DISTINCT
+        f.memberQid,
+        u.pfUrl,
+        u.username
+      FROM user_book_status f
+      JOIN users u 
+        ON f.memberQid = u.memberQid
+      WHERE f.bookQid = ?
+      `,
+      [bookQid]
+    )
+
+    return res.json({
+      // review
+      total_review: reviews.length,   
+      users_review: reviews,
+      // rate
+      total_rate: rates.length,
+      users_rate:rates,    
+      // favorite
+      total_favorite:favorites.length,
+      users_favorite:favorites 
+    });
+
+  } catch (err) {
+    console.error("getPPLreview error:", err);
+    res.status(500).json({ error: "Failed to load getPPLreview" });
+  }
+};
+
+const addBookView = async (req, res) => {
+  try {
+    const { bookQid } = req.params;
+    const memberQid = req.user.memberQid;
+
+    if (!memberQid) {
+      return res.status(401).json(
+        { error: "User guest not sign in, view is not count" }
+      );
+    }
+    // Insert activity
+    await db.query(
+      `INSERT INTO user_book_activity (memberQid, bookQid, activity_type) 
+       VALUES (?, ?, 'view')`,
+      [memberQid, bookQid]
+    );
+
+    // ✅ Update book viewCount
+    await db.query(
+      "UPDATE uploadBook SET viewCount = viewCount + 1 WHERE bookQid = ?",
+      [bookQid]
+    );
+
+    res.json({ message: "View recorded successfully" });
+  } catch (err) {
+    console.error("Error recording view:", err);
+    res.status(500).json({ error: "Failed to record view" });
+  }
+}
+
+const recordActivity = async (req, res) => {
+  try {
+    const { bookQid, type } = req.params; 
+    const memberQId = req.user.memberQId; 
+
+    const allowedTypes = ["read", "download", "share"];
+    if (!allowedTypes.includes(type)) {
+      return res.status(400).json({ message: "Invalid activity type" });
+    }
+
+    // Insert into activity table
+    await db.query(
+      `INSERT INTO user_book_activity (memberQid, bookQid, activity_type) VALUES (?,?,?)`,
+      [memberQId, bookQid, type]
+    );
+
+    // Update uploadBook counters (optional for fast display)
+    await db.query(
+      `UPDATE uploadBook 
+       SET ${type}Count = ${type}Count + 1 
+       WHERE bookQid = ?`,
+      [bookQid]
+    );
+
+    res.json({ message: `${type} recorded successfully!` });
+
+  } catch (err) {
+    console.error("recordActivity error:", err.message);
+    res.status(500).json({ message: "Internal server error", error: err.message });
+  }
+};
 
     module.exports = {
       getAuthorInfo,
@@ -811,5 +975,9 @@ const getRatingSummary = async (req, res) => {
       reportReply,
       rateBook,
       getUserRating,
-      getRatingSummary
+      getRatingSummary,
+      addBookView,
+      getPopularity,
+      toggleFavorite,
+      recordActivity
     };
