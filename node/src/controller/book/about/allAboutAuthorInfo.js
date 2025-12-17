@@ -792,7 +792,7 @@ const getRatingSummary = async (req, res) => {
 const toggleFavorite = async (req, res) => {
   try {
     const { bookQid } = req.params;
-    const memberQid = req.user.user_id;
+    const memberQid = req.user.memberQid;
 
     // Check current status
     const [rows] = await db.query(
@@ -883,6 +883,7 @@ const getPopularity = async (req, res) => {
         u.username
       FROM user_book_activity r
       JOIN users u 
+        ON r.memberQid = u.memberQid
       WHERE r.activity_type = "read" AND bookQid = ?
       `,
       [bookQid]
@@ -896,6 +897,7 @@ const getPopularity = async (req, res) => {
         u.username
       FROM user_book_activity r
       JOIN users u 
+        ON r.memberQid = u.memberQid
       WHERE r.activity_type = "download" AND bookQid = ?
       `,
       [bookQid]

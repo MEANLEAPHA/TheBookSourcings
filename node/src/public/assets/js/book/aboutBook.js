@@ -2139,6 +2139,8 @@ async function loadPopularity() {
     users: data.users_rate,
     text: "People rate this book"
   });
+
+
 }
 function createPopularityBlock(container, { total, users, text }) {
   if (!total || total === 0) return; // ❌ don't render empty blocks
