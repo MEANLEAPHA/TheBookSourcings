@@ -1,4 +1,5 @@
-const { fetchJson } = require("../../../util/apiClient");
+const { fetchJson } = require("../../util/apiClient");
+const db = require("../../config/db");
 const searchBooks = async (req, res) => {
   try {
     const { q } = req.query;
