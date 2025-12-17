@@ -766,6 +766,7 @@ margin-top: 5px;
     width: 100%;
     
 }
+
 .noti-head{
     display:flex;
     justify-content: space-between;
@@ -1063,6 +1064,13 @@ padding-left: 10px;
     }
     .fa-photo-film{
         color: green;
+        font-size: small;
+    }
+    .fa-quote-left{
+        font-size: larger;
+    }
+    .fa-book{
+        font-size: small;
     }
     /*Reply username */
     #ReplyToast .toast-header .usernameFromReply{
@@ -1202,7 +1210,7 @@ padding-left: 10px;
         display: flex;
         justify-content: start;
         align-items: center;
-        gap: 10px;
+        gap: 15px;
     }
     /* post (upload with post end label) */
     #PostToast .toast-body #uploadWithPost #uploadWithPost-end label{
@@ -1569,7 +1577,7 @@ padding-left: 10px;
         display: flex;
         gap: 15px;
     }
-         
+ 
          .post-hr{
             color: gainsboro;
             background-color: gainsboro;

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input id="bookSearch" placeholder="Search title or paste bookQid..." />
+<div id="results"></div>
+
+</body>
+<script>
+    const API = "https://thebooksourcings.onrender.com/api/books/search";
+const input = document.getElementById("bookSearch");
+const results = document.getElementById("results");
+
+let timer;
+
+input.addEventListener("input", () => {
+  clearTimeout(timer);
+  const q = input.value.trim();
+  if (!q) {
+    results.innerHTML = "";
+    return;
+  }
+
+  timer = setTimeout(() => fetchBooks(q), 300);
+});
+
+async function fetchBooks(q) {
+  const res = await fetch(`${API}?q=${encodeURIComponent(q)}`);
+  const data = await res.json();
+  renderBooks(data);
+}
+
+function renderBooks(books) {
+  results.innerHTML = "";
+
+  books.forEach(b => {
+    const div = document.createElement("div");
+    div.className = "book-card";
+    div.innerHTML = `
+      <img src="${b.cover || "/img/noCoverFound.png"}" />
+      <div>
+        <h4>${b.title}</h4>
+        <p>${b.authors.join(", ")}</p>
+        <small>${b.source}</small>
+      </div>
+    `;
+
+    div.onclick = () => {
+      // Redirect to detail page
+      window.location.href = `/book/${b.bookQid}`;
+    };
+
+    results.appendChild(div);
+  });
+}
+
+</script>
+</html>

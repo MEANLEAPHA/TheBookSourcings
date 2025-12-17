@@ -124,9 +124,31 @@
       <div class="toast-body">
         <textarea id="message-input" class="form-control mb-2" placeholder="Share your thought here" ></textarea>
         <div id="media-preview" class="mb-1"></div>
+        <div id="book-preview"  class="mb-2">
+          <div>
+             <input type="text" id="search-box" placeholder="Search by title or Book Id">
+          </div>
+          <div id="book-search-results">
+              <div id="img-book-wrapper">
+                 <img src="" id="img-book">
+              </div>
+              <div id="book-info-wrapper">
+                 <p id="book-title"></p>
+                 <p id="book-author"></p>
+                 <p id="book-des"></p>
+              </div>
+          </div>
+           
+        </div>
         <div id="uploadWithPost">
           <div id="uploadWithPost-start">Add to your post</div>
           <div id="uploadWithPost-end"> 
+            <label for="feelingGrid" id="feelingLabel" style="cursor:pointer;">
+                  <i class="fa-solid fa-book" style="color:wheat;"></i><div>Book</div> 
+            </label>
+            <label for="feelingGrid" id="feelingLabel" style="cursor:pointer;">
+                  <i class="fa-solid fa-quote-left" style="color:purple"></i><div>Quote</div> 
+            </label>
             <label for="mediaInput" style="cursor: pointer" id="mediaInputLabel">
                   <i class="fa-solid fa-photo-film fa-lg"></i><div>Photo/Video</div> 
             </label>

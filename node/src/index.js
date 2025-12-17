@@ -75,6 +75,11 @@ const quiz = require('./routes/quizRoute');
 // const pushNotification = require('./routes/service/pushRoute');
 
 
+
+
+// filter
+
+const filter = require('./routes/filter/filterBookRoute');
 // Initialize Routes
 TheBookSourcingUser(app);
 bookRoutes(app);
@@ -82,6 +87,9 @@ bookRoutes(app);
 // minday quiz
 app.use('/api/quiz', quiz)
 
+//filter
+
+app.use('/api/book', filter);
 
 app.use('/api/trending', trendingRoutes); // ✅ mount trending API
 app.use('/api/aboutBook', aboutBookInfoRoute);
