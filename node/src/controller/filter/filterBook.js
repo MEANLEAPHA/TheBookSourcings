@@ -1,48 +1,96 @@
 const { fetchJson } = require("../../util/apiClient");
 const db = require("../../config/db");
+// const searchBooks = async (req, res) => {
+//   try {
+//     const { q } = req.query;
+//     if (!q) return res.json([]);
+
+//     const isBookQid = q.includes("_") || q.startsWith("OL") || /^\d+$/.test(q);
+//     let results = [];
+
+//     // 1️⃣ Otthor (priority)
+//     const otthor = await searchOtthor(q, isBookQid);
+//     results.push(...otthor);
+
+//     if (isBookQid && otthor.length) {
+//       return res.json(results.slice(0, 20));
+//     }
+
+//     // Parallel external search
+//     const [google, openlib, gutenberg] = await Promise.all([
+//       searchGoogle(q),
+//       searchOpenLibrary(q),
+//       searchGutenberg(q),
+//     ]);
+
+//     results.push(...google, ...openlib, ...gutenberg);
+
+//     res.json(results.slice(0, 20));
+//   } catch (err) {
+//     console.error("searchBooks error:", err);
+//     res.status(500).json({ error: "Search failed" });
+//   }
+// };
 const searchBooks = async (req, res) => {
   try {
     const { q } = req.query;
     if (!q) return res.json([]);
 
-    const isBookQid = q.includes("_") || q.startsWith("OL") || /^\d+$/.test(q);
+    const source = detectSourceByBookId(q);
     let results = [];
 
-    // 1️⃣ Otthor (priority)
-    const otthor = await searchOtthor(q, isBookQid);
-    results.push(...otthor);
+    // 🔹 EXACT BOOK ID → single source only (FAST)
+    if (source) {
+      if (source === "otthor") {
+        results = await searchOtthorById(q);
+      } else if (source === "openlibrary") {
+        results = await searchOpenLibraryById(q);
+      } else if (source === "gutenberg") {
+        results = await searchGutenbergById(q);
+      } else if (source === "google") {
+        results = await searchGoogleById(q);
+      }
 
-    if (isBookQid && otthor.length) {
-      return res.json(results.slice(0, 20));
+      return res.json(results);
     }
 
-    // Parallel external search
-    const [google, openlib, gutenberg] = await Promise.all([
+    // 🔹 TITLE SEARCH (parallel & fast)
+    const [otthor, google, openlib, gutenberg] = await Promise.all([
+      searchOtthorByTitle(q),
       searchGoogle(q),
       searchOpenLibrary(q),
-      searchGutenberg(q),
+      searchGutenberg(q)
     ]);
 
-    results.push(...google, ...openlib, ...gutenberg);
-
+    results = [...otthor, ...google, ...openlib, ...gutenberg];
     res.json(results.slice(0, 20));
+
   } catch (err) {
     console.error("searchBooks error:", err);
     res.status(500).json({ error: "Search failed" });
   }
 };
-async function searchOtthor(q, isBookQid) {
-  const sql = isBookQid
-    ? `SELECT bookQid, title, author, summary, bookCover 
-       FROM uploadBook WHERE bookQid = ?`
-    : `SELECT bookQid, title, author, summary, bookCover 
-       FROM uploadBook WHERE title LIKE ? LIMIT 5`;
-
+async function searchOtthorById(bookQid) {
   const [rows] = await db.query(
-    sql,
-    isBookQid ? [q] : [`%${q}%`]
+    `SELECT bookQid, title, author, summary, bookCover
+     FROM uploadBook WHERE bookQid = ? LIMIT 1`,
+    [bookQid]
   );
 
+  return mapOtthor(rows);
+}
+
+async function searchOtthorByTitle(q) {
+  const [rows] = await db.query(
+    `SELECT bookQid, title, author, summary, bookCover
+     FROM uploadBook WHERE title LIKE ? LIMIT 5`,
+    [`%${q}%`]
+  );
+
+  return mapOtthor(rows);
+}
+
+function mapOtthor(rows) {
   return rows.map(b => ({
     bookQid: b.bookQid,
     title: b.title,
@@ -52,6 +100,73 @@ async function searchOtthor(q, isBookQid) {
     source: "otthor"
   }));
 }
+
+// async function searchOtthor(q, isBookQid) {
+//   const sql = isBookQid
+//     ? `SELECT bookQid, title, author, summary, bookCover 
+//        FROM uploadBook WHERE bookQid = ?`
+//     : `SELECT bookQid, title, author, summary, bookCover 
+//        FROM uploadBook WHERE title LIKE ? LIMIT 5`;
+
+//   const [rows] = await db.query(
+//     sql,
+//     isBookQid ? [q] : [`%${q}%`]
+//   );
+
+//   return rows.map(b => ({
+//     bookQid: b.bookQid,
+//     title: b.title,
+//     authors: b.author ? b.author.split(",").map(a => a.trim()) : [],
+//     description: b.summary || null,
+//     cover: b.bookCover || null,
+//     source: "otthor"
+//   }));
+// }
+async function searchGoogleById(id) {
+  const data = await fetchJson(
+    `https://www.googleapis.com/books/v1/volumes/${id}`
+  );
+
+  return [{
+    bookQid: data.id,
+    title: data.volumeInfo.title,
+    authors: data.volumeInfo.authors || [],
+    description: null,
+    cover: data.volumeInfo.imageLinks?.thumbnail || null,
+    source: "google"
+  }];
+}
+
+async function searchOpenLibraryById(id) {
+  const data = await fetchJson(
+    `https://openlibrary.org/works/${id}.json`
+  );
+
+  return [{
+    bookQid: id,
+    title: data.title,
+    authors: [],
+    description: null,
+    cover: data.covers?.[0]
+      ? `https://covers.openlibrary.org/b/id/${data.covers[0]}-M.jpg`
+      : null,
+    source: "openlibrary"
+  }];
+}
+
+async function searchGutenbergById(id) {
+  const data = await fetchJson(`https://gutendex.com/books/${id}`);
+
+  return [{
+    bookQid: data.id,
+    title: data.title,
+    authors: data.authors.map(a => a.name),
+    description: null,
+    cover: data.formats?.["image/jpeg"] || null,
+    source: "gutenberg"
+  }];
+}
+
 async function searchGoogle(q) {
   const url = `https://www.googleapis.com/books/v1/volumes?q=intitle:${encodeURIComponent(q)}&maxResults=5`;
      const data = await fetchJson(url);
