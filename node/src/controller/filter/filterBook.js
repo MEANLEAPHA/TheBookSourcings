@@ -31,6 +31,14 @@ const db = require("../../config/db");
 //     res.status(500).json({ error: "Search failed" });
 //   }
 // };
+function detectSourceByBookId(bookId) {
+  if (/^TB\d+S$/.test(bookId)) return "otthor";
+  if (/^OL\d+(W|M|A)$/.test(bookId)) return "openlibrary";
+  if (/^\d+$/.test(bookId)) return "gutenberg";
+  if (/^[a-zA-Z0-9_-]{10,}$/.test(bookId)) return "google"; // Google IDs
+  return null;
+}
+
 const searchBooks = async (req, res) => {
   try {
     const { q } = req.query;
