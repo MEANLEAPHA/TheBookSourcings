@@ -60,12 +60,51 @@
   0% { background-position: -200px; }
   100% { background-position: 200px; }
 }
+#book-search-results {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+  padding: 12px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+}
+
+#img-book {
+  width: 140px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+#book-title {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+#book-author {
+  color: #555;
+}
+
+#book-des {
+  color: #666;
+  margin-top: 8px;
+}
 
     </style>
 </head>
 <body>
     <input id="bookSearch" placeholder="Search title or paste bookQid…" />
     <div id="results" class="results"></div>
+    <div id="book-search-results">
+              <div id="img-book-wrapper">
+                 <img src="" id="img-book">
+              </div>
+              <div id="book-info-wrapper">
+                 <p id="book-title"></p>
+                 <p id="book-author"></p>
+                 <p id="book-des"></p>
+              </div>
+          </div>
 </body>
 <script>
     const API = "https://thebooksourcings.onrender.com/api/books/search";
@@ -107,9 +146,9 @@ function renderBooks(books) {
     `;
 
     div.onclick = () => {
-      // Redirect to detail page
-      window.location.href = `/book/${b.bookQid}`;
-    };
+  fillBookPreview(b);
+};
+
 
     results.appendChild(div);
   });
@@ -139,6 +178,26 @@ async function fetchBooks(q) {
 
   cache.set(q, data);
   renderBooks(data);
+}
+function fillBookPreview(book) {
+  const img = document.getElementById("img-book");
+  const title = document.getElementById("book-title");
+  const author = document.getElementById("book-author");
+  const des = document.getElementById("book-des");
+
+  img.src = book.cover || "/img/noCoverFound.png";
+  img.alt = book.title || "Book cover";
+
+  title.textContent = book.title || "Untitled";
+
+  author.textContent = book.authors?.length
+    ? book.authors.join(", ")
+    : "Unknown author";
+
+  des.textContent = book.description
+    ? book.description.slice(0, 300) + (book.description.length > 300 ? "…" : "")
+    : "No description available.";
+    results.innerHTML = "";
 }
 
 </script>
