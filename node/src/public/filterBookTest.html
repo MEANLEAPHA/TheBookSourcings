@@ -94,6 +94,7 @@
 </head>
 <body>
     <input id="bookSearch" placeholder="Search title or paste bookQid…" />
+    <button id="pasteBtn" type="button">📋 Paste</button>
     <div id="results" class="results"></div>
     <div id="book-search-results">
               <div id="img-book-wrapper">
@@ -107,11 +108,27 @@
           </div>
 </body>
 <script>
+
+  const pasteBtn = document.getElementById("pasteBtn");
+
+pasteBtn.addEventListener("click", async () => {
+  try {
+    const text = await navigator.clipboard.readText();
+    if (!text) return;
+
+    input.value = text.trim();
+    input.dispatchEvent(new Event("input")); // 🔥 trigger search
+  } catch (err) {
+    alert("Clipboard access denied");
+  }
+});
+
     const API = "https://thebooksourcings.onrender.com/api/books/search";
 const input = document.getElementById("bookSearch");
 const results = document.getElementById("results");
 
 let timer;
+let selectedBook = null;
 
 input.addEventListener("input", () => {
   clearTimeout(timer);
@@ -138,21 +155,18 @@ function renderBooks(books) {
     div.className = "book-card";
     div.innerHTML = `
       <img src="${b.cover || "/img/noCoverFound.png"}" />
-      <div>
+      <div class="book-meta">
         <h4>${b.title}</h4>
         <p>${b.authors.join(", ")}</p>
-        <small>${b.source}</small>
+        <small class="source">${b.source}</small>
       </div>
     `;
 
-    div.onclick = () => {
-  fillBookPreview(b);
-};
-
-
+    div.onclick = () => selectBook(b);
     results.appendChild(div);
   });
 }
+
 function showSkeleton() {
   results.innerHTML = Array.from({ length: 5 })
     .map(() => `
@@ -198,6 +212,20 @@ function fillBookPreview(book) {
     ? book.description.slice(0, 300) + (book.description.length > 300 ? "…" : "")
     : "No description available.";
     results.innerHTML = "";
+}
+function selectBook(book) {
+  selectedBook = book; // ✅ store for DB
+
+  // 🔥 Update input value (for saving)
+  input.value = book.bookQid; 
+  // OR use title if you prefer:
+  // input.value = book.title;
+
+  // Fill preview panel
+  fillBookPreview(book);
+
+  // Hide results ONLY after selection
+  results.innerHTML = "";
 }
 
 </script>
