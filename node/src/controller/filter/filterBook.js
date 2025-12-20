@@ -162,16 +162,30 @@ async function searchOpenLibraryById(id) {
   }];
 }
 
-async function searchGutenbergById(id) {
-  const data = await fetchJson(`https://gutendex.com/books/${id}`);
+async function searchOpenLibraryById(id) {
+  const data = await fetchJson(
+    `https://openlibrary.org/works/${id}.json`
+  );
 
   return [{
-    bookQid: data.id,
+    bookQid: id,
     title: data.title,
-    authors: data.authors.map(a => a.name),
-    description:  data.summaries?.[0] || null,
-    cover: data.formats?.["image/jpeg"] || null,
-    source: "gutenberg"
+    authors: data.authors
+      ? await Promise.all(
+          data.authors.map(async a => {
+            const author = await fetchJson(`https://openlibrary.org${a.author.key}.json`);
+            return author.name;
+          })
+        )
+      : [],
+    description:
+      typeof data.description === "string"
+        ? data.description
+        : data.description?.value || null,
+    cover: data.covers?.[0]
+      ? `https://covers.openlibrary.org/b/id/${data.covers[0]}-M.jpg`
+      : null,
+    source: "openlibrary"
   }];
 }
 
@@ -194,19 +208,20 @@ async function searchGoogle(q) {
 
 async function searchOpenLibrary(q) {
   const url = `https://openlibrary.org/search.json?title=${encodeURIComponent(q)}&limit=5`;
-     const data = await fetchJson(url);
+  const data = await fetchJson(url);
 
   return data.docs.map(b => ({
     bookQid: b.key.replace("/works/", ""),
     title: b.title,
     authors: b.author_name || [],
-    description: data.description || data.description?.value || null,
+    description: null, // ❗ intentionally null
     cover: b.cover_i
       ? `https://covers.openlibrary.org/b/id/${b.cover_i}-M.jpg`
       : null,
     source: "openlibrary"
   }));
 }
+
 
 async function searchGutenberg(q) {
   const url = `https://gutendex.com/books/?search=${encodeURIComponent(q)}`;
