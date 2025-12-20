@@ -145,22 +145,25 @@ async function searchGoogleById(id) {
   }];
 }
 
-async function searchOpenLibraryById(id) {
-  const data = await fetchJson(
-    `https://openlibrary.org/works/${id}.json`
-  );
+// async function searchOpenLibraryById(id) {
+//   const data = await fetchJson(
+//     `https://openlibrary.org/works/${id}.json`
+//   );
 
-  return [{
-    bookQid: id,
-    title: data.title,
-    authors: [],
-    description: data.description || data.description?.value || null,
-    cover: data.covers?.[0]
-      ? `https://covers.openlibrary.org/b/id/${data.covers[0]}-M.jpg`
-      : null,
-    source: "openlibrary"
-  }];
-}
+//   return [{
+//     bookQid: id,
+//     title: data.title,
+//     authors: [],
+//      description:
+//       typeof data.description === "string"
+//         ? data.description
+//         : data.description?.value || null,
+//     cover: data.covers?.[0]
+//       ? `https://covers.openlibrary.org/b/id/${data.covers[0]}-M.jpg`
+//       : null,
+//     source: "openlibrary"
+//   }];
+// }
 
 async function searchOpenLibraryById(id) {
   const data = await fetchJson(
@@ -214,7 +217,10 @@ async function searchOpenLibrary(q) {
     bookQid: b.key.replace("/works/", ""),
     title: b.title,
     authors: b.author_name || [],
-    description: null, // ❗ intentionally null
+     description:
+      typeof data.description === "string"
+        ? data.description
+        : data.description?.value || null, // ❗ intentionally null
     cover: b.cover_i
       ? `https://covers.openlibrary.org/b/id/${b.cover_i}-M.jpg`
       : null,
