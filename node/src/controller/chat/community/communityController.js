@@ -241,7 +241,7 @@ if (req.files?.quote_bg_url?.length > 0) {
     quote_by || null,
     quote_font_family || null,
     quote_font_color || null,
-    quote_bg_url || null
+    quoteBgUrl || null
   ]
 );
 
