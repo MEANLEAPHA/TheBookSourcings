@@ -213,19 +213,39 @@ async function searchOpenLibrary(q) {
   const url = `https://openlibrary.org/search.json?title=${encodeURIComponent(q)}&limit=5`;
   const data = await fetchJson(url);
 
-  return data.docs.map(b => ({
-    bookQid: b.key.replace("/works/", ""),
-    title: b.title,
-    authors: b.author_name || [],
-     description:
-      typeof data.description === "string"
-        ? data.description
-        : data.description?.value || null, // ❗ intentionally null
-    cover: b.cover_i
-      ? `https://covers.openlibrary.org/b/id/${b.cover_i}-M.jpg`
-      : null,
-    source: "openlibrary"
-  }));
+  if (!data.docs) return [];
+
+  return await Promise.all(
+    data.docs.map(async (b) => {
+      const workId = b.key.replace("/works/", "");
+
+      let description = null;
+
+      try {
+        const work = await fetchJson(
+          `https://openlibrary.org/works/${workId}.json`
+        );
+
+        description =
+          typeof work.description === "string"
+            ? work.description
+            : work.description?.value || null;
+      } catch (err) {
+        // Fail silently (do NOT block search)
+      }
+
+      return {
+        bookQid: workId,
+        title: b.title,
+        authors: b.author_name || [],
+        description,
+        cover: b.cover_i
+          ? `https://covers.openlibrary.org/b/id/${b.cover_i}-M.jpg`
+          : null,
+        source: "openlibrary",
+      };
+    })
+  );
 }
 
 
