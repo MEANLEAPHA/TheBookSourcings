@@ -154,7 +154,7 @@ async function searchOpenLibraryById(id) {
     bookQid: id,
     title: data.title,
     authors: [],
-    description: workData.description ||null,
+    description: data.description || data.description?.value || null,
     cover: data.covers?.[0]
       ? `https://covers.openlibrary.org/b/id/${data.covers[0]}-M.jpg`
       : null,
@@ -200,7 +200,7 @@ async function searchOpenLibrary(q) {
     bookQid: b.key.replace("/works/", ""),
     title: b.title,
     authors: b.author_name || [],
-    description: workData.description ||null,
+    description: data.description || data.description?.value || null,
     cover: b.cover_i
       ? `https://covers.openlibrary.org/b/id/${b.cover_i}-M.jpg`
       : null,
