@@ -139,7 +139,7 @@ async function searchGoogleById(id) {
     bookQid: data.id,
     title: data.volumeInfo.title,
     authors: data.volumeInfo.authors || [],
-    description: null,
+    description: data.volumeInfo.description || null,
     cover: data.volumeInfo.imageLinks?.thumbnail || null,
     source: "google"
   }];
@@ -154,7 +154,7 @@ async function searchOpenLibraryById(id) {
     bookQid: id,
     title: data.title,
     authors: [],
-    description: null,
+    description: workData.description ||null,
     cover: data.covers?.[0]
       ? `https://covers.openlibrary.org/b/id/${data.covers[0]}-M.jpg`
       : null,
@@ -169,7 +169,7 @@ async function searchGutenbergById(id) {
     bookQid: data.id,
     title: data.title,
     authors: data.authors.map(a => a.name),
-    description: null,
+    description:  data.summaries?.[0] || null,
     cover: data.formats?.["image/jpeg"] || null,
     source: "gutenberg"
   }];
@@ -200,7 +200,7 @@ async function searchOpenLibrary(q) {
     bookQid: b.key.replace("/works/", ""),
     title: b.title,
     authors: b.author_name || [],
-    description: null,
+    description: workData.description ||null,
     cover: b.cover_i
       ? `https://covers.openlibrary.org/b/id/${b.cover_i}-M.jpg`
       : null,
