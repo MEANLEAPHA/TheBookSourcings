@@ -303,6 +303,171 @@ mediaInput.addEventListener("change", () => {
   });
 });
 
+// bookQid
+  const pasteBtn = document.getElementById("pasteBtn");
+const hiddenBookQid = document.getElementById("selectedBookQid");
+pasteBtn.addEventListener("click", async () => {
+  try {
+    const text = await navigator.clipboard.readText();
+    if (!text) return;
+
+    input.value = text.trim();
+     // ❗ Reset previous selection
+    hiddenBookQid.value = "";
+    selectedBook = null;
+
+    input.dispatchEvent(new Event("input")); // 🔥 trigger search
+  } catch (err) {
+    alert("Clipboard access denied");
+  }
+});
+
+    const API = "https://thebooksourcings.onrender.com/api/books/search";
+const input = document.getElementById("bookSearch");
+const results = document.getElementById("results");
+
+let timer;
+let selectedBook = null;
+
+input.addEventListener("input", () => {
+  clearTimeout(timer);
+  const q = input.value.trim();
+  if (!q) {
+    results.innerHTML = "";
+    return;
+  }
+
+  timer = setTimeout(() => fetchBooks(q), 300);
+});
+
+async function fetchBooks(q) {
+  const res = await fetch(`${API}?q=${encodeURIComponent(q)}`);
+  const data = await res.json();
+  renderBooks(data);
+}
+
+function renderBooks(books) {
+  results.innerHTML = "";
+
+  books.forEach(b => {
+    const div = document.createElement("div");
+    div.className = "book-card";
+    div.innerHTML = `
+      <img src="${b.cover || "/img/noCoverFound.png"}" />
+      <div class="book-meta">
+        <h4>${b.title}</h4>
+        <p>${b.authors.join(", ")}</p>
+        <small class="source">${b.source}</small>
+      </div>
+    `;
+
+    div.onclick = () => selectBook(b);
+    results.appendChild(div);
+  });
+}
+
+function showSkeleton() {
+  results.innerHTML = Array.from({ length: 5 })
+    .map(() => `
+      <div class="book-card">
+        <div class="skeleton-img"></div>
+        <div class="skeleton-text"></div>
+      </div>
+    `)
+    .join("");
+}
+const cache = new Map();
+
+async function fetchBooks(q) {
+  if (cache.has(q)) {
+    renderBooks(cache.get(q));
+    return;
+  }
+
+  showSkeleton();
+
+  const res = await fetch(`${API}?q=${encodeURIComponent(q)}`);
+  const data = await res.json();
+
+  cache.set(q, data);
+  renderBooks(data);
+}
+function fillBookPreview(book) {
+  const img = document.getElementById("img-book");
+  const title = document.getElementById("book-title");
+  const author = document.getElementById("book-author");
+  const des = document.getElementById("book-des");
+
+  img.src = book.cover || "/img/noCoverFound.png";
+  img.alt = book.title || "Book cover";
+
+  title.textContent = book.title || "Untitled";
+
+  author.textContent = book.authors?.length
+    ? book.authors.join(", ")
+    : "Unknown author";
+
+  des.textContent = book.description
+    ? book.description.slice(0, 300) + (book.description.length > 300 ? "…" : "")
+    : "No description available.";
+    results.innerHTML = "";
+} 
+function selectBook(book) {
+  selectedBook = book; // ✅ store for DB
+  hiddenBookQid.value = book.bookQid;
+
+  // 🔥 Update input value (for saving)
+  input.value = book.bookQid; 
+  
+
+  // Fill preview panel
+  fillBookPreview(book);
+
+  // Hide results ONLY after selection
+  results.innerHTML = "";
+}
+
+
+// quote
+
+const quoteCard = document.getElementById("quoteCard");
+const quoteInput = document.getElementById("quoteInput");
+const authorInput = document.getElementById("authorInput");
+const colorPicker = document.getElementById("colorPicker");
+const fontSelect = document.getElementById("fontSelect");
+const bgInput = document.getElementById("bgInput");
+
+let quoteBgFile = null;
+
+bgInput.addEventListener("change", e => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  quoteBgFile = file;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    quoteCard.style.backgroundImage = `url(${reader.result})`;
+  };
+  reader.readAsDataURL(file);
+});
+
+
+/* Font color */
+colorPicker.addEventListener("input", e => {
+  quoteCard.style.color = e.target.value;
+});
+
+/* Font family */
+fontSelect.addEventListener("change", e => {
+  const font = e.target.value;
+
+  quoteCard.style.fontFamily = font;
+  quoteInput.style.fontFamily = font;
+  authorInput.style.fontFamily = font;
+});
+
+
 // Send message (text + optional multiple media)
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -311,13 +476,39 @@ form.addEventListener("submit", async (e) => {
   const feeling = feelingInput.value; // hidden input
   const files = mediaInput.files; // multiple files
 
-  if (!text && files.length === 0 && !feeling && !repost_id) return; // must have text, media, or feeling
+  const quoteText = quoteInput.value.trim();
+  const quoteBy = authorInput.value.trim();
+  const quoteFont = fontSelect.value;
+  const quoteColor = colorPicker.value;
+
+  // ❗ require something
+  if (
+    !text &&
+    files.length === 0 &&
+    !feeling &&
+    !repost_id &&
+    !quoteText
+  ) return;
 
   try {
     const formData = new FormData();
     formData.append("message", text);
     formData.append("feeling", feeling);
     formData.append("repost_id", repost_id);
+     if (hiddenBookQid.value) {
+    formData.append("bookQid", hiddenBookQid.value);
+    }
+     // ⭐ QUOTE DATA
+    if (quoteText) {
+      formData.append("quote_text", quoteText);
+      formData.append("quote_by", quoteBy || null);
+      formData.append("quote_font_family", quoteFont);
+      formData.append("quote_font_color", quoteColor);
+    }
+
+    if (quoteBgFile) {
+      formData.append("quote_bg_url", quoteBgFile);
+    }
     // Append all selected files
     Array.from(files).forEach(file => {
       formData.append("media", file); // "media" field matches backend
@@ -347,7 +538,15 @@ form.addEventListener("submit", async (e) => {
     displayMessage(savedMsg);
     socket.emit("send-message", savedMsg);
 
+
     // Reset form
+
+    // 🔄 reset quote UI
+    quoteInput.value = "";
+    authorInput.value = "";
+    quoteBgFile = null;
+    quoteCard.style.backgroundImage = "";
+
     messageInput.value = "";
     mediaInput.value = "";
     mediaPreview.innerHTML = "";

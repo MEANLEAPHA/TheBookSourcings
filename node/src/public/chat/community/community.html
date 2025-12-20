@@ -125,10 +125,11 @@
         <textarea id="message-input" class="form-control mb-2" placeholder="Share your thought here" ></textarea>
         <div id="media-preview" class="mb-1"></div>
         <div id="book-preview"  class="mb-2">
-          <div>
-             <input type="text" id="search-box" placeholder="Search by title or Book Id">
-          </div>
-          <div id="book-search-results">
+          <input id="bookSearch" placeholder="Search title or paste bookQid…" />
+          <input type="hidden" id="selectedBookQid" name="bookQid" />
+    <button id="pasteBtn" type="button">📋 Paste</button>
+    <div id="results" class="results"></div>
+    <div id="book-search-results">
               <div id="img-book-wrapper">
                  <img src="" id="img-book">
               </div>
@@ -140,6 +141,57 @@
           </div>
            
         </div>
+        <div class="quote-wrapper">
+  <div class="quote-card" id="quoteCard">
+  <!-- Controls -->
+   <div class="controls">
+  <label class="control-btn color-btn">
+    <input type="color" id="colorPicker" />
+    <i class="fa-solid fa-palette"></i>
+  </label>
+
+  <div class="control-btn select-btn">
+    <i class="fa-solid fa-font"></i>
+    <select id="fontSelect">
+      <option value="'Poppins', sans-serif">Poppins</option>
+      <option value="Georgia, serif">Georgia</option>
+      <option value="'Times New Roman', serif">Times</option>
+      <option value="Arial, sans-serif">Arial</option>
+      <option value="'Courier New', monospace">Courier</option>
+    </select>
+  </div>
+
+  <label class="control-btn upload-btn">
+    <i class="fa-solid fa-image"></i>
+    <input type="file" id="bgInput" accept="image/*" hidden />
+  </label>
+</div>
+
+ 
+
+    <!-- Quote container -->
+   <div class="quote-box">
+  <span class="quote-mark left"><i class="fa-solid fa-quote-left"></i></span>
+  <br>
+  <textarea
+    id="quoteInput"
+    placeholder="..................................................."
+    class="quote-text"
+  ></textarea>
+  
+</div>
+
+ <div id="author-box">
+ 
+    <input
+      type="text"
+      id="authorInput"
+      placeholder=" By ............."
+      class="quote-author"
+    />
+ </div>
+  </div>
+</div>
         <div id="uploadWithPost">
           <div id="uploadWithPost-start">Add to your post</div>
           <div id="uploadWithPost-end"> 

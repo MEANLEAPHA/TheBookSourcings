@@ -920,12 +920,12 @@ padding-left: 10px;
 
     /*Upload Post toast */
     #PostToastWrapper {
-      position: fixed;
+      /* position: fixed;
       top: 55%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      left: 50%; */
+      /* transform: translate(-50%, -50%); */
       z-index: 1080;
-      width: 50%;
+      width: 100%;
       height: auto;
       border-radius: 10px;
       
@@ -2327,6 +2327,312 @@ body.toast-open #imgToast {
      .dropdown-item{
         color: var(--font-color);
      }
+
+
+
+/* book  */
+
+.results {
+  max-width: 900px;
+}
+
+.book-card {
+  display: flex;
+  gap: 12px;
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.book-card:hover {
+  background: #f7f7f7;
+}
+
+.book-card img {
+  width: 80px;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.book-meta h4 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.book-meta p {
+  margin: 4px 0;
+  color: #666;
+}
+
+.source {
+  font-size: 12px;
+  color: #999;
+}
+.skeleton-img {
+  width: 80px;
+  height: 110px;
+  background: #ddd;
+  border-radius: 6px;
+}
+
+.skeleton-text {
+  flex: 1;
+  height: 60px;
+  background: linear-gradient(90deg, #ddd, #eee, #ddd);
+  animation: shimmer 1.2s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200px; }
+  100% { background-position: 200px; }
+}
+#book-search-results {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+  padding: 12px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+}
+
+#img-book {
+  width: 140px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+#book-title {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+#book-author {
+  color: #555;
+}
+
+#book-des {
+  color: #666;
+  margin-top: 8px;
+}
+
+
+
+
+
+
+     /* quote */
+     .quote-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.quote-card {
+  position: relative;
+  width: 440px;
+  height: 280px;
+  border-radius: 18px;
+  background:rgba(67, 67, 67, 0.597);
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,.15);
+  padding: 24px;
+  color: #fff;
+}
+
+/* Quote box */
+.quote-box {
+  background-color: transparent;
+  display: flex;
+  position: relative;
+  flex-direction: column;
+   justify-content: center;
+}
+
+/* Quote marks */
+.quote-mark i{
+  font-size: 35px;
+  font-weight: 700;
+  opacity: .8;
+  margin-left: 10px;
+  line-height: 1;
+}
+
+
+
+/* Author */
+.quote-author {
+ 
+ background-color: transparent;
+  border: none;
+  outline: none;
+  text-align: end;
+  font-size: 14px;
+  color: inherit;
+}
+
+.quote-author::placeholder {
+  color: rgba(255,255,255,.7);
+}
+
+
+/* Quote marks fixed */
+.quote-mark {
+  position: absolute;
+  font-size: 64px;
+  font-weight: 700;
+  opacity: .8;
+  pointer-events: none;
+}
+
+.quote-mark.left {
+  top: -20px;
+  left: -10px;
+}
+
+
+
+/* Textarea */
+.quote-text {
+width: 88%;
+  min-height: 80px;
+
+  border: none;
+  outline: none;
+  resize: none;
+  background-color: transparent;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 500;
+  margin:20px auto;
+  /* 🔥 FIX: force inheritance */
+  font-family: inherit;
+  color: inherit;
+  line-height: 1.4;
+}
+
+/* Controls */
+.controls {
+  position: relative;
+  width: 100%;
+  align-items: center;
+  display: flex;
+  justify-content: end;
+  gap: 5px;
+  margin-bottom: 40px;
+}
+
+.controls select,
+.controls input[type="color"] {
+  border: none;
+  padding: 4px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#author-box{
+    width: 87%;
+
+    display: flex;
+    padding-right: 50px;
+    justify-content: end;
+}
+#by-sign{
+    font-size: x-large;
+}
+#by-sign i{
+      font-size: 25px;
+  font-weight: 700;
+  opacity: .8;
+  margin-left: 10px;
+  line-height: 1;
+}
+.fa-image{
+    font-size: 28px;
+
+}
+.controls {
+
+
+  display: flex;
+  gap: 14px;
+
+  border-radius: 999px;
+
+  /* background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  box-shadow: 0 10px 30px rgba(0,0,0,.15); */
+}
+
+/* Shared button style */
+.control-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(255,255,255,.25);
+  backdrop-filter: blur(10px);
+ box-shadow: 0 10px 30px rgba(0,0,0,.15);
+  cursor: pointer;
+  position: relative;
+
+  transition: all .25s ease;
+}
+
+/* Hover / active */
+.control-btn:hover {
+  transform: scale(1.1);
+  background: rgba(255,255,255,.35);
+}
+
+.control-btn:active {
+  transform: scale(.95);
+}
+
+/* Icons */
+.control-btn i {
+  font-size: 18px;
+  color: #fff;
+  pointer-events: none;
+}
+
+/* Hide native inputs */
+.control-btn input[type="color"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Font select */
+.select-btn select {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Mobile safe */
+@media (max-width: 480px) {
+  .controls {
+    gap: 10px;
+    padding: 10px 14px;
+  }
+
+  .control-btn {
+    width: 44px;
+    height: 44px;
+  }
+}
+
 @media screen and (max-width:1024px){
     #PostToastWrapper{
         width: 70%;

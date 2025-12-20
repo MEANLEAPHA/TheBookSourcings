@@ -176,10 +176,18 @@ const sendMessage = async (req, res) => {
   try {
     const memberQid = req.user.memberQid;
     const username = req.user.username;
-    const { message, feeling, repost_id } = req.body;
+    const { message, feeling, repost_id, bookQid, quote_text, quote_by, quote_font_family, quote_font_color } = req.body;
 
     let mediaUrls = [];
     let mediaTypes = [];
+    let quoteBgUrl = null;
+
+if (req.files?.quote_bg_url?.length > 0) {
+  const bgFile = req.files.quote_bg_url[0];
+  quoteBgUrl = await uploadToS3(bgFile, "community/");
+}
+
+
 
     // Support multiple file uploads (req.files instead of req.file)
     if (req.files && req.files.length > 0) {
@@ -205,18 +213,55 @@ const sendMessage = async (req, res) => {
     const cleanRepostId =
   repost_id && repost_id !== "null" && repost_id !== "" ? repost_id : null;
 
-const [result] = await db.query(
-  `INSERT INTO community (memberQid, message_text, feeling, repost_id, media_type, media_url)
-   VALUES (?, ?, ?, ?, ?, ?)`,
+  const [result] = await db.query(
+  `INSERT INTO community (
+    memberQid,
+    message_text,
+    feeling,
+    repost_id,
+    media_type,
+    media_url,
+    repost_bookQid,
+    quote_text,
+    quote_by,
+    quote_font_family,
+    quote_font_color,
+    quote_bg_url
+  )
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   [
     memberQid,
     message || null,
     feeling || null,
     cleanRepostId,
     JSON.stringify(mediaTypes),
-    JSON.stringify(mediaUrls)
+    JSON.stringify(mediaUrls),
+    bookQid || null,
+    quote_text || null,
+    quote_by || null,
+    quote_font_family || null,
+    quote_font_color || null,
+    quote_bg_url || null
   ]
 );
+
+// const [result] = await db.query(
+//   `INSERT INTO community (memberQid, message_text, feeling, repost_id, media_type, media_url, bookQid, quote_text, quote_by, quote_font_family, quote_font_color)
+//    VALUES (?, ?, ?, ?, ?, ?)`,
+//   [
+//     memberQid,
+//     message || null,
+//     feeling || null,
+//     cleanRepostId,
+//     JSON.stringify(mediaTypes),
+//     JSON.stringify(mediaUrls),
+//     bookQid || null,
+//     quote_text || null,
+//     quote_by || null,
+//     quote_font_family || null,
+//     quote_font_color || null
+//   ]
+// );
 
 
      
@@ -261,7 +306,12 @@ const [result] = await db.query(
       media_url: mediaUrls,
       createFormNow: "just now",
       like_count: 0,
-      repostData 
+      repostData,
+      quote_text,
+      quote_by,
+      quote_font_family,
+      quote_font_color,
+      // bookQid will need to fetch from the database work here soon
     };
 
     res.json(msgObj);

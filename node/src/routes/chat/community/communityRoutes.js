@@ -20,7 +20,11 @@ router.get("/display/:memberQid", getAllMessagesByMemberQid);
 router.post(
   "/send", 
   verifyHttpToken, 
-  upload.array("media", 5), // max 5 files
+  upload.fields([
+    { name: "media", maxCount: 5 },
+    { name: "quote_bg_url", maxCount: 1 }
+  ]),
+  // upload.array("media", 5), 
   sendMessage
 );
 
