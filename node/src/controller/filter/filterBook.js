@@ -247,7 +247,18 @@ async function searchOpenLibrary(q) {
     })
   );
 }
+async function searchGutenbergById(id) {
+  const data = await fetchJson(`https://gutendex.com/books/${id}`);
 
+  return [{
+    bookQid: data.id,
+    title: data.title,
+    authors: data.authors.map(a => a.name),
+    description: b.summaries?.[0] || null,
+    cover: data.formats?.["image/jpeg"] || null,
+    source: "gutenberg"
+  }];
+}
 
 async function searchGutenberg(q) {
   const url = `https://gutendex.com/books/?search=${encodeURIComponent(q)}`;
