@@ -392,7 +392,7 @@ async function fetchBooks(q) {
   cache.set(q, data);
   renderBooks(data);
 }
-const bookResult = getElementById("book-search-results");
+const bookResult = document.getElementById("book-search-results");
 function fillBookPreview(book) {
   const imgBookWrapper = document.createElement('div');
   imgBookWrapper.id ='img-book-wrapper';
@@ -401,9 +401,6 @@ function fillBookPreview(book) {
   img.id='img-book';
   img.src = book.cover || "/img/noCoverFound.png";
   img.alt = book.title || "Book cover";
-
-  
-
   const imgInfoWrapper = document.createElement('div');
   imgInfoWrapper.id ='book-info-wrapper';
 
@@ -564,7 +561,6 @@ form.addEventListener("submit", async (e) => {
     authorInput.value = "";
     quoteBgFile = null;
     quoteCard.style.backgroundImage = "";
-
 
     bookResult.innerHTML = "";
 
