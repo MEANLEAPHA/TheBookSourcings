@@ -392,24 +392,42 @@ async function fetchBooks(q) {
   cache.set(q, data);
   renderBooks(data);
 }
+const bookResult = getElementById("book-search-results");
 function fillBookPreview(book) {
-  const img = document.getElementById("img-book");
-  const title = document.getElementById("book-title");
-  const author = document.getElementById("book-author");
-  const des = document.getElementById("book-des");
+  const imgBookWrapper = document.createElement('div');
+  imgBookWrapper.id ='img-book-wrapper';
 
+  const img = document.createElement('img');
+  img.id='img-book';
   img.src = book.cover || "/img/noCoverFound.png";
   img.alt = book.title || "Book cover";
 
+  
+
+  const imgInfoWrapper = document.createElement('div');
+  imgInfoWrapper.id ='book-info-wrapper';
+
+  const title = document.createElement('p');
+  title.id = "book-title";
   title.textContent = book.title || "Untitled";
 
-  author.textContent = book.authors?.length
+  const author = document.createElement('p');
+  author.id = "book-author";
+    author.textContent = book.authors?.length
     ? book.authors.join(", ")
     : "Unknown author";
 
+  const des = document.createElement('p');
+  des.id = "book-des";
   des.textContent = book.description
     ? book.description.slice(0, 300) + (book.description.length > 300 ? "…" : "")
     : "No description available.";
+imgBookWrapper.appendChild(img);
+imgInfoWrapper.appendChild(title);
+imgInfoWrapper.appendChild(author);
+imgInfoWrapper.appendChild(des);
+bookResult.appendChild(imgBookWrapper);
+bookResult.appendChild(imgInfoWrapper);
     results.innerHTML = "";
 } 
 function selectBook(book) {
@@ -546,6 +564,9 @@ form.addEventListener("submit", async (e) => {
     authorInput.value = "";
     quoteBgFile = null;
     quoteCard.style.backgroundImage = "";
+
+
+    bookResult.innerHTML = "";
 
     messageInput.value = "";
     mediaInput.value = "";
