@@ -563,6 +563,8 @@ form.addEventListener("submit", async (e) => {
     quoteCard.style.backgroundImage = "";
 
     bookResult.innerHTML = "";
+    input.value = "";
+    selectBook(null);
 
     messageInput.value = "";
     mediaInput.value = "";
