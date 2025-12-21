@@ -771,6 +771,30 @@ function observeVideo(video) {
   observer.observe(video);
 }
 
+if(msg.quote_text){
+  const quoteWrapper = document.createElement("div");
+  quoteWrapper.className = "quote-wrapper";
+  quoteWrapper.style.backgroundImage = `url(${msg.quote_bg_url})`;
+  quoteWrapper.style.backgroundSize = "cover";
+  
+
+  const quoteText = document.createElement("p");
+  quoteText.className = "quote-text";
+  quoteText.textContent = msg.quote_text;
+  quoteText.style.fontFamily = msg.quote_font_family;
+  quoteText.style.color = msg.quote_font_color;
+
+  const quoteBy = document.createElement("p");
+  quoteBy.className = "quote-by";
+  quoteBy.textContent = msg.quote_by;
+  quoteBy.style.fontFamily = msg.quote_font_family;
+  quoteBy.style.color = msg.quote_font_color;
+
+  quoteWrapper.appendChild(quoteText);
+  quoteWrapper.appendChild(quoteBy);
+  body.appendChild(quoteWrapper);
+
+}
 
 // ================== MAIN MEDIA DISPLAY ==================
 if (msg.media_url && msg.media_url.length > 0) {
