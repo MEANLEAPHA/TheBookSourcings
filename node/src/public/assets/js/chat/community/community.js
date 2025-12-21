@@ -231,6 +231,26 @@ const mediaPreview = document.getElementById("media-preview");
 
 let selectedFile = null;
 
+
+const bookLabel = document.getElementById("bookLabel");
+const bookPreview = document.getElementById("book-preview");
+const quoteLabel = document.getElementById("quoteLabel");
+const quoteWrapper = document.querySelector(".quote-wrapper");
+
+quoteWrapper.style.display = "none";
+quoteLabel.addEventListener("click", () => {
+  quoteWrapper.style.display = "block";
+  bookPreview.style.display = "none";
+  mediaPreview.innerHTML='';
+});
+
+bookPreview.style.display = "none";
+bookLabel.addEventListener("click", () => {
+  bookPreview.style.display = "block";
+  quoteWrapper.style.display = "none";
+  mediaPreview.innerHTML='';
+});
+
 // limit of 5 multi file upload 
 
 
@@ -301,6 +321,8 @@ mediaInput.addEventListener("change", () => {
       mediaPreview.appendChild(video);
     }
   });
+  bookPreview.style.display = "none";
+  quoteWrapper.style.display = "none";
 });
 
 // bookQid
@@ -565,6 +587,9 @@ form.addEventListener("submit", async (e) => {
     bookResult.innerHTML = "";
     input.value = "";
     selectBook(null);
+
+    quoteWrapper.style.display = "none";
+    bookPreview.style.display = "none";
 
     messageInput.value = "";
     mediaInput.value = "";
@@ -1444,6 +1469,8 @@ document.getElementById("submitReportBtn").onclick = async () => {
   });
 
   document.getElementById("cancelPostBtn").onclick = () => {
+    quoteWrapper.style.display = "none";
+    bookPreview.style.display = "none";
     postToast.hide();
     messageInput.value = "";
     mediaInput.value = "";
@@ -1451,6 +1478,17 @@ document.getElementById("submitReportBtn").onclick = async () => {
     feelingInput.value = "";
     selectedFile = null;
     displayFeeling.textContent = "";
+
+      quoteInput.value = "";
+    authorInput.value = "";
+    quoteBgFile = null;
+    quoteCard.style.backgroundImage = "";
+
+    bookResult.innerHTML = "";
+    input.value = "";
+    selectBook(null);
+  
+    
 
     // Restore media inputs visibility
     mediaInput.style.display = "";

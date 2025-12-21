@@ -127,78 +127,69 @@
         <div id="book-preview"  class="mb-2">
           <input id="bookSearch" placeholder="Search title or paste bookQid…" />
           <input type="hidden" id="selectedBookQid" name="bookQid" />
-    <button id="pasteBtn" type="button">📋 Paste</button>
-    <div id="results" class="results"></div>
-    <div id="book-search-results">
-              <!-- <div id="img-book-wrapper">
-                 <img src="" id="img-book">
-              </div>
-              <div id="book-info-wrapper">
-                 <p id="book-title"></p>
-                 <p id="book-author"></p>
-                 <p id="book-des"></p>
-              </div> -->
-      </div>
-           
+          <button id="pasteBtn" type="button">📋 Paste</button>
+          <div id="results" class="results"></div>
+          <div id="book-search-results">   
+            </div>
         </div>
         <div class="quote-wrapper">
-  <div class="quote-card" id="quoteCard">
-  <!-- Controls -->
-   <div class="controls">
-  <label class="control-btn color-btn">
-    <input type="color" id="colorPicker" />
-    <i class="fa-solid fa-palette"></i>
-  </label>
+            <div class="quote-card" id="quoteCard">
+            <!-- Controls -->
+            <div class="controls">
+            <label class="control-btn color-btn">
+              <input type="color" id="colorPicker" />
+              <i class="fa-solid fa-palette"></i>
+            </label>
 
-  <div class="control-btn select-btn">
-    <i class="fa-solid fa-font"></i>
-    <select id="fontSelect">
-      <option value="'Poppins', sans-serif">Poppins</option>
-      <option value="Georgia, serif">Georgia</option>
-      <option value="'Times New Roman', serif">Times</option>
-      <option value="Arial, sans-serif">Arial</option>
-      <option value="'Courier New', monospace">Courier</option>
-    </select>
-  </div>
+            <div class="control-btn select-btn">
+              <i class="fa-solid fa-font"></i>
+              <select id="fontSelect">
+                <option value="'Poppins', sans-serif">Poppins</option>
+                <option value="Georgia, serif">Georgia</option>
+                <option value="'Times New Roman', serif">Times</option>
+                <option value="Arial, sans-serif">Arial</option>
+                <option value="'Courier New', monospace">Courier</option>
+              </select>
+            </div>
 
-  <label class="control-btn upload-btn">
-    <i class="fa-solid fa-image"></i>
-    <input type="file" id="bgInput" accept="image/*" hidden />
-  </label>
-</div>
+            <label class="control-btn upload-btn">
+              <i class="fa-solid fa-image"></i>
+              <input type="file" id="bgInput" accept="image/*" hidden />
+            </label>
+          </div>
 
- 
+          
 
-    <!-- Quote container -->
-   <div class="quote-box">
-  <span class="quote-mark left"><i class="fa-solid fa-quote-left"></i></span>
-  <br>
-  <textarea
-    id="quoteInput"
-    placeholder="..................................................."
-    class="quote-text"
-  ></textarea>
-  
-</div>
+              <!-- Quote container -->
+            <div class="quote-box">
+            <span class="quote-mark left"><i class="fa-solid fa-quote-left"></i></span>
+            <br>
+            <textarea
+              id="quoteInput"
+              placeholder="..................................................."
+              class="quote-text"
+            ></textarea>
+            
+          </div>
 
- <div id="author-box">
- 
-    <input
-      type="text"
-      id="authorInput"
-      placeholder=" By ............."
-      class="quote-author"
-    />
- </div>
-  </div>
+          <div id="author-box">
+          
+              <input
+                type="text"
+                id="authorInput"
+                placeholder=" By ............."
+                class="quote-author"
+              />
+          </div>
+            </div>
 </div>
         <div id="uploadWithPost">
           <div id="uploadWithPost-start">Add to your post</div>
           <div id="uploadWithPost-end"> 
-            <label for="feelingGrid" id="feelingLabel" style="cursor:pointer;">
+            <label for="bookGrid" id="bookLabel" style="cursor:pointer;">
                   <i class="fa-solid fa-book" style="color:wheat;"></i><div>Book</div> 
             </label>
-            <label for="feelingGrid" id="feelingLabel" style="cursor:pointer;">
+            <label for="quoteGrid" id="quoteLabel" style="cursor:pointer;">
                   <i class="fa-solid fa-quote-left" style="color:purple"></i><div>Quote</div> 
             </label>
             <label for="mediaInput" style="cursor: pointer" id="mediaInputLabel">
