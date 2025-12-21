@@ -196,7 +196,7 @@ const getAllMessagesByMemberQid = async (req, res) => {
         message_id: row.message_id,
         message: row.message,
         feeling: row.feeling,
-        bookQid: row.report_bookQid,
+        bookQid: row.repost_bookQid,
         quote_text: row.quote_text,
         quote_by: row.quote_by,
         quote_font_family: row.quote_font_family,
