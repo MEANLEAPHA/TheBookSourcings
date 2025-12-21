@@ -254,7 +254,7 @@ async function searchGutenbergById(id) {
     bookQid: data.id,
     title: data.title,
     authors: data.authors.map(a => a.name),
-    description: b.summaries?.[0] || null,
+    description: data.summaries?.[0] || null,
     cover: data.formats?.["image/jpeg"] || null,
     source: "gutenberg"
   }];
