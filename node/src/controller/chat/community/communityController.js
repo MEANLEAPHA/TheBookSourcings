@@ -122,7 +122,7 @@ const getAllMessagesByMemberQid = async (req, res) => {
           c.message_id, 
           c.message_text AS message, 
           c.feeling,
-          c.report_bookQid,
+          c.repost_bookQid,
           c.quote_text,
           c.quote_by,
           c.quote_font_color,
