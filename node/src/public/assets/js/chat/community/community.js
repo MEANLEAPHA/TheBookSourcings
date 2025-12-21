@@ -354,6 +354,12 @@ let selectedBook = null;
 input.addEventListener("input", () => {
   clearTimeout(timer);
   const q = input.value.trim();
+
+  // Reset selection on ANY typing
+  selectedBook = null;
+  hiddenBookQid.value = "";
+  bookResult.innerHTML = "";
+
   if (!q) {
     results.innerHTML = "";
     return;
@@ -361,6 +367,7 @@ input.addEventListener("input", () => {
 
   timer = setTimeout(() => fetchBooks(q), 300);
 });
+
 
 async function fetchBooks(q) {
   const res = await fetch(`${API}?q=${encodeURIComponent(q)}`);
@@ -416,6 +423,7 @@ async function fetchBooks(q) {
 }
 const bookResult = document.getElementById("book-search-results");
 function fillBookPreview(book) {
+  bookResult.innerHTML = ""; 
   const imgBookWrapper = document.createElement('div');
   imgBookWrapper.id ='img-book-wrapper';
 
@@ -454,7 +462,7 @@ function selectBook(book) {
   hiddenBookQid.value = book.bookQid;
 
   // 🔥 Update input value (for saving)
-  input.value = book.bookQid; 
+  input.value = book.title; 
   
 
   // Fill preview panel
