@@ -1114,8 +1114,8 @@ if (msg.repostData) {
 
     bookWrapper.appendChild(bookImg);
     bookWrapper.appendChild(bookInfo);
-    repostWrapper.appendChild(bookWrapper);
-      repostBody.appendChild(repostWrapper);
+   repostBody.appendChild(bookWrapper);
+
   }
 
 
