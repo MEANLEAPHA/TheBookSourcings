@@ -2619,6 +2619,50 @@ width: 88%;
   cursor: pointer;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+/* repost_bookQid */
+.book-wrapper {
+  display: flex;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 10px;
+  background: #f7f7f7;
+  margin-top: 8px;
+}
+
+.book-cover {
+  width: 70px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.book-title {
+  font-weight: 600;
+  margin: 0;
+}
+
+.book-author {
+  font-size: 13px;
+  color: #666;
+  margin: 2px 0;
+}
+
+.book-desc {
+  font-size: 13px;
+  color: #444;
+}
+
 /* Mobile safe */
 @media (max-width: 480px) {
   .controls {

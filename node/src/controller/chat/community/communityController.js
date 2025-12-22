@@ -3,7 +3,7 @@ const db = require("../../../config/db");
 const dayjs = require("dayjs");
 const relativeTime = require("dayjs/plugin/relativeTime");
 const { uploadToS3, deleteFromS3 } = require("../../../middleware/AWSuploadMiddleware");
-
+const { fetchJson } = require("../../../util/apiClient");
 dayjs.extend(relativeTime);
 
 

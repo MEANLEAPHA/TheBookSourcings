@@ -796,6 +796,48 @@ if(msg.quote_text){
 
 }
 
+if (msg.results && msg.results.length > 0) {
+  const book = msg.results[0]; // single book
+
+  const bookWrapper = document.createElement("div");
+  bookWrapper.className = "book-wrapper";
+
+  const bookImg = document.createElement("img");
+  bookImg.className = "book-cover";
+  bookImg.src = book.cover || "/img/noCoverFound.png";
+  bookImg.alt = book.title || "Book cover";
+
+  const bookInfo = document.createElement("div");
+  bookInfo.className = "book-info";
+
+  const bookTitle = document.createElement("p");
+  bookTitle.className = "book-title";
+  bookTitle.textContent = book.title;
+
+  const bookAuthor = document.createElement("p");
+  bookAuthor.className = "book-author";
+  bookAuthor.textContent = book.authors?.length
+    ? book.authors.join(", ")
+    : "Unknown author";
+
+  const bookDesc = document.createElement("p");
+  bookDesc.className = "book-desc";
+  bookDesc.textContent = book.description
+    ? book.description.slice(0, 180) + (book.description.length > 180 ? "…" : "")
+    : "No description available.";
+
+  bookInfo.appendChild(bookTitle);
+  bookInfo.appendChild(bookAuthor);
+  bookInfo.appendChild(bookDesc);
+
+  bookWrapper.appendChild(bookImg);
+  bookWrapper.appendChild(bookInfo);
+
+  body.appendChild(bookWrapper);
+}
+
+
+
 // ================== MAIN MEDIA DISPLAY ==================
 if (msg.media_url && msg.media_url.length > 0) {
   const mediaWrapper = document.createElement("div");
@@ -1032,6 +1074,51 @@ if (msg.repostData) {
   textP.textContent = "";
   repostBody.appendChild(textP);
 }
+
+
+  
+  // 📚 Repost book
+  if (repost.repostData.results && repost.repostData.results.length > 0) {
+    const book = repost.repostData.results[0];
+
+    const bookWrapper = document.createElement("div");
+    bookWrapper.className = "book-wrapper repost-book";
+
+    const bookImg = document.createElement("img");
+    bookImg.className = "book-cover";
+    bookImg.src = book.cover || "/img/noCoverFound.png";
+    bookImg.alt = book.title || "Book cover";
+
+    const bookInfo = document.createElement("div");
+    bookInfo.className = "book-info";
+
+    const bookTitle = document.createElement("p");
+    bookTitle.className = "book-title";
+    bookTitle.textContent = book.title;
+
+    const bookAuthor = document.createElement("p");
+    bookAuthor.className = "book-author";
+    bookAuthor.textContent = book.authors?.length
+      ? book.authors.join(", ")
+      : "Unknown author";
+
+    const bookDesc = document.createElement("p");
+    bookDesc.className = "book-desc";
+    bookDesc.textContent = book.description
+      ? book.description.slice(0, 150) + (book.description.length > 150 ? "…" : "")
+      : "No description available.";
+
+    bookInfo.appendChild(bookTitle);
+    bookInfo.appendChild(bookAuthor);
+    bookInfo.appendChild(bookDesc);
+
+    bookWrapper.appendChild(bookImg);
+    bookWrapper.appendChild(bookInfo);
+    repostWrapper.appendChild(bookWrapper);
+      repostBody.appendChild(repostWrapper);
+  }
+
+
 
 
   // --- Repost Media Section (same logic as your original post) ---
