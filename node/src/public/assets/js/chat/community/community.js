@@ -73,44 +73,44 @@ if (username) {
 const socket = io(API_URL, { auth: { token } });
 
 // load user info to fill
-const userPfHeader = document.querySelector('.userPf'); // on header
-const usernameCol = document.querySelector('.userName-collapse');
-const nicknameCol = document.querySelector('.nickName-collapse');
-const userPf = document.querySelector('.userPf-collapse');
+// const userPfHeader = document.querySelector('.userPf'); // on header
+// const usernameCol = document.querySelector('.userName-collapse');
+// const nicknameCol = document.querySelector('.nickName-collapse');
+// const userPf = document.querySelector('.userPf-collapse');
 
-async function loadUserInfo() {
-  try {
-    const response = await fetch(`https://thebooksourcings.onrender.com/loadUserInfo`, {
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
-      }
-    });
-    const data = await response.json();
-    if (data && data.user) {
-      usernameCol.textContent = data.user.username || 'Guest-User';
-      nicknameCol.textContent = `@${data.user.nickname}` || data.user.nickname || '@WelcomeMyGuest';
-      userPf.src = data.user.pfUrl;
-      userPfHeader.src = data.user.pfUrl;
-    }
-  } catch (error) {
-    console.error('Error fetching user info:', error);
-  }
-}
+// async function loadUserInfo() {
+//   try {
+//     const response = await fetch(`https://thebooksourcings.onrender.com/loadUserInfo`, {
+//       headers: {
+//         "Authorization": `Bearer ${token}`,
+//         "Content-Type": "application/json"
+//       }
+//     });
+//     const data = await response.json();
+//     if (data && data.user) {
+//       usernameCol.textContent = data.user.username || 'Guest-User';
+//       nicknameCol.textContent = `@${data.user.nickname}` || data.user.nickname || '@WelcomeMyGuest';
+//       userPf.src = data.user.pfUrl;
+//       userPfHeader.src = data.user.pfUrl;
+//     }
+//   } catch (error) {
+//     console.error('Error fetching user info:', error);
+//   }
+// }
 
-loadUserInfo();
+// loadUserInfo();
 
-// login and out 
-const loginButton = document.getElementById("loginButton");
-const logoutButton = document.getElementById("logoutButton");
+// // login and out 
+// const loginButton = document.getElementById("loginButton");
+// const logoutButton = document.getElementById("logoutButton");
 
-if (token) {
-  loginButton.style.display = "none";
-  logoutButton.style.display = "block";
-} else {
-  loginButton.style.display = "block";
-  logoutButton.style.display = "none";
-}
+// if (token) {
+//   loginButton.style.display = "none";
+//   logoutButton.style.display = "block";
+// } else {
+//   loginButton.style.display = "block";
+//   logoutButton.style.display = "none";
+// }
 
 
 
