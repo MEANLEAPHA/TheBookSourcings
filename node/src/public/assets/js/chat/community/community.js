@@ -1078,8 +1078,8 @@ if (msg.repostData) {
 
   
   // 📚 Repost book
-  if (repost.repostData.results && repost.repostData.results.length > 0) {
-    const book = repost.repostData.results[0];
+  if (repost.results && repost.results.length > 0) {
+    const book = repost.results[0];
 
     const bookWrapper = document.createElement("div");
     bookWrapper.className = "book-wrapper repost-book";
