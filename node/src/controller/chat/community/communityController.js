@@ -6,45 +6,143 @@ const { uploadToS3, deleteFromS3 } = require("../../../middleware/AWSuploadMiddl
 
 dayjs.extend(relativeTime);
 
+
+
+function detectSourceByBookId(bookId) {
+  if (/^TB\d+S$/.test(bookId)) return "otthor";
+  if (/^OL\d+(W|M|A)$/.test(bookId)) return "openlibrary";
+  if (/^\d+$/.test(bookId)) return "gutenberg";
+  if (/^[a-zA-Z0-9_-]{10,}$/.test(bookId)) return "google"; // Google IDs
+  return null;
+}
+
+async function searchOtthorById(bookQid) {
+  const [rows] = await db.query(
+    `SELECT bookQid, title, author, summary, bookCover
+     FROM uploadBook WHERE bookQid = ? LIMIT 1`,
+    [bookQid]
+  );
+
+  return mapOtthor(rows);
+}
+function mapOtthor(rows) {
+  return rows.map(b => ({
+    bookQid: b.bookQid,
+    title: b.title,
+    authors: b.author ? b.author.split(",").map(a => a.trim()) : [],
+    description: b.summary || null,
+    cover: b.bookCover || null,
+    source: "otthor"
+  }));
+}
+async function searchGoogleById(id) {
+  const data = await fetchJson(
+    `https://www.googleapis.com/books/v1/volumes/${id}`
+  );
+
+  return [{
+    bookQid: data.id,
+    title: data.volumeInfo.title,
+    authors: data.volumeInfo.authors || [],
+    description: data.volumeInfo.description || null,
+    cover: data.volumeInfo.imageLinks?.thumbnail || null,
+    source: "google"
+  }];
+}
+
+async function searchOpenLibraryById(id) {
+  const data = await fetchJson(
+    `https://openlibrary.org/works/${id}.json`
+  );
+
+  return [{
+    bookQid: id,
+    title: data.title,
+    authors: data.authors
+      ? await Promise.all(
+          data.authors.map(async a => {
+            const author = await fetchJson(`https://openlibrary.org${a.author.key}.json`);
+            return author.name;
+          })
+        )
+      : [],
+    description:
+      typeof data.description === "string"
+        ? data.description
+        : data.description?.value || null,
+    cover: data.covers?.[0]
+      ? `https://covers.openlibrary.org/b/id/${data.covers[0]}-M.jpg`
+      : null,
+    source: "openlibrary"
+  }];
+}
+async function searchGutenbergById(id) {
+  const data = await fetchJson(`https://gutendex.com/books/${id}`);
+
+  return [{
+    bookQid: data.id,
+    title: data.title,
+    authors: data.authors.map(a => a.name),
+    description: data.summaries?.[0] || null,
+    cover: data.formats?.["image/jpeg"] || null,
+    source: "gutenberg"
+  }];
+}
+async function fetchBookByQid(bookQid) {
+  const source = detectSourceByBookId(bookQid);
+  if (!source) return [];
+
+  if (source === "otthor") return await searchOtthorById(bookQid);
+  if (source === "openlibrary") return await searchOpenLibraryById(bookQid);
+  if (source === "gutenberg") return await searchGutenbergById(bookQid);
+  if (source === "google") return await searchGoogleById(bookQid);
+
+  return [];
+}
 const getAllMessages = async (req, res) => {
   try {
     const [rows] = await db.query(`
       SELECT 
-          c.message_id, 
-          c.message_text AS message, 
-          c.feeling,
-          c.media_type,
-          c.media_url,
-          c.repost_bookQid,
-          c.quote_text,
-          c.quote_by,
-          c.quote_font_color,
-          c.quote_font_family,
-          c.quote_bg_url,
-          c.like_count,
-          c.comment_count,
-          c.repost_count,
-          c.repost_id,
-          c.memberQid, 
-          c.created_at,
-          u.username
-       FROM community c
-       JOIN users u ON c.memberQid = u.memberQid
-       WHERE c.deleted_at IS NULL
-       ORDER BY c.created_at DESC
+        c.message_id,
+        c.message_text AS message,
+        c.feeling,
+        c.media_type,
+        c.media_url,
+        c.repost_bookQid,
+        c.quote_text,
+        c.quote_by,
+        c.quote_font_color,
+        c.quote_font_family,
+        c.quote_bg_url,
+        c.like_count,
+        c.comment_count,
+        c.repost_count,
+        c.repost_id,
+        c.memberQid,
+        c.created_at,
+        u.username
+      FROM community c
+      JOIN users u ON c.memberQid = u.memberQid
+      WHERE c.deleted_at IS NULL
+      ORDER BY c.created_at DESC
     `);
 
-    const messages = await Promise.all(rows.map(async row => {
+    const messages = await Promise.all(
+      rows.map(async row => {
 
+        // 🔹 Book attached to main post
+        const bookResults = row.repost_bookQid
+          ? await fetchBookByQid(row.repost_bookQid)
+          : [];
 
-      let repostData = null;
+        let repostData = null;
 
-      // If this message is a repost, get the original post info
-      if (row.repost_id) {
-        const [repostRows] = await db.query(`
-          SELECT 
+        // 🔹 Repost handling
+        if (row.repost_id) {
+          const [repostRows] = await db.query(`
+            SELECT 
               c.message_id,
-              c.message_text AS repostText, 
+              c.message_text AS repostText,
               c.feeling,
               c.repost_bookQid,
               c.quote_text,
@@ -57,54 +155,60 @@ const getAllMessages = async (req, res) => {
               c.memberQid,
               c.created_at,
               u.username
-           FROM community c
-           JOIN users u ON c.memberQid = u.memberQid
-           WHERE c.message_id = ?
-        `, [row.repost_id]);
+            FROM community c
+            JOIN users u ON c.memberQid = u.memberQid
+            WHERE c.message_id = ?
+          `, [row.repost_id]);
 
-         if (repostRows.length > 0) {
-          const repost = repostRows[0];
-          repostData = {
-            message_id: repost.message_id,
-            message: repost.repostText,
-            feeling: repost.feeling,
-            bookQid: repost.repost_bookQid,
-            quote_text: repost.quote_text,
-            quote_by: repost.quote_by,
-            quote_font_family: repost.quote_font_family,
-            quote_font_color: repost.quote_font_color,
-            quote_bg_url: repost.quote_bg_url,
-            media_type: repost.media_type ? JSON.parse(repost.media_type) : [],
-            media_url: repost.media_url ? JSON.parse(repost.media_url) : [],
-            memberQid: repost.memberQid,
-            username: repost.username,
-            createFormNow: dayjs(repost.created_at).fromNow(), // 👈 Add this
-          };
+          if (repostRows.length) {
+            const repost = repostRows[0];
+
+            const repostBookResults = repost.repost_bookQid
+              ? await fetchBookByQid(repost.repost_bookQid)
+              : [];
+
+            repostData = {
+              message_id: repost.message_id,
+              message: repost.repostText,
+              feeling: repost.feeling,
+              results: repostBookResults,
+              quote_text: repost.quote_text,
+              quote_by: repost.quote_by,
+              quote_font_family: repost.quote_font_family,
+              quote_font_color: repost.quote_font_color,
+              quote_bg_url: repost.quote_bg_url,
+              media_type: repost.media_type ? JSON.parse(repost.media_type) : [],
+              media_url: repost.media_url ? JSON.parse(repost.media_url) : [],
+              memberQid: repost.memberQid,
+              username: repost.username,
+              createFormNow: dayjs(repost.created_at).fromNow()
+            };
+          }
         }
-      }
 
-      return {
-        message_id: row.message_id,
-        message: row.message,
-        feeling: row.feeling,
-        bookQid: row.repost_bookQid,
-        quote_text: row.quote_text,
-        quote_by: row.quote_by,
-        quote_font_family: row.quote_font_family,
-        quote_font_color: row.quote_font_color,
-        quote_bg_url: row.quote_bg_url,
-        media_type: row.media_type ? JSON.parse(row.media_type) : [],
-        media_url: row.media_url ? JSON.parse(row.media_url) : [],
-        like_count: row.like_count,
-        comment_count: row.comment_count,
-        repost_count: row.repost_count,
-        repost_id: row.repost_id,
-        repostData, 
-        username: row.username,
-        memberQid: row.memberQid,
-        createFormNow: dayjs(row.created_at).fromNow()
-      };
-    }));
+        return {
+          message_id: row.message_id,
+          message: row.message,
+          feeling: row.feeling,
+          results: bookResults,
+          quote_text: row.quote_text,
+          quote_by: row.quote_by,
+          quote_font_family: row.quote_font_family,
+          quote_font_color: row.quote_font_color,
+          quote_bg_url: row.quote_bg_url,
+          media_type: row.media_type ? JSON.parse(row.media_type) : [],
+          media_url: row.media_url ? JSON.parse(row.media_url) : [],
+          like_count: row.like_count,
+          comment_count: row.comment_count,
+          repost_count: row.repost_count,
+          repost_id: row.repost_id,
+          repostData,
+          username: row.username,
+          memberQid: row.memberQid,
+          createFormNow: dayjs(row.created_at).fromNow()
+        };
+      })
+    );
 
     res.json(messages);
   } catch (err) {
@@ -112,6 +216,141 @@ const getAllMessages = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// const getAllMessages = async (req, res) => {
+//   try {
+//     const [rows] = await db.query(`
+//       SELECT 
+//           c.message_id, 
+//           c.message_text AS message, 
+//           c.feeling,
+//           c.media_type,
+//           c.media_url,
+//           c.repost_bookQid,
+//           c.quote_text,
+//           c.quote_by,
+//           c.quote_font_color,
+//           c.quote_font_family,
+//           c.quote_bg_url,
+//           c.like_count,
+//           c.comment_count,
+//           c.repost_count,
+//           c.repost_id,
+//           c.memberQid, 
+//           c.created_at,
+//           u.username
+//        FROM community c
+//        JOIN users u ON c.memberQid = u.memberQid
+//        WHERE c.deleted_at IS NULL
+//        ORDER BY c.created_at DESC
+//     `);
+
+//     const messages = await Promise.all(rows.map(async row => {
+
+//       let repostData = null;
+//       let results = [];
+//       if(row.repost_bookQid){
+//         const source = detectSourceByBookId(row.repost_bookQid);
+//     if (source) {
+//       if (source === "otthor") {
+//         results = await searchOtthorById(row.repost_bookQid);
+//       } else if (source === "openlibrary") {
+//         results = await searchOpenLibraryById(row.repost_bookQid);
+//       } else if (source === "gutenberg") {
+//         results = await searchGutenbergById(row.repost_bookQid);
+//       } else if (source === "google") {
+//         results = await searchGoogleById(row.repost_bookQid);
+//       }
+//     }
+//       }
+//       // If this message is a repost, get the original post info
+//       if (row.repost_id) {
+//         const [repostRows] = await db.query(`
+//           SELECT 
+//               c.message_id,
+//               c.message_text AS repostText, 
+//               c.feeling,
+//               c.repost_bookQid,
+//               c.quote_text,
+//               c.quote_by,
+//               c.quote_font_color,
+//               c.quote_font_family,
+//               c.quote_bg_url,
+//               c.media_type,
+//               c.media_url,
+//               c.memberQid,
+//               c.created_at,
+//               u.username
+//            FROM community c
+//            JOIN users u ON c.memberQid = u.memberQid
+//            WHERE c.message_id = ?
+//         `, [row.repost_id]);
+
+//          if (repostRows.length > 0) {
+//           const repost = repostRows[0];
+//           let results2 = [];
+//           if(repost.repost_bookQid){
+//             const source = detectSourceByBookId(repost.repost_bookQid);
+//             if (source) {
+//               if (source === "otthor") {
+//                 results2 = await searchOtthorById(repost.repost_bookQid);
+//               } else if (source === "openlibrary") {
+//                 results2 = await searchOpenLibraryById(repost.repost_bookQid);
+//               } else if (source === "gutenberg") {
+//                 results2 = await searchGutenbergById(repost.repost_bookQid);
+//               } else if (source === "google") {
+//                 results2 = await searchGoogleById(repost.repost_bookQid);
+//               }
+//             }
+//           }
+//           repostData = {
+//             message_id: repost.message_id,
+//             message: repost.repostText,
+//             feeling: repost.feeling,
+//             results2,
+//             quote_text: repost.quote_text,
+//             quote_by: repost.quote_by,
+//             quote_font_family: repost.quote_font_family,
+//             quote_font_color: repost.quote_font_color,
+//             quote_bg_url: repost.quote_bg_url,
+//             media_type: repost.media_type ? JSON.parse(repost.media_type) : [],
+//             media_url: repost.media_url ? JSON.parse(repost.media_url) : [],
+//             memberQid: repost.memberQid,
+//             username: repost.username,
+//             createFormNow: dayjs(repost.created_at).fromNow(), // 👈 Add this
+//           };
+//         }
+//       }
+
+//       return {
+//         message_id: row.message_id,
+//         message: row.message,
+//         feeling: row.feeling,
+//         results,
+//         quote_text: row.quote_text,
+//         quote_by: row.quote_by,
+//         quote_font_family: row.quote_font_family,
+//         quote_font_color: row.quote_font_color,
+//         quote_bg_url: row.quote_bg_url,
+//         media_type: row.media_type ? JSON.parse(row.media_type) : [],
+//         media_url: row.media_url ? JSON.parse(row.media_url) : [],
+//         like_count: row.like_count,
+//         comment_count: row.comment_count,
+//         repost_count: row.repost_count,
+//         repost_id: row.repost_id,
+//         repostData, 
+//         username: row.username,
+//         memberQid: row.memberQid,
+//         createFormNow: dayjs(row.created_at).fromNow()
+//       };
+//     }));
+
+//     res.json(messages);
+//   } catch (err) {
+//     console.error("getAllMessages error:", err);
+//     res.status(500).json({ error: err.message });
+//   }
+// };
 
 
 const getAllMessagesByMemberQid = async (req, res) => {
