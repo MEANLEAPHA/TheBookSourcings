@@ -3,6 +3,139 @@ const urlParams = new URLSearchParams(window.location.search);
 const bookId = urlParams.get("bookId");
 const source = detectSource(bookId);
 
+const feelingMap = {
+  happy: "😊 happy",
+  sad: "😢 sad",
+  angry: "😡 angry",
+  blissful: "😇 blissful",
+  "in love": "😍 in love",
+  silly: "😜 silly",
+  cool: "😎 cool",
+  relaxed: "😌 relaxed",
+  sleepy: "😴 sleepy",
+  sick: "🤒 sick",
+  loved: "🤗 loved",
+  shocked: "😱 shocked",
+  disappointed: "😞 disappointed",
+  frustrated: "😤 frustrated",
+  excited: "🤩 excited",
+  festive: "🥳 festive",
+  down: "😔 down",
+  confused: "😕 confused",
+  nervous: "😬 nervous",
+  blessed: "😇 blessed",
+  thankful: "🙏 thankful",
+  amused: "😅 amused",
+  curious: "🤓 curious",
+  overwhelmed: "😩 overwhelmed",
+  fantastic: "😆 fantastic",
+  meh: "😶 meh",
+  heartbroken: "😢 heartbroken",
+  determined: "😤 determined",
+  inspired: "😇 inspired",
+  crazy: "😵‍💫 crazy",
+  ok: "😐 OK",
+  proud: "😃 proud",
+  satisfied: "😋 satisfied",
+  embarrassed: "😳 embarrassed",
+  thoughtful: "🤔 thoughtful",
+  lovely: "😍 lovely",
+  miserable: "😖 miserable",
+  grateful: "😇 grateful"
+};
+const shareBtn = document.querySelector(".shareBtn");
+// ====== SEND MESSAGE ======
+const forms = document.getElementById("form");
+const messageInput = document.getElementById("message-input");
+ // feeling toast logic
+    const feelingLabel = document.getElementById('feelingLabel');
+    const displayFeeling = document.getElementById("displayFeeling");
+    const feelingInput = document.getElementById("feelingValue");
+ 
+    const FeelingToast = new bootstrap.Toast(document.getElementById("FeelingToast"), { autohide: false });
+    const feelingOptions = document.querySelectorAll('.feeling-option');
+
+    // Show toast on label click
+    feelingLabel.addEventListener('click', () => {
+      FeelingToast.show();
+    });
+
+    // Handle click on each feeling option
+    feelingOptions.forEach(option => {
+      option.addEventListener("click", () => {
+        const text = option.textContent;
+        displayFeeling.textContent = 'Is feeling ' + text;
+
+        // Save selected feeling (strip emoji if needed)
+        feelingInput.value = text.replace(/^[^\w]+/, "").trim().toLowerCase();
+
+        FeelingToast.hide();
+      });
+    });
+       document.getElementById("cancelFeelingBtn").onclick = () => {
+      FeelingToast.hide();
+      displayFeeling.textContent = "";
+      feelingInput.value = "";
+    };
+// Send message (text + optional multiple media)
+forms.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const text = messageInput.value.trim();
+  const feeling = feelingInput.value; // hidden input
+  // ❗ require something
+  if (
+    !text &&
+    !feeling
+    && !bookId
+  ) return;
+
+  try {
+    const formData = new FormData();
+    formData.append("message", text);
+    formData.append("feeling", feeling);
+    formData.append("bookQid", bookId);
+    const res = await fetch(`${API_URL}/api/community/send`, {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${token}` },
+      body: formData
+    });
+
+    // if (!res.ok) throw new Error("Failed to send message");
+    if (!res.ok) {
+          if (res.status === 403) {
+            showErrorToast("Unauthorized. Please log in or sign up first.");
+  
+          } else {
+            const errorText = await res.text();
+            showErrorToast("Error: " + errorText);
+          }
+          return;
+        }
+   
+    messageInput.value = "";
+    displayFeeling.textContent = "";
+    postToast.hide();
+  } catch (err) {
+    console.error(err);
+  }
+});
+// Post toast
+document.addEventListener("DOMContentLoaded", () => {
+  const postToast = new bootstrap.Toast(document.getElementById("PostToast"), { autohide: false });
+
+const shareBtn = document.querySelector(".shareBtn");
+shareBtn.addEventListener("click", () => {
+  postToast.show();
+});
+
+  document.getElementById("cancelPostBtn").onclick = () => {
+    postToast.hide();
+    messageInput.value = "";
+    feelingInput.value = "";
+    displayFeeling.textContent = "";
+  };
+});
+
 function detectSource(bookId) {
     if (/^TB\d+S$/.test(bookId)) return "otthor";
     if (/^OL\d+(W|M|A)$/.test(bookId)) return "openlibrary";
