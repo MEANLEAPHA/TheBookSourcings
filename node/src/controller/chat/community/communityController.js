@@ -217,21 +217,154 @@ const getAllMessages = async (req, res) => {
   }
 };
 
-// const getAllMessages = async (req, res) => {
+
+const getAllMessagesByMemberQid = async (req, res) => {
+  try {
+    const { memberQid } = req.params;
+
+    const [rows] = await db.query(`
+      SELECT 
+        c.message_id, 
+        c.message_text AS message, 
+        c.feeling,
+        c.repost_bookQid,
+        c.quote_text,
+        c.quote_by,
+        c.quote_font_color,
+        c.quote_font_family,
+        c.quote_bg_url,
+        c.media_type,
+        c.media_url,
+        c.like_count,
+        c.comment_count,
+        c.repost_count,
+        c.repost_id,
+        c.memberQid, 
+        c.created_at,
+        u.username
+      FROM community c
+      JOIN users u ON c.memberQid = u.memberQid
+      WHERE c.memberQid = ? AND c.deleted_at IS NULL
+      ORDER BY c.created_at DESC
+    `, [memberQid]);
+
+    const messages = await Promise.all(
+      rows.map(async row => {
+
+        /* ===============================
+           🔹 Resolve book for this post
+        =============================== */
+        const book =
+          row.repost_bookQid
+            ? (await fetchBookByQid(row.repost_bookQid))[0] || null
+            : null;
+
+        let repostData = null;
+
+        /* ===============================
+           🔁 If this is a repost
+        =============================== */
+        if (row.repost_id) {
+          const [repostRows] = await db.query(`
+            SELECT 
+              c.message_id,
+              c.message_text AS repostText,
+              c.feeling,
+              c.repost_bookQid,
+              c.quote_text,
+              c.quote_by,
+              c.quote_font_color,
+              c.quote_font_family,
+              c.quote_bg_url,
+              c.media_type,
+              c.media_url,
+              c.memberQid,
+              c.created_at,
+              u.username
+            FROM community c
+            JOIN users u ON c.memberQid = u.memberQid
+            WHERE c.message_id = ?
+          `, [row.repost_id]);
+
+          if (repostRows.length) {
+            const repost = repostRows[0];
+
+            const repostBook =
+              repost.repost_bookQid
+                ? (await fetchBookByQid(repost.repost_bookQid))[0] || null
+                : null;
+
+            repostData = {
+              message_id: repost.message_id,
+              message: repost.repostText,
+              feeling: repost.feeling,
+              results: repostBook, // ✅ resolved from any source
+              quote_text: repost.quote_text,
+              quote_by: repost.quote_by,
+              quote_font_family: repost.quote_font_family,
+              quote_font_color: repost.quote_font_color,
+              quote_bg_url: repost.quote_bg_url,
+              media_type: repost.media_type ? JSON.parse(repost.media_type) : [],
+              media_url: repost.media_url ? JSON.parse(repost.media_url) : [],
+              memberQid: repost.memberQid,
+              username: repost.username,
+              createFormNow: dayjs(repost.created_at).fromNow()
+            };
+          }
+        }
+
+        /* ===============================
+           📦 Final message payload
+        =============================== */
+        return {
+          message_id: row.message_id,
+          message: row.message,
+          feeling: row.feeling,
+          book, // ✅ resolved via detectSourceByBookId
+          quote_text: row.quote_text,
+          quote_by: row.quote_by,
+          quote_font_family: row.quote_font_family,
+          quote_font_color: row.quote_font_color,
+          quote_bg_url: row.quote_bg_url,
+          media_type: row.media_type ? JSON.parse(row.media_type) : [],
+          media_url: row.media_url ? JSON.parse(row.media_url) : [],
+          like_count: row.like_count,
+          comment_count: row.comment_count,
+          repost_count: row.repost_count,
+          repost_id: row.repost_id,
+          repostData,
+          username: row.username,
+          memberQid: row.memberQid,
+          createFormNow: dayjs(row.created_at).fromNow()
+        };
+      })
+    );
+
+    res.json(messages);
+
+  } catch (err) {
+    console.error("getAllMessagesByMemberQid error:", err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
+// const getAllMessagesByMemberQid = async (req, res) => {
 //   try {
+//     const { memberQid } = req.params;
 //     const [rows] = await db.query(`
 //       SELECT 
 //           c.message_id, 
 //           c.message_text AS message, 
 //           c.feeling,
-//           c.media_type,
-//           c.media_url,
 //           c.repost_bookQid,
 //           c.quote_text,
 //           c.quote_by,
 //           c.quote_font_color,
 //           c.quote_font_family,
 //           c.quote_bg_url,
+//           c.media_type,
+//           c.media_url,
 //           c.like_count,
 //           c.comment_count,
 //           c.repost_count,
@@ -241,28 +374,15 @@ const getAllMessages = async (req, res) => {
 //           u.username
 //        FROM community c
 //        JOIN users u ON c.memberQid = u.memberQid
-//        WHERE c.deleted_at IS NULL
+//        WHERE c.memberQid = ? AND c.deleted_at IS NULL
 //        ORDER BY c.created_at DESC
-//     `);
+//     `, 
+//      [memberQid]
+//     );
 
 //     const messages = await Promise.all(rows.map(async row => {
-
 //       let repostData = null;
-//       let results = [];
-//       if(row.repost_bookQid){
-//         const source = detectSourceByBookId(row.repost_bookQid);
-//     if (source) {
-//       if (source === "otthor") {
-//         results = await searchOtthorById(row.repost_bookQid);
-//       } else if (source === "openlibrary") {
-//         results = await searchOpenLibraryById(row.repost_bookQid);
-//       } else if (source === "gutenberg") {
-//         results = await searchGutenbergById(row.repost_bookQid);
-//       } else if (source === "google") {
-//         results = await searchGoogleById(row.repost_bookQid);
-//       }
-//     }
-//       }
+
 //       // If this message is a repost, get the original post info
 //       if (row.repost_id) {
 //         const [repostRows] = await db.query(`
@@ -288,26 +408,11 @@ const getAllMessages = async (req, res) => {
 
 //          if (repostRows.length > 0) {
 //           const repost = repostRows[0];
-//           let results2 = [];
-//           if(repost.repost_bookQid){
-//             const source = detectSourceByBookId(repost.repost_bookQid);
-//             if (source) {
-//               if (source === "otthor") {
-//                 results2 = await searchOtthorById(repost.repost_bookQid);
-//               } else if (source === "openlibrary") {
-//                 results2 = await searchOpenLibraryById(repost.repost_bookQid);
-//               } else if (source === "gutenberg") {
-//                 results2 = await searchGutenbergById(repost.repost_bookQid);
-//               } else if (source === "google") {
-//                 results2 = await searchGoogleById(repost.repost_bookQid);
-//               }
-//             }
-//           }
 //           repostData = {
 //             message_id: repost.message_id,
 //             message: repost.repostText,
 //             feeling: repost.feeling,
-//             results2,
+//             bookQid: repost.repost_bookQid,
 //             quote_text: repost.quote_text,
 //             quote_by: repost.quote_by,
 //             quote_font_family: repost.quote_font_family,
@@ -326,7 +431,7 @@ const getAllMessages = async (req, res) => {
 //         message_id: row.message_id,
 //         message: row.message,
 //         feeling: row.feeling,
-//         results,
+//         bookQid: row.repost_bookQid,
 //         quote_text: row.quote_text,
 //         quote_by: row.quote_by,
 //         quote_font_family: row.quote_font_family,
@@ -351,135 +456,35 @@ const getAllMessages = async (req, res) => {
 //     res.status(500).json({ error: err.message });
 //   }
 // };
-
-
-const getAllMessagesByMemberQid = async (req, res) => {
-  try {
-    const { memberQid } = req.params;
-    const [rows] = await db.query(`
-      SELECT 
-          c.message_id, 
-          c.message_text AS message, 
-          c.feeling,
-          c.repost_bookQid,
-          c.quote_text,
-          c.quote_by,
-          c.quote_font_color,
-          c.quote_font_family,
-          c.quote_bg_url,
-          c.media_type,
-          c.media_url,
-          c.like_count,
-          c.comment_count,
-          c.repost_count,
-          c.repost_id,
-          c.memberQid, 
-          c.created_at,
-          u.username
-       FROM community c
-       JOIN users u ON c.memberQid = u.memberQid
-       WHERE c.memberQid = ? AND c.deleted_at IS NULL
-       ORDER BY c.created_at DESC
-    `, 
-     [memberQid]
-    );
-
-    const messages = await Promise.all(rows.map(async row => {
-      let repostData = null;
-
-      // If this message is a repost, get the original post info
-      if (row.repost_id) {
-        const [repostRows] = await db.query(`
-          SELECT 
-              c.message_id,
-              c.message_text AS repostText, 
-              c.feeling,
-              c.repost_bookQid,
-              c.quote_text,
-              c.quote_by,
-              c.quote_font_color,
-              c.quote_font_family,
-              c.quote_bg_url,
-              c.media_type,
-              c.media_url,
-              c.memberQid,
-              c.created_at,
-              u.username
-           FROM community c
-           JOIN users u ON c.memberQid = u.memberQid
-           WHERE c.message_id = ?
-        `, [row.repost_id]);
-
-         if (repostRows.length > 0) {
-          const repost = repostRows[0];
-          repostData = {
-            message_id: repost.message_id,
-            message: repost.repostText,
-            feeling: repost.feeling,
-            bookQid: repost.repost_bookQid,
-            quote_text: repost.quote_text,
-            quote_by: repost.quote_by,
-            quote_font_family: repost.quote_font_family,
-            quote_font_color: repost.quote_font_color,
-            quote_bg_url: repost.quote_bg_url,
-            media_type: repost.media_type ? JSON.parse(repost.media_type) : [],
-            media_url: repost.media_url ? JSON.parse(repost.media_url) : [],
-            memberQid: repost.memberQid,
-            username: repost.username,
-            createFormNow: dayjs(repost.created_at).fromNow(), // 👈 Add this
-          };
-        }
-      }
-
-      return {
-        message_id: row.message_id,
-        message: row.message,
-        feeling: row.feeling,
-        bookQid: row.repost_bookQid,
-        quote_text: row.quote_text,
-        quote_by: row.quote_by,
-        quote_font_family: row.quote_font_family,
-        quote_font_color: row.quote_font_color,
-        quote_bg_url: row.quote_bg_url,
-        media_type: row.media_type ? JSON.parse(row.media_type) : [],
-        media_url: row.media_url ? JSON.parse(row.media_url) : [],
-        like_count: row.like_count,
-        comment_count: row.comment_count,
-        repost_count: row.repost_count,
-        repost_id: row.repost_id,
-        repostData, 
-        username: row.username,
-        memberQid: row.memberQid,
-        createFormNow: dayjs(row.created_at).fromNow()
-      };
-    }));
-
-    res.json(messages);
-  } catch (err) {
-    console.error("getAllMessages error:", err);
-    res.status(500).json({ error: err.message });
-  }
-};
 // 📌 Send message with multiple media
 const sendMessage = async (req, res) => {
   try {
     const memberQid = req.user.memberQid;
     const username = req.user.username;
-    const { message, feeling, repost_id, bookQid, quote_text, quote_by, quote_font_family, quote_font_color } = req.body;
+
+    const {
+      message,
+      feeling,
+      repost_id,
+      bookQid,
+      quote_text,
+      quote_by,
+      quote_font_family,
+      quote_font_color
+    } = req.body;
 
     let mediaUrls = [];
     let mediaTypes = [];
     let quoteBgUrl = null;
 
-if (req.files?.quote_bg_url?.length > 0) {
-  const bgFile = req.files.quote_bg_url[0];
-  quoteBgUrl = await uploadToS3(bgFile, "community/");
-}
+    // 🖼️ Quote background upload
+    if (req.files?.quote_bg_url?.length > 0) {
+      const bgFile = req.files.quote_bg_url[0];
+      quoteBgUrl = await uploadToS3(bgFile, "community/");
+    }
 
-
-
-    // Support multiple file uploads (req.files instead of req.file)
-    if (req.files?.media && req.files?.media.length > 0) {
+    // 📷 Media uploads
+    if (req.files?.media?.length > 0) {
       for (const file of req.files.media) {
         let type = null;
         if (file.mimetype.startsWith("image/")) type = "image";
@@ -491,52 +496,207 @@ if (req.files?.quote_bg_url?.length > 0) {
       }
     }
 
+    // ❌ Validation
     if (!message && mediaUrls.length === 0 && !feeling && !repost_id) {
-      return res.status(400).json({ error: "Message, media, repost content,or feeling required" });
+      return res.status(400).json({
+        error: "Message, media, repost, or feeling required"
+      });
     }
 
-    // const [result] = await db.query(
-    //   "INSERT INTO community (memberQid, message_text, feeling, repost_id, media_type, media_url) VALUES (?, ?, ?, ?, ?, ?)",
-    //   [memberQid, message || null, feeling || null, repost_id || null, JSON.stringify(mediaTypes), JSON.stringify(mediaUrls)]
-    // );
     const cleanRepostId =
-  repost_id && repost_id !== "null" && repost_id !== "" ? repost_id : null;
+      repost_id && repost_id !== "null" && repost_id !== ""
+        ? repost_id
+        : null;
 
-  const [result] = await db.query(
-  `INSERT INTO community (
-    memberQid,
-    message_text,
-    feeling,
-    repost_id,
-    media_type,
-    media_url,
-    repost_bookQid,
-    quote_text,
-    quote_by,
-    quote_font_family,
-    quote_font_color,
-    quote_bg_url
-  )
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-  [
-    memberQid,
-    message || null,
-    feeling || null,
-    cleanRepostId,
-    JSON.stringify(mediaTypes),
-    JSON.stringify(mediaUrls),
-    bookQid || null,
-    quote_text || null,
-    quote_by || null,
-    quote_font_family || null,
-    quote_font_color || null,
-    quoteBgUrl || null
-  ]
-);
+    // 🧾 Insert message
+    const [insertResult] = await db.query(
+      `INSERT INTO community (
+        memberQid,
+        message_text,
+        feeling,
+        repost_id,
+        media_type,
+        media_url,
+        repost_bookQid,
+        quote_text,
+        quote_by,
+        quote_font_family,
+        quote_font_color,
+        quote_bg_url
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        memberQid,
+        message || null,
+        feeling || null,
+        cleanRepostId,
+        JSON.stringify(mediaTypes),
+        JSON.stringify(mediaUrls),
+        bookQid || null,
+        quote_text || null,
+        quote_by || null,
+        quote_font_family || null,
+        quote_font_color || null,
+        quoteBgUrl || null
+      ]
+    );
 
-// const [result] = await db.query(
-//   `INSERT INTO community (memberQid, message_text, feeling, repost_id, media_type, media_url, bookQid, quote_text, quote_by, quote_font_family, quote_font_color)
-//    VALUES (?, ?, ?, ?, ?, ?)`,
+    // 📚 Resolve main post book
+    let book = null;
+    if (bookQid) {
+      const bookResult = await fetchBookByQid(bookQid);
+      book = bookResult.length ? bookResult[0] : null;
+    }
+
+    // 🔁 Resolve repost data
+    let repostData = null;
+
+    if (cleanRepostId) {
+      const [rows] = await db.query(
+        `SELECT 
+          c.message_id,
+          c.message_text AS message,
+          c.feeling,
+          c.repost_bookQid,
+          c.quote_text,
+          c.quote_by,
+          c.quote_font_color,
+          c.quote_font_family,
+          c.quote_bg_url,
+          c.media_type,
+          c.media_url,
+          c.memberQid,
+          c.created_at,
+          u.username
+        FROM community c
+        JOIN users u ON c.memberQid = u.memberQid
+        WHERE c.message_id = ?`,
+        [cleanRepostId]
+      );
+
+      if (rows.length > 0) {
+        const repostRow = rows[0];
+
+        // 📚 Resolve repost book
+        let repostBook = null;
+        if (repostRow.repost_bookQid) {
+          const repostBookResult = await fetchBookByQid(
+            repostRow.repost_bookQid
+          );
+          repostBook = repostBookResult.length
+            ? repostBookResult[0]
+            : null;
+        }
+
+        repostData = {
+          message_id: repostRow.message_id,
+          message: repostRow.message,
+          feeling: repostRow.feeling,
+          results: repostBook? [repostBook] : [],
+          quote_text: repostRow.quote_text,
+          quote_by: repostRow.quote_by,
+          quote_font_family: repostRow.quote_font_family,
+          quote_font_color: repostRow.quote_font_color,
+          quote_bg_url: repostRow.quote_bg_url,
+          media_type: repostRow.media_type
+            ? JSON.parse(repostRow.media_type)
+            : [],
+          media_url: repostRow.media_url
+            ? JSON.parse(repostRow.media_url)
+            : [],
+          memberQid: repostRow.memberQid,
+          username: repostRow.username,
+          createFormNow: dayjs(repostRow.created_at).fromNow()
+        };
+      }
+    }
+
+    // 📦 Final payload (Socket.IO + REST)
+    const msgObj = {
+      message_id: insertResult.insertId,
+      memberQid,
+      username,
+      feeling,
+      message: message || "",
+      results: book ? [book] : [],
+      media_type: mediaTypes,
+      media_url: mediaUrls,
+      like_count: 0,
+      comment_count: 0,
+      repost_count: 0,
+      repost_id: cleanRepostId,
+      repostData,
+      quote_text,
+      quote_by,
+      quote_font_family,
+      quote_font_color,
+      quote_bg_url: quoteBgUrl,
+      createFormNow: "just now"
+    };
+
+    res.json(msgObj);
+  } catch (err) {
+    console.error("sendMessage error:", err);
+    res.status(500).json({
+      error: "Internal Server Error",
+      details: err.message
+    });
+  }
+};
+
+// const sendMessage = async (req, res) => {
+//   try {
+//     const memberQid = req.user.memberQid;
+//     const username = req.user.username;
+//     const { message, feeling, repost_id, bookQid, quote_text, quote_by, quote_font_family, quote_font_color } = req.body;
+
+//     let mediaUrls = [];
+//     let mediaTypes = [];
+//     let quoteBgUrl = null;
+
+// if (req.files?.quote_bg_url?.length > 0) {
+//   const bgFile = req.files.quote_bg_url[0];
+//   quoteBgUrl = await uploadToS3(bgFile, "community/");
+// }
+
+
+
+//     // Support multiple file uploads (req.files instead of req.file)
+//     if (req.files?.media && req.files?.media.length > 0) {
+//       for (const file of req.files.media) {
+//         let type = null;
+//         if (file.mimetype.startsWith("image/")) type = "image";
+//         else if (file.mimetype.startsWith("video/")) type = "video";
+
+//         const url = await uploadToS3(file, "community/");
+//         mediaUrls.push(url);
+//         mediaTypes.push(type);
+//       }
+//     }
+
+//     if (!message && mediaUrls.length === 0 && !feeling && !repost_id) {
+//       return res.status(400).json({ error: "Message, media, repost content,or feeling required" });
+//     }
+
+    
+//     const cleanRepostId =
+//   repost_id && repost_id !== "null" && repost_id !== "" ? repost_id : null;
+
+//   const [result] = await db.query(
+//   `INSERT INTO community (
+//     memberQid,
+//     message_text,
+//     feeling,
+//     repost_id,
+//     media_type,
+//     media_url,
+//     repost_bookQid,
+//     quote_text,
+//     quote_by,
+//     quote_font_family,
+//     quote_font_color,
+//     quote_bg_url
+//   )
+//   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 //   [
 //     memberQid,
 //     message || null,
@@ -548,74 +708,73 @@ if (req.files?.quote_bg_url?.length > 0) {
 //     quote_text || null,
 //     quote_by || null,
 //     quote_font_family || null,
-//     quote_font_color || null
+//     quote_font_color || null,
+//     quoteBgUrl || null
 //   ]
 // );
+  
+//     // Fetch repost info if repost_id exists
+//     let repostData = null;
+//     if (repost_id) {
+//       const [rows] = await db.query(
+//         `SELECT 
+//             c.message_id,
+//             c.message_text AS message,  
+//             c.feeling,
+//             c.repost_bookQid,
+//             c.quote_text,
+//             c.quote_by,
+//             c.quote_font_color,
+//             c.quote_font_family,
+//             c.quote_bg_url,
+//             c.memberQid, 
+//             c.media_type,
+//             c.media_url,
+//             c.created_at,
+//             u.username
+//          FROM community c
+//          JOIN users u ON c.memberQid = u.memberQid
+//          WHERE c.message_id = ?`,
+//         [repost_id]
+//       );
 
+//       if (rows.length > 0) {
+//         repostData = rows[0];
+//         // ✅ Parse JSON fields
+//         repostData.media_url = repostData.media_url
+//           ? JSON.parse(repostData.media_url)
+//           : [];
+//         repostData.media_type = repostData.media_type
+//           ? JSON.parse(repostData.media_type)
+//           : [];
+//       }
+//     }
 
+//     const msgObj = {
+//       message_id: result.insertId,
+//       memberQid,
+//       username,
+//       feeling,
+//       message: message || "",
+//       media_type: mediaTypes,
+//       media_url: mediaUrls,
+//       createFormNow: "just now",
+//       like_count: 0,
+//       repostData,
+//       quote_text,
+//       quote_by,
+//       quote_font_family,
+//       quote_font_color,
+//       quoteBgUrl
      
-    // Fetch repost info if repost_id exists
-    let repostData = null;
-    if (repost_id) {
-      const [rows] = await db.query(
-        `SELECT 
-            c.message_id,
-            c.message_text AS message,  
-            c.feeling,
-            c.repost_bookQid,
-            c.quote_text,
-            c.quote_by,
-            c.quote_font_color,
-            c.quote_font_family,
-            c.quote_bg_url,
-            c.memberQid, 
-            c.media_type,
-            c.media_url,
-            c.created_at,
-            u.username
-         FROM community c
-         JOIN users u ON c.memberQid = u.memberQid
-         WHERE c.message_id = ?`,
-        [repost_id]
-      );
+//     };
 
-      if (rows.length > 0) {
-        repostData = rows[0];
-        // ✅ Parse JSON fields
-        repostData.media_url = repostData.media_url
-          ? JSON.parse(repostData.media_url)
-          : [];
-        repostData.media_type = repostData.media_type
-          ? JSON.parse(repostData.media_type)
-          : [];
-      }
-    }
-
-    const msgObj = {
-      message_id: result.insertId,
-      memberQid,
-      username,
-      feeling,
-      message: message || "",
-      media_type: mediaTypes,
-      media_url: mediaUrls,
-      createFormNow: "just now",
-      like_count: 0,
-      repostData,
-      quote_text,
-      quote_by,
-      quote_font_family,
-      quote_font_color,
-      quoteBgUrl
-      // bookQid will need to fetch from the database work here soon
-    };
-
-    res.json(msgObj);
-  } catch (err) {
-    console.error("sendMessage error:", err);
-    res.status(500).json({ error: "Internal Server Error", details: err.message });
-  }
-};
+//     res.json(msgObj);
+//   } catch (err) {
+//     console.error("sendMessage error:", err);
+//     res.status(500).json({ error: "Internal Server Error", details: err.message });
+//   }
+// };
 
 
 
