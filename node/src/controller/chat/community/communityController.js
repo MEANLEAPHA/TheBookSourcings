@@ -240,8 +240,8 @@ if (req.files?.quote_bg_url?.length > 0) {
 
 
     // Support multiple file uploads (req.files instead of req.file)
-    if (req.files && req.files.length > 0) {
-      for (const file of req.files) {
+    if (req.files?.media && req.files?.media.length > 0) {
+      for (const file of req.files.media) {
         let type = null;
         if (file.mimetype.startsWith("image/")) type = "image";
         else if (file.mimetype.startsWith("video/")) type = "video";
@@ -367,6 +367,7 @@ if (req.files?.quote_bg_url?.length > 0) {
       quote_by,
       quote_font_family,
       quote_font_color,
+      quoteBgUrl
       // bookQid will need to fetch from the database work here soon
     };
 
