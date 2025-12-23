@@ -93,7 +93,10 @@ forms.addEventListener("submit", async (e) => {
     
     const res = await fetch(`${API_URL}/api/community/share`, {
       method: "POST",
-      headers: { "Authorization": `Bearer ${token}` },
+      headers: {
+    "Authorization": `Bearer ${token}`,
+    "Content-Type": "application/json" // ✅ THIS IS THE KEY
+  },
       body: JSON.stringify({
       message: text,
       feeling,
