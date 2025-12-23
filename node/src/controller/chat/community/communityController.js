@@ -844,7 +844,7 @@ const deleteMessage = async (req, res) => {
     const { message_id } = req.body;
 
     const [rows] = await db.query(
-      "SELECT memberQid, media_url FROM community WHERE message_id = ? AND deleted_at IS NULL",
+      "SELECT memberQid, media_url, repost_bookQid FROM community WHERE message_id = ? AND deleted_at IS NULL",
       [message_id]
     );
 
@@ -869,6 +869,11 @@ const deleteMessage = async (req, res) => {
           }
         }
       }
+    }
+
+    if(rows[0].repost_bookQid) {
+      await db.query("DELETE FROM book_share WHERE bookQid = ? AND memberQid = ?", 
+        [rows[0].repost_bookQid, memberQid]);
     }
 
     // delete message from DB

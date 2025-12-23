@@ -884,7 +884,7 @@ const getPopularity = async (req, res) => {
       FROM user_book_activity r
       JOIN users u 
         ON r.memberQid = u.memberQid
-      WHERE r.activity_type = "read" AND bookQid = ?
+      WHERE r.activity_type = "read" AND r.bookQid = ?
       `,
       [bookQid]
     );
@@ -898,7 +898,21 @@ const getPopularity = async (req, res) => {
       FROM user_book_activity r
       JOIN users u 
         ON r.memberQid = u.memberQid
-      WHERE r.activity_type = "download" AND bookQid = ?
+      WHERE r.activity_type = "download" AND r.bookQid = ?
+      `,
+      [bookQid]
+    );
+
+    const [shares] = await db.query(
+      `
+      SELECT DISTINCT
+        r.memberQid,
+        u.pfUrl,
+        u.username
+      FROM book_share r
+      JOIN users u 
+        ON r.memberQid = u.memberQid
+      WHERE r.bookQid = ?
       `,
       [bookQid]
     );
@@ -919,6 +933,9 @@ const getPopularity = async (req, res) => {
       //download
       total_download:downloads.length,
       users_download:downloads,
+      //share
+      total_share:shares.length,
+      users_share:shares
     });
 
   } catch (err) {
