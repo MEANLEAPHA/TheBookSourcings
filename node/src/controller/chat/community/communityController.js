@@ -485,13 +485,13 @@ const shareBook = async (req, res) => {
       [memberQid, bookQid]
     );
 
-    await db.query(
-      `UPDATE uploadBook 
-       SET shareCount = shareCount + 1 
-       WHERE bookQid = ?`,
-      [bookQid]
-    );
-    
+    // await db.query(
+    //   `UPDATE uploadBook 
+    //    SET shareCount = shareCount + 1 
+    //    WHERE bookQid = ?`,
+    //   [bookQid]
+    // );
+
     res.json(insertResult);
   }
   catch (err) {
@@ -854,7 +854,7 @@ const deleteMessage = async (req, res) => {
     const { message_id } = req.body;
 
     const [rows] = await db.query(
-      "SELECT memberQid, media_url, repost_bookQid FROM community WHERE message_id = ? AND deleted_at IS NULL",
+      "SELECT memberQid, media_url, repost_bookQid, share_post FROM community WHERE message_id = ? AND deleted_at IS NULL",
       [message_id]
     );
 

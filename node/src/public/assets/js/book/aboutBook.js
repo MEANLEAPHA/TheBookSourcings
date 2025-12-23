@@ -2278,6 +2278,11 @@ async function loadPopularity() {
     users: data.users_review,
     text: "People review this book"
   });
+   createPopularityBlock(container, {
+    total: data.total_share,
+    users: data.users_share,
+    text: "People share this book"
+  });
 
   createPopularityBlock(container, {
     total: data.total_rate,
