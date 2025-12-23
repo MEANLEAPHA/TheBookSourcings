@@ -481,6 +481,21 @@
   </div>
   </div>
  
+    <!-- Toast container for logib/signup-->
+    <div class="position-fixed" style="z-index: 1100; right: 10px;bottom: 10px;">
+      <div id="errorToast" class="toast align-items-center text-bg-warning border-0 p-8" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex flex-column" style="padding: 10px;">
+          <div class="d-flex justify-content-between w-100 gap-2" >
+            <div  id="errorToastBody">
+            Unauthorized. Please log in / sign up first. It takes a few seconds :)
+            </div>
+            <button type="button" class="btn-close btn-close-white " data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+          
+          <button type="button" class="close-btn-no-token btn btn-success border-0 mt-1" style="border-radius: 5px;width: 45%;font-size: small;"><a href="../../userSign/login.html">Log in / sign up</a></button>
+        </div>
+      </div>
+    </div>
   <!--Feeling Toast-->
   <div id="FeelingToastWrapper">
       <div id="FeelingToast" class="toast align-items-center text-bg-light border-0" role="alert" aria-live="assertive" aria-atomic="true">

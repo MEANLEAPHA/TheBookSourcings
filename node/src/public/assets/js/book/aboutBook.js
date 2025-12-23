@@ -100,7 +100,7 @@ forms.addEventListener("submit", async (e) => {
       body: formData
     });
 
-    // if (!res.ok) throw new Error("Failed to send message");
+    if (!res.ok) throw new Error("Failed to send message");
     if (!res.ok) {
           if (res.status === 403) {
             showErrorToast("Unauthorized. Please log in or sign up first.");
@@ -135,6 +135,14 @@ shareBtn.addEventListener("click", () => {
     displayFeeling.textContent = "";
   };
 });
+function showErrorToast(message) {
+  const toastEl = document.getElementById('errorToast');
+  const toastBody = document.getElementById('errorToastBody');
+  toastBody.textContent = message;
+
+  const toast = new bootstrap.Toast(toastEl);
+  toast.show();
+}
 
 function detectSource(bookId) {
     if (/^TB\d+S$/.test(bookId)) return "otthor";
