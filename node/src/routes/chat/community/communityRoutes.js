@@ -5,7 +5,8 @@ const {
   getAllMessagesByMemberQid,
   sendMessage, 
   editMessage, 
-  deleteMessage 
+  deleteMessage ,
+  shareBook
 } = require("../../../controller/chat/community/communityController");
 const verifyHttpToken = require("../../../middleware/verifyHttpToken");
 const { upload } = require("../../../middleware/AWSuploadMiddleware");
@@ -28,6 +29,7 @@ router.post(
   sendMessage
 );
 
+router.post('/share', verifyHttpToken, shareBook);
 
 // Edit message
 router.put("/edit", verifyHttpToken, editMessage);

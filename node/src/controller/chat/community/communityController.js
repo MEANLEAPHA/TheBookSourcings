@@ -457,6 +457,39 @@ const getAllMessagesByMemberQid = async (req, res) => {
 //   }
 // };
 // 📌 Send message with multiple media
+
+const shareBook = async (req, res) => {
+  try{
+    const memberQid = req.user.memberQid;
+    const {bookQid, message, feeling} = req.body;
+
+
+    const [insertResult] = await db.query(
+      `INSERT INTO community (
+        memberQid,
+        message_text,
+        feeling,
+        repost_bookQid
+      ) VALUES (?, ?, ?, ?)`,
+      [
+        memberQid,
+        message || null,
+        feeling || null,
+        bookQid,
+      ]
+    );
+
+    await db.query(
+      `INSERT INTO book-share (memberQid, bookQid)`,
+      [memberQid, bookQid]
+    );
+    res.json(insertResult);
+  }
+  catch (err) {
+    console.error("shareBook error:", err);
+    res.status(500).json({ error: err.message });
+  }
+}
 const sendMessage = async (req, res) => {
   try {
     const memberQid = req.user.memberQid;
@@ -853,5 +886,6 @@ module.exports = {
   getAllMessagesByMemberQid,
   sendMessage,
   editMessage,
-  deleteMessage
+  deleteMessage,
+  shareBook
 };
