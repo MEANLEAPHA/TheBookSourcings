@@ -480,7 +480,7 @@ const shareBook = async (req, res) => {
     );
 
     await db.query(
-      `INSERT INTO book_share (memberQid, bookQid)`,
+      `INSERT INTO book_share (memberQid, bookQid) VALUES (?, ?)`,
       [memberQid, bookQid]
     );
     res.json(insertResult);
