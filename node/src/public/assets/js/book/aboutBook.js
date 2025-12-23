@@ -90,14 +90,15 @@ forms.addEventListener("submit", async (e) => {
   ) return;
 
   try {
-    const formData = new FormData();
-    formData.append("message", text);
-    formData.append("feeling", feeling);
-    formData.append("bookQid", bookId);
+    
     const res = await fetch(`${API_URL}/api/community/share`, {
       method: "POST",
       headers: { "Authorization": `Bearer ${token}` },
-      body: formData
+      body: JSON.stringify({
+      message: text,
+      feeling,
+      bookQid: bookId
+  })
     });
 
     if (!res.ok) throw new Error("Failed to send message");
