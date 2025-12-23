@@ -469,8 +469,9 @@ const shareBook = async (req, res) => {
         memberQid,
         message_text,
         feeling,
-        repost_bookQid
-      ) VALUES (?, ?, ?, ?)`,
+        repost_bookQid,
+        share_post
+      ) VALUES (?, ?, ?, ?, 1)`,
       [
         memberQid,
         message || null,
@@ -483,6 +484,14 @@ const shareBook = async (req, res) => {
       `INSERT INTO book_share (memberQid, bookQid) VALUES (?, ?)`,
       [memberQid, bookQid]
     );
+
+    await db.query(
+      `UPDATE uploadBook 
+       SET shareCount = shareCount + 1 
+       WHERE bookQid = ?`,
+      [bookQid]
+    );
+    
     res.json(insertResult);
   }
   catch (err) {
@@ -555,8 +564,9 @@ const sendMessage = async (req, res) => {
         quote_by,
         quote_font_family,
         quote_font_color,
-        quote_bg_url
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        quote_bg_url,
+        com_post
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`,
       [
         memberQid,
         message || null,
@@ -871,7 +881,7 @@ const deleteMessage = async (req, res) => {
       }
     }
 
-    if(rows[0].repost_bookQid) {
+    if(rows[0].share_post === 1){
       await db.query("DELETE FROM book_share WHERE bookQid = ? AND memberQid = ?", 
         [rows[0].repost_bookQid, memberQid]);
     }
