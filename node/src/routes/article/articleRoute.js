@@ -4,7 +4,7 @@ const {
 publishArticle
 } = require("../../controller/article/articleController");
 const verifyHttpToken = require("../../middleware/verifyHttpToken");
-const { upload } = require("../../../middleware/AWSuploadMiddleware");
+const { upload } = require("../../middleware/AWSuploadMiddleware");
 router.post(
   '/upload',
   upload.fields([
