@@ -7,7 +7,7 @@ const verifyHttpToken = require("../../middleware/verifyHttpToken");
 const { upload } = require("../../middleware/AWSuploadMiddleware");
 router.post(
   '/upload',
-  upload.fields([
+   upload.fields([
     { name: 'main_image', maxCount: 1 },
     { name: 'section_images', maxCount: 3 }
   ]),

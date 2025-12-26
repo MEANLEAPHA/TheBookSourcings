@@ -7,49 +7,52 @@ const publishArticle = async (req, res) => {
     const { title } = req.body;
     const memberQid = req.user.memberQid;
 
+    /* =========================
+       SECTION TEXTS & LAYOUTS
+    ========================= */
     let sectionTexts = req.body.section_texts || [];
     let sectionLayouts = req.body.section_layouts || [];
 
     if (!Array.isArray(sectionTexts)) sectionTexts = [sectionTexts];
     if (!Array.isArray(sectionLayouts)) sectionLayouts = [sectionLayouts];
 
-    // ------------------------
-    // MAIN IMAGE
-    // ------------------------
-    let mainImageUrl = null;
-    if (req.files.main_image) {
-      const file = req.files.main_image[0];
-      // mainImageUrl = await uploadToS3(file);
-      mainImageUrl = `uploads/${Date.now()}-${file.originalname}`;
+    /* =========================
+       MAIN IMAGE (REQUIRED)
+    ========================= */
+    if (!req.files?.main_image?.length) {
+      return res.status(400).json({ error: 'Main image is required' });
     }
 
-    // ------------------------
-    // SECTION IMAGES
-    // ------------------------
-    const sectionImages = new Array(sectionLayouts.length).fill(null);
-    let imageIndex = 0;
+    const mainImageFile = req.files.main_image[0];
 
-    if (req.files.section_images) {
-      for (let i = 0; i < sectionLayouts.length; i++) {
-        if (sectionLayouts[i] !== 'no-image') {
-          const file = req.files.section_images[imageIndex];
-          if (file) {
-            // const url = await uploadToS3(file);
-            const url = `uploads/${Date.now()}-${file.originalname}`;
-            sectionImages[i] = url;
-            imageIndex++;
-          }
-        }
-      }
+    // ✅ Upload to S3
+    const mainImageUrl = await uploadToS3(
+      mainImageFile,
+      'articles/main'
+    );
+
+    /* =========================
+       OPTIONAL SECTION IMAGES (POOL)
+       MAX 3
+    ========================= */
+    const sectionImages = [];
+    const optionalImages = req.files.section_images || [];
+
+    for (const file of optionalImages.slice(0, 3)) {
+      const url = await uploadToS3(
+        file,
+        'articles/sections'
+      );
+      sectionImages.push(url);
     }
 
-    // ------------------------
-    // SAVE TO DB
-    // ------------------------
+    /* =========================
+       SAVE TO DB (YOUR SCHEMA)
+    ========================= */
     await db.query(
       `INSERT INTO articles 
-        (memberQid, title, main_image, section_texts, section_images, section_layouts)
-       VALUES (?,?, ?, ?, ?, ?)`,
+       (memberQid, title, main_image, section_texts, section_images, section_layouts)
+       VALUES (?, ?, ?, ?, ?, ?)`,
       [
         memberQid,
         title,
@@ -70,5 +73,6 @@ const publishArticle = async (req, res) => {
     res.status(500).json({ error: 'Publish failed' });
   }
 };
+
 
 module.exports = { publishArticle };

@@ -277,7 +277,15 @@
                     <li><a class="dropdown-item" href="#" data-type="image-right"><img src="assets/img/article1.png" alt="" > With Image at right</a></li>
                 </ul>
             </div>
-         
+         <input
+  type="file"
+  id="optional-images-input"
+  name="optional_images"
+  accept="image/*"
+  multiple
+  hidden
+>
+
        </section>
        <button type="submit" id="publish-btn" class="btn btn-primary">
     Publish Article
@@ -295,6 +303,10 @@ const sectionsContainer = document.getElementById('sections-container');
 const globalAddBtn = document.querySelector('.dropdown');
 
 let imageCount = 0;
+
+
+const optionalImagesInput = document.getElementById('optional-images-input');
+let optionalImages = [];
 
 /* =========================
    SECTION UTILITIES
@@ -401,31 +413,76 @@ function attachSectionEvents(section) {
     const cancelImgBtn = section.querySelector('.cancel-section-image');
 
     // Image preview
-    if (imgInput) {
-        imgInput.addEventListener('change', () => {
-            const file = imgInput.files[0];
-            if (!file || !file.type.startsWith('image/')) return;
+    imgInput.addEventListener('change', () => {
+  const file = imgInput.files[0];
+  if (!file || !file.type.startsWith('image/')) return;
 
-            const reader = new FileReader();
-            reader.onload = e => {
-                img.src = e.target.result;
-                img.style.display = 'block';
-                cancelImgBtn.style.display = 'inline-block';
-            };
-            reader.readAsDataURL(file);
-        });
-    }
+  if (optionalImages.length >= 3) {
+    alert('Maximum 3 optional images allowed');
+    imgInput.value = '';
+    return;
+  }
+
+  optionalImages.push(file);
+
+  const dt = new DataTransfer();
+  optionalImages.forEach(f => dt.items.add(f));
+  optionalImagesInput.files = dt.files;
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    img.src = e.target.result;
+    img.style.display = 'block';
+    cancelImgBtn.style.display = 'inline-block';
+  };
+  reader.readAsDataURL(file);
+});
+
+    // if (imgInput) {
+    //     imgInput.addEventListener('change', () => {
+    //         const file = imgInput.files[0];
+    //         if (!file || !file.type.startsWith('image/')) return;
+
+    //         const reader = new FileReader();
+    //         reader.onload = e => {
+    //             img.src = e.target.result;
+    //             img.style.display = 'block';
+    //             cancelImgBtn.style.display = 'inline-block';
+    //         };
+    //         reader.readAsDataURL(file);
+    //     });
+    // }
 
     // ❌ Cancel image
     if (cancelImgBtn) {
         cancelImgBtn.addEventListener('click', () => {
-            img.src = '';
-            img.style.display = 'none';
-            imgInput.value = '';
-            cancelImgBtn.style.display = 'none';
-            imageCount--;
-            toggleAddButtons();
-        });
+  const index = optionalImages.findIndex(
+    f => f.name === imgInput.files[0]?.name
+  );
+
+  if (index !== -1) optionalImages.splice(index, 1);
+
+  const dt = new DataTransfer();
+  optionalImages.forEach(f => dt.items.add(f));
+  optionalImagesInput.files = dt.files;
+
+  imgInput.value = '';
+  img.src = '';
+  img.style.display = 'none';
+  cancelImgBtn.style.display = 'none';
+
+  imageCount--;
+  toggleAddButtons();
+});
+
+        // cancelImgBtn.addEventListener('click', () => {
+        //     img.src = '';
+        //     img.style.display = 'none';
+        //     imgInput.value = '';
+        //     cancelImgBtn.style.display = 'none';
+        //     imageCount--;
+        //     toggleAddButtons();
+        // });
     }
 
     // 🗑 Delete section
@@ -444,41 +501,7 @@ function attachSectionEvents(section) {
     });
 }
 
-// function attachSectionEvents(section) {
 
-//     // Image preview
-//     const imgInput = section.querySelector('.section-image');
-//     const img = section.querySelector('.section-preview');
-
-//     if (imgInput) {
-//         imgInput.addEventListener('change', () => {
-//             const file = imgInput.files[0];
-//             if (!file) return;
-
-//             const reader = new FileReader();
-//             reader.onload = e => {
-//                 img.src = e.target.result;
-//                 img.style.display = 'block';
-//             };
-//             reader.readAsDataURL(file);
-//         });
-//     }
-
-//     // Delete
-//     section.querySelector('.delete-section').addEventListener('click', () => {
-//         if (imgInput) imageCount--;
-//         section.remove();
-//         toggleAddButtons();
-//     });
-
-//     // ➕ Add section BELOW THIS ONE (FIXED)
-//     section.querySelectorAll('.dropdown-item').forEach(item => {
-//         item.addEventListener('click', e => {
-//             e.preventDefault();
-//             createSection(item.dataset.type, section);
-//         });
-//     });
-// }
 
 /* =========================
    GLOBAL ADD BUTTON (BOTTOM)
@@ -606,15 +629,19 @@ document.getElementById('article-form').addEventListener('submit', async functio
     document.querySelectorAll('.article-section').forEach((section, index) => {
         const layout = section.dataset.layout;
         const text = section.querySelector('.section-input')?.value || '';
-        const image = section.querySelector('.section-image')?.files[0] || null;
+        // const image = section.querySelector('.section-image')?.files[0] || null;
 
         formData.append(`sections[${index}][layout]`, layout);
         formData.append(`sections[${index}][text]`, text);
+      
 
-        if (image) {
-            formData.append(`sections[${index}][image]`, image);
-        }
+        // if (image) {
+        //     formData.append(`sections[${index}][image]`, image);
+        // }
     });
+      for (const file of optionalImagesInput.files) {
+        formData.append('section_images', file);
+        }
 
     try {
         const res = await fetch('https://thebooksourcings.onrender.com/api/article/upload', {
