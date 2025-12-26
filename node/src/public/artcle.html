@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Article Builder</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{
+  --primary:#fd7648;
+  --border:#ddd;
+}
+
+body{font-family:Arial;background:#f5f5f5;}
+section{width:80%;margin:auto;background:#fff;padding:20px;border-radius:10px}
+
+/* ---------- SECTION ---------- */
+.article-section{
+  border:2px dashed transparent;
+  margin:25px 0;
+  padding:15px;
+  position:relative;
+}
+.article-section:hover{border-color:var(--primary)}
+
+/* ---------- TOOLBAR ---------- */
+.section-toolbar{
+  position:absolute;
+  top:8px;
+  right:8px;
+  display:flex;
+  gap:6px;
+  opacity:0;
+}
+.article-section:hover .section-toolbar{opacity:1}
+
+.section-toolbar button{
+  border:none;
+  background:var(--primary);
+  color:#fff;
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  cursor:pointer;
+}
+
+/* ---------- CONTENT ---------- */
+textarea{
+  width:100%;
+  border:none;
+  resize:none;
+  font-size:16px;
+  min-height:120px;
+}
+textarea:focus{outline:none}
+
+.section-with-image{
+  display:flex;
+  gap:15px;
+}
+.section-with-image.right{flex-direction:row-reverse}
+.section-with-image img{
+  width:200px;
+  display:none;
+  border-radius:6px;
+}
+
+/* ---------- ADD BUTTON ---------- */
+.add-section{
+  background:var(--primary);
+  color:#fff;
+  border:none;
+  padding:10px 20px;
+  cursor:pointer;
+  border-radius:5px;
+}
+</style>
+</head>
+<body>
+
+<form id="article-form">
+<section>
+
+<h2>Main Title</h2>
+<textarea placeholder="Main title..."></textarea>
+
+<h3>First Section (fixed)</h3>
+<textarea></textarea>
+
+<div id="sections-container"></div>
+
+<button type="button" class="add-section" id="addSectionBtn">Add Section</button>
+
+</section>
+</form>
+<script>
+const container = document.getElementById('sections-container');
+const addBtn = document.getElementById('addSectionBtn');
+
+const MAX_DYNAMIC = 6; // + 1 fixed = 7 total
+let insertAfter = null;
+
+/* ---------- ADD SECTION ---------- */
+function createSection(type){
+  if(container.children.length >= MAX_DYNAMIC) return;
+
+  const sec = document.createElement('div');
+  sec.className = 'article-section';
+  sec.draggable = true;
+  sec.dataset.type = type;
+
+  sec.innerHTML = `
+    <div class="section-toolbar">
+      <button class="insert"><i class="fa fa-plus"></i></button>
+      <button class="delete"><i class="fa fa-trash"></i></button>
+    </div>
+  `;
+
+  if(type === 'text'){
+    sec.innerHTML += `<textarea></textarea>`;
+  }else{
+    sec.innerHTML += `
+      <div class="section-with-image ${type}">
+        <input type="file" accept="image/*">
+        <img>
+        <textarea></textarea>
+      </div>
+    `;
+    attachPreview(sec);
+  }
+
+  if(insertAfter){
+    insertAfter.after(sec);
+    insertAfter = null;
+  }else{
+    container.appendChild(sec);
+  }
+
+  attachControls(sec);
+  updateAddVisibility();
+  saveState();
+}
+
+/* ---------- CONTROLS ---------- */
+function attachControls(sec){
+  sec.querySelector('.delete').onclick = () => {
+    sec.remove();
+    updateAddVisibility();
+    saveState();
+  };
+
+  sec.querySelector('.insert').onclick = () => {
+    insertAfter = sec;
+    showChooser();
+  };
+}
+
+/* ---------- IMAGE PREVIEW ---------- */
+function attachPreview(sec){
+  const input = sec.querySelector('input');
+  const img = sec.querySelector('img');
+
+  input.onchange = () => {
+    const f = input.files[0];
+    if(!f) return;
+    img.src = URL.createObjectURL(f);
+    img.style.display = 'block';
+  };
+}
+
+/* ---------- ADD BUTTON ---------- */
+function showChooser(){
+  const type = prompt('Type: text / left / right');
+  if(!type) return;
+  createSection(type === 'text' ? 'text' : type);
+}
+
+addBtn.onclick = () => {
+  insertAfter = null;
+  showChooser();
+};
+
+function updateAddVisibility(){
+  addBtn.style.display =
+    container.children.length >= MAX_DYNAMIC ? 'none' : 'block';
+}
+
+/* ---------- DRAG & DROP ---------- */
+let dragItem = null;
+
+container.addEventListener('dragstart', e=>{
+  if(e.target.classList.contains('article-section')){
+    dragItem = e.target;
+    dragItem.style.opacity = .4;
+  }
+});
+container.addEventListener('dragend', ()=>{
+  if(dragItem) dragItem.style.opacity = '';
+  saveState();
+});
+container.addEventListener('dragover', e=>{
+  e.preventDefault();
+  const after = [...container.children]
+    .find(el => e.clientY < el.getBoundingClientRect().top + el.offsetHeight/2);
+  if(after) container.insertBefore(dragItem, after);
+  else container.appendChild(dragItem);
+});
+
+/* ---------- UNDO / REDO ---------- */
+const undo=[], redo=[];
+function saveState(){
+  undo.push(container.innerHTML);
+  redo.length=0;
+}
+function restore(html){
+  container.innerHTML = html;
+  [...container.children].forEach(sec=>{
+    attachControls(sec);
+    if(sec.querySelector('input')) attachPreview(sec);
+  });
+  updateAddVisibility();
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.ctrlKey && e.key==='z' && undo.length>1){
+    redo.push(undo.pop());
+    restore(undo[undo.length-1]);
+  }
+  if(e.ctrlKey && e.key==='y' && redo.length){
+    const s = redo.pop();
+    undo.push(s);
+    restore(s);
+  }
+});
+
+saveState();
+</script>
+</body>
+</html>

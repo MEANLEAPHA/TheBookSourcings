@@ -74,7 +74,7 @@ const quiz = require('./routes/quizRoute');
 // push nootification
 // const pushNotification = require('./routes/service/pushRoute');
 
-
+const article = require('./routes/article/articleRoute');
 
 
 // filter
@@ -89,6 +89,7 @@ app.use('/api/quiz', quiz)
 
 //filter
 
+api.use('api/article', article)
 app.use('/api/books', filter);
 
 app.use('/api/trending', trendingRoutes); // ✅ mount trending API
