@@ -89,7 +89,7 @@ app.use('/api/quiz', quiz)
 
 //filter
 
-api.use('api/article', article)
+app.use('/api/article', article)
 app.use('/api/books', filter);
 
 app.use('/api/trending', trendingRoutes); // ✅ mount trending API
