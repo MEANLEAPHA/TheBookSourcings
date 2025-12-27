@@ -1,5 +1,5 @@
 const db = require("../../config/db");
-
+const { uploadToS3, deleteFromS3 } = require("../../middleware/AWSuploadMiddleware");
 // const uploadToS3 = require('../utils/s3'); // optional
 
 const publishArticle = async (req, res) => {
