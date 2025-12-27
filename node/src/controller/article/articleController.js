@@ -51,7 +51,7 @@ const publishArticle = async (req, res) => {
     ========================= */
     await db.query(
       `INSERT INTO articles 
-       (memberQid, title, main_image, section_texts, section_images, section_layouts)
+       (memberQid, title, main_image, section_texts, section_images, section_layout)
        VALUES (?, ?, ?, ?, ?, ?)`,
       [
         memberQid,
