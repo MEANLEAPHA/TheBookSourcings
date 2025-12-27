@@ -4,7 +4,7 @@ const { uploadToS3, deleteFromS3 } = require("../../middleware/AWSuploadMiddlewa
 
 const publishArticle = async (req, res) => {
   try {
-    const { title } = req.body;
+    const { title, main_section } = req.body;
     const memberQid = req.user.memberQid;
 
     /* =========================
@@ -51,11 +51,12 @@ const publishArticle = async (req, res) => {
     ========================= */
     await db.query(
       `INSERT INTO articles 
-       (memberQid, title, main_image, section_texts, section_images, section_layout)
-       VALUES (?, ?, ?, ?, ?, ?)`,
+       (memberQid, title, main_section, main_image, section_texts, section_images, section_layout)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
       [
         memberQid,
         title,
+        main_section,
         mainImageUrl,
         JSON.stringify(sectionTexts),
         JSON.stringify(sectionImages),

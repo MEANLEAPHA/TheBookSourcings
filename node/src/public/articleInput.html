@@ -347,10 +347,10 @@ function sectionToolbar() {
                     ➕ Add
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#" data-type="no-image">No Image</a></li>
-                    <li><a class="dropdown-item" href="#" data-type="image-top">Image Top</a></li>
-                    <li><a class="dropdown-item" href="#" data-type="image-left">Image Left</a></li>
-                    <li><a class="dropdown-item" href="#" data-type="image-right">Image Right</a></li>
+                    <li><a class="dropdown-item" href="#" data-type="0">No Image</a></li>
+                    <li><a class="dropdown-item" href="#" data-type="1">Image Top</a></li>
+                    <li><a class="dropdown-item" href="#" data-type="2">Image Left</a></li>
+                    <li><a class="dropdown-item" href="#" data-type="3">Image Right</a></li>
                 </ul>
             </div>
             <button type="button" class="delete-section">🗑</button>
@@ -535,70 +535,6 @@ cancelBtn.addEventListener('click', function () {
     inputLabelHolder.style.display = 'flex';
 });
 
-
-
-// function addSection(type) {
-//     const section = document.createElement('div');
-//     section.classList.add('article-section');
-
-//     if (type === 'no-image') {
-//         section.innerHTML = `
-//             <textarea name="sections[]" placeholder="Write your section here..."></textarea>
-//         `;
-//     }
-
-//     if (type === 'image-top') {
-//         section.innerHTML = `
-//             <div class="section-with-image-top">
-//                 <input type="file" name="section_images[]" accept="image/*">
-//                 <img style="display:none">
-//                 <textarea name="sections[]" placeholder="Write your section here..."></textarea>
-//             </div>
-//         `;
-//         attachPreview(section);
-//     }
-
-//     if (type === 'image-left') {
-//         section.innerHTML = `
-//             <div class="section-with-image-side left">
-//                 <input type="file" name="section_images[]" accept="image/*">
-//                 <img style="display:none">
-//                 <textarea name="sections[]" placeholder="Write your section here..."></textarea>
-//             </div>
-//         `;
-//         attachPreview(section);
-//     }
-
-//     if (type === 'image-right') {
-//         section.innerHTML = `
-//             <div class="section-with-image-side right">
-//                 <input type="file" name="section_images[]" accept="image/*">
-//                 <img style="display:none">
-//                 <textarea name="sections[]" placeholder="Write your section here..."></textarea>
-//             </div>
-//         `;
-//         attachPreview(section);
-//     }
-
-//     sectionsContainer.appendChild(section);
-// }
-
-// function attachPreview(section) {
-//     const input = section.querySelector('input[type="file"]');
-//     const img = section.querySelector('img');
-
-//     input.addEventListener('change', () => {
-//         const file = input.files[0];
-//         if (!file || !file.type.startsWith('image/')) return;
-
-//         const reader = new FileReader();
-//         reader.onload = e => {
-//             img.src = e.target.result;
-//             img.style.display = 'block';
-//         };
-//         reader.readAsDataURL(file);
-//     });
-// }
 const token = localStorage.getItem('token');
 document.getElementById('article-form').addEventListener('submit', async function (e) {
     e.preventDefault();
@@ -611,11 +547,13 @@ document.getElementById('article-form').addEventListener('submit', async functio
 
     // Main content
     formData.append('title', document.getElementById('main-input').value);
-    formData.append('first_section', document.querySelector('.first-section-input').value);
+    formData.append('main_section', document.querySelector('.first-section-input').value);
 
     // Dynamic sections
     document.querySelectorAll('.article-section').forEach((section, index) => {
-        const layout = section.dataset.layout;
+        // const layout = section.dataset.layout;
+        const layout = Number(section.dataset.layout);
+
         const text = section.querySelector('.section-input')?.value || '';
         // const image = section.querySelector('.section-image')?.files[0] || null;
 
