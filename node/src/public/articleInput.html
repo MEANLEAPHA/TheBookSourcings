@@ -610,7 +610,7 @@ document.getElementById('article-form').addEventListener('submit', async functio
     if (mainImg) formData.append('main_image', mainImg);
 
     // Main content
-    formData.append('main_text', document.getElementById('main-input').value);
+    formData.append('title', document.getElementById('main-input').value);
     formData.append('first_section', document.querySelector('.first-section-input').value);
 
     // Dynamic sections
