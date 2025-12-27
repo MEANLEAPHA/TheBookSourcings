@@ -3,7 +3,7 @@ const router = express.Router();
 const { 
 publishArticle
 } = require("../../controller/article/articleController");
-const verifyHttpToken = require("../../middleware/verifyHttpToken");
+const {authMiddleware} = require("../../middleware/authMiddleware");
 const { upload } = require("../../middleware/AWSuploadMiddleware");
 router.post(
   '/upload',
@@ -11,7 +11,7 @@ router.post(
     { name: 'main_image', maxCount: 1 },
     { name: 'section_images', maxCount: 3 }
   ]),
-  verifyHttpToken,
+  authMiddleware,
   publishArticle
 );
 
