@@ -369,6 +369,7 @@ function createSection(type, insertAfter = null) {
         return;
     }
 
+
     const section = document.createElement('div');
     section.className = 'article-section';
     section.dataset.layout = type;
@@ -405,100 +406,86 @@ function createSection(type, insertAfter = null) {
 
 /* =========================
    EVENTS
-========================= */
+// ========================= */
 function attachSectionEvents(section) {
 
-    const imgInput = section.querySelector('.section-image');
-    const img = section.querySelector('.section-preview');
-    const cancelImgBtn = section.querySelector('.cancel-section-image');
+  const imgInput = section.querySelector('.section-image');
+  const img = section.querySelector('.section-preview');
+  const cancelImgBtn = section.querySelector('.cancel-section-image');
 
-    // Image preview
+  /* =========================
+     IMAGE INPUT (ONLY IF EXISTS)
+  ========================= */
+  if (imgInput) {
     imgInput.addEventListener('change', () => {
-  const file = imgInput.files[0];
-  if (!file || !file.type.startsWith('image/')) return;
+      const file = imgInput.files[0];
+      if (!file || !file.type.startsWith('image/')) return;
 
-  if (optionalImages.length >= 3) {
-    alert('Maximum 3 optional images allowed');
-    imgInput.value = '';
-    return;
+      if (optionalImages.length >= MAX_IMAGES) {
+        alert('Maximum 3 optional images allowed');
+        imgInput.value = '';
+        return;
+      }
+
+      optionalImages.push(file);
+
+      const dt = new DataTransfer();
+      optionalImages.forEach(f => dt.items.add(f));
+      optionalImagesInput.files = dt.files;
+
+      const reader = new FileReader();
+      reader.onload = e => {
+        img.src = e.target.result;
+        img.style.display = 'block';
+        cancelImgBtn.style.display = 'inline-block';
+      };
+      reader.readAsDataURL(file);
+    });
   }
 
-  optionalImages.push(file);
+  /* =========================
+     CANCEL IMAGE
+  ========================= */
+  if (cancelImgBtn && imgInput) {
+    cancelImgBtn.addEventListener('click', () => {
+      const index = optionalImages.findIndex(
+        f => f.name === imgInput.files[0]?.name
+      );
 
-  const dt = new DataTransfer();
-  optionalImages.forEach(f => dt.items.add(f));
-  optionalImagesInput.files = dt.files;
+      if (index !== -1) optionalImages.splice(index, 1);
 
-  const reader = new FileReader();
-  reader.onload = e => {
-    img.src = e.target.result;
-    img.style.display = 'block';
-    cancelImgBtn.style.display = 'inline-block';
-  };
-  reader.readAsDataURL(file);
-});
+      const dt = new DataTransfer();
+      optionalImages.forEach(f => dt.items.add(f));
+      optionalImagesInput.files = dt.files;
 
-    // if (imgInput) {
-    //     imgInput.addEventListener('change', () => {
-    //         const file = imgInput.files[0];
-    //         if (!file || !file.type.startsWith('image/')) return;
+      imgInput.value = '';
+      img.src = '';
+      img.style.display = 'none';
+      cancelImgBtn.style.display = 'none';
 
-    //         const reader = new FileReader();
-    //         reader.onload = e => {
-    //             img.src = e.target.result;
-    //             img.style.display = 'block';
-    //             cancelImgBtn.style.display = 'inline-block';
-    //         };
-    //         reader.readAsDataURL(file);
-    //     });
-    // }
-
-    // ❌ Cancel image
-    if (cancelImgBtn) {
-        cancelImgBtn.addEventListener('click', () => {
-  const index = optionalImages.findIndex(
-    f => f.name === imgInput.files[0]?.name
-  );
-
-  if (index !== -1) optionalImages.splice(index, 1);
-
-  const dt = new DataTransfer();
-  optionalImages.forEach(f => dt.items.add(f));
-  optionalImagesInput.files = dt.files;
-
-  imgInput.value = '';
-  img.src = '';
-  img.style.display = 'none';
-  cancelImgBtn.style.display = 'none';
-
-  imageCount--;
-  toggleAddButtons();
-});
-
-        // cancelImgBtn.addEventListener('click', () => {
-        //     img.src = '';
-        //     img.style.display = 'none';
-        //     imgInput.value = '';
-        //     cancelImgBtn.style.display = 'none';
-        //     imageCount--;
-        //     toggleAddButtons();
-        // });
-    }
-
-    // 🗑 Delete section
-    section.querySelector('.delete-section').addEventListener('click', () => {
-        if (imgInput && imgInput.value) imageCount--;
-        section.remove();
-        toggleAddButtons();
+      imageCount--;
+      toggleAddButtons();
     });
+  }
 
-    // ➕ Insert below
-    section.querySelectorAll('.dropdown-item').forEach(item => {
-        item.addEventListener('click', e => {
-            e.preventDefault();
-            createSection(item.dataset.type, section);
-        });
+  /* =========================
+     DELETE SECTION (ALWAYS)
+  ========================= */
+  section.querySelector('.delete-section').addEventListener('click', () => {
+    if (imgInput && imgInput.value) imageCount--;
+    section.remove();
+    toggleAddButtons();
+  });
+
+  /* =========================
+     INSERT BELOW
+  ========================= */
+  section.querySelectorAll('.dropdown-item').forEach(item => {
+    item.addEventListener('click', e => {
+      e.preventDefault();
+      createSection(item.dataset.type, section);
     });
+  });
 }
 
 
@@ -550,68 +537,68 @@ cancelBtn.addEventListener('click', function () {
 
 
 
-function addSection(type) {
-    const section = document.createElement('div');
-    section.classList.add('article-section');
+// function addSection(type) {
+//     const section = document.createElement('div');
+//     section.classList.add('article-section');
 
-    if (type === 'no-image') {
-        section.innerHTML = `
-            <textarea name="sections[]" placeholder="Write your section here..."></textarea>
-        `;
-    }
+//     if (type === 'no-image') {
+//         section.innerHTML = `
+//             <textarea name="sections[]" placeholder="Write your section here..."></textarea>
+//         `;
+//     }
 
-    if (type === 'image-top') {
-        section.innerHTML = `
-            <div class="section-with-image-top">
-                <input type="file" name="section_images[]" accept="image/*">
-                <img style="display:none">
-                <textarea name="sections[]" placeholder="Write your section here..."></textarea>
-            </div>
-        `;
-        attachPreview(section);
-    }
+//     if (type === 'image-top') {
+//         section.innerHTML = `
+//             <div class="section-with-image-top">
+//                 <input type="file" name="section_images[]" accept="image/*">
+//                 <img style="display:none">
+//                 <textarea name="sections[]" placeholder="Write your section here..."></textarea>
+//             </div>
+//         `;
+//         attachPreview(section);
+//     }
 
-    if (type === 'image-left') {
-        section.innerHTML = `
-            <div class="section-with-image-side left">
-                <input type="file" name="section_images[]" accept="image/*">
-                <img style="display:none">
-                <textarea name="sections[]" placeholder="Write your section here..."></textarea>
-            </div>
-        `;
-        attachPreview(section);
-    }
+//     if (type === 'image-left') {
+//         section.innerHTML = `
+//             <div class="section-with-image-side left">
+//                 <input type="file" name="section_images[]" accept="image/*">
+//                 <img style="display:none">
+//                 <textarea name="sections[]" placeholder="Write your section here..."></textarea>
+//             </div>
+//         `;
+//         attachPreview(section);
+//     }
 
-    if (type === 'image-right') {
-        section.innerHTML = `
-            <div class="section-with-image-side right">
-                <input type="file" name="section_images[]" accept="image/*">
-                <img style="display:none">
-                <textarea name="sections[]" placeholder="Write your section here..."></textarea>
-            </div>
-        `;
-        attachPreview(section);
-    }
+//     if (type === 'image-right') {
+//         section.innerHTML = `
+//             <div class="section-with-image-side right">
+//                 <input type="file" name="section_images[]" accept="image/*">
+//                 <img style="display:none">
+//                 <textarea name="sections[]" placeholder="Write your section here..."></textarea>
+//             </div>
+//         `;
+//         attachPreview(section);
+//     }
 
-    sectionsContainer.appendChild(section);
-}
+//     sectionsContainer.appendChild(section);
+// }
 
-function attachPreview(section) {
-    const input = section.querySelector('input[type="file"]');
-    const img = section.querySelector('img');
+// function attachPreview(section) {
+//     const input = section.querySelector('input[type="file"]');
+//     const img = section.querySelector('img');
 
-    input.addEventListener('change', () => {
-        const file = input.files[0];
-        if (!file || !file.type.startsWith('image/')) return;
+//     input.addEventListener('change', () => {
+//         const file = input.files[0];
+//         if (!file || !file.type.startsWith('image/')) return;
 
-        const reader = new FileReader();
-        reader.onload = e => {
-            img.src = e.target.result;
-            img.style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-    });
-}
+//         const reader = new FileReader();
+//         reader.onload = e => {
+//             img.src = e.target.result;
+//             img.style.display = 'block';
+//         };
+//         reader.readAsDataURL(file);
+//     });
+// }
 document.getElementById('article-form').addEventListener('submit', async function (e) {
     e.preventDefault();
 
@@ -631,8 +618,9 @@ document.getElementById('article-form').addEventListener('submit', async functio
         const text = section.querySelector('.section-input')?.value || '';
         // const image = section.querySelector('.section-image')?.files[0] || null;
 
-        formData.append(`sections[${index}][layout]`, layout);
-        formData.append(`sections[${index}][text]`, text);
+        formData.append('section_layouts[]', layout);
+        formData.append('section_texts[]', text);
+
       
 
         // if (image) {
