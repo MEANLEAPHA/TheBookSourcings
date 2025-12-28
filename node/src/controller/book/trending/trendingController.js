@@ -4,60 +4,63 @@ const { getGutenbergTrending } = require('./gutenbergController');
 const { getOpenLibraryTrending } = require('./openLibraryController');
 const { getOtthorTrending } = require('./otthorController');
 
-let trendingCache = {
-  data: null,
-  expiry: 0
-};
+// let trendingCache = {
+//   data: null,
+//   expiry: 0
+// };
+
+const feedCache = new Map(); 
+// key = seed, value = { data, expiry }
+
 
 function isCacheValid() {
   return trendingCache.data && Date.now() < trendingCache.expiry;
 }
+const { getGoogleTrending } = require('./googleController');
+const { getGutenbergTrending } = require('./gutenbergController');
+const { getOpenLibraryTrending } = require('./openLibraryController');
+const { getOtthorTrending } = require('./otthorController');
+
+
+
 async function getAllTrending(req, res) {
   try {
     const seed = Number(req.query.seed || 0);
     const cursor = Number(req.query.cursor || 0);
-    const limit = 50; //20
+    const limit = 50;
 
-    if (isCacheValid() && cursor === 0) {
-      return res.json({
-        success: true,
-        data: trendingCache.data.slice(0, limit),
-        nextCursor: limit
-      });
+    let cached = feedCache.get(seed);
+
+    // ✅ BUILD FEED ONLY ONCE PER SEED
+    if (!cached || Date.now() > cached.expiry) {
+      const [google, gutenberg, openLibrary, otthor] =
+        await Promise.all([
+          getGoogleTrending().catch(() => []),
+          getGutenbergTrending().catch(() => []),
+          getOpenLibraryTrending().catch(() => []),
+          getOtthorTrending().catch(() => [])
+        ]);
+
+      const mixed = mixBooksSeeded(
+        [...google, ...gutenberg, ...openLibrary, ...otthor],
+        seed
+      );
+
+      cached = {
+        data: mixed,
+        expiry: Date.now() + 1000 * 60 * 5
+      };
+
+      feedCache.set(seed, cached);
     }
 
-    const [
-      google,
-      gutenberg,
-      openLibrary,
-      otthor
-    ] = await Promise.all([
-      getGoogleTrending().catch(() => []),
-      getGutenbergTrending().catch(() => []),
-      getOpenLibraryTrending().catch(() => []),
-      getOtthorTrending().catch(() => [])
-    ]);
-
-    const allBooks = [
-      ...google,
-      ...gutenberg,
-      ...openLibrary,
-      ...otthor
-    ];
-
-    const mixed = mixBooksSeeded(allBooks, seed);
-
-    trendingCache = {
-      data: mixed,
-      expiry: Date.now() + 1000 * 60 * 5
-    };
-
-    const batch = mixed.slice(cursor, cursor + limit);
+    // ✅ PAGINATION (cursor-based)
+    const batch = cached.data.slice(cursor, cursor + limit);
 
     res.json({
       success: true,
       data: batch,
-      nextCursor: cursor + limit
+      nextCursor: cursor + batch.length
     });
 
   } catch (err) {
@@ -65,6 +68,60 @@ async function getAllTrending(req, res) {
     res.status(500).json({ success: false });
   }
 }
+
+// async function getAllTrending(req, res) {
+//   try {
+//     const seed = Number(req.query.seed || 0);
+//     const cursor = Number(req.query.cursor || 0);
+//     const limit = 50; //20
+
+//     if (isCacheValid() && cursor === 0) {
+//       return res.json({
+//         success: true,
+//         data: trendingCache.data.slice(0, limit),
+//         nextCursor: limit
+//       });
+//     }
+
+//     const [
+//       google,
+//       gutenberg,
+//       openLibrary,
+//       otthor
+//     ] = await Promise.all([
+//       getGoogleTrending().catch(() => []),
+//       getGutenbergTrending().catch(() => []),
+//       getOpenLibraryTrending().catch(() => []),
+//       getOtthorTrending().catch(() => [])
+//     ]);
+
+//     const allBooks = [
+//       ...google,
+//       ...gutenberg,
+//       ...openLibrary,
+//       ...otthor
+//     ];
+
+//     const mixed = mixBooksSeeded(allBooks, seed);
+
+//     trendingCache = {
+//       data: mixed,
+//       expiry: Date.now() + 1000 * 60 * 5
+//     };
+
+//     const batch = mixed.slice(cursor, cursor + limit);
+
+//     res.json({
+//       success: true,
+//       data: batch,
+//       nextCursor: cursor + limit
+//     });
+
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ success: false });
+//   }
+// }
 
 
 function mulberry32(seed) {
