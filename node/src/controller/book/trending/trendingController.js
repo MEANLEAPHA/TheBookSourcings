@@ -13,13 +13,13 @@ const feedCache = new Map();
 // key = seed, value = { data, expiry }
 
 
-function isCacheValid() {
-  return trendingCache.data && Date.now() < trendingCache.expiry;
-}
-const { getGoogleTrending } = require('./googleController');
-const { getGutenbergTrending } = require('./gutenbergController');
-const { getOpenLibraryTrending } = require('./openLibraryController');
-const { getOtthorTrending } = require('./otthorController');
+// function isCacheValid() {
+//   return trendingCache.data && Date.now() < trendingCache.expiry;
+// }
+// const { getGoogleTrending } = require('./googleController');
+// const { getGutenbergTrending } = require('./gutenbergController');
+// const { getOpenLibraryTrending } = require('./openLibraryController');
+// const { getOtthorTrending } = require('./otthorController');
 
 
 
