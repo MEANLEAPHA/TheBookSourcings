@@ -30,6 +30,9 @@ async function fetchNextBatch() {
   cursor = result.nextCursor;
   isLoading = false;
 }
+function removeSkeletons() {
+  document.querySelectorAll('.skeleton-card').forEach(skeleton => skeleton.remove());
+}
 
 // 1️⃣ Render skeletons immediately
 function renderSkeletons(count = 6) {
