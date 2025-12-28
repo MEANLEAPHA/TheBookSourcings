@@ -74,10 +74,10 @@ async function getAllTrending(req, res) {
 
     // ✅ 3. MIX & LIMIT
     const mixedBooks = mixBooks([
+      ...otthor,
       ...google,
       ...gutenberg,
-      ...openLibrary,
-      ...otthor
+      ...openLibrary
     ]);
 
     // ✅ 4. SAVE TO CACHE

@@ -96,8 +96,7 @@ const userBookByMemberQid = async (req, res) => {
     }
 
     // Format result
-    const books = existingBook.map(
-        (book) => (
+    const books = existingBook.map((book) => (
             {
       bookQid: book.bookQid,
       author: book.author || "",

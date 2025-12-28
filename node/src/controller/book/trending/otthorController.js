@@ -45,27 +45,23 @@ async function getOtthorTrending() {
       b.title,
       b.author,
       b.bookCover,
-      b.UploadAt,
-      b.ViewCount,
-      u.username,
-      u.pfUrl
+      u.username
     FROM uploadBook b
     JOIN users u ON b.memberQid = u.memberQid
     ORDER BY b.UploadAt DESC
-    LIMIT 20
   `);
 
   if (!books || books.length === 0) return [];
 
-  return books.map(book => ({
+  return books.map((book) => ({
     bookId: book.bookQid,
     title: book.title,
     authors: [book.author], // 🔥 important: keep format consistent
     cover: book.bookCover,
-    upload_at: dayjs(book.UploadAt).fromNow(),
-    view_count: book.ViewCount,
-    source: book.username,
-    channel_url: book.pfUrl
+    // upload_at: dayjs(book.UploadAt).fromNow(),
+    // view_count: book.ViewCount,
+    source: book.username
+    // channel_url: book.pfUrl
   }));
 }
 
