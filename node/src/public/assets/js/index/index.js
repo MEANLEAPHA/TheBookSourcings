@@ -1,8 +1,11 @@
 
+let feedSeed = sessionStorage.getItem("feed_seed");
+
 if (!feedSeed) {
   feedSeed = Math.floor(Math.random() * 1_000_000);
   sessionStorage.setItem("feed_seed", feedSeed);
 }
+
 
 let cursor = 0;
 let isLoading = false;
@@ -93,7 +96,7 @@ async function fetchTrendingBooks() {
     container.innerHTML = "<p>Failed to load books.</p>";
   }
 }
-let feedSeed = sessionStorage.getItem("feed_seed");
+
 
 
 // Load on page
