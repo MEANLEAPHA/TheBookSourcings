@@ -67,55 +67,6 @@ async function getAllTrending(req, res) {
 }
 
 
-
-// async function getAllTrending(req, res) {
-//   try {
-//     // ✅ 1. RETURN CACHE IF VALID
-//     if (isCacheValid()) {
-//       return res.json({
-//         success: true,
-//         data: trendingCache.data
-//       });
-//     }
-
-//     // ✅ 2. FETCH ALL SOURCES IN PARALLEL
-//     const [
-//       google,
-//       gutenberg,
-//       openLibrary,
-//       otthor
-//     ] = await Promise.all([
-//       getGoogleTrending().catch(() => []),
-//       getGutenbergTrending().catch(() => []),
-//       getOpenLibraryTrending().catch(() => []),
-//       getOtthorTrending().catch(() => [])
-//     ]);
-
-//     // ✅ 3. MIX & LIMIT
-//     const mixedBooks = mixBooks([
-//       ...otthor,
-//       ...google,
-//       ...gutenberg,
-//       ...openLibrary
-//     ]);
-
-//     // ✅ 4. SAVE TO CACHE
-//     trendingCache = {
-//       data: mixedBooks,
-//       expiry: Date.now() + 1000 * 60 * 5 // 5 minutes
-//     };
-
-//     // ✅ 5. SEND RESPONSE
-//     res.json({
-//       success: true,
-//       data: mixedBooks
-//     });
-
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ success: false });
-//   }
-// }
 function mulberry32(seed) {
   return function () {
     let t = seed += 0x6D2B79F5;

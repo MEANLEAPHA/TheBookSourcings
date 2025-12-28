@@ -11,10 +11,17 @@ let cursor = 0;
 let isLoading = false;
 // Example: when page first loads
 window.addEventListener('load', () => {
-  feedSeed++;   // increment seed to get a new random feed
-  cursor = 0;   // reset scroll
+  const newSeed = Math.floor(Math.random() * 1_000_000);
+  sessionStorage.setItem("feed_seed", newSeed);
+  feedSeed = newSeed;
+
+  cursor = 0;
+  isLoading = false;
+  container.innerHTML = "";
+
   fetchNextBatch();
 });
+
 async function fetchNextBatch() {
   if (isLoading) return;
   isLoading = true;
