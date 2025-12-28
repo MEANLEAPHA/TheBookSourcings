@@ -1,70 +1,32 @@
-// async function fetchTrendingBooks() {
-//   try {
-//     const res = await fetch('https://thebooksourcings.onrender.com/api/trending');
-//     const result = await res.json();
 
-//     // ✅ Flatten all sources into one array
-//     const books = [
-//       ...(result.data.google || []),
-//       ...(result.data.gutenberg || []),
-//       ...(result.data.openLibrary || []),
-//       ...(result.data.otthor || [])
-//     ];
+if (!feedSeed) {
+  feedSeed = Math.floor(Math.random() * 1_000_000);
+  sessionStorage.setItem("feed_seed", feedSeed);
+}
 
-//     const container = document.getElementById('BookContent');
-//     container.innerHTML = ''; // Clear old content
-
-//     if (books.length === 0) {
-//       container.innerHTML = `<p>No trending books found right now.</p>`;
-//       return;
-//     }
-
-//     books.forEach(book => {
-//       // ✅ Get cover
-//       const cover = book.cover || "default.jpg";
-//       // ✅ Get authors
-//       const author = book.authors && book.authors.length ? book.authors.join(", ") : "No Data";
-//       // ✅ Get source
-//       const source = book.source || "No Data";
-
-//       // get boook id
-//       const bookId = book.bookId;
-
-
-
-//       // ✅ Build HTML
-//       const card = `
-//         <div class="Book-card">
-//           <a href='aboutBook.html?bookId=${bookId}'>
-//             <div class="thumbnail">
-//               <img src="${cover}" class="bookCovers">
-//             </div>
-//             <div class="Book-info">
-//               <div class="title">${book.title || "Untitled"}</div>
-//               <div class="byAuthor">${author}</div>
-//               <div class="meta">1.2M views · 3 days ago</div>
-//               <div class="channel">
-//                 <div class="avatar"></div>
-//                 <div class="channel-name">${source}</div>
-//               </div>
-             
-//             </div>
-//           </a>
-//         </div>
-//       `;
-
-//       container.insertAdjacentHTML('beforeend', card);
-//     });
-//   } catch (err) {
-//     console.error("Error fetching trending books:", err);
-//   }
-// }
-
-
-// // Load on page
-// fetchTrendingBooks();
+let cursor = 0;
+let isLoading = false;
 
 const container = document.getElementById("BookContent");
+
+
+async function fetchNextBatch() {
+  if (isLoading) return;
+  isLoading = true;
+
+  renderSkeletons(3);
+
+  const res = await fetch(
+    `https://thebooksourcings.onrender.com/api/trending?seed=${feedSeed}&cursor=${cursor}`
+  );
+  const result = await res.json();
+
+  removeSkeletons();
+  renderBooks(result.data);
+
+  cursor = result.nextCursor;
+  isLoading = false;
+}
 
 // 1️⃣ Render skeletons immediately
 function renderSkeletons(count = 6) {
@@ -131,6 +93,17 @@ async function fetchTrendingBooks() {
     container.innerHTML = "<p>Failed to load books.</p>";
   }
 }
+let feedSeed = sessionStorage.getItem("feed_seed");
+
 
 // Load on page
 fetchTrendingBooks();
+
+window.addEventListener("scroll", () => {
+  if (
+    window.innerHeight + window.scrollY >=
+    document.body.offsetHeight - 300
+  ) {
+    fetchNextBatch();
+  }
+});

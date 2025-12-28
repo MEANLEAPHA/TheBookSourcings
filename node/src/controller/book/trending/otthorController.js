@@ -38,7 +38,7 @@ dayjs.extend(relativeTime);
 //     }))
 
 // }
-async function getOtthorTrending() {
+async function getOtthorTrending(){
   const [books] = await db.query(`
     SELECT 
       b.bookQid,
