@@ -99,28 +99,28 @@ function renderBooks(books) {
 }
 
 // 3️⃣ Fetch trending books
-async function fetchTrendingBooks() {
-  renderSkeletons(); // 👈 instant UI feedback
+// async function fetchTrendingBooks() {
+//   renderSkeletons();
 
-  try {
-    const res = await fetch("https://thebooksourcings.onrender.com/api/trending");
-    const result = await res.json();
+//   try {
+//     const res = await fetch("https://thebooksourcings.onrender.com/api/trending");
+//     const result = await res.json();
 
-    // 🔥 NOW backend already mixes data
-    const books = result.data || [];
+  
+//     const books = result.data || [];
 
-    renderBooks(books);
+//     renderBooks(books);
 
-  } catch (err) {
-    console.error(err);
-    container.innerHTML = "<p>Failed to load books.</p>";
-  }
-}
+//   } catch (err) {
+//     console.error(err);
+//     container.innerHTML = "<p>Failed to load books.</p>";
+//   }
+// }
 
 
 
-// Load on page
-fetchTrendingBooks();
+
+// fetchTrendingBooks();
 
 window.addEventListener("scroll", () => {
   if (
