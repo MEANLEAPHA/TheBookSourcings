@@ -1,4 +1,4 @@
-
+const container = document.getElementById("BookContent");
 let feedSeed = Number(sessionStorage.getItem("feed_seed"));
 
 if (!feedSeed) {
@@ -15,18 +15,6 @@ window.addEventListener('load', () => {
   cursor = 0;   // reset scroll
   fetchNextBatch();
 });
-
-// Or, if you have a refresh button:
-document.getElementById('refreshFeedBtn').addEventListener('click', () => {
-  feedSeed++;
-  cursor = 0;
-  container.innerHTML = ''; // clear old books if you want
-  fetchNextBatch();
-});
-
-const container = document.getElementById("BookContent");
-
-
 async function fetchNextBatch() {
   if (isLoading) return;
   isLoading = true;
@@ -48,52 +36,6 @@ function removeSkeletons() {
   document.querySelectorAll('.skeleton-card').forEach(skeleton => skeleton.remove());
 }
 
-// 1️⃣ Render skeletons immediately
-// function renderSkeletons(count = 6) {
-//   container.innerHTML = "";
-//   for (let i = 0; i < count; i++) {
-//     container.insertAdjacentHTML(
-//       "beforeend",
-//       `<div class="skeleton-card"></div>`
-//     );
-//   }
-// }
-
-// // 2️⃣ Render books
-// function renderBooks(books) {
-//   container.innerHTML = "";
-
-//   if (!books.length) {
-//     container.innerHTML = "<p>No trending books found.</p>";
-//     return;
-//   }
-
-//   books.forEach(book => {
-//     const cover = book.cover || "default.jpg";
-//     const author = book.authors?.length ? book.authors.join(", ") : "No Data";
-//     const source = book.source || "No Data";
-//     const bookId = book.bookId || book.bookQid;
-
-//     const card = `
-//       <div class="Book-card">
-//         <a href="aboutBook.html?bookId=${bookId}">
-//           <div class="thumbnail">
-//             <img src="${cover}" class="bookCovers">
-//           </div>
-//           <div class="Book-info">
-//             <div class="title">${book.title || "Untitled"}</div>
-//             <div class="byAuthor">${author}</div>
-//             <div class="channel">
-//               <div class="channel-name">${source}</div>
-//             </div>
-//           </div>
-//         </a>
-//       </div>
-//     `;
-
-//     container.insertAdjacentHTML("beforeend", card);
-//   });
-// }
 function renderSkeletons(count = 6) {
   for (let i = 0; i < count; i++) {
     container.insertAdjacentHTML(
@@ -168,3 +110,51 @@ window.addEventListener("scroll", () => {
     fetchNextBatch();
   }
 });
+
+
+// 1️⃣ Render skeletons immediately
+// function renderSkeletons(count = 6) {
+//   container.innerHTML = "";
+//   for (let i = 0; i < count; i++) {
+//     container.insertAdjacentHTML(
+//       "beforeend",
+//       `<div class="skeleton-card"></div>`
+//     );
+//   }
+// }
+
+// // 2️⃣ Render books
+// function renderBooks(books) {
+//   container.innerHTML = "";
+
+//   if (!books.length) {
+//     container.innerHTML = "<p>No trending books found.</p>";
+//     return;
+//   }
+
+//   books.forEach(book => {
+//     const cover = book.cover || "default.jpg";
+//     const author = book.authors?.length ? book.authors.join(", ") : "No Data";
+//     const source = book.source || "No Data";
+//     const bookId = book.bookId || book.bookQid;
+
+//     const card = `
+//       <div class="Book-card">
+//         <a href="aboutBook.html?bookId=${bookId}">
+//           <div class="thumbnail">
+//             <img src="${cover}" class="bookCovers">
+//           </div>
+//           <div class="Book-info">
+//             <div class="title">${book.title || "Untitled"}</div>
+//             <div class="byAuthor">${author}</div>
+//             <div class="channel">
+//               <div class="channel-name">${source}</div>
+//             </div>
+//           </div>
+//         </a>
+//       </div>
+//     `;
+
+//     container.insertAdjacentHTML("beforeend", card);
+//   });
+// }
