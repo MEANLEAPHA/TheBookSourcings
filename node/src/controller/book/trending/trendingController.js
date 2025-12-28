@@ -16,7 +16,7 @@ async function getAllTrending(req, res) {
   try {
     const seed = Number(req.query.seed || 0);
     const cursor = Number(req.query.cursor || 0);
-    const limit = 20;
+    const limit = 50; //20
 
     if (isCacheValid() && cursor === 0) {
       return res.json({

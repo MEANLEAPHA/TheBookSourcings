@@ -1,5 +1,5 @@
 
-let feedSeed = sessionStorage.getItem("feed_seed");
+let feedSeed = Number(sessionStorage.getItem("feed_seed"));
 
 if (!feedSeed) {
   feedSeed = Math.floor(Math.random() * 1_000_000);
@@ -9,6 +9,20 @@ if (!feedSeed) {
 
 let cursor = 0;
 let isLoading = false;
+// Example: when page first loads
+window.addEventListener('load', () => {
+  feedSeed++;   // increment seed to get a new random feed
+  cursor = 0;   // reset scroll
+  fetchNextBatch();
+});
+
+// Or, if you have a refresh button:
+document.getElementById('refreshFeedBtn').addEventListener('click', () => {
+  feedSeed++;
+  cursor = 0;
+  container.innerHTML = ''; // clear old books if you want
+  fetchNextBatch();
+});
 
 const container = document.getElementById("BookContent");
 
@@ -35,8 +49,52 @@ function removeSkeletons() {
 }
 
 // 1️⃣ Render skeletons immediately
+// function renderSkeletons(count = 6) {
+//   container.innerHTML = "";
+//   for (let i = 0; i < count; i++) {
+//     container.insertAdjacentHTML(
+//       "beforeend",
+//       `<div class="skeleton-card"></div>`
+//     );
+//   }
+// }
+
+// // 2️⃣ Render books
+// function renderBooks(books) {
+//   container.innerHTML = "";
+
+//   if (!books.length) {
+//     container.innerHTML = "<p>No trending books found.</p>";
+//     return;
+//   }
+
+//   books.forEach(book => {
+//     const cover = book.cover || "default.jpg";
+//     const author = book.authors?.length ? book.authors.join(", ") : "No Data";
+//     const source = book.source || "No Data";
+//     const bookId = book.bookId || book.bookQid;
+
+//     const card = `
+//       <div class="Book-card">
+//         <a href="aboutBook.html?bookId=${bookId}">
+//           <div class="thumbnail">
+//             <img src="${cover}" class="bookCovers">
+//           </div>
+//           <div class="Book-info">
+//             <div class="title">${book.title || "Untitled"}</div>
+//             <div class="byAuthor">${author}</div>
+//             <div class="channel">
+//               <div class="channel-name">${source}</div>
+//             </div>
+//           </div>
+//         </a>
+//       </div>
+//     `;
+
+//     container.insertAdjacentHTML("beforeend", card);
+//   });
+// }
 function renderSkeletons(count = 6) {
-  container.innerHTML = "";
   for (let i = 0; i < count; i++) {
     container.insertAdjacentHTML(
       "beforeend",
@@ -45,12 +103,9 @@ function renderSkeletons(count = 6) {
   }
 }
 
-// 2️⃣ Render books
 function renderBooks(books) {
-  container.innerHTML = "";
-
   if (!books.length) {
-    container.innerHTML = "<p>No trending books found.</p>";
+    if (!container.innerHTML) container.innerHTML = "<p>No trending books found.</p>";
     return;
   }
 
