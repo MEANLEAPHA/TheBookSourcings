@@ -4,39 +4,70 @@ const relativeTime = require("dayjs/plugin/relativeTime");
 
 dayjs.extend(relativeTime);
 
-async function getOtthorTrending (){
-    const [books] = await db.query(
-        `
-        SELECT 
-            b.bookQid,
-            b.title,
-            b.author,
-            b.bookCover,
-            b.UploadAt,
-            b.ViewCount,
-            u.username,
-            u.pfUrl
-            FROM b.uploadBook
-            JOIN ON b.memberQid = u.memberQid
-            ORDER BY b.UploadAt DESC
-        `
+// async function getOtthorTrending (){
+//     const [books] = await db.query(
+//         `
+//         SELECT 
+//             b.bookQid,
+//             b.title,
+//             b.author,
+//             b.bookCover,
+//             b.UploadAt,
+//             b.ViewCount,
+//             u.username,
+//             u.pfUrl
+//             FROM b.uploadBook
+//             JOIN ON b.memberQid = u.memberQid
+//             ORDER BY b.UploadAt DESC
+//         `
 
-    )
-    if(books.length === 0 || !books){
-        return []
-    }
+//     )
+//     if(books.length === 0 || !books){
+//         return []
+//     }
 
-    return books.map(book => ({
-        bookId: book.bookQid,
-        title: book.title,
-        author: book.author,
-        cover: book.bookCover,
-        upload_at: dayjs(book.UploadAt).fromNow(),
-        view_count: book.ViewCount,
-        source: book.username,
-        channel_url: book.pfUrl
-    }))
+//     return books.map(book => ({
+//         bookId: book.bookQid,
+//         title: book.title,
+//         author: book.author,
+//         cover: book.bookCover,
+//         upload_at: dayjs(book.UploadAt).fromNow(),
+//         view_count: book.ViewCount,
+//         source: book.username,
+//         channel_url: book.pfUrl
+//     }))
 
+// }
+async function getOtthorTrending() {
+  const [books] = await db.query(`
+    SELECT 
+      b.bookQid,
+      b.title,
+      b.author,
+      b.bookCover,
+      b.UploadAt,
+      b.ViewCount,
+      u.username,
+      u.pfUrl
+    FROM uploadBook b
+    JOIN users u ON b.memberQid = u.memberQid
+    ORDER BY b.UploadAt DESC
+    LIMIT 20
+  `);
+
+  if (!books || books.length === 0) return [];
+
+  return books.map(book => ({
+    bookId: book.bookQid,
+    title: book.title,
+    authors: [book.author], // 🔥 important: keep format consistent
+    cover: book.bookCover,
+    upload_at: dayjs(book.UploadAt).fromNow(),
+    view_count: book.ViewCount,
+    source: book.username,
+    channel_url: book.pfUrl
+  }));
 }
+
 
 module.exports = { getOtthorTrending };
