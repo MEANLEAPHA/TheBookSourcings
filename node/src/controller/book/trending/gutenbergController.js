@@ -8,7 +8,7 @@ async function getGutenbergTrending() {
 
   if (!data || !data.results) return [];
 
-  return data.results.slice(0, 10).map(book => {
+  return data.results.map(book => {
     // Clean author names (convert "Last, First" → "First Last")
     const authors = (book.authors || []).map(a => {
       if (a.name.includes(",")) {
@@ -23,7 +23,7 @@ async function getGutenbergTrending() {
       title: book.title,
       authors,
       cover: book.formats["image/jpeg"] || null,
-      categories: book.subjects || [],
+      // categories: book.subjects || [],
       bookId: book.id
     };
   });
