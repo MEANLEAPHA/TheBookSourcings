@@ -9,9 +9,9 @@ if (!feedSeed) {
 
 let cursor = 0;
 let isLoading = false;
-// Example: when page first loads
-window.addEventListener("pageshow", (event) => {
-  // fires even when restored from cache
+
+
+window.addEventListener('load', () => {
   const newSeed = Math.floor(Math.random() * 1_000_000);
   sessionStorage.setItem("feed_seed", newSeed);
   feedSeed = newSeed;
@@ -23,18 +23,6 @@ window.addEventListener("pageshow", (event) => {
   fetchNextBatch();
 });
 
-// window.addEventListener('load', () => {
-//   const newSeed = Math.floor(Math.random() * 1_000_000);
-//   sessionStorage.setItem("feed_seed", newSeed);
-//   feedSeed = newSeed;
-
-//   cursor = 0;
-//   isLoading = false;
-//   container.innerHTML = "";
-
-//   fetchNextBatch();
-// });
-
 async function fetchNextBatch() {
   if (isLoading) return;
   isLoading = true;
@@ -45,6 +33,11 @@ async function fetchNextBatch() {
     `https://thebooksourcings.onrender.com/api/trending?seed=${feedSeed}&cursor=${cursor}`
   );
   const result = await res.json();
+  if (!result.data || !result.data.length) {
+  isLoading = false;
+  removeSkeletons();  
+  return;
+}
 
   removeSkeletons();
   renderBooks(result.data);
@@ -71,7 +64,8 @@ function renderBooks(books) {
     return;
   }
 
-  books.forEach(book => {
+  books.forEach((book, index)  => {
+    const position = cursor + index;
     const cover = book.cover || "default.jpg";
     const author = book.authors?.length ? book.authors.join(", ") : "No Data";
     const source = book.source || "No Data";
@@ -79,7 +73,7 @@ function renderBooks(books) {
 
     const card = `
       <div class="Book-card">
-        <a href="aboutBook.html?bookId=${bookId}">
+        <a href="aboutBook.html?bookId=${bookId}&position=${position}">
           <div class="thumbnail">
             <img src="${cover}" class="bookCovers">
           </div>
@@ -97,6 +91,32 @@ function renderBooks(books) {
     container.insertAdjacentHTML("beforeend", card);
   });
 }
+
+
+
+window.addEventListener("scroll", () => {
+  if (
+    window.innerHeight + window.scrollY >=
+    document.body.offsetHeight - 300
+  ) {
+    fetchNextBatch();
+  }
+});
+
+
+// Example: when page first loads
+// window.addEventListener("pageshow", (event) => {
+
+//   const newSeed = Math.floor(Math.random() * 1_000_000);
+//   sessionStorage.setItem("feed_seed", newSeed);
+//   feedSeed = newSeed;
+
+//   cursor = 0;
+//   isLoading = false;
+//   container.innerHTML = "";
+
+//   fetchNextBatch();
+// });
 
 // 3️⃣ Fetch trending books
 // async function fetchTrendingBooks() {
@@ -117,20 +137,7 @@ function renderBooks(books) {
 //   }
 // }
 
-
-
-
 // fetchTrendingBooks();
-
-window.addEventListener("scroll", () => {
-  if (
-    window.innerHeight + window.scrollY >=
-    document.body.offsetHeight - 300
-  ) {
-    fetchNextBatch();
-  }
-});
-
 
 // 1️⃣ Render skeletons immediately
 // function renderSkeletons(count = 6) {

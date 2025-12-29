@@ -2,6 +2,7 @@
 const urlParams = new URLSearchParams(window.location.search);
 const bookId = urlParams.get("bookId");
 const source = detectSource(bookId);
+const position = Number(urlParams.get('position')) || null;
 
 const feelingMap = {
   happy: "😊 happy",
@@ -155,17 +156,32 @@ function detectSource(bookId) {
     return "google"; // fallback for Google Books
 }
 
+recordView(bookId, position, source);
    // View count
-    fetch(`https://thebooksourcings.onrender.com/api/bookByAuthor/viewBook/${bookId}`, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${localStorage.getItem("token")}`,
-        "Content-Type": "application/json"
-      }
-    })
-    .then(res => res.json())
-    .then(data => console.log(data))
-    .catch(err => console.error("Error recording view:", err));
+   function recordView(bookId, position, source) {
+  fetch(`https://thebooksourcings.onrender.com/api/bookByAuthor/viewBook/${bookId}`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${localStorage.getItem("token")}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ position, source })
+  })
+  .then(res => res.json())
+  .then(data => console.log("View recorded:", data))
+  .catch(err => console.error("Error recording view:", err));
+}
+
+    // fetch(`https://thebooksourcings.onrender.com/api/bookByAuthor/viewBook/${bookId}`, {
+    //   method: "POST",
+    //   headers: {
+    //     "Authorization": `Bearer ${localStorage.getItem("token")}`,
+    //     "Content-Type": "application/json"
+    //   }
+    // })
+    // .then(res => res.json())
+    // .then(data => console.log(data))
+    // .catch(err => console.error("Error recording view:", err));
 
      // READ, Share, Download
     const read = document.getElementById("readBtn");
