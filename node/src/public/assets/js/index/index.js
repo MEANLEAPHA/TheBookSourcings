@@ -39,7 +39,8 @@ async function fetchNextBatch() {
    if (!result.data || !result.data.length) {
       // No more books to load
       isLoading = false;
-      window.removeEventListener("scroll", onScrollLoadMore); // Optional: stop infinite scroll
+      removeSkeletons();
+      // window.removeEventListener("scroll", onScrollLoadMore); // Optional: stop infinite scroll
       return;
     }
   renderBooks(result.data);
