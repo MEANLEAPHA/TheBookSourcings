@@ -13,15 +13,18 @@ let isLoading = false;
 
 window.addEventListener('load', () => {
   const newSeed = Math.floor(Math.random() * 1_000_000);
+
   sessionStorage.setItem("feed_seed", newSeed);
   feedSeed = newSeed;
 
   cursor = 0;
   isLoading = false;
+  hasMore = true;
   container.innerHTML = "";
 
   fetchNextBatch();
 });
+
 
 async function fetchNextBatch() {
   if (isLoading) return;
