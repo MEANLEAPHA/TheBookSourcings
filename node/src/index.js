@@ -106,7 +106,7 @@ app.use('/api/authors/notableWork', notableWork);
 app.use('/api/getBookByQid', getBookByQidRoute);
 app.use('/api/getMyBooks', getMyBooksRoutes);
 app.use('/api/books', displayUserUploadBookRoute);
-app.use('/api/books/view', viewRoute);
+// app.use('/api/books/view', viewRoute);
 app.use('/api/books', RDSroute);
 app.use('/api/LAFbook', LAF);  
 // app.use('/api', followRoute); old follow route
