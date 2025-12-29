@@ -49,8 +49,14 @@ async function fetchNextBatch() {
   isLoading = false;
 }
 function removeSkeletons() {
-  document.querySelectorAll('.skeleton-card').forEach(skeleton => skeleton.remove());
+  const skeletons = document.querySelectorAll('.skeleton-card');
+  if (!skeletons.length) return;
+  skeletons.forEach(el => el.remove());
 }
+
+// function removeSkeletons() {
+//   document.querySelectorAll('.skeleton-card').forEach(skeleton => skeleton.remove());
+// }
 
 function renderSkeletons(count = 6) {
   for (let i = 0; i < count; i++) {
