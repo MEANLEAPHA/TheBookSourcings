@@ -33,13 +33,15 @@ async function fetchNextBatch() {
     `https://thebooksourcings.onrender.com/api/trending?seed=${feedSeed}&cursor=${cursor}`
   );
   const result = await res.json();
-  if (!result.data || !result.data.length) {
-  isLoading = false;
-  removeSkeletons();  
-  return;
-}
+  
 
   removeSkeletons();
+   if (!result.data || !result.data.length) {
+      // No more books to load
+      isLoading = false;
+      window.removeEventListener("scroll", onScrollLoadMore); // Optional: stop infinite scroll
+      return;
+    }
   renderBooks(result.data);
 
   cursor = result.nextCursor;
