@@ -6,7 +6,7 @@ if (!feedSeed) {
   sessionStorage.setItem("feed_seed", feedSeed);
 }
 
-
+let hasMore = true;
 let cursor = 0;
 let isLoading = false;
 
@@ -26,31 +26,61 @@ window.addEventListener('load', () => {
 });
 
 
+// async function fetchNextBatch() {
+//   if (isLoading) return;
+//   isLoading = true;
+
+//   renderSkeletons(3);
+
+//   const res = await fetch(
+//     `https://thebooksourcings.onrender.com/api/trending?seed=${feedSeed}&cursor=${cursor}`
+//   );
+//   const result = await res.json();
+  
+
+//   removeSkeletons();
+//    if (!result.data || !result.data.length) {
+//       // No more books to load
+//       isLoading = false;
+//       hasMore = false;
+//       return;
+//     }
+//   renderBooks(result.data);
+
+//    cursor = result.nextCursor;
+//   isLoading = false;
+// }
 async function fetchNextBatch() {
-  if (isLoading) return;
+  if (isLoading || !hasMore) return;
   isLoading = true;
 
   renderSkeletons(3);
 
-  const res = await fetch(
-    `https://thebooksourcings.onrender.com/api/trending?seed=${feedSeed}&cursor=${cursor}`
-  );
-  const result = await res.json();
-  
+  try {
+    const res = await fetch(
+      `https://thebooksourcings.onrender.com/api/trending?seed=${feedSeed}&cursor=${cursor}`
+    );
+    const result = await res.json();
 
-  removeSkeletons();
-   if (!result.data || !result.data.length) {
-      // No more books to load
+    removeSkeletons();
+
+    if (!result.data || result.data.length === 0) {
+      hasMore = false;   // 🛑 feed ends here
       isLoading = false;
-      removeSkeletons();
-      // window.removeEventListener("scroll", onScrollLoadMore); // Optional: stop infinite scroll
       return;
     }
-  renderBooks(result.data);
 
-  cursor = result.nextCursor;
+    renderBooks(result.data);
+    cursor = result.nextCursor;
+
+  } catch (err) {
+    console.error(err);
+    removeSkeletons();
+  }
+
   isLoading = false;
 }
+
 function removeSkeletons() {
   const skeletons = document.querySelectorAll('.skeleton-card');
   if (!skeletons.length) return;
@@ -107,6 +137,7 @@ function renderBooks(books) {
 
 
 window.addEventListener("scroll", () => {
+  if (!hasMore) return;
   if (
     window.innerHeight + window.scrollY >=
     document.body.offsetHeight - 300
