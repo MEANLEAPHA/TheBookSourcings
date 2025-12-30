@@ -157,7 +157,7 @@ function detectSource(bookId) {
 }
 
 
-recordView(bookId, position, source, genre);
+// recordView(bookId, position, source);
 
    // View count
    function recordView(bookId, position, source, genre) {
@@ -355,9 +355,9 @@ async function loadBookInfo() {
     // call the loader with that category
     loadSimilarBooks(categoryToUse);
 
-    recordView(categoryToUse);
+    recordView(bookId, position, source, categoryToUse);
 
-
+// recordView(bookId, position, source);
     // follow logic
     if(userMemberQid === book.channel){
         followHolder.style.display = 'none';
