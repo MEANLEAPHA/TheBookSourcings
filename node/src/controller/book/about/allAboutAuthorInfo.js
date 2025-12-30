@@ -943,21 +943,53 @@ const getPopularity = async (req, res) => {
     res.status(500).json({ error: "Failed to load getPPLreview" });
   }
 };
+function normalizeGenre(rawGenre = '') {
+  return rawGenre
+    .toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+}
+async function getOrCreateGenreId(genreName) {
+  if (!genreName) return null;
+
+  const slug = normalizeGenre(genreName);
+
+  // 1️⃣ Try to find existing genre
+  const [rows] = await db.query(
+    `SELECT genre_id FROM genres WHERE slug = ? LIMIT 1`,
+    [slug]
+  );
+
+  if (rows.length) {
+    return rows[0].genre_id;
+  }
+
+  // 2️⃣ Insert new genre
+  const [insertResult] = await db.query(
+    `INSERT INTO genres (name, slug) VALUES (?, ?)`,
+    [genreName, slug]
+  );
+
+  return insertResult.insertId;
+}
 
 const addBookView = async (req, res) => {
   try {
     const { bookQid } = req.params;
-    const { position, source } = req.body;
+    const { position, source, genre } = req.body;
     const memberQid = req.user.memberQid;
 
     if (!memberQid) {
       return res.status(401).json({ error: "User guest not signed in, view is not counted" });
     }
+    // 1️⃣ Resolve genre_id in backend
+    const genreId = await getOrCreateGenreId(genre);
 
     await db.query(
-      `INSERT INTO user_book_activity (memberQid, bookQid, activity_type, position, source) 
-       VALUES (?, ?, 'view', ?, ?)`,
-      [memberQid, bookQid, position, source]
+      `INSERT INTO user_book_activity (memberQid, bookQid, activity_type, position, source, genre_id) 
+       VALUES (?, ?, 'view', ?, ?, genre_id)`,
+      [memberQid, bookQid, position, source, genreId]
     );
 
     await db.query(

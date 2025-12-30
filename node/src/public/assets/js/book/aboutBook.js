@@ -156,33 +156,23 @@ function detectSource(bookId) {
     return "google"; // fallback for Google Books
 }
 
-recordView(bookId, position, source);
+
+recordView(bookId, position, source, genre);
+
    // View count
-   function recordView(bookId, position, source) {
+   function recordView(bookId, position, source, genre) {
   fetch(`https://thebooksourcings.onrender.com/api/bookByAuthor/viewBook/${bookId}`, {
     method: "POST",
     headers: {
       "Authorization": `Bearer ${localStorage.getItem("token")}`,
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ position, source })
+    body: JSON.stringify({ position, source, genre })
   })
   .then(res => res.json())
   .then(data => console.log("View recorded:", data))
   .catch(err => console.error("Error recording view:", err));
 }
-
-    // fetch(`https://thebooksourcings.onrender.com/api/bookByAuthor/viewBook/${bookId}`, {
-    //   method: "POST",
-    //   headers: {
-    //     "Authorization": `Bearer ${localStorage.getItem("token")}`,
-    //     "Content-Type": "application/json"
-    //   }
-    // })
-    // .then(res => res.json())
-    // .then(data => console.log(data))
-    // .catch(err => console.error("Error recording view:", err));
-
      // READ, Share, Download
     const read = document.getElementById("readBtn");
     const download = document.getElementById("downloadBtn");
@@ -364,6 +354,8 @@ async function loadBookInfo() {
 
     // call the loader with that category
     loadSimilarBooks(categoryToUse);
+
+    recordView(categoryToUse);
 
 
     // follow logic
