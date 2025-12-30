@@ -29,6 +29,7 @@ async function getGutenbergBookById(req, res) {
       title: data.title || null,
       subtitle: null,
       authors,
+      author_id: authors,
       description: data.summaries?.[0] || null,
       cover: data.formats?.["image/jpeg"] || null,
       categories: data.subjects?data.subjects.map(cat => cat.replace("--", ", ").replace(" -- ", ", ").replace(" --", ", ").replace("-- ", ", ")) : [],

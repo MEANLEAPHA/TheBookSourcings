@@ -943,6 +943,15 @@ const getPopularity = async (req, res) => {
     res.status(500).json({ error: "Failed to load getPPLreview" });
   }
 };
+
+function normalizeAuthor(raw = '') {
+  return raw
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+}
+
 function normalizeGenre(rawGenre = '') {
   return rawGenre
     .toLowerCase()
@@ -950,6 +959,46 @@ function normalizeGenre(rawGenre = '') {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '');
 }
+function generateAuthorQid() {
+  return 'OTT_' + Math.random().toString(36).slice(2, 10) + '_HOR';
+}
+
+async function getOrCreateAuthorId(authorInput) {
+  if (!authorInput) return null;
+
+  // frontend already sends ONE author (string)
+  const authorName = String(authorInput).trim();
+
+  // 1️⃣ Otthor author → trust it
+  if (authorName.startsWith('OTT')) {
+    return authorName;
+  }
+
+  const slug = normalizeAuthor(authorName);
+
+  // 2️⃣ Check existing author
+  const [rows] = await db.query(
+    `SELECT author_id FROM authors WHERE slug = ? LIMIT 1`,
+    [slug]
+  );
+
+  if (rows.length) {
+    return rows[0].author_id;
+  }
+
+  // 3️⃣ Create new author
+  const authorQid = generateAuthorQid();
+
+  await db.query(
+    `INSERT INTO authors (author_id, name, slug, source)
+     VALUES (?, ?, ?, 'external')`,
+    [authorQid, authorName, slug]
+  );
+
+  return authorQid;
+}
+
+
 async function getOrCreateGenreId(genreName) {
   if (!genreName) return null;
 
@@ -977,7 +1026,7 @@ async function getOrCreateGenreId(genreName) {
 const addBookView = async (req, res) => {
   try {
     const { bookQid } = req.params;
-    const { position, source, genre } = req.body;
+    const { position, source, genre, author_id } = req.body;
     const memberQid = req.user.memberQid;
 
     if (!memberQid) {
@@ -985,11 +1034,12 @@ const addBookView = async (req, res) => {
     }
     // 1️⃣ Resolve genre_id in backend
     const genreId = await getOrCreateGenreId(genre);
+    const authorId = await getOrCreateAuthorId(author_id);
 
     await db.query(
-      `INSERT INTO user_book_activity (memberQid, bookQid, activity_type, position, source, genre_id) 
-       VALUES (?, ?, 'view', ?, ?, genre_id)`,
-      [memberQid, bookQid, position, source, genreId]
+      `INSERT INTO user_book_activity (memberQid, bookQid, activity_type, position, source, genre_id, author_id) 
+       VALUES (?, ?, 'view', ?, ?, ?, ?)`,
+      [memberQid, bookQid, position, source, genreId, authorId]
     );
 
     await db.query(

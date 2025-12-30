@@ -160,14 +160,14 @@ function detectSource(bookId) {
 // recordView(bookId, position, source);
 
    // View count
-   function recordView(bookId, position, source, genre) {
+   function recordView(bookId, position, source, genre, author_id) {
   fetch(`https://thebooksourcings.onrender.com/api/bookByAuthor/viewBook/${bookId}`, {
     method: "POST",
     headers: {
       "Authorization": `Bearer ${localStorage.getItem("token")}`,
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ position, source, genre })
+    body: JSON.stringify({ position, source, genre, author_id })
   })
   .then(res => res.json())
   .then(data => console.log("View recorded:", data))
@@ -352,10 +352,15 @@ async function loadBookInfo() {
     : (book.categories || "");
     const categoryToUse = (firstCategory && String(firstCategory).trim()) ? firstCategory : "fiction";
 
+    const authorId = Array.isArray(book.author_id)
+    ? (book.author_id[0] || "")
+    : (book.author_id || "");
+    const authorIdToUse = (authorId && String(authorId).trim()) ? authorId : "";
+
     // call the loader with that category
     loadSimilarBooks(categoryToUse);
 
-    recordView(bookId, position, source, categoryToUse);
+    recordView(bookId, position, source, categoryToUse, authorIdToUse);
 
 // recordView(bookId, position, source);
     // follow logic

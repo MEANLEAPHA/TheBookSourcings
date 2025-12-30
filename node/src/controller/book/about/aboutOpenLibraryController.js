@@ -76,6 +76,7 @@ async function getOpenLibraryBookById(req, res) {
       title: workData.title || null,
       subtitle: editionData?.subtitle || null,
       authors: authorNames,
+      author_id: authorNames,
       description:
         typeof workData.description === "string"
           ? workData.description
