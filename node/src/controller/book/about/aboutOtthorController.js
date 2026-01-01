@@ -31,6 +31,7 @@ const getOtthorById = async (req, res) => {
         b.bookFile,
         u.username,
         u.authorQid,
+        u.authorId,
         u.memberQid,
         u.pfUrl,
         u.followerCount

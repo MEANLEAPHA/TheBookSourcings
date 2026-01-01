@@ -966,76 +966,37 @@ function generateAuthorQid() {
 async function getOrCreateAuthorId(authorInput) {
   if (!authorInput) return null;
 
-  // ✅ normalize array → first author
-  const authorName = Array.isArray(authorInput)
-    ? authorInput[0]
-    : 'OTT007HOR';
-
-  if (!authorName) return null;
-
-  const authorStr = String(authorName).trim();
+  // frontend already sends ONE author (string)
+  const authorName = String(authorInput).trim();
 
   // 1️⃣ Otthor author → trust it
-  if (authorStr.startsWith("OTT")) {
-    return authorStr;
+  if (authorName.startsWith('OTT')) {
+    return authorName;
   }
 
-  const slug = normalizeAuthor(authorStr);
+  const slug = normalizeAuthor(authorName);
 
-  // 2️⃣ Check existing
+  // 2️⃣ Check existing author
   const [rows] = await db.query(
     `SELECT author_id FROM authors WHERE slug = ? LIMIT 1`,
     [slug]
   );
 
-  if (rows.length) return rows[0].author_id;
+  if (rows.length) {
+    return rows[0].author_id;
+  }
 
-  // 3️⃣ Create
+  // 3️⃣ Create new author
   const authorQid = generateAuthorQid();
 
   await db.query(
     `INSERT INTO authors (author_id, name, slug, source)
      VALUES (?, ?, ?, 'external')`,
-    [authorQid, authorStr, slug]
+    [authorQid, authorName, slug]
   );
 
   return authorQid;
 }
-
-// async function getOrCreateAuthorId(authorInput) {
-//   if (!authorInput) return null;
-
-//   // frontend already sends ONE author (string)
-//   const authorName = String(authorInput).trim();
-
-//   // 1️⃣ Otthor author → trust it
-//   if (authorName.startsWith('OTT')) {
-//     return authorName;
-//   }
-
-//   const slug = normalizeAuthor(authorName);
-
-//   // 2️⃣ Check existing author
-//   const [rows] = await db.query(
-//     `SELECT author_id FROM authors WHERE slug = ? LIMIT 1`,
-//     [slug]
-//   );
-
-//   if (rows.length) {
-//     return rows[0].author_id;
-//   }
-
-//   // 3️⃣ Create new author
-//   const authorQid = generateAuthorQid();
-
-//   await db.query(
-//     `INSERT INTO authors (author_id, name, slug, source)
-//      VALUES (?, ?, ?, 'external')`,
-//     [authorQid, authorName, slug]
-//   );
-
-//   return authorQid;
-// }
 
 
 async function getOrCreateGenreId(genreName) {

@@ -352,15 +352,10 @@ async function loadBookInfo() {
     : (book.categories || "");
     const categoryToUse = (firstCategory && String(firstCategory).trim()) ? firstCategory : "fiction";
 
-    // const authorId = Array.isArray(book.author_id)
-    // ? (book.author_id[0] || "")
-    // : (book.author_id || "");
-    // const authorIdToUse = (authorId && String(authorId).trim()) ? authorId : "";
-    const authorIds = Array.isArray(book.author_id)
-      ? book.author_id
-      : [];
-
-    const authorIdToUse = authorIds.length ? authorIds[0] : null;
+    const authorId = Array.isArray(book.author_id)
+    ? (book.author_id[0] || "")
+    : (book.author_id || "");
+    const authorIdToUse = (authorId && String(authorId).trim()) ? authorId : "";
 
     // call the loader with that category
     loadSimilarBooks(categoryToUse);
