@@ -973,7 +973,7 @@ async function getOrCreateAuthorId(authorInput) {
  // 1️⃣ Otthor author → trust it
   if (authorName.startsWith('OTT')) {
    
-    return authorArray;
+    return authorName;
   }
 
   const slug = normalizeAuthor(authorName);
