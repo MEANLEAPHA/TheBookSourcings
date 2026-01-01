@@ -969,7 +969,7 @@ async function getOrCreateAuthorId(authorInput) {
   // ✅ normalize array → first author
   const authorName = Array.isArray(authorInput)
     ? authorInput[0]
-    : authorInput;
+    : 'OTT007HOR';
 
   if (!authorName) return null;
 
