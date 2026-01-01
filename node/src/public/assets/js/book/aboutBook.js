@@ -352,23 +352,10 @@ async function loadBookInfo() {
     : (book.categories || "");
     const categoryToUse = (firstCategory && String(firstCategory).trim()) ? firstCategory : "fiction";
 
-    // const authorId = Array.isArray(book.author_id)
-    // ? (book.author_id[0] || "")
-    // : (book.author_id || "");
-    // const authorIdToUse = (authorId && String(authorId).trim()) ? authorId : "";
-    let authorIdRaw = book.author_id; // "[\"OTT007HOR\", \"OTT009HOR\"]"
-let authorArray;
-
-try {
-  authorArray = JSON.parse(authorIdRaw); // ["OTT007HOR", "OTT009HOR"]
-} catch (e) {
-  authorArray = []; // fallback if parsing fails
-}
-
-const authorIdToUse = Array.isArray(authorArray)
-  ? (authorArray[0] || "")
-  : (authorArray || "");
-
+    const authorId = Array.isArray(book.author_id)
+    ? (book.author_id[0] || "")
+    : (book.author_id || "");
+    const authorIdToUse = (authorId && String(authorId).trim()) ? authorId : "";
 
     // call the loader with that category
     loadSimilarBooks(categoryToUse);

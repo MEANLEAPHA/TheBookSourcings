@@ -969,9 +969,11 @@ async function getOrCreateAuthorId(authorInput) {
   // frontend already sends ONE author (string)
   const authorName = String(authorInput).trim();
 
-  // 1️⃣ Otthor author → trust it
+   
+ // 1️⃣ Otthor author → trust it
   if (authorName.startsWith('OTT')) {
-    return authorName;
+   
+    return authorArray;
   }
 
   const slug = normalizeAuthor(authorName);

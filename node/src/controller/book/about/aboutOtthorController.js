@@ -49,6 +49,13 @@ const getOtthorById = async (req, res) => {
     }
 
     const bookRow = rows[0];
+    let authorIdRaw = bookRow.authorId; // "[\"OTT007HOR\", \"OTT009HOR\"]"
+    let authorArray;
+    try {
+      authorArray = JSON.parse(authorIdRaw); // ["OTT007HOR", "OTT009HOR"]
+    } catch (e) {
+      authorArray = []; // fallback if parsing fails
+    }
 
     const book = {
       pfUrl : bookRow.pfUrl,
@@ -56,7 +63,7 @@ const getOtthorById = async (req, res) => {
       bookQid: bookRow.bookQid,
       title: bookRow.title,
       subtitle: bookRow.subTitle,
-      author: bookRow.author,
+      author: authorArray,
       authorIds : bookRow.authorQid,
       author_id: bookRow.authorId,
       description: bookRow.summary,
