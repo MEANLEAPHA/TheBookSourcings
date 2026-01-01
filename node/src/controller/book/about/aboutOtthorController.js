@@ -49,13 +49,13 @@ const getOtthorById = async (req, res) => {
     }
 
     const bookRow = rows[0];
-    let authorArray = []; 
-    try { 
-      authorArray = JSON.parse(bookRow.authorId || "[]"); 
-    } 
-    catch (e) {
-     authorArray = []; 
-    }
+    // let authorArray = []; 
+    // try { 
+    //   authorArray = JSON.parse(bookRow.authorId || "[]"); 
+    // } 
+    // catch (e) {
+    //  authorArray = []; 
+    // }
 
     const book = {
       pfUrl : bookRow.pfUrl,
@@ -65,7 +65,8 @@ const getOtthorById = async (req, res) => {
       subtitle: bookRow.subTitle,
       author: bookRow.author,
       authorIds : bookRow.authorQid,
-      author_id: authorArray,
+      // author_id: authorArray,
+      author_id: (() => { try { return JSON.parse(bookRow.authorId || "[]"); } catch { return []; } })(),
       description: bookRow.summary,
       cover: bookRow.bookCover,
       categories: bookRow.mainCategory,
