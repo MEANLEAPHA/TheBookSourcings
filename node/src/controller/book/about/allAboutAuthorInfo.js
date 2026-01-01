@@ -1054,36 +1054,6 @@ const addBookView = async (req, res) => {
   }
 }
 
-// const addBookView = async (req, res) => {
-//   try {
-//     const { bookQid } = req.params;
-//     const memberQid = req.user.memberQid;
-
-//     if (!memberQid) {
-//       return res.status(401).json(
-//         { error: "User guest not sign in, view is not count" }
-//       );
-//     }
-//     // Insert activity
-//     await db.query(
-//       `INSERT INTO user_book_activity (memberQid, bookQid, activity_type) 
-//        VALUES (?, ?, 'view')`,
-//       [memberQid, bookQid]
-//     );
-
-//     // ✅ Update book viewCount
-//     await db.query(
-//       "UPDATE uploadBook SET viewCount = viewCount + 1 WHERE bookQid = ?",
-//       [bookQid]
-//     );
-
-//     res.json({ message: "View recorded successfully" });
-//   } catch (err) {
-//     console.error("Error recording view:", err);
-//     res.status(500).json({ error: "Failed to record view" });
-//   }
-// }
-
 const recordActivity = async (req, res) => {
   try {
     const { bookQid, type } = req.params; 
