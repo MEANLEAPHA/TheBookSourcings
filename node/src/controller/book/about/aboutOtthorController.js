@@ -49,12 +49,12 @@ const getOtthorById = async (req, res) => {
     }
 
     const bookRow = rows[0];
-    let authorIdRaw = bookRow.authorId; // "[\"OTT007HOR\", \"OTT009HOR\"]"
-    let authorArray;
-    try {
-      authorArray = JSON.parse(authorIdRaw); // ["OTT007HOR", "OTT009HOR"]
-    } catch (e) {
-      authorArray = []; // fallback if parsing fails
+    let authorArray = []; 
+    try { 
+      authorArray = JSON.parse(bookRow.authorId || "[]"); 
+    } 
+    catch (e) {
+     authorArray = []; 
     }
 
     const book = {
