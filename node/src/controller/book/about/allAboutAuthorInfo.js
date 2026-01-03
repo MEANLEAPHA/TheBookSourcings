@@ -54,7 +54,7 @@ async function fetchWikidataEntity(qid) {
   return data.entities[qid];
 }
 
-// --- Get label (human-readable) for a Wikidata QID
+
 async function fetchWikidataLabel(qid) {
   try {
     const url = `https://www.wikidata.org/wiki/Special:EntityData/${qid}.json`;
