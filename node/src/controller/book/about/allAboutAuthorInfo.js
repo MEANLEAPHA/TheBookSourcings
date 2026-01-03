@@ -81,7 +81,7 @@ async function getAuthorInfo(req, res) {
         let profession = "";
         let photo = "";
 
-        if (wikidataId) {
+        if (wikidataId) { 
           try {
             const entity = await fetchWikidataEntity(wikidataId);
             description = entity.descriptions?.en?.value || entity.labels?.en?.value || description;

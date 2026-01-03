@@ -395,7 +395,7 @@ async function loadBookInfo() {
   }
   else{
     loadAuthorInfo(authorNames); // for googlebook, gutenberg and openlibrary
-    loadOtherBookByAuthor(authorNameToUse);// googlebook, openlibrary, gutenberg
+    loadOtherBookByAuthor(authorNameToUse);
   }
 
 }
