@@ -1,66 +1,23 @@
-// Import dependencies
 const { getGoogleTrending } = require('./googleController');
 const { getGutenbergTrending } = require('./gutenbergController');
 const { getOpenLibraryTrending } = require('./openLibraryController');
 const { getOtthorTrending } = require('./otthorController');
 
-// let trendingCache = {
-//   data: null,
-//   expiry: 0
-// };
-
 const feedCache = new Map(); 
-// key = seed, value = { data, expiry }
-
-
-// function isCacheValid() {
-//   return trendingCache.data && Date.now() < trendingCache.expiry;
-// }
-// const { getGoogleTrending } = require('./googleController');
-// const { getGutenbergTrending } = require('./gutenbergController');
-// const { getOpenLibraryTrending } = require('./openLibraryController');
-// const { getOtthorTrending } = require('./otthorController');
-
-
-
 async function getAllTrending(req, res) {
   try {
     const seed = Number(req.query.seed || 0);
     const cursor = Number(req.query.cursor || 0);
     const limit = 50;
 
-    let cached = feedCache.get(seed);
-
-    // ✅ BUILD FEED ONLY ONCE PER SEED
-    if (!cached || Date.now() > cached.expiry) {
-      const [google, gutenberg, openLibrary, otthor] =
-        await Promise.all([
-          getGoogleTrending().catch(() => []),
-          getGutenbergTrending().catch(() => []),
-          getOpenLibraryTrending().catch(() => []),
-          getOtthorTrending().catch(() => [])
-        ]);
-
-      const mixed = mixBooksSeeded(
-        [...google, ...gutenberg, ...openLibrary, ...otthor],
-        seed
-      );
-
-      cached = {
-        data: mixed,
-        expiry: Date.now() + 1000 * 60 * 5
-      };
-
-      feedCache.set(seed, cached);
-    }
-
-    // ✅ PAGINATION (cursor-based)
-    const batch = cached.data.slice(cursor, cursor + limit);
+    const data = await buildSeededFeed(seed);
+    const batch = data.slice(cursor, cursor + limit);
 
     res.json({
       success: true,
       data: batch,
-      nextCursor: cursor + batch.length
+      nextCursor: cursor + batch.length,
+      hasMore: cursor + batch.length < data.length
     });
 
   } catch (err) {
@@ -69,59 +26,59 @@ async function getAllTrending(req, res) {
   }
 }
 
-// async function getAllTrending(req, res) {
-//   try {
-//     const seed = Number(req.query.seed || 0);
-//     const cursor = Number(req.query.cursor || 0);
-//     const limit = 50; //20
+async function getFeed(req, res) {
+  try {
+    const seed = Number(req.query.seed || 0);
+    const cursor = Number(req.query.cursor || 0);
+    const limit = 50;
 
-//     if (isCacheValid() && cursor === 0) {
-//       return res.json({
-//         success: true,
-//         data: trendingCache.data.slice(0, limit),
-//         nextCursor: limit
-//       });
-//     }
+    // STEP 1: feed = trending seed ONLY (for now)
+    const seedFeed = await buildSeededFeed(seed);
 
-//     const [
-//       google,
-//       gutenberg,
-//       openLibrary,
-//       otthor
-//     ] = await Promise.all([
-//       getGoogleTrending().catch(() => []),
-//       getGutenbergTrending().catch(() => []),
-//       getOpenLibraryTrending().catch(() => []),
-//       getOtthorTrending().catch(() => [])
-//     ]);
+    const batch = seedFeed.slice(cursor, cursor + limit);
 
-//     const allBooks = [
-//       ...google,
-//       ...gutenberg,
-//       ...openLibrary,
-//       ...otthor
-//     ];
+    res.json({
+      success: true,
+      data: batch,
+      nextCursor: cursor + batch.length,
+      source: 'seed'
+    });
 
-//     const mixed = mixBooksSeeded(allBooks, seed);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false });
+  }
+}
 
-//     trendingCache = {
-//       data: mixed,
-//       expiry: Date.now() + 1000 * 60 * 5
-//     };
 
-//     const batch = mixed.slice(cursor, cursor + limit);
+async function buildSeededFeed(seed) {
+  // const limit = 50;
+  let cached = feedCache.get(seed);
 
-//     res.json({
-//       success: true,
-//       data: batch,
-//       nextCursor: cursor + limit
-//     });
+  if (!cached || Date.now() > cached.expiry) {
+    const [google, gutenberg, openLibrary, otthor] =
+      await Promise.all([
+        getGoogleTrending().catch(() => []),
+        getGutenbergTrending().catch(() => []),
+        getOpenLibraryTrending().catch(() => []),
+        getOtthorTrending().catch(() => [])
+      ]);
 
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ success: false });
-//   }
-// }
+    const mixed = mixBooksSeeded(
+      [...google, ...gutenberg, ...openLibrary, ...otthor],
+      seed
+    );
+
+    cached = {
+      data: mixed,
+      expiry: Date.now() + 1000 * 60 * 5
+    };
+
+    feedCache.set(seed, cached);
+  }
+
+  return cached.data;
+}
 
 
 function mulberry32(seed) {
@@ -145,8 +102,54 @@ function mixBooksSeeded(books, seed) {
   return clean;
 }
 
-
-// Export the function
 module.exports = {
-  getAllTrending
+  getAllTrending,
+  getFeed
 };
+
+
+// async function getAllTrending(req, res) {
+//   try {
+//     const seed = Number(req.query.seed || 0);
+//     const cursor = Number(req.query.cursor || 0);
+//     const limit = 50;
+
+//     let cached = feedCache.get(seed);
+
+//     // ✅ BUILD FEED ONLY ONCE PER SEED
+//     if (!cached || Date.now() > cached.expiry) {
+//       const [google, gutenberg, openLibrary, otthor] =
+//         await Promise.all([
+//           getGoogleTrending().catch(() => []),
+//           getGutenbergTrending().catch(() => []),
+//           getOpenLibraryTrending().catch(() => []),
+//           getOtthorTrending().catch(() => [])
+//         ]);
+
+//       const mixed = mixBooksSeeded(
+//         [...google, ...gutenberg, ...openLibrary, ...otthor],
+//         seed
+//       );
+
+//       cached = {
+//         data: mixed,
+//         expiry: Date.now() + 1000 * 60 * 5
+//       };
+
+//       feedCache.set(seed, cached);
+//     }
+
+//     // ✅ PAGINATION (cursor-based)
+//     const batch = cached.data.slice(cursor, cursor + limit);
+
+//     res.json({
+//       success: true,
+//       data: batch,
+//       nextCursor: cursor + batch.length
+//     });
+
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ success: false });
+//   }
+// }

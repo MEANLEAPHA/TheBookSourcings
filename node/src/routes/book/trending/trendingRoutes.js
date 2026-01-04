@@ -1,11 +1,12 @@
 // Import dependencies using require
 const express = require('express');
-const { getAllTrending } = require('../../../controller/book/trending/trendingController');
+const { getAllTrending, getFeed } = require('../../../controller/book/trending/trendingController');
 
 const router = express.Router();
 
 // GET /api/trending
-router.get('/', getAllTrending);
+router.get('/trending', getAllTrending);
+router.get('/feed', getFeed);
 
 // Export the router using CommonJS
 module.exports = router;

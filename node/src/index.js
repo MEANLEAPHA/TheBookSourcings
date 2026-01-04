@@ -80,11 +80,19 @@ const article = require('./routes/article/articleRoute');
 // filter
 
 const filter = require('./routes/filter/filterBookRoute');
+
+
+
+//feed
+// const feed = require('./routes/feed/feedRoute');
+
 // Initialize Routes
 TheBookSourcingUser(app);
 bookRoutes(app);
 
-// minday quiz
+// app.use('/api', feed);
+
+// monday quiz
 app.use('/api/quiz', quiz)
 
 //filter
@@ -92,7 +100,8 @@ app.use('/api/quiz', quiz)
 app.use('/api/article', article)
 app.use('/api/books', filter);
 
-app.use('/api/trending', trendingRoutes); // ✅ mount trending API
+app.use('/api', trendingRoutes);
+
 app.use('/api/aboutBook', aboutBookInfoRoute);
 app.use('/api/similar', similarBookRoute);
 
