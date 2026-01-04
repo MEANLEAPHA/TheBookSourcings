@@ -26,22 +26,33 @@ async function getAllTrending(req, res) {
   }
 }
 
+
 async function getFeed(req, res) {
   try {
     const seed = Number(req.query.seed || 0);
     const cursor = Number(req.query.cursor || 0);
     const limit = 50;
 
-    // STEP 1: feed = trending seed ONLY (for now)
+    const memberQid = req.user?.memberQid || null;
+
+    // 1️⃣ Seed feed (trending)
     const seedFeed = await buildSeededFeed(seed);
 
-    const batch = seedFeed.slice(cursor, cursor + limit);
+    // 2️⃣ Extension feed (smart continuation)
+    const extensionFeed = memberQid
+      ? await buildExtensionFeed(memberQid, seed)
+      : [];
+
+    // 3️⃣ Combine
+    const fullFeed = [...seedFeed, ...extensionFeed];
+
+    const batch = fullFeed.slice(cursor, cursor + limit);
 
     res.json({
       success: true,
       data: batch,
       nextCursor: cursor + batch.length,
-      source: 'seed'
+      hasMore: cursor + batch.length < fullFeed.length
     });
 
   } catch (err) {
@@ -102,6 +113,22 @@ function mixBooksSeeded(books, seed) {
   return clean;
 }
 
+
+
+async function buildExtensionFeed(memberQid, seed) {
+  /**
+   * STEP 2:
+   * - Use user_book_activity
+   * - Find top genres / authors
+   * - Fetch more books using those signals
+   *
+   * For now: return EMPTY array
+   * We will fill it in Step 3
+   */
+  return [];
+}
+
+
 module.exports = {
   getAllTrending,
   getFeed
@@ -146,6 +173,30 @@ module.exports = {
 //       success: true,
 //       data: batch,
 //       nextCursor: cursor + batch.length
+//     });
+
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ success: false });
+//   }
+// }
+
+// async function getFeed(req, res) {
+//   try {
+//     const seed = Number(req.query.seed || 0);
+//     const cursor = Number(req.query.cursor || 0);
+//     const limit = 50;
+
+//     // STEP 1: feed = trending seed ONLY (for now)
+//     const seedFeed = await buildSeededFeed(seed);
+
+//     const batch = seedFeed.slice(cursor, cursor + limit);
+
+//     res.json({
+//       success: true,
+//       data: batch,
+//       nextCursor: cursor + batch.length,
+//       source: 'seed'
 //     });
 
 //   } catch (err) {
