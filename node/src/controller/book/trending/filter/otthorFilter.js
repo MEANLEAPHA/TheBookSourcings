@@ -1,4 +1,4 @@
-const db = require("../../../config/db");
+const db = require("../../../../config/db");
 async function searchOtthorByGenre(genreId, limit = 20) {
   const [rows] = await db.query(
     `
