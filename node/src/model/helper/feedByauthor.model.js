@@ -1,4 +1,4 @@
-const db = require('../config/db');
+const db = require('../../config/db');
 const { searchOtthorByAuthor } = require('../../controller/book/trending/filter/otthorFilter');
 const {searchGoogleBookByAuthor} = require('../../controller/book/trending/filter/googleFilter');
 const {searchGutenbergByAuthor} = require('../../controller/book/trending/filter/gutenbergFilter');
