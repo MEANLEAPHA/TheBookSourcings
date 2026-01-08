@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Heart Burst Animation</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .heart {
+      font-size: 60px;
+      color: #e74c3c;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .heart.animate {
+      animation: wigglePop 0.6s ease;
+    }
+
+    @keyframes wigglePop {
+      0%   { transform: scale(1) rotate(0deg); }
+      25%  { transform: scale(1.3) rotate(-15deg); }
+      50%  { transform: scale(1.3) rotate(15deg); }
+      75%  { transform: scale(1.2) rotate(-10deg); }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+
+    /* Dot burst */
+    .dot {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 10px;
+      height: 10px;
+      background: #e74c3c;
+      border-radius: 50%;
+      opacity: 0;
+    }
+
+    .dot.animate {
+      animation: popDot 0.8s ease forwards;
+    }
+
+    @keyframes popDot {
+      0%   { transform: translate(-50%, 0) scale(0.5); opacity: 0; }
+      30%  { opacity: 1; }
+      100% { transform: translate(var(--x), var(--y)) scale(0.8); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div style="display:inline-block; position:relative;">
+    <i id="heart" class="fa-regular fa-heart heart"></i>
+  </div>
+
+  <script>
+    const heart = document.getElementById('heart');
+
+    heart.addEventListener('click', () => {
+      // Toggle heart style
+      if (heart.classList.contains('fa-regular')) {
+        heart.classList.remove('fa-regular');
+        heart.classList.add('fa-solid');
+      } else {
+        heart.classList.remove('fa-solid');
+        heart.classList.add('fa-regular');
+      }
+
+      // Heart wiggle
+      heart.classList.add('animate');
+      setTimeout(() => heart.classList.remove('animate'), 600);
+
+      // Create burst dots
+      for (let i = 0; i < 6; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'dot animate';
+        // Random spread upward
+        const angle = (Math.PI / 3) * i - Math.PI/6; // spread around top
+        const distance = 50; // how far they travel
+        const x = Math.cos(angle) * distance + 'px';
+        const y = -Math.sin(angle) * distance + 'px';
+        dot.style.setProperty('--x', x);
+        dot.style.setProperty('--y', y);
+
+        heart.parentElement.appendChild(dot);
+
+        // Remove after animation
+        setTimeout(() => dot.remove(), 800);
+      }
+    });
+  </script>
+</body>
+</html>

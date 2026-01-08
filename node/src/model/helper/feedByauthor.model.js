@@ -1,0 +1,40 @@
+const db = require('../config/db');
+const { searchOtthorByAuthor } = require('../../controller/book/trending/filter/otthorFilter');
+const {searchGoogleBookByAuthor} = require('../../controller/book/trending/filter/googleFilter');
+const {searchGutenbergByAuthor} = require('../../controller/book/trending/filter/gutenbergFilter');
+const {searchOpenLibraryByAuthor} = require('../../controller/book/trending/filter/openlibraryFilter');
+
+async function buildAuthorFeed(authorId) {
+  let authorName = null;
+
+  // 🔹 OTT author
+  if (authorId.startsWith('OTT')) {
+    const [[row]] = await db.query(
+      `SELECT fullName FROM users WHERE authorQid = ? LIMIT 1`,
+      [authorId]
+    );
+    authorName = row?.fullName;
+  } else {
+    // 🔹 external author
+    const [[row]] = await db.query(
+      `SELECT author_name FROM authors WHERE author_id = ? LIMIT 1`,
+      [authorId]
+    );
+    authorName = row?.author_name;
+  }
+
+  if (!authorName) return [];
+
+  const results = await Promise.allSettled([
+    searchGoogleBookByAuthor(authorName),
+    searchGutenbergByAuthor(authorName),
+    searchOpenLibraryByAuthor(authorName),
+    searchOtthorByAuthor(authorId)
+  ]);
+
+  return results
+    .filter(r => r.status === 'fulfilled')
+    .flatMap(r => r.value);
+}
+
+module.exports = { buildAuthorFeed };

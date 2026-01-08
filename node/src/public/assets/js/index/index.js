@@ -106,12 +106,124 @@ function renderBooks(books) {
   });
 }
 
-window.addEventListener("scroll", () => {
-  if (!hasMore) return;
-  if (
-    window.innerHeight + window.scrollY >=
-    document.body.offsetHeight - 300
-  ) {
-    fetchNextBatch();
+async function loadNavGenres() {
+  try {
+    const res = await fetch('https://thebooksourcings.onrender.com/api/static/nav', {
+      headers: {
+        Authorization: localStorage.getItem('token')
+          ? `Bearer ${localStorage.getItem('token')}`
+          : ''
+      }
+    });
+
+    const json = await res.json();
+    if (!json.success) return;
+
+    const genreBar = document.getElementById('genreBar');
+    genreBar.innerHTML = '';
+
+    json.genres.forEach((genre, index) => {
+      const btn = document.createElement('button');
+      btn.className = 'genre-btn';
+      if (index === 0) btn.classList.add('active');
+
+      btn.textContent = genre.name;
+      btn.dataset.slug = genre.slug;
+
+      btn.addEventListener('click', () => {
+        document
+          .querySelectorAll('.genre-btn')
+          .forEach(b => b.classList.remove('active'));
+
+        btn.classList.add('active');
+
+        // NEXT STEP (locked)
+        loadFeedByGenre(genre.slug);
+      });
+
+      genreBar.appendChild(btn);
+    });
+
+  } catch (err) {
+    console.error('Nav load error', err);
   }
-});
+}
+
+document.addEventListener('DOMContentLoaded', loadNavGenres);
+
+
+
+let feedCursor = 0;
+let currentMode = 'home';
+let currentValue = null;
+
+async function loadFeedByGenre(slug) {
+  currentMode = 'genre';
+  currentValue = slug;
+  feedCursor = 0;
+
+  document.getElementById('BookContent').innerHTML = '';
+  await loadFeed();
+}
+
+async function loadFeed() {
+  const params = new URLSearchParams({
+    cursor: feedCursor,
+    mode: currentMode
+  });
+
+  if (currentMode === 'genre') params.set('genre', currentValue);
+  if (currentMode === 'author') params.set('authorId', currentValue);
+
+  const res = await fetch(`/api/feed?${params.toString()}`);
+  const json = await res.json();
+
+  if (!json.success) return;
+
+  renderBooks(json.data);
+  feedCursor = json.nextCursor;
+}
+
+
+// let feedCursor = 0;
+// let currentMode = 'genre';
+// let currentSlug = null;
+
+
+// // i don't have any feed container declare yet
+// async function loadFeedByGenre(slug) {
+//   currentSlug = slug;
+//   feedCursor = 0;
+//   feedContainer.innerHTML = '';
+
+//   await loadMoreFeed();
+// }
+
+// async function loadMoreFeed() {
+//   let url = '';
+
+//   if (currentMode === 'genre') {
+//     url = `https://thebooksourcings.onrender.com/api/feed/genre/${currentSlug}?cursor=${feedCursor}`;
+//   } else {
+//     url = `https://thebooksourcings.onrender.com/api/feed?cursor=${feedCursor}`;
+//   }
+
+//   const res = await fetch(url);
+//   const json = await res.json();
+
+//   if (!json.success) return;
+
+//   renderBooks(json.data);
+//   feedCursor = json.nextCursor;
+// }
+
+
+// window.addEventListener("scroll", () => {
+//   if (!hasMore) return;
+//   if (
+//     window.innerHeight + window.scrollY >=
+//     document.body.offsetHeight - 300
+//   ) {
+//     fetchNextBatch();
+//   }
+// });

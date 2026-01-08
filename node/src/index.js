@@ -84,13 +84,18 @@ const filter = require('./routes/filter/filterBookRoute');
 
 
 //feed
-// const feed = require('./routes/feed/feedRoute');
+// const feed = require('./routes/book/trending/feeds/feedsRoute');
+
+//nav
+const navFeed = require('./routes/book/trending/feeds/feedsRoute');
 
 // Initialize Routes
 TheBookSourcingUser(app);
 bookRoutes(app);
 
-// app.use('/api', feed);
+app.use('/api', feed);
+
+app.use('/api', navFeed);
 
 // monday quiz
 app.use('/api/quiz', quiz)
