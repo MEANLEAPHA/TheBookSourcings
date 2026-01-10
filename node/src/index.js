@@ -69,7 +69,7 @@ const userChatIcon = require("./routes/chat/community/userRoomChatRoutes");
 
 const search = require('./routes/components/searchRoutes');
 
-const quiz = require('./routes/quizRoute');
+// const quiz = require('./routes/quizRoute');
 
 // push nootification
 // const pushNotification = require('./routes/service/pushRoute');
@@ -93,18 +93,19 @@ const navFeed = require('./routes/book/trending/feeds/feedsRoute');
 TheBookSourcingUser(app);
 bookRoutes(app);
 
-app.use('/api', feed);
+// app.use('/api', feed);
 
 app.use('/api', navFeed);
 
 // monday quiz
-app.use('/api/quiz', quiz)
+// app.use('/api/quiz', quiz)
 
 //filter
 
 app.use('/api/article', article)
 app.use('/api/books', filter);
 
+// feed in here too
 app.use('/api', trendingRoutes);
 
 app.use('/api/aboutBook', aboutBookInfoRoute);

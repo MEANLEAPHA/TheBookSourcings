@@ -7,6 +7,12 @@ const { buildFeed } = require('../../../model/feed.model');
 const { buildAuthorFeed } = require('../../../model/helper/feedByauthor.model');
 const { buildGenreFeed } = require('../../../model/helper/feedBygenre.model');
 
+const { getTrendingBooks } = require('../../../model/trending.model');
+const { getInterestBooks } = require('../../../model/interest.model');
+const { getRandomBooks } = require('../../../model/random.model');
+// const { dedupeFeed } = require('../../../util/feedUtils');
+const { rankFeed } = require('../../../util/rankFeed');
+
 const feedCache = new Map(); 
 async function getAllTrending(req, res) {
   try {
@@ -31,46 +37,7 @@ async function getAllTrending(req, res) {
 }
 
 
-async function getFeed(req, res) {
-  try {
-    const cursor = Number(req.query.cursor || 0);
-    const limit = 50;
 
-    const mode = req.query.mode || 'home';
-    const genreSlug = req.query.genre || null;
-    const authorId = req.query.authorId || null;
-
-    let feed = [];
-
-    if (mode === 'home') {
-      feed = await buildFeed({
-        memberQid: req.user?.memberQid || null,
-        limit
-      });
-    }
-
-    if (mode === 'genre' && genreSlug) {
-      feed = await buildGenreFeed(genreSlug, limit);
-    }
-
-    if (mode === 'author' && authorId) {
-      feed = await buildAuthorFeed(authorId, limit);
-    }
-
-    const batch = feed.slice(cursor, cursor + limit);
-
-    res.json({
-      success: true,
-      data: batch,
-      nextCursor: cursor + batch.length,
-      hasMore: cursor + batch.length < feed.length
-    });
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false });
-  }
-}
 
 
 async function buildSeededFeed(seed) {
@@ -125,30 +92,106 @@ function mixBooksSeeded(books, seed) {
 }
 
 
+async function getFeed(req, res) {
+  try {
+    const cursor = Number(req.query.cursor || 0);
+    const limit = 50;
 
-async function buildExtensionFeed(memberQid, seed) {
-  const interests = await getUserInterestProfile(memberQid);
-  if (!interests.length) return [];
+    const mode = req.query.mode || 'home';
+    const genreSlug = req.query.genre || null;
+    const authorId = req.query.authorId || null;
 
-  const { genres, authors } = await resolveInterestEntities(interests);
+    let feed = [];
 
-  let results = [];
+    // 🔹 HOME
+    if (mode === 'home') {
+      if (cursor === 0) {
+        // ✅ FIRST LOAD
+        feed = await buildFeed({
+          memberQid: req.user?.memberQid || null,
+          limit
+        });
+      } else {
+        // ✅ EXTENSION
+        feed = await buildExtendedFeed({
+          memberQid: req.user?.memberQid || null,
+          cursor,
+          limit
+        });
+      }
+    }
 
-  for (const g of genres) {
-    const books = await searchByGenre(g.slug);
-    results.push(...books);
+    // 🔹 GENRE (no extension yet)
+    if (mode === 'genre' && genreSlug) {
+      feed = await buildGenreFeed(genreSlug, limit);
+    }
+
+    // 🔹 AUTHOR (no extension yet)
+    if (mode === 'author' && authorId) {
+      feed = await buildAuthorFeed(authorId, limit);
+    }
+
+    const batch = feed.slice(0, limit);
+
+    res.json({
+      success: true,
+      data: batch,
+      nextCursor: cursor + batch.length,
+      hasMore: batch.length === limit
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false });
+  }
+}
+
+
+async function buildExtendedFeed({ memberQid, cursor, limit }) {
+  let items = [];
+
+  // 🔹 Phase derived from cursor depth
+  let phase = 0;
+
+  if (cursor > 200) phase = 4;
+  else if (cursor > 150) phase = 3;
+  else if (cursor > 100) phase = 2;
+  else if (cursor > 50) phase = 1;
+
+  switch (phase) {
+    case 0:
+      items = await getTrendingBooks(limit);
+      break;
+
+    case 1:
+      items = await getInterestBooks(memberQid, limit);
+      break;
+
+    case 2:
+      items = await buildAuthorFeed(memberQid, limit);
+      break;
+
+    case 3:
+      items = await buildGenreFeed(null, limit);
+      break;
+
+    default:
+      items = await getRandomBooks(limit);
   }
 
-  for (const a of authors) {
-    const books = await searchByAuthor(a.name);
-    results.push(...books);
-  }
-
-  return mixBooksSeeded(results, seed + 999);
+  return rankFeed(dedupeFeed(items));
 }
 
 
 
+function dedupeFeed(items) {
+  const map = new Map();
+  for (const item of items) {
+    const key = `${item.source}_${item.bookId}`;
+    if (!map.has(key)) map.set(key, item);
+  }
+  return [...map.values()];
+}
 async function getUserInterestProfile(memberQid) {
   const [rows] = await db.query(`
     SELECT 
@@ -314,6 +357,47 @@ module.exports = {
 //       data: batch,
 //       nextCursor: cursor + batch.length,
 //       hasMore: cursor + batch.length < fullFeed.length
+//     });
+
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ success: false });
+//   }
+// }
+
+// async function getFeed(req, res) {
+//   try {
+//     const cursor = Number(req.query.cursor || 0);
+//     const limit = 50;
+
+//     const mode = req.query.mode || 'home';
+//     const genreSlug = req.query.genre || null;
+//     const authorId = req.query.authorId || null;
+
+//     let feed = [];
+
+//     if (mode === 'home') {
+//       feed = await buildFeed({
+//         memberQid: req.user?.memberQid || null,
+//         limit
+//       });
+//     }
+
+//     if (mode === 'genre' && genreSlug) {
+//       feed = await buildGenreFeed(genreSlug, limit);
+//     }
+
+//     if (mode === 'author' && authorId) {
+//       feed = await buildAuthorFeed(authorId, limit);
+//     }
+
+//     const batch = feed.slice(cursor, cursor + limit);
+
+//     res.json({
+//       success: true,
+//       data: batch,
+//       nextCursor: cursor + batch.length,
+//       hasMore: cursor + batch.length < feed.length
 //     });
 
 //   } catch (err) {

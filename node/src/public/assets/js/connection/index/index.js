@@ -9,9 +9,11 @@ if (!feedSeed) {
 let hasMore = true;
 let cursor = 0;
 let isLoading = false;
+let feedMode = 'home'; // 'home' | 'genre' | 'author'
 
 
 window.addEventListener('load', () => {
+  feedMode = 'home';
   const newSeed = Math.floor(Math.random() * 1_000_000);
 
   sessionStorage.setItem("feed_seed", newSeed);
@@ -26,6 +28,7 @@ window.addEventListener('load', () => {
 });
 
 async function fetchNextBatch() {
+  if (feedMode !== 'home') return; 
   if (isLoading || !hasMore) return;
   isLoading = true;
 
@@ -106,50 +109,64 @@ function renderBooks(books) {
   });
 }
 
-async function loadNavGenres() {
-  try {
-    const res = await fetch('https://thebooksourcings.onrender.com/api/static/nav', {
-      headers: {
-        Authorization: localStorage.getItem('token')
-          ? `Bearer ${localStorage.getItem('token')}`
-          : ''
-      }
+async function loadSmartNav() {
+  const token = localStorage.getItem('token');
+  let url = 'https://thebooksourcings.onrender.com/api/static/nav';
+
+  if (token) {
+    // Try dynamic first
+    const test = await fetch('https://thebooksourcings.onrender.com/api/dynamic/nav', {
+      headers: { Authorization: `Bearer ${token}` }
     });
+    const json = await test.json();
 
-    const json = await res.json();
-    if (!json.success) return;
-
-    const genreBar = document.getElementById('genreBar');
-    genreBar.innerHTML = '';
-
-    json.genres.forEach((genre, index) => {
-      const btn = document.createElement('button');
-      btn.className = 'genre-btn';
-      if (index === 0) btn.classList.add('active');
-
-      btn.textContent = genre.name;
-      btn.dataset.slug = genre.slug;
-
-      btn.addEventListener('click', () => {
-        document
-          .querySelectorAll('.genre-btn')
-          .forEach(b => b.classList.remove('active'));
-
-        btn.classList.add('active');
-
-        // NEXT STEP (locked)
-        loadFeedByGenre(genre.slug);
-      });
-
-      genreBar.appendChild(btn);
-    });
-
-  } catch (err) {
-    console.error('Nav load error', err);
+    if (json.success && (json.genres?.length >= 5 || json.authors?.length >= 3)) {
+      renderDynamicNav(json);
+      return;
+    }
   }
+
+  // Fallback to static
+  const res = await fetch(url);
+  const data = await res.json();
+  renderStaticNav(data);
 }
 
-document.addEventListener('DOMContentLoaded', loadNavGenres);
+function renderDynamicNav(data) {
+  const bar = document.getElementById('genreBar');
+  bar.innerHTML = '';
+
+  data.genres.forEach(g => {
+    const btn = document.createElement('button');
+    btn.className = 'genre-btn';
+    btn.textContent = g.name;
+    btn.onclick = () => loadFeedByGenre(g.slug);
+    bar.appendChild(btn);
+  });
+
+  data.authors.forEach(a => {
+    const btn = document.createElement('button');
+    btn.className = 'author-btn';
+    btn.textContent = a.name;
+    btn.onclick = () => loadFeedByAuthor(a.authorId);
+    bar.appendChild(btn);
+  });
+}
+
+function renderStaticNav(json) {
+  const genreBar = document.getElementById('genreBar');
+  genreBar.innerHTML = '';
+
+  json.genres.forEach(genre => {
+    const btn = document.createElement('button');
+    btn.className = 'genre-btn';
+    btn.textContent = genre.name;
+    btn.onclick = () => loadFeedByGenre(genre.slug);
+    genreBar.appendChild(btn);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', loadSmartNav);
 
 
 
@@ -158,7 +175,7 @@ let currentMode = 'home';
 let currentValue = null;
 
 async function loadFeedByGenre(slug) {
-  currentMode = 'genre';
+  feedMode = 'genre';
   currentValue = slug;
   feedCursor = 0;
 
@@ -166,14 +183,24 @@ async function loadFeedByGenre(slug) {
   await loadFeed();
 }
 
+async function loadFeedByAuthor(authorId) {
+  feedMode = 'author';
+  currentValue = authorId;
+  feedCursor = 0;
+
+  document.getElementById('BookContent').innerHTML = '';
+  await loadFeed();
+}
+
+
 async function loadFeed() {
   const params = new URLSearchParams({
     cursor: feedCursor,
-    mode: currentMode
+    mode: feedMode
   });
 
-  if (currentMode === 'genre') params.set('genre', currentValue);
-  if (currentMode === 'author') params.set('authorId', currentValue);
+  if (feedMode === 'genre') params.set('genre', currentValue);
+  if (feedMode === 'author') params.set('authorId', currentValue);
 
   const res = await fetch(`/api/feed?${params.toString()}`);
   const json = await res.json();
@@ -227,3 +254,48 @@ async function loadFeed() {
 //     fetchNextBatch();
 //   }
 // });
+
+//async function loadNavGenres() {
+//   try {
+//     const res = await fetch('https://thebooksourcings.onrender.com/api/static/nav', {
+//       headers: {
+//         Authorization: localStorage.getItem('token')
+//           ? `Bearer ${localStorage.getItem('token')}`
+//           : ''
+//       }
+//     });
+
+//     const json = await res.json();
+//     if (!json.success) return;
+
+//     const genreBar = document.getElementById('genreBar');
+//     genreBar.innerHTML = '';
+
+//     json.genres.forEach((genre, index) => {
+//       const btn = document.createElement('button');
+//       btn.className = 'genre-btn';
+//       if (index === 0) btn.classList.add('active');
+
+//       btn.textContent = genre.name;
+//       btn.dataset.slug = genre.slug;
+
+//       btn.addEventListener('click', () => {
+//         document
+//           .querySelectorAll('.genre-btn')
+//           .forEach(b => b.classList.remove('active'));
+
+//         btn.classList.add('active');
+
+//         // NEXT STEP (locked)
+//         loadFeedByGenre(genre.slug);
+//       });
+
+//       genreBar.appendChild(btn);
+//     });
+
+//   } catch (err) {
+//     console.error('Nav load error', err);
+//   }
+// }
+
+// document.addEventListener('DOMContentLoaded', loadNavGenres);
