@@ -87,7 +87,7 @@ const filter = require('./routes/filter/filterBookRoute');
 // const feed = require('./routes/book/trending/feeds/feedsRoute');
 
 //nav
-const navFeed = require('./routes/book/trending/feeds/feedsRoute');
+const navFeed = require('./routes/book/trending/feeds/navRoutes');
 
 // Initialize Routes
 TheBookSourcingUser(app);
