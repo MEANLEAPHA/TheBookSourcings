@@ -41,7 +41,7 @@ async function resolveAuthorNames(authorRows) {
   if (authorRows.length === 0) return [];
 
   const ottAuthors = authorRows
-    .filter(a => a.author_id.startsWith('OTT'))
+    .filter(a => a.author_id.startsWith('OTTM'))
     .map(a => a.author_id);
 
   const extAuthors = authorRows
@@ -54,7 +54,7 @@ async function resolveAuthorNames(authorRows) {
   // 🔹 OTT → users table
   if (ottAuthors.length) {
     const [rows] = await db.query(`
-      SELECT authorQid, fullName
+      SELECT authorQid, username
       FROM users
       WHERE authorQid IN (?)
     `, [ottAuthors]);
@@ -65,7 +65,7 @@ async function resolveAuthorNames(authorRows) {
   // 🔹 Google / Gutenberg / OpenLibrary → authors table
   if (extAuthors.length) {
     const [rows] = await db.query(`
-      SELECT author_id, author_name
+      SELECT author_id, name
       FROM authors
       WHERE author_id IN (?)
     `, [extAuthors]);
