@@ -61,7 +61,7 @@ async function resolveAuthorNames(authorRows) {
       WHERE authorQid IN (?)
     `, [ottAuthors]);
 
-    rows.forEach(r => ottMap[r.authorQid] = r.fullName);
+    rows.forEach(r => ottMap[r.authorQid] = r.username);
   }
 
   // 🔹 Google / Gutenberg / OpenLibrary → authors table
@@ -72,13 +72,13 @@ async function resolveAuthorNames(authorRows) {
       WHERE author_id IN (?)
     `, [extAuthors]);
 
-    rows.forEach(r => extMap[r.author_id] = r.author_name);
+    rows.forEach(r => extMap[r.author_id] = r.name);
   }
 
   // 🔹 Merge back
   return authorRows.map(a => ({
     author_id: a.author_id,
-    author_name: a.author_id.startsWith('OTT')
+    name: a.author_id?.startsWith('OTTM')
       ? ottMap[a.author_id] || 'Unknown Author'
       : extMap[a.author_id] || 'Unknown Author',
     score: a.totalScore
