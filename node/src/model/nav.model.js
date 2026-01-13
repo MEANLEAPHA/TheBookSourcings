@@ -47,7 +47,7 @@ async function resolveAuthorNames(authorRows) {
     .map(a => a.author_id);
 
   const extAuthors = authorRows
-    .filter(a => !a.author_id?.startsWith('OTT_'))
+    .filter(a => !a.author_id?.startsWith('OTTM'))
     .map(a => a.author_id);
 
   let ottMap = {};
@@ -81,7 +81,7 @@ async function resolveAuthorNames(authorRows) {
     name: a.author_id?.startsWith('OTTM')
       ? ottMap[a.author_id] || 'Unknown Author'
       : extMap[a.author_id] || 'Unknown Author',
-    score: a.totalScore
+    score: a.score
   }));
 }
 async function getTopAuthorsForUser(memberQid, limit = 10) {
