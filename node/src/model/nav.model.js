@@ -35,7 +35,7 @@ async function getTopAuthorIds(memberQid, limit = 10) {
   `, [memberQid, limit]);
 
   return rows;
-}
+};
 
 async function resolveAuthorNames(authorRows) {
   if (authorRows.length === 0) return [];
