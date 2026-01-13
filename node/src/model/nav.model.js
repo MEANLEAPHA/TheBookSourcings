@@ -47,7 +47,7 @@ async function resolveAuthorNames(authorRows) {
     .map(a => a.author_id);
 
   const extAuthors = authorRows
-    .filter(a => !a.author_id?.startsWith('OTT'))
+    .filter(a => !a.author_id?.startsWith('OTT_'))
     .map(a => a.author_id);
 
   let ottMap = {};
