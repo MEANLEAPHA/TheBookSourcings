@@ -61,7 +61,7 @@
       display: none;
     }
 
-    .genre-btn {
+    .genre-btn, .author-btn {
       background-color: var(--background-color); 
       backdrop-filter: blur(8px);
       color:var(--font-color);

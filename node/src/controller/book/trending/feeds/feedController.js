@@ -12,7 +12,7 @@ const {searchOpenLibraryByGenre} = require('../filter/openlibraryFilter');
 async function getFeed(req, res) {
   try {
     const memberQid = req.user?.memberQid || null;
-    const limit = parseInt(req.query.limit) || 20;
+    const limit = parseInt(req.query.limit) || 50;
     const cursor = req.query.cursor || null;
 
     const result = [];
