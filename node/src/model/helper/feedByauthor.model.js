@@ -8,16 +8,16 @@ async function buildAuthorFeed(authorId) {
   let authorName = null;
 
   // 🔹 OTT author
-  if (authorId.startsWith('OTT')) {
+  if (authorId.startsWith('OTTM')) {
     const [[row]] = await db.query(
-      `SELECT fullName FROM users WHERE authorQid = ? LIMIT 1`,
+      `SELECT username FROM users WHERE authorQid = ? LIMIT 1`,
       [authorId]
     );
     authorName = row?.fullName;
   } else {
     // 🔹 external author
     const [[row]] = await db.query(
-      `SELECT author_name FROM authors WHERE author_id = ? LIMIT 1`,
+      `SELECT name FROM authors WHERE author_id = ? LIMIT 1`,
       [authorId]
     );
     authorName = row?.author_name;
