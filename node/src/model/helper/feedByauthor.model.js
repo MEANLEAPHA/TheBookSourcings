@@ -4,8 +4,10 @@ const {searchGoogleBookByAuthor} = require('../../controller/book/trending/filte
 const {searchGutenbergByAuthor} = require('../../controller/book/trending/filter/gutenbergFilter');
 const {searchOpenLibraryByAuthor} = require('../../controller/book/trending/filter/openlibraryFilter');
 
-async function buildAuthorFeed(authorId) {
+async function buildAuthorFeed(authorId, limit) {
   let authorName = null;
+
+  console.log(`Building author feed for authorId: ${authorId}`); // Debug log
 
   // 🔹 OTT author (internal source only)
   if (authorId.startsWith('OTTM')) {
@@ -14,52 +16,36 @@ async function buildAuthorFeed(authorId) {
   } 
   // 🔹 External author (mixed sources)
   else {
-    const [[row]] = await db.query(
-      `SELECT name FROM authors WHERE author_id = ? LIMIT 1`,
-      [authorId]
-    );
+    // FIXED: Check for OTT_ prefix (not OTTM)
+    if (authorId.startsWith('OTT_')) {
+      // This is likely an external author reference
+      const [[row]] = await db.query(
+        `SELECT name FROM authors WHERE author_id = ? LIMIT 1`,
+        [authorId]
+      );
 
-    authorName = row?.name;
-    if (!authorName) return [];
+      authorName = row?.name;
+      console.log(`Found author name: ${authorName}`); // Debug log
+      
+      if (!authorName) return [];
 
-    const results = await Promise.allSettled([
-      searchGoogleBookByAuthor(authorName),
-      searchGutenbergByAuthor(authorName),
-      searchOpenLibraryByAuthor(authorName)
-    ]);
+      const results = await Promise.allSettled([
+        searchGoogleBookByAuthor(authorName, limit),
+        searchGutenbergByAuthor(authorName, limit),
+        searchOpenLibraryByAuthor(authorName, limit)
+      ]);
 
-    return results
-      .filter(r => r.status === 'fulfilled')
-      .flatMap(r => r.value);
+      // Combine and deduplicate results
+      const combinedResults = results
+        .filter(r => r.status === 'fulfilled')
+        .flatMap(r => r.value);
+      
+      return combinedResults.slice(0, limit);
+    } else {
+      // Handle other author ID formats
+      console.log(`Unknown author ID format: ${authorId}`);
+      return [];
+    }
   }
 }
-
-// async function buildAuthorFeed(authorId) {
-//   let authorName = null;
-//   let results = [];
-//   // 🔹 OTT author
-//   if (authorId.startsWith('OTTM')) {
-//       if (!authorId) return [];
-//       results = await searchOtthorByAuthor(authorId);
-//   } else {
-//     // 🔹 external author
-//     const [[row]] = await db.query(
-//       `SELECT name FROM authors WHERE author_id = ? LIMIT 1`,
-//       [authorId]
-//     );
-//     authorName = row?.name;
-//      if (!authorName) return [];
-
-//     results = await Promise.allSettled([
-//       searchGoogleBookByAuthor(authorName),
-//       searchGutenbergByAuthor(authorName),
-//       searchOpenLibraryByAuthor(authorName)
-//       ])
-//   }
-
-//   return results
-//     .filter(r => r.status === 'fulfilled')
-//     .flatMap(r => r.value);
-// }
-
 module.exports = { buildAuthorFeed };
