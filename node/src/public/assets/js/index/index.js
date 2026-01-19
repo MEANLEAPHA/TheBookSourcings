@@ -140,7 +140,7 @@ function renderDynamicNav(data) {
     const btn = document.createElement('button');
     btn.className = 'genre-btn';
     btn.textContent = g.name;
-    btn.onclick = () => loadFeedByGenre(g.slug);
+    btn.onclick = () => loadFeedByGenre(g.name);
     bar.appendChild(btn);
   });
 
@@ -161,7 +161,7 @@ function renderStaticNav(json) {
     const btn = document.createElement('button');
     btn.className = 'genre-btn';
     btn.textContent = genre.name;
-    btn.onclick = () => loadFeedByGenre(genre.slug);
+    btn.onclick = () => loadFeedByGenre(genre.name);
     genreBar.appendChild(btn);
   });
 }
@@ -174,9 +174,9 @@ let feedCursor = 0;
 let currentMode = 'home';
 let currentValue = null;
 
-async function loadFeedByGenre(slug) {
+async function loadFeedByGenre(name) {
   feedMode = 'genre';
-  currentValue = slug;
+  currentValue = name;
   feedCursor = 0;
 
   document.getElementById('BookContent').innerHTML = '';
