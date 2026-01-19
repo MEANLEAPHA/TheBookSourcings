@@ -50,7 +50,7 @@ async function searchGutenbergByAuthor(query) {
   try {
     if (!query) return [];
 
-    const url = `https://gutendex.com/books?author=${encodeURIComponent(query)}&&page=1`;
+    const url = `https://gutendex.com/books?search=${encodeURIComponent(query)}&page=1`;
 
     console.log(`🔍 Gutenberg URL: ${url}`);
     
@@ -76,7 +76,7 @@ async function searchGutenbergByGenre(query) {
   try {
     if (!query) return [];
 
-    const url = `https://gutendex.com/books?topic=${encodeURIComponent(query)}&&page=1`;
+    const url = `https://gutendex.com/books?topic=${encodeURIComponent(query)}&page=1`;
 
     console.log(`🔍 Gutenberg Genre URL: ${url}`);
     

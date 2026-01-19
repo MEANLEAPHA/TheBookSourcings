@@ -1,5 +1,5 @@
 const db = require("../../../../config/db");
-async function searchOtthorByGenre(genreId, limit = 20) {
+async function searchOtthorByGenre(genreName, limit = 20) {
   const [rows] = await db.query(
     `
     SELECT 
@@ -9,10 +9,10 @@ async function searchOtthorByGenre(genreId, limit = 20) {
       author,
       'otthor' AS source
     FROM uploadBook
-    WHERE genre_id = ?
+    WHERE genre = ?
     LIMIT ?
     `,
-    [genreId, limit]
+    [genreName, limit]
   );
 
   return rows;
