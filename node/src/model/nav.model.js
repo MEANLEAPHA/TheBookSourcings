@@ -83,7 +83,7 @@ async function resolveAuthorNames(authorRows) {
       : extMap[a.author_id] || 'Unknown Author',
     score: a.score
   }));
-}
+} 
 async function getTopAuthorsForUser(memberQid, limit = 10) {
   const raw = await getTopAuthorIds(memberQid, limit);
   return resolveAuthorNames(raw);

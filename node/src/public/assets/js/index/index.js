@@ -148,7 +148,7 @@ function renderDynamicNav(data) {
     const btn = document.createElement('button');
     btn.className = 'author-btn';
     btn.textContent = a.name;
-    btn.onclick = () => loadFeedByAuthor(a.authorId);
+    btn.onclick = () => loadFeedByAuthor(a.author_id);
     bar.appendChild(btn);
   });
 }

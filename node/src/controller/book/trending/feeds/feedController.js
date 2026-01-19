@@ -101,30 +101,4 @@ async function getFeedByGenre(req, res) {
     res.status(500).json({ success: false });
   }
 }
-// async function buildGenreFeed(slug) {
-//   const results = await Promise.allSettled([
-//     searchGoogleBookByGenre(slug, 40),
-//     searchGutenbergByGenre(slug, 40),
-//     searchOpenLibraryByGenre(slug, 40),
-//     searchOtthorByGenreBySlug(slug, 40) // helper below
-//   ]);
-
-//   const books = results
-//     .filter(r => r.status === 'fulfilled')
-//     .flatMap(r => r.value);
-
-//   // mix + shuffle
-//   return books.sort(() => Math.random() - 0.5);
-// }
-// async function searchOtthorByGenreBySlug(slug, limit = 40) {
-//   const [rows] = await db.query(`
-//     SELECT genre_id FROM genres WHERE slug = ? LIMIT 1
-//   `, [slug]);
-
-//   if (!rows.length) return [];
-
-//   return searchOtthorByGenre(rows[0].genre_id, limit);
-// }
-
-
 module.exports = { getFeed };
