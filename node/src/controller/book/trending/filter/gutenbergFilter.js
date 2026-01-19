@@ -46,11 +46,11 @@
 
 const { fetchJson } = require('../../../../util/apiClient');
 
-async function searchGutenbergByAuthor(query, limit = 20) {
+async function searchGutenbergByAuthor(query) {
   try {
     if (!query) return [];
 
-    const url = `https://gutendex.com/books?author=${encodeURIComponent(query)}&limit=${limit}`;
+    const url = `https://gutendex.com/books?author=${encodeURIComponent(query)}&&page=1`;
 
     console.log(`🔍 Gutenberg URL: ${url}`);
     
@@ -72,11 +72,11 @@ async function searchGutenbergByAuthor(query, limit = 20) {
   }
 }
 
-async function searchGutenbergByGenre(query, limit = 20) {
+async function searchGutenbergByGenre(query) {
   try {
     if (!query) return [];
 
-    const url = `https://gutendex.com/books?topic=${encodeURIComponent(query)}&limit=${limit}`;
+    const url = `https://gutendex.com/books?topic=${encodeURIComponent(query)}&&page=1`;
 
     console.log(`🔍 Gutenberg Genre URL: ${url}`);
     
