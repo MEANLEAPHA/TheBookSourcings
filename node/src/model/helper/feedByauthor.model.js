@@ -3,6 +3,7 @@ const { searchOtthorByAuthor } = require('../../controller/book/trending/filter/
 const {searchGoogleBookByAuthor} = require('../../controller/book/trending/filter/googleFilter');
 const {searchGutenbergByAuthor} = require('../../controller/book/trending/filter/gutenbergFilter');
 const {searchOpenLibraryByAuthor} = require('../../controller/book/trending/filter/openlibraryFilter');
+const {searchInternetArchiveByAuthor} = require('../../controller/book/trending/filter/internetArchFilter');
 
 async function buildAuthorFeed(authorId, limit) {
   try {
@@ -32,14 +33,16 @@ async function buildAuthorFeed(authorId, limit) {
 
       console.log(`🔍 Searching for books by "${authorName}"...`);
       
+      // Use all 4 sources: Google Books, Internet Archive, Gutenberg, and Open Library
       const results = await Promise.allSettled([
-        searchGoogleBookByAuthor(authorName, limit),
-        searchGutenbergByAuthor(authorName, limit),
-        searchOpenLibraryByAuthor(authorName, limit)
+        searchGoogleBookByAuthor(authorName, Math.ceil(limit/4)),
+        searchInternetArchiveByAuthor(authorName, Math.ceil(limit/4)),
+        searchGutenbergByAuthor(authorName, Math.ceil(limit/4)),
+        searchOpenLibraryByAuthor(authorName, Math.ceil(limit/4))
       ]);
 
       // Log results for debugging
-      const apiNames = ['Google Books', 'Gutenberg', 'Open Library'];
+      const apiNames = ['Google Books', 'Internet Archive', 'Gutenberg', 'Open Library'];
       results.forEach((result, index) => {
         if (result.status === 'fulfilled') {
           console.log(`✅ ${apiNames[index]}: Found ${result.value.length} books`);
@@ -57,7 +60,7 @@ async function buildAuthorFeed(authorId, limit) {
       // Deduplicate by title
       const uniqueResults = deduplicateBooks(combinedResults);
       
-      console.log(`📊 Total unique results: ${uniqueResults.length}`);
+      console.log(`📊 Total unique results from all sources: ${uniqueResults.length}`);
       return uniqueResults.slice(0, limit);
     }
   } catch (error) {
