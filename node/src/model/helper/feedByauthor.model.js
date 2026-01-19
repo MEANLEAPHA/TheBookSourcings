@@ -13,14 +13,14 @@ async function buildAuthorFeed(authorId) {
       `SELECT username FROM users WHERE authorQid = ? LIMIT 1`,
       [authorId]
     );
-    authorName = row?.fullName;
+    authorName = row?.username;
   } else {
     // 🔹 external author
     const [[row]] = await db.query(
       `SELECT name FROM authors WHERE author_id = ? LIMIT 1`,
       [authorId]
     );
-    authorName = row?.author_name;
+    authorName = row?.name;
   }
 
   if (!authorName) return [];

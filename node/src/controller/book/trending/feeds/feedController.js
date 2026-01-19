@@ -79,26 +79,26 @@ function generateNextCursor(items) {
   if (!items.length) return null;
   return items[items.length - 1].bookId;
 }
-async function getFeedByGenre(req, res) {
-  try {
-    const { slug } = req.params;
-    const cursor = Number(req.query.cursor || 0);
-    const limit = 50;
+// async function getFeedByGenre(req, res) {
+//   try {
+//     const { slug } = req.params;
+//     const cursor = Number(req.query.cursor || 0);
+//     const limit = 50;
 
-    const feed = await buildGenreFeed(slug);
+//     const feed = await buildGenreFeed(slug);
 
-    const batch = feed.slice(cursor, cursor + limit);
+//     const batch = feed.slice(cursor, cursor + limit);
 
-    res.json({
-      success: true,
-      data: batch,
-      nextCursor: cursor + batch.length,
-      hasMore: cursor + batch.length < feed.length
-    });
+//     res.json({
+//       success: true,
+//       data: batch,
+//       nextCursor: cursor + batch.length,
+//       hasMore: cursor + batch.length < feed.length
+//     });
 
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false });
-  }
-}
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ success: false });
+//   }
+// }
 module.exports = { getFeed };
