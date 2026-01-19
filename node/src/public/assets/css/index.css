@@ -19,12 +19,12 @@
 .nav-wrappers {
   display: flex;
   align-items: center;
-   position: static;  /* stays inside .content */
+   position: sticky;  /* stays inside .content */
   width: 98%;
   padding: 10px;
   height: 65px;
   margin: auto;
-  /* top: 160px; */
+  top: 60px;
   background-color: rgba(88, 88, 88, 0.307);
   backdrop-filter: blur(10px);
   z-index: 1;

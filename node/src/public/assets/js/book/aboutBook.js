@@ -345,12 +345,16 @@ async function loadBookInfo() {
       }
     }
 
-    // similar book
+    
+//  .toLowerCase()
+//     .replace(/&/g, ' ')
+//     .replace(/[^a-z0-9]+/g, ' ')
+//     .replace(/(^-|-$)/g, ' ');
 
     const firstCategory = Array.isArray(book.categories)
     ? (book.categories[0] || "")
     : (book.categories || "");
-    const categoryToUse = (firstCategory && String(firstCategory).trim()) ? firstCategory : "fiction";
+    const categoryToUse = (firstCategory && String(firstCategory).trim().toLowerCase().replace(/&/g, ' ').replace(/[^a-z0-9]+/g, ' ').replace(/(^-|-$)/g, ' ')) ? firstCategory : "fiction";
 
     const authorId = Array.isArray(book.author_id)
     ? (book.author_id[0] || "")

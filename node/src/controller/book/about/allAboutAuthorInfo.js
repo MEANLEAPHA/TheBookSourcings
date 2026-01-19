@@ -955,9 +955,9 @@ function normalizeAuthor(raw = '') {
 function normalizeGenre(rawGenre = '') {
   return rawGenre
     .toLowerCase()
-    .replace(/&/g, 'and')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '');
+    .replace(/&/g, ' ')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/(^-|-$)/g, ' ');
 }
 function generateAuthorQid() {
   return 'OTT_' + Math.random().toString(36).slice(2, 10) + '_HOR';
@@ -1000,8 +1000,8 @@ async function getOrCreateAuthorId(authorInput) {
   return authorQid;
 }
 
-
-async function getOrCreateGenreId(genreName) {
+// genre creator
+async function getOrCreateGenreId(genreName) {  
   if (!genreName) return null;
 
   const slug = normalizeGenre(genreName);
