@@ -1,4 +1,17 @@
-
+:root{
+    --background-color:white;
+    --primary-color:#fd7648;
+    --secondary-color: gainsboro;
+    --font-color:rgb(65, 65, 65);
+    --back-con:rgb(245, 245, 245);
+}
+.dark-theme{
+    --background-color:rgb(32, 32, 32);
+    --primary-color:#fd7648;
+    --secondary-color: rgba(220, 220, 220, 0.318);
+    --font-color:rgb(255, 255, 255);
+     --back-con:rgb(40, 40, 40);
+}
 .fa-heart{
   color: var(--font-color);
 }
@@ -6,11 +19,12 @@
 .nav-wrappers {
   display: flex;
   align-items: center;
-   position: sticky;  /* stays inside .content */
-  width: 100%;
+   position: static;  /* stays inside .content */
+  width: 98%;
   padding: 10px;
   height: 65px;
-  top: 60px;
+  margin: auto;
+  /* top: 160px; */
   background-color: rgba(88, 88, 88, 0.307);
   backdrop-filter: blur(10px);
   z-index: 1;
@@ -36,7 +50,7 @@
       cursor: pointer;
       margin: 0 5px;
     
-      
+      border: 1px solid var(--primary-color);
       opacity: 1;
        transition: width 0.5s ease;
     }
@@ -132,6 +146,34 @@
       align-items: flex-start;
     }
     
+    #BookContent-trending{
+        height: auto;
+      display: flex;
+      justify-content: start;
+      flex-wrap: wrap;
+      /* border: 1px solid black; */
+      padding: 0;
+      gap: 10px;
+      width: 98%;
+      justify-content: start;
+      margin: auto;
+      margin-top: 10px;
+      align-items: flex-start;
+    }
+     #BookContent-topRating{
+        height: auto;
+      display: flex;
+      justify-content: start;
+      flex-wrap: wrap;
+      /* border: 1px solid black; */
+      padding: 0;
+      gap: 10px;
+      width: 98%;
+      justify-content: start;
+      margin: auto;
+      margin-top: 10px;
+      align-items: flex-start;
+    }
     .Book-card {
        width: calc(100%/6.3);
       height:auto;

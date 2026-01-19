@@ -149,8 +149,8 @@ function renderDynamicNav(data) {
   data.genres.forEach(g => {
     const btn = document.createElement('button');
     btn.className = 'genre-btn';
-    btn.textContent = g.name;
-    btn.onclick = () => loadFeedByGenre(g.name);
+    btn.textContent = g.slug;
+    btn.onclick = () => loadFeedByGenre(g.slug);
     bar.appendChild(btn);
   });
 
