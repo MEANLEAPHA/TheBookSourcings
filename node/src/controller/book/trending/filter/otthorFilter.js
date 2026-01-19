@@ -21,17 +21,17 @@ async function searchOtthorByGenre(genreName, limit = 20) {
 async function searchOtthorByAuthor(authorId, limit = 20) {
   const [rows] = await db.query(
     `
-    SELECT 
-      bookQid AS bookId,
-      title,
-      bookCover AS cover,
-      author,
-      'otthor' AS source
-    FROM uploadBook
-    WHERE JSON_CONTAINS(authorId, JSON_QUOTE(?))
-    LIMIT ?
-    `,
-    [authorId, limit]
+      SELECT 
+        bookQid AS bookId,
+        title,
+        bookCover AS cover,
+        author,
+        'otthor' AS source
+      FROM uploadBook
+      WHERE JSON_CONTAINS(authorId, ?)
+      LIMIT ?
+      `,
+      [`"${authorId}"`, limit] // Note: "${authorId}" with quotes
   );
 
   return rows;
