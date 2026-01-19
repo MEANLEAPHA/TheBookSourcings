@@ -61,8 +61,9 @@ async function searchOpenLibraryByGenre(query, limit = 20) {
 
     const url = `https://openlibrary.org/subjects/${encodeURIComponent(query.toLowerCase())}.json?limit=${limit}`;
 
-    const res = await fetchJson(url);
-    const data = res.data || res;
+    console.log(`🔍 Open Library Genre URL: ${url}`);
+    
+    const data = await fetchJson(url);
     
     if (!data.works) return [];
     
@@ -95,8 +96,9 @@ async function searchOpenLibraryByAuthor(query, limit = 20) {
 
     const url = `https://openlibrary.org/search.json?author=${encodeURIComponent(query)}&limit=${limit}`;
 
-    const res = await fetchJson(url);
-    const data = res.data || res;
+    console.log(`🔍 Open Library Author URL: ${url}`);
+    
+    const data = await fetchJson(url);
     
     return (data.docs || []).map(book => ({
       bookId: book.key || book.edition_key?.[0] || '',

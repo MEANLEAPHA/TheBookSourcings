@@ -52,8 +52,9 @@ async function searchGutenbergByAuthor(query, limit = 20) {
 
     const url = `https://gutendex.com/books?author=${encodeURIComponent(query)}&limit=${limit}`;
 
-    const res = await fetchJson(url);
-    const data = res.data || res;
+    console.log(`🔍 Gutenberg URL: ${url}`);
+    
+    const data = await fetchJson(url);
     
     return (data.results || []).map(book => ({
       bookId: book.id.toString(),
@@ -77,8 +78,9 @@ async function searchGutenbergByGenre(query, limit = 20) {
 
     const url = `https://gutendex.com/books?topic=${encodeURIComponent(query)}&limit=${limit}`;
 
-    const res = await fetchJson(url);
-    const data = res.data || res;
+    console.log(`🔍 Gutenberg Genre URL: ${url}`);
+    
+    const data = await fetchJson(url);
     
     return (data.results || []).map(book => ({
       bookId: book.id.toString(),

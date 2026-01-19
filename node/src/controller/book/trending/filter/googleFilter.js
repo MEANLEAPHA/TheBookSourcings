@@ -45,10 +45,9 @@ async function searchGoogleBookByAuthor(query, limit = 20) {
 
     const url = `https://www.googleapis.com/books/v1/volumes?q=inauthor:"${encodeURIComponent(query)}"&maxResults=${limit}`;
     
-    const res = await fetchJson(url);
+    console.log(`🔍 Google Books URL: ${url}`);
     
-    // Check if res.data exists or if res is the data directly
-    const data = res.data || res;
+    const data = await fetchJson(url); // fetchJson now returns data directly
     
     return (data.items || []).map(item => ({
       bookId: item.id,
@@ -60,7 +59,7 @@ async function searchGoogleBookByAuthor(query, limit = 20) {
     }));
   } catch (error) {
     console.error('Google Books author search error:', error.message);
-    return [];
+    return []; // Return empty array on error
   }
 }
 
@@ -70,8 +69,9 @@ async function searchGoogleBookByGenre(query, limit = 20) {
 
     const url = `https://www.googleapis.com/books/v1/volumes?q=subject:"${encodeURIComponent(query)}"&maxResults=${limit}`;
 
-    const res = await fetchJson(url);
-    const data = res.data || res;
+    console.log(`🔍 Google Books Genre URL: ${url}`);
+    
+    const data = await fetchJson(url);
     
     return (data.items || []).map(item => ({
       bookId: item.id,

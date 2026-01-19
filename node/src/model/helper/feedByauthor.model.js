@@ -65,6 +65,27 @@ async function buildAuthorFeed(authorId, limit) {
     return [];
   }
 }
+// Helper function to deduplicate books
+function deduplicateBooks(books) {
+  const seen = new Set();
+  const uniqueBooks = [];
+  
+  for (const book of books) {
+    if (!book || !book.title) continue;
+    
+    // Create a unique key from title and first author
+    const titleKey = book.title.toLowerCase().trim();
+    const firstAuthor = book.authors?.[0]?.toLowerCase().trim() || 'unknown';
+    const uniqueKey = `${titleKey}|${firstAuthor}`;
+    
+    if (!seen.has(uniqueKey)) {
+      seen.add(uniqueKey);
+      uniqueBooks.push(book);
+    }
+  }
+  
+  return uniqueBooks;
+}
 // async function buildAuthorFeed(authorId, limit) {
 //   let authorName = null;
 
