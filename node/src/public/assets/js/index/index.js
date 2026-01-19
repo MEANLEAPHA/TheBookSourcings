@@ -84,7 +84,17 @@ function renderBooks(books) {
   books.forEach((book, index)  => {
     const position = cursor + index;
     const cover = book.cover || "default.jpg";
-    const author = book.authors?.length ? book.authors.join(", ") : "No Data";
+     // Handle authors - make sure it's an array before using .join()
+    let authorsDisplay = "No Data";
+    
+    if (book.authors) {
+      if (Array.isArray(book.authors)) {
+        authorsDisplay = book.authors.join(", ");
+      } else if (typeof book.authors === 'string') {
+        authorsDisplay = book.authors;
+      }
+    }
+    // const author = book.authors?.length ? book.authors.join(", ") : "No Data";
     const source = book.source || "No Data";
     const bookId = book.bookId || book.bookQid;
 
@@ -96,7 +106,7 @@ function renderBooks(books) {
           </div>
           <div class="Book-info">
             <div class="title">${book.title || "Untitled"}</div>
-            <div class="byAuthor">${author}</div>
+            <div class="byAuthor">${authorsDisplay}</div>
             <div class="channel">
               <div class="channel-name">${source}</div>
             </div>
