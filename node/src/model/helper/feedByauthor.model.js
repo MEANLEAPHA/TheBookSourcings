@@ -5,59 +5,64 @@ const {searchGutenbergByAuthor} = require('../../controller/book/trending/filter
 const {searchOpenLibraryByAuthor} = require('../../controller/book/trending/filter/openlibraryFilter');
 
 async function buildAuthorFeed(authorId, limit) {
-  let authorName = null;
+  try {
+    let authorName = null;
 
-  console.log(`Building author feed for authorId: ${authorId}`);
+    console.log(`📚 Building author feed for authorId: ${authorId}`);
 
-  // 🔹 OTT author (internal source only)
-  if (authorId.startsWith('OTTM')) {
-    if (!authorId) return [];
-    return await searchOtthorByAuthor(authorId, limit);
-  } 
-  // 🔹 External author (mixed sources)
-  else {
-    const [[row]] = await db.query(
-      `SELECT name FROM authors WHERE author_id = ? LIMIT 1`,
-      [authorId]
-    );
+    // 🔹 OTT author (internal source only)
+    if (authorId.startsWith('OTTM')) {
+      if (!authorId) return [];
+      return await searchOtthorByAuthor(authorId, limit);
+    } 
+    // 🔹 External author (mixed sources)
+    else {
+      const [[row]] = await db.query(
+        `SELECT name FROM authors WHERE author_id = ? LIMIT 1`,
+        [authorId]
+      );
 
-    authorName = row?.name;
-    console.log(`Found author name: ${authorName}`);
-    
-    if (!authorName) return [];
+      authorName = row?.name;
+      console.log(`👤 Found author name: "${authorName}"`);
+      
+      if (!authorName) {
+        console.log('❌ No author name found');
+        return [];
+      }
 
-    // URL encode the author name for API calls
-    const encodedAuthorName = encodeURIComponent(authorName);
-    
-    try {
+      console.log(`🔍 Searching for books by "${authorName}"...`);
+      
       const results = await Promise.allSettled([
-        searchGoogleBookByAuthor(encodedAuthorName, limit),
-        searchGutenbergByAuthor(encodedAuthorName, limit),
-        searchOpenLibraryByAuthor(encodedAuthorName, limit)
+        searchGoogleBookByAuthor(authorName, limit),
+        searchGutenbergByAuthor(authorName, limit),
+        searchOpenLibraryByAuthor(authorName, limit)
       ]);
 
-      // Log each result for debugging
+      // Log results for debugging
+      const apiNames = ['Google Books', 'Gutenberg', 'Open Library'];
       results.forEach((result, index) => {
-        const apiNames = ['Google Books', 'Gutenberg', 'Open Library'];
         if (result.status === 'fulfilled') {
-          console.log(`${apiNames[index]}: Found ${result.value.length} results`);
+          console.log(`✅ ${apiNames[index]}: Found ${result.value.length} books`);
         } else {
-          console.log(`${apiNames[index]}: Error - ${result.reason.message}`);
+          console.log(`❌ ${apiNames[index]}: ${result.reason?.message || 'Error'}`);
         }
       });
 
       // Combine successful results
       const combinedResults = results
         .filter(r => r.status === 'fulfilled')
-        .flatMap(r => r.value);
+        .flatMap(r => r.value)
+        .filter(book => book && book.title); // Filter out invalid books
+
+      // Deduplicate by title
+      const uniqueResults = deduplicateBooks(combinedResults);
       
-      console.log(`Total combined results: ${combinedResults.length}`);
-      return combinedResults.slice(0, limit);
-      
-    } catch (err) {
-      console.error('Error in buildAuthorFeed:', err);
-      return [];
+      console.log(`📊 Total unique results: ${uniqueResults.length}`);
+      return uniqueResults.slice(0, limit);
     }
+  } catch (error) {
+    console.error('🔥 Error in buildAuthorFeed:', error.message);
+    return [];
   }
 }
 // async function buildAuthorFeed(authorId, limit) {

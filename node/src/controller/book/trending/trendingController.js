@@ -90,8 +90,6 @@ function mixBooksSeeded(books, seed) {
 
   return clean;
 }
-
-
 async function getFeed(req, res) {
   try {
     const cursor = Number(req.query.cursor || 0);
@@ -101,37 +99,37 @@ async function getFeed(req, res) {
     const genreSlug = req.query.genre || null;
     const authorId = req.query.authorId || null;
 
+    console.log(`🚀 API Called: mode=${mode}, authorId=${authorId}, genre=${genreSlug}, cursor=${cursor}`);
+
     let feed = [];
 
-    // 🔹 HOME
-    if (mode === 'home') {
+    if (mode === 'author' && authorId) {
+      feed = await buildAuthorFeed(authorId, limit);
+    } else if (mode === 'genre' && genreSlug) {
+      feed = await buildGenreFeed(genreSlug, limit);
+    } else if (mode === 'home') {
       if (cursor === 0) {
-        // ✅ FIRST LOAD
         feed = await buildFeed({
           memberQid: req.user?.memberQid || null,
           limit
         });
       } else {
-        // ✅ EXTENSION
         feed = await buildExtendedFeed({
           memberQid: req.user?.memberQid || null,
           cursor,
           limit
         });
       }
-    }
-
-    // 🔹 GENRE (no extension yet)
-    if (mode === 'genre' && genreSlug) {
-      feed = await buildGenreFeed(genreSlug, limit);
-    }
-
-    // 🔹 AUTHOR (no extension yet)
-    if (mode === 'author' && authorId) {
-      feed = await buildAuthorFeed(authorId, limit);
+    } else {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid mode or missing parameters'
+      });
     }
 
     const batch = feed.slice(0, limit);
+
+    console.log(`🎉 Sending response: ${batch.length} items`);
 
     res.json({
       success: true,
@@ -141,10 +139,67 @@ async function getFeed(req, res) {
     });
 
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false });
+    console.error('🔥 getFeed error:', err);
+    res.status(500).json({ 
+      success: false,
+      error: err.message 
+    });
   }
 }
+
+// async function getFeed(req, res) {
+//   try {
+//     const cursor = Number(req.query.cursor || 0);
+//     const limit = 100;
+
+//     const mode = req.query.mode || 'home';
+//     const genreSlug = req.query.genre || null;
+//     const authorId = req.query.authorId || null;
+
+//     let feed = [];
+
+//     // 🔹 HOME
+//     if (mode === 'home') {
+//       if (cursor === 0) {
+//         // ✅ FIRST LOAD
+//         feed = await buildFeed({
+//           memberQid: req.user?.memberQid || null,
+//           limit
+//         });
+//       } else {
+//         // ✅ EXTENSION
+//         feed = await buildExtendedFeed({
+//           memberQid: req.user?.memberQid || null,
+//           cursor,
+//           limit
+//         });
+//       }
+//     }
+
+//     // 🔹 GENRE (no extension yet)
+//     if (mode === 'genre' && genreSlug) {
+//       feed = await buildGenreFeed(genreSlug, limit);
+//     }
+
+//     // 🔹 AUTHOR (no extension yet)
+//     if (mode === 'author' && authorId) {
+//       feed = await buildAuthorFeed(authorId, limit);
+//     }
+
+//     const batch = feed.slice(0, limit);
+
+//     res.json({
+//       success: true,
+//       data: batch,
+//       nextCursor: cursor + batch.length,
+//       hasMore: batch.length === limit
+//     });
+
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ success: false });
+//   }
+// }
 
 
 async function buildExtendedFeed({ memberQid, cursor, limit }) {
