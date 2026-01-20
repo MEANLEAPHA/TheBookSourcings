@@ -93,7 +93,7 @@ function mixBooksSeeded(books, seed) {
 async function getFeed(req, res) {
   try {
     const cursor = Number(req.query.cursor || 0);
-    const limit = 100;
+    const limit = 230;
 
     const mode = req.query.mode || 'home';
     const genreSlug = req.query.genre || null;

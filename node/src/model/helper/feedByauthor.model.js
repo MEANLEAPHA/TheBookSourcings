@@ -46,7 +46,7 @@ async function buildAuthorFeed(authorId, limit) {
       ]);
 
       // Log results for debugging
-      const apiNames = ['Google Books', 'Internet Archive', 'Gutenberg', 'Open Library'];
+      const apiNames = ['Google Books', 'Internet Archive', 'Gutenberg', 'Open Library', 'MangaDex', 'AniList'];
       results.forEach((result, index) => {
         if (result.status === 'fulfilled') {
           console.log(`✅ ${apiNames[index]}: Found ${result.value.length} books`);

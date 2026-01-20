@@ -96,7 +96,7 @@ async function buildGenreFeed(genreSlug, limit = 100) {
     ]);
 
     // 3️⃣ Log results for debugging
-    const apiNames = ['Google Books', 'Gutenberg', 'Open Library', 'Internet Archive', 'OTTHOR'];
+    const apiNames = ['Google Books', 'Gutenberg', 'Open Library', 'Internet Archive', 'OTTHOR', 'MangaDex', 'AniList'];
     results.forEach((result, index) => {
       if (result.status === 'fulfilled') {
         console.log(`✅ ${apiNames[index]}: Found ${result.value.length} books`);
