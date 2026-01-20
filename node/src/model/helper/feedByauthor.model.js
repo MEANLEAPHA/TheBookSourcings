@@ -4,6 +4,8 @@ const {searchGoogleBookByAuthor} = require('../../controller/book/trending/filte
 const {searchGutenbergByAuthor} = require('../../controller/book/trending/filter/gutenbergFilter');
 const {searchOpenLibraryByAuthor} = require('../../controller/book/trending/filter/openlibraryFilter');
 const {searchInternetArchiveByAuthor} = require('../../controller/book/trending/filter/internetArchFilter');
+const {searchByMangaDexAuthor} = require('../../controller/book/trending/filter/mangaDexFilter');
+const {searchByAniListAuthor} = require('../../controller/book/trending/filter/aniListFilter');
 
 async function buildAuthorFeed(authorId, limit) {
   try {
@@ -38,7 +40,9 @@ async function buildAuthorFeed(authorId, limit) {
         searchGoogleBookByAuthor(authorName, Math.ceil(limit/4)),
         searchInternetArchiveByAuthor(authorName, Math.ceil(limit/4)),
         searchGutenbergByAuthor(authorName, Math.ceil(limit/4)),
-        searchOpenLibraryByAuthor(authorName, Math.ceil(limit/4))
+        searchOpenLibraryByAuthor(authorName, Math.ceil(limit/4)),
+        searchByMangaDexAuthor(authorName, Math.ceil(limit/4)),
+        searchByAniListAuthor(authorName, Math.ceil(limit/4))
       ]);
 
       // Log results for debugging

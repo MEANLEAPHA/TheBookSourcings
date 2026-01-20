@@ -39,6 +39,8 @@ const { searchGoogleBookByGenre } = require('../../controller/book/trending/filt
 const { searchGutenbergByGenre } = require('../../controller/book/trending/filter/gutenbergFilter');
 const { searchOpenLibraryByGenre } = require('../../controller/book/trending/filter/openlibraryFilter');
 const { searchInternetArchiveByGenre } = require('../../controller/book/trending/filter/internetArchFilter');
+const {searchByMangaDexGenre} = require('../../controller/book/trending/filter/mangaDexFilter');
+const { searchByAniListGenre } = require('../../controller/book/trending/filter/aniListFilter');
 
 // Helper function to deduplicate books
 function deduplicateBooks(books) {
@@ -88,7 +90,9 @@ async function buildGenreFeed(genreSlug, limit = 100) {
       searchGutenbergByGenre(genreName, Math.ceil(limit/5)),
       searchOpenLibraryByGenre(genreName, Math.ceil(limit/5)),
       searchInternetArchiveByGenre(genreName, Math.ceil(limit/5)),
-      searchOtthorByGenre(genreName, Math.ceil(limit/5))
+      searchOtthorByGenre(genreName, Math.ceil(limit/5)),
+      searchByMangaDexGenre(genreName, Math.ceil(limit/5)),
+      searchByAniListGenre(genreName, Math.ceil(limit/5))
     ]);
 
     // 3️⃣ Log results for debugging
