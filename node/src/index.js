@@ -9,7 +9,9 @@ const app = express();
 app.use(cors(
     {
         origin: ["https://admin.socket.io", "https://thebooksourcings.onrender.com"],
-        credentials: true
+        credentials: true,
+        methods: ['GET', 'POST', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Accept']
     }
 ));
 app.use(express.json());
