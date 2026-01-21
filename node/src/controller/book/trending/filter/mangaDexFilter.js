@@ -62,9 +62,8 @@ async function searchByMangaDexGenre(query, limit = 20) {
     const tagIds = matchingTags.map(tag => tag.id);
     
     // Search manga that include ANY of the matching tags
-    // Use OR logic (includedTagsMode defaults to AND, so we need to build URL manually)
     const tagParams = tagIds.map(id => `includedTags[]=${id}`).join('&');
-    const url = `https://api.mangadex.org/manga?limit=${limit}&${tagParams}&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&order[followedCount]=desc`;
+    const url = `https://api.mangadex.org/manga?limit=${limit}&${tagParams}&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&order[followedCount]=desc&includes[]=cover_art`;
     
     console.log(`🔍 MangaDex Genre URL: ${url}`);
     
@@ -99,7 +98,7 @@ async function searchMangaByKeywordAndExtractGenre(query, limit = 20) {
   try {
     console.log(`🔍 Searching manga by keyword: "${query}"`);
     
-    const url = `https://api.mangadex.org/manga?limit=${limit * 2}&title=${encodeURIComponent(query)}&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&order[followedCount]=desc`;
+    const url = `https://api.mangadex.org/manga?limit=${limit * 2}&title=${encodeURIComponent(query)}&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&order[followedCount]=desc&includes[]=cover_art`;
     
     const data = await fetchJson(url);
     
@@ -148,17 +147,43 @@ async function searchMangaByKeywordAndExtractGenre(query, limit = 20) {
 // Helper: Process a single manga
 async function processManga(manga, genre) {
   try {
-    // Get cover image
+    // Get cover image - NEW CORRECT METHOD
     let cover = null;
-    try {
-      const coverUrl = `https://api.mangadex.org/cover?limit=1&manga[]=${manga.id}&order[createdAt]=desc`;
-      const coverData = await fetchJson(coverUrl);
-      if (coverData.data?.[0]?.attributes?.fileName) {
-        const fileName = coverData.data[0].attributes.fileName;
-        cover = `https://uploads.mangadex.org/covers/${manga.id}/${fileName}.256.jpg`;
+    
+    // Method 1: Check if cover_art is included in relationships
+    if (manga.relationships) {
+      const coverRel = manga.relationships.find(r => r.type === 'cover_art');
+      if (coverRel?.attributes?.fileName) {
+        const fileName = coverRel.attributes.fileName;
+        // CORRECT COVER URL FORMAT
+        cover = `https://uploads.mangadex.org/covers/${manga.id}/${fileName}`;
+        
+        // You can optionally add size suffix, but the base URL should work
+        // cover = `https://uploads.mangadex.org/covers/${manga.id}/${fileName}.256.jpg`;
       }
-    } catch (coverError) {
-      console.log(`⚠️ Could not fetch cover for manga ${manga.id}: ${coverError.message}`);
+    }
+    
+    // Method 2: Fetch cover separately if not found in relationships
+    if (!cover) {
+      try {
+        const coverUrl = `https://api.mangadex.org/cover?limit=1&manga[]=${manga.id}&order[createdAt]=desc`;
+        const coverData = await fetchJson(coverUrl);
+        if (coverData.data?.[0]?.attributes?.fileName) {
+          const fileName = coverData.data[0].attributes.fileName;
+          // CORRECT COVER URL FORMAT
+          cover = `https://uploads.mangadex.org/covers/${manga.id}/${fileName}`;
+        }
+      } catch (coverError) {
+        console.log(`⚠️ Could not fetch cover for manga ${manga.id}: ${coverError.message}`);
+      }
+    }
+    
+    // Method 3: Try with different size suffix if still no cover
+    if (cover && !cover.includes('.jpg') && !cover.includes('.png')) {
+      // Try with .jpg extension
+      const jpgUrl = `${cover}.256.jpg`;
+      // You could test this URL or just use it
+      cover = jpgUrl;
     }
     
     // Get authors
@@ -214,7 +239,6 @@ async function processManga(manga, genre) {
   }
 }
 
-
 async function searchByMangaDexAuthor(query, limit = 20) {
   try {
     if (!query) return [];
@@ -253,7 +277,7 @@ async function searchByMangaDexAuthor(query, limit = 20) {
       console.log(`❌ Author ${authorName} has no manga relationships`);
       
       // Try alternative approach: search manga directly by author
-      const searchUrl = `https://api.mangadex.org/manga?limit=${limit}&title=${encodeURIComponent(query)}&order[followedCount]=desc`;
+      const searchUrl = `https://api.mangadex.org/manga?limit=${limit}&title=${encodeURIComponent(query)}&order[followedCount]=desc&includes[]=cover_art`;
       console.log(`🔍 Trying alternative search: ${searchUrl}`);
       
       const searchData = await fetchJson(searchUrl);
@@ -267,7 +291,7 @@ async function searchByMangaDexAuthor(query, limit = 20) {
     }
     
     // Fetch manga details for the found IDs
-    const mangaUrl = `https://api.mangadex.org/manga?limit=${limit}&ids[]=${mangaIds.slice(0, 10).join('&ids[]=')}&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&order[followedCount]=desc`;
+    const mangaUrl = `https://api.mangadex.org/manga?limit=${limit}&ids[]=${mangaIds.slice(0, 10).join('&ids[]=')}&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&order[followedCount]=desc&includes[]=cover_art`;
     
     console.log(`🔍 MangaDex Author Manga URL: ${mangaUrl}`);
     
@@ -292,17 +316,29 @@ async function processMangaList(mangaList, authorName, source) {
   const results = [];
   
   for (const manga of mangaList) {
-    // Get cover image
+    // Get cover image - SIMPLIFIED VERSION
     let cover = null;
-    try {
-      const coverUrl = `https://api.mangadex.org/cover?limit=1&manga[]=${manga.id}&order[createdAt]=desc`;
-      const coverData = await fetchJson(coverUrl);
-      if (coverData.data?.[0]?.attributes?.fileName) {
-        const fileName = coverData.data[0].attributes.fileName;
-        cover = `https://uploads.mangadex.org/covers/${manga.id}/${fileName}.256.jpg`;
+    
+    // Check relationships for cover_art
+    if (manga.relationships) {
+      const coverRel = manga.relationships.find(r => r.type === 'cover_art');
+      if (coverRel?.attributes?.fileName) {
+        const fileName = coverRel.attributes.fileName;
+        // Use the simplified URL format
+        cover = `https://uploads.mangadex.org/covers/${manga.id}/${fileName}`;
       }
-    } catch (coverError) {
-      console.log(`⚠️ Could not fetch cover for manga ${manga.id}: ${coverError.message}`);
+    }
+    
+    // If no cover found, try to fetch it
+    if (!cover) {
+      try {
+        const result = await processManga(manga, null);
+        if (result && result.cover) {
+          cover = result.cover;
+        }
+      } catch (error) {
+        console.log(`⚠️ Could not get cover for ${manga.id}:`, error.message);
+      }
     }
     
     const title = manga.attributes?.title?.en || 
@@ -328,13 +364,26 @@ async function processMangaList(mangaList, authorName, source) {
   
   return results;
 }
+// Debug function to test cover URLs
+// async function testCoverUrl(mangaId) {
+//   try {
+//     const coverUrl = `https://api.mangadex.org/cover?limit=1&manga[]=${mangaId}`;
+//     const coverData = await fetchJson(coverUrl);
+    
+//     if (coverData.data?.[0]) {
+//       const cover = coverData.data[0];
+//       console.log('Cover data:', cover);
+//       console.log('File name:', cover.attributes.fileName);
+//       console.log('URL 1:', `https://uploads.mangadex.org/covers/${mangaId}/${cover.attributes.fileName}`);
+//       console.log('URL 2:', `https://uploads.mangadex.org/covers/${mangaId}/${cover.attributes.fileName}.256.jpg`);
+//       console.log('URL 3:', `https://uploads.mangadex.org/covers/${mangaId}/${cover.attributes.fileName}.512.jpg`);
+//     }
+//   } catch (error) {
+//     console.error('Test error:', error.message);
+//   }
+// }
 
 module.exports = {
   searchByMangaDexGenre,
   searchByMangaDexAuthor
 };
-
-
-
-
-
