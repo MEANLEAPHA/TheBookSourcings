@@ -6,6 +6,7 @@ const path = require('path');
 const http = require('http'); 
 const db = require("./config/db"); // your MySQL pool/connection
 const app = express();
+const proxyRoutes = require('./routes/proxy-routes');
 app.use(cors(
     {
         origin: ["https://admin.socket.io", "https://thebooksourcings.onrender.com"],
@@ -16,6 +17,7 @@ app.use(cors(
 ));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use('/api', proxyRoutes);
 
 // ✅ Serve static files from the src/public folder
 app.use(express.static(path.join(__dirname, 'public')));
