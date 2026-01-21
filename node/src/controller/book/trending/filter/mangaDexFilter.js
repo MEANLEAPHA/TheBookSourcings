@@ -10,7 +10,7 @@ async function searchByMangaDexGenre(query, limit = 20) {
     const cleanQuery = query.toLowerCase().trim();
     
     // First, get ALL available tags to find matching ones
-    const tagSearchUrl = `https://api.mangadex.org/manga/tag?limit=100`;
+    const tagSearchUrl = `https://api.mangadex.org/manga/tag`;
     const tagData = await fetchJson(tagSearchUrl);
     
     if (!tagData.data) {
@@ -26,44 +26,37 @@ async function searchByMangaDexGenre(query, limit = 20) {
       const nameEn = t.attributes.name.en?.toLowerCase() || '';
       const nameJa = t.attributes.name.ja?.toLowerCase() || '';
       const nameKo = t.attributes.name.ko?.toLowerCase() || '';
-      const nameEs = t.attributes.name.es?.toLowerCase() || '';
-      const namePt = t.attributes.name.pt?.toLowerCase() || '';
-      const nameRu = t.attributes.name.ru?.toLowerCase() || '';
       
-      // Check if query is included in any language version OR
-      // if any language version is included in the query
+      // Check if query is included in any language version
       return nameEn.includes(cleanQuery) || 
              cleanQuery.includes(nameEn) ||
              nameJa.includes(cleanQuery) || 
              cleanQuery.includes(nameJa) ||
              nameKo.includes(cleanQuery) || 
-             cleanQuery.includes(nameKo) ||
-             nameEs.includes(cleanQuery) || 
-             cleanQuery.includes(nameEs) ||
-             namePt.includes(cleanQuery) || 
-             cleanQuery.includes(namePt) ||
-             nameRu.includes(cleanQuery) || 
-             cleanQuery.includes(nameRu);
+             cleanQuery.includes(nameKo);
     });
     
     if (matchingTags.length === 0) {
       console.log(`❌ No matching tags found for genre: "${query}"`);
-      console.log('Available tags (first 10):', tagData.data.slice(0, 10).map(t => t.attributes.name.en || t.attributes.name.ja));
-      
-      // Fallback: Search manga by title/keyword and extract genres
-      console.log(`🔄 Trying fallback search by keyword...`);
-      return await searchMangaByKeywordAndExtractGenre(query, limit);
+      // Try direct search instead
+      return await searchMangaDirectly(query, limit);
     }
     
-    console.log(`✅ Found ${matchingTags.length} matching tags for "${query}":`, 
-                matchingTags.map(t => t.attributes.name.en || t.attributes.name.ja));
+    console.log(`✅ Found ${matchingTags.length} matching tags for "${query}"`);
     
     // Get tag IDs
     const tagIds = matchingTags.map(tag => tag.id);
     
     // Search manga that include ANY of the matching tags
-    const tagParams = tagIds.map(id => `includedTags[]=${id}`).join('&');
-    const url = `https://api.mangadex.org/manga?limit=${limit}&${tagParams}&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&order[followedCount]=desc&includes[]=cover_art`;
+    // Note: MangaDex API requires includedTags[] parameter for each tag
+    let url = `https://api.mangadex.org/manga?limit=${limit}&includedTags[]=${tagIds[0]}`;
+    
+    // Add additional tags if more than one
+    for (let i = 1; i < Math.min(tagIds.length, 3); i++) {
+      url += `&includedTags[]=${tagIds[i]}`;
+    }
+    
+    url += `&contentRating[]=safe&contentRating[]=suggestive&order[followedCount]=desc&includes[]=cover_art&includes[]=author`;
     
     console.log(`🔍 MangaDex Genre URL: ${url}`);
     
@@ -71,18 +64,16 @@ async function searchByMangaDexGenre(query, limit = 20) {
     
     if (!data.data || data.data.length === 0) {
       console.log(`❌ No manga found with tags: "${query}"`);
-      
-      // Try with a simpler approach: just search manga by keyword
-      return await searchMangaByKeywordAndExtractGenre(query, limit);
+      return await searchMangaDirectly(query, limit);
     }
     
     console.log(`✅ Found ${data.data.length} manga with genre "${query}"`);
     
     const results = [];
     
-    // Process manga in batches
+    // Process each manga
     for (const manga of data.data.slice(0, limit)) {
-      const result = await processMangaWithCover(manga, query);
+      const result = await processMangaData(manga, query);
       if (result) results.push(result);
     }
     
@@ -93,140 +84,78 @@ async function searchByMangaDexGenre(query, limit = 20) {
   }
 }
 
-// Helper: Search manga by keyword and extract matching genre
-async function searchMangaByKeywordAndExtractGenre(query, limit = 20) {
+// Helper: Search manga directly by title/keyword
+async function searchMangaDirectly(query, limit = 20) {
   try {
-    console.log(`🔍 Searching manga by keyword: "${query}"`);
+    console.log(`🔍 Searching manga directly: "${query}"`);
     
-    const url = `https://api.mangadex.org/manga?limit=${limit * 2}&title=${encodeURIComponent(query)}&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&order[followedCount]=desc&includes[]=cover_art`;
+    const url = `https://api.mangadex.org/manga?limit=${limit}&title=${encodeURIComponent(query)}&contentRating[]=safe&contentRating[]=suggestive&order[followedCount]=desc&includes[]=cover_art&includes[]=author`;
     
     const data = await fetchJson(url);
     
     if (!data.data || data.data.length === 0) {
-      console.log(`❌ No manga found by keyword: "${query}"`);
+      console.log(`❌ No manga found for: "${query}"`);
       return [];
     }
     
-    console.log(`✅ Found ${data.data.length} manga by keyword "${query}"`);
+    console.log(`✅ Found ${data.data.length} manga by direct search`);
     
     const results = [];
-    const cleanQuery = query.toLowerCase();
     
-    for (const manga of data.data.slice(0, limit * 2)) {
-      // Check if manga has tags that match the query
-      const matchingGenre = manga.attributes?.tags
-        ?.filter(tag => tag.attributes.group === 'genre')
-        ?.map(tag => {
-          const nameEn = tag.attributes.name.en?.toLowerCase() || '';
-          const nameJa = tag.attributes.name.ja?.toLowerCase() || '';
-          return (nameEn.includes(cleanQuery) || cleanQuery.includes(nameEn) ||
-                  nameJa.includes(cleanQuery) || cleanQuery.includes(nameJa)) 
-                 ? tag.attributes.name.en || tag.attributes.name.ja 
-                 : null;
-        })
-        ?.find(genre => genre !== null);
-      
-      // Only include manga that actually has the genre
-      if (matchingGenre) {
-        const result = await processMangaWithCover(manga, matchingGenre);
-        if (result) {
-          results.push(result);
-          if (results.length >= limit) break;
-        }
-      }
+    for (const manga of data.data.slice(0, limit)) {
+      const result = await processMangaData(manga, query);
+      if (result) results.push(result);
     }
     
-    console.log(`✅ Extracted ${results.length} manga with genre "${query}" from keyword search`);
     return results;
   } catch (error) {
-    console.error('Keyword search error:', error.message);
+    console.error('Direct search error:', error.message);
     return [];
   }
 }
 
-// Helper: Process a single manga with cover image
-async function processMangaWithCover(manga, genre) {
+// Helper: Process manga data
+async function processMangaData(manga, query) {
   try {
-    // Get cover image - THIS IS THE FIXED PART
+    // Get cover image - CORRECT WAY
     let cover = null;
     
-    // Method 1: Check if cover_art is included in relationships
+    // Check relationships for cover_art
     if (manga.relationships) {
-      const coverRel = manga.relationships.find(r => r.type === 'cover_art');
-      if (coverRel?.attributes?.fileName) {
-        const fileName = coverRel.attributes.fileName;
-        // MangaDex cover URLs work like this
-        cover = `https://uploads.mangadex.org/covers/${manga.id}/${fileName}`;
-        
-        // Test if the cover exists by trying different formats
-        const coverFormats = [
-          cover,
-          `${cover}.jpg`,
-          `${cover}.png`,
-          `${cover}.256.jpg`,
-          `${cover}.512.jpg`
-        ];
-        
-        // You could test which URL works, but for now use the first one
-        console.log(`📸 Cover URL for ${manga.id}: ${cover}`);
-      }
-    }
-    
-    // Method 2: If no cover in relationships, fetch it separately
-    if (!cover) {
-      try {
-        const coverUrl = `https://api.mangadex.org/cover?limit=1&manga[]=${manga.id}&order[createdAt]=desc`;
-        const coverData = await fetchJson(coverUrl);
-        if (coverData.data?.[0]?.attributes?.fileName) {
-          const fileName = coverData.data[0].attributes.fileName;
+      for (const rel of manga.relationships) {
+        if (rel.type === 'cover_art' && rel.attributes?.fileName) {
+          const fileName = rel.attributes.fileName;
+          // MangaDex cover URLs: https://uploads.mangadex.org/covers/{manga-id}/{filename}
           cover = `https://uploads.mangadex.org/covers/${manga.id}/${fileName}`;
-          console.log(`📸 Fetched cover separately for ${manga.id}: ${cover}`);
+          console.log(`📸 Cover found: ${cover}`);
+          break;
         }
-      } catch (coverError) {
-        console.log(`⚠️ Could not fetch cover for manga ${manga.id}: ${coverError.message}`);
       }
     }
     
     // Get authors
     let authors = ["Unknown"];
     if (manga.relationships) {
-      // Find author relationships
-      const authorRels = manga.relationships.filter(r => r.type === 'author');
-      
-      if (authorRels.length > 0) {
-        // Try to get author names from the relationships if available
-        const authorNames = authorRels
-          .map(r => r.attributes?.name)
-          .filter(name => name && name !== 'Unknown');
-        
-        if (authorNames.length > 0) {
-          authors = authorNames;
-        } else {
-          // If names not in relationships, fetch author details
-          const authorIds = authorRels.map(r => r.id).filter(id => id);
-          if (authorIds.length > 0) {
-            try {
-              const authorsUrl = `https://api.mangadex.org/author?ids[]=${authorIds.join('&ids[]=')}`;
-              const authorsData = await fetchJson(authorsUrl);
-              if (authorsData.data) {
-                authors = authorsData.data.map(a => a.attributes?.name || 'Unknown').filter(name => name !== 'Unknown');
-              }
-            } catch (authorError) {
-              console.log(`⚠️ Could not fetch authors for manga ${manga.id}: ${authorError.message}`);
-            }
-          }
+      const authorNames = [];
+      for (const rel of manga.relationships) {
+        if (rel.type === 'author' && rel.attributes?.name) {
+          authorNames.push(rel.attributes.name);
         }
+      }
+      if (authorNames.length > 0) {
+        authors = authorNames;
       }
     }
     
+    // Get title
     const title = manga.attributes?.title?.en || 
                  manga.attributes?.title?.['ja-ro'] || 
                  manga.attributes?.title?.ja ||
                  Object.values(manga.attributes?.title || {})[0] || 
                  'Unknown Title';
     
-    // Extract actual genre from manga if available
-    let actualGenre = genre;
+    // Get genre from tags
+    let genre = query;
     if (manga.attributes?.tags) {
       const genreTags = manga.attributes.tags
         .filter(tag => tag.attributes.group === 'genre')
@@ -234,24 +163,36 @@ async function processMangaWithCover(manga, genre) {
         .filter(name => name);
       
       if (genreTags.length > 0) {
-        actualGenre = genreTags[0];
+        genre = genreTags[0];
       }
     }
     
-    // Also include a link to the manga on MangaDex
-    const mangaLink = `https://mangadex.org/title/${manga.id}`;
+    // Get description
+    const description = manga.attributes?.description?.en || 
+                       manga.attributes?.description?.['ja-ro'] || 
+                       manga.attributes?.description?.ja || 
+                       '';
+    
+    // Get status
+    const status = manga.attributes?.status || 'ongoing';
+    
+    // Get content rating
+    const contentRating = manga.attributes?.contentRating || 'safe';
     
     return {
       bookId: manga.id,
       title: title,
       cover: cover,
-      authors: authors.length > 0 ? authors : ["Unknown"],
+      authors: authors,
       source: "mangadex",
-      genre: actualGenre,
-      url: mangaLink // Add URL for reference
+      genre: genre,
+      description: description,
+      status: status,
+      contentRating: contentRating,
+      url: `https://mangadex.org/title/${manga.id}`
     };
   } catch (error) {
-    console.error(`Error processing manga ${manga.id}:`, error.message);
+    console.error(`Error processing manga ${manga?.id}:`, error.message);
     return null;
   }
 }
@@ -267,75 +208,44 @@ async function searchByMangaDexAuthor(query, limit = 20) {
     const authorData = await fetchJson(authorSearchUrl);
     
     if (!authorData.data || authorData.data.length === 0) {
-      console.log(`❌ No authors found for query: "${query}"`);
-      return [];
+      console.log(`❌ No authors found for: "${query}"`);
+      return await searchMangaDirectly(query, limit);
     }
     
     console.log(`✅ Found ${authorData.data.length} authors matching "${query}"`);
     
-    // Get the first author
-    const author = authorData.data[0];
-    const authorId = author.id;
-    const authorName = author.attributes?.name || query;
+    // Get author IDs
+    const authorIds = authorData.data.map(author => author.id);
+    const authorName = authorData.data[0]?.attributes?.name || query;
     
-    console.log(`✅ Using author: ${authorName} (ID: ${authorId})`);
+    // Search manga by author IDs
+    let url = `https://api.mangadex.org/manga?limit=${limit}&authors[]=${authorIds[0]}`;
     
-    // Get manga IDs from author relationships
-    const mangaIds = [];
-    if (author.relationships) {
-      author.relationships.forEach(rel => {
-        if (rel.type === 'manga' && rel.id) {
-          mangaIds.push(rel.id);
-        }
-      });
+    // Add additional authors if more than one
+    for (let i = 1; i < Math.min(authorIds.length, 3); i++) {
+      url += `&authors[]=${authorIds[i]}`;
     }
     
-    if (mangaIds.length === 0) {
-      console.log(`❌ Author ${authorName} has no manga relationships`);
-      
-      // Try alternative approach: search manga directly
-      const searchUrl = `https://api.mangadex.org/manga?limit=${limit}&title=${encodeURIComponent(query)}&order[followedCount]=desc&includes[]=cover_art`;
-      console.log(`🔍 Trying alternative search: ${searchUrl}`);
-      
-      const searchData = await fetchJson(searchUrl);
-      
-      if (!searchData.data || searchData.data.length === 0) {
-        console.log(`❌ No manga found by title search for "${query}"`);
-        return [];
-      }
-      
-      const results = [];
-      for (const manga of searchData.data.slice(0, limit)) {
-        const result = await processMangaWithCover(manga, null);
-        if (result) {
-          // Override authors with the searched author name
-          result.authors = [authorName];
-          results.push(result);
-        }
-      }
-      
-      return results;
-    }
+    url += `&contentRating[]=safe&contentRating[]=suggestive&order[followedCount]=desc&includes[]=cover_art&includes[]=author`;
     
-    // Fetch manga details for the found IDs
-    const mangaUrl = `https://api.mangadex.org/manga?limit=${limit}&ids[]=${mangaIds.slice(0, 10).join('&ids[]=')}&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&order[followedCount]=desc&includes[]=cover_art`;
+    console.log(`🔍 MangaDex Author URL: ${url}`);
     
-    console.log(`🔍 MangaDex Author Manga URL: ${mangaUrl}`);
-    
-    const mangaData = await fetchJson(mangaUrl);
+    const mangaData = await fetchJson(url);
     
     if (!mangaData.data || mangaData.data.length === 0) {
-      console.log(`❌ No manga found for author ${authorName}`);
-      return [];
+      console.log(`❌ No manga found for author: "${authorName}"`);
+      return await searchMangaDirectly(query, limit);
     }
     
-    console.log(`✅ Found ${mangaData.data.length} manga for author ${authorName}`);
+    console.log(`✅ Found ${mangaData.data.length} manga for author "${authorName}"`);
     
     const results = [];
+    
+    // Process each manga
     for (const manga of mangaData.data.slice(0, limit)) {
-      const result = await processMangaWithCover(manga, null);
+      const result = await processMangaData(manga, null);
       if (result) {
-        // Use the author name we found
+        // Override authors with the searched author
         result.authors = [authorName];
         results.push(result);
       }
@@ -347,6 +257,46 @@ async function searchByMangaDexAuthor(query, limit = 20) {
     return [];
   }
 }
+
+// Debug function to test the API
+async function testMangaDexAPI() {
+  try {
+    console.log('🧪 Testing MangaDex API...');
+    
+    // Test 1: Get a single manga to see the structure
+    const testMangaId = 'f9c33607-3ad3-42a8-9e25-5b8bcd4f4b4a'; // Example manga ID
+    const testUrl = `https://api.mangadex.org/manga/${testMangaId}?includes[]=cover_art&includes[]=author`;
+    
+    console.log(`Test URL: ${testUrl}`);
+    const testData = await fetchJson(testUrl);
+    
+    console.log('Test manga data structure:');
+    console.log('- ID:', testData.data?.id);
+    console.log('- Title:', testData.data?.attributes?.title);
+    console.log('- Relationships:', testData.data?.relationships?.map(r => ({
+      type: r.type,
+      id: r.id,
+      fileName: r.attributes?.fileName,
+      name: r.attributes?.name
+    })));
+    
+    // Test 2: Get cover URL
+    if (testData.data?.relationships) {
+      const coverRel = testData.data.relationships.find(r => r.type === 'cover_art');
+      if (coverRel) {
+        console.log('Cover relationship found:', coverRel);
+        const coverUrl = `https://uploads.mangadex.org/covers/${testMangaId}/${coverRel.attributes?.fileName}`;
+        console.log('Cover URL:', coverUrl);
+      }
+    }
+    
+  } catch (error) {
+    console.error('Test error:', error.message);
+  }
+}
+
+// Uncomment to test
+// testMangaDexAPI();
 
 module.exports = {
   searchByMangaDexGenre,
