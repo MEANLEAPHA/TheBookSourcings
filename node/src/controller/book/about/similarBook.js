@@ -216,13 +216,21 @@ async function getMangaDexBooks(category) {
     
     return data.data.map(manga => {
       // Get cover URL
+      // let coverUrl = null;
+      // if (manga.relationships) {
+      //   const coverRel = manga.relationships.find(r => r.type === 'cover_art');
+      //   if (coverRel?.attributes?.fileName) {
+      //     coverUrl = `https://uploads.mangadex.org/covers/${manga.id}/${coverRel.attributes.fileName}`;
+      //   }
+      // }
+
       let coverUrl = null;
-      if (manga.relationships) {
-        const coverRel = manga.relationships.find(r => r.type === 'cover_art');
-        if (coverRel?.attributes?.fileName) {
-          coverUrl = `https://uploads.mangadex.org/covers/${manga.id}/${coverRel.attributes.fileName}`;
-        }
+    if (manga.relationships) {
+      const coverRel = manga.relationships.find(r => r.type === 'cover_art');
+      if (coverRel?.attributes?.fileName) {
+        coverUrl = `https://uploads.mangadex.org/covers/${bookId}/${coverRel.attributes.fileName}`;
       }
+    }
       
       // Get authors
       let author = "Various Manga Authors";
