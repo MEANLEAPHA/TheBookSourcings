@@ -37,6 +37,16 @@
 
 // module.exports = {getMangaDexTrending};
 const { fetchJson } = require('../../../util/apiClient');
+function getCoverUrl(originalUrl, mangaId) {
+  if (!originalUrl) {
+    // Return placeholder if no cover
+    return '/api/proxy/placeholder?text=No+Cover&width=256&height=384';
+  }
+  
+  // REQUIRED: Always use proxy for MangaDex images
+  return `/api/proxy/mangadex-image?url=${encodeURIComponent(originalUrl)}&mangaId=${mangaId}`;
+}
+
 async function getMangaDexTrending() {
   const url = "https://api.mangadex.org/manga?limit=20&order[followedCount]=desc&contentRating[]=safe&includes[]=cover_art&includes[]=author";
   const data = await fetchJson(url);
