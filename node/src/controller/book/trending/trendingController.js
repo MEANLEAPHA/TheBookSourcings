@@ -47,7 +47,7 @@ async function buildSeededFeed(seed) {
   let cached = feedCache.get(seed);
 
   if (!cached || Date.now() > cached.expiry) {
-    const [google, gutenberg, openLibrary, otthor, mangaDex, internetArchive] =
+    const [gutenberg, openLibrary, otthor, mangaDex, internetArchive] =
       await Promise.all([
         // getGoogleTrending().catch(() => []),
         getGutenbergTrending().catch(() => []),
@@ -58,7 +58,7 @@ async function buildSeededFeed(seed) {
       ]);
 
     const mixed = mixBooksSeeded(
-      [...google, ...gutenberg, ...openLibrary, ...otthor, ...mangaDex, ...internetArchive],
+      [...gutenberg, ...openLibrary, ...otthor, ...mangaDex, ...internetArchive],
       seed
     );
 
