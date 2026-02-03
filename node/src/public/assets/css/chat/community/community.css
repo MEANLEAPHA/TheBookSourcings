@@ -79,28 +79,30 @@ header{
     max-height: 35px;
 }
 #headerMiddle{
-    width: 35%;
+    width: 40%;
     border: 1px solid  var(--secondary-color);
     height: 35px;
-    border-radius: 35px;
+    border-radius: 10px;
     display: flex;
-    background-color: var(--secondary-color);
+    background-color: var(--background-color);
     align-items: center;
     justify-content: space-between;
     position: relative;
 }
 #searchTBS{
-    width: 90%;
+    width: 70%;
     height: 100%;
     border: none;
-    border-radius: 35px;
+    border-radius: 10px;
     border-bottom-right-radius: 0px;
     border-top-right-radius: 0px;
     background-color:var(--background-color);
     padding-left: 10px;
     padding-top: 3px;
+    
     color: var(--font-color);
     /* z-index: 2; */
+    
     font-size: 15px;
 }
 #searchTBS:focus{
@@ -108,6 +110,29 @@ header{
     border: none;
 
 }
+.select-option, .select-option-book{
+    width: 15%;
+    margin-right: 10px;
+    height: 65%;
+    display: flex;
+    align-items: center;
+   
+}
+.form-select-option, .form-select-option-book{
+ 
+    height: 100%;
+    color: var(--font-color);
+    /* appearance: none; 
+     -webkit-appearance: none;
+      -moz-appearance: none; */
+    font-size: small;
+    width: 100%;
+    background-color: var(--background-color);
+}
+/* .form-select-option:focus{
+    outline: none;
+    border: none;
+} */
 #searchIcon{
     width: 10%;
     height: 100%;
@@ -115,11 +140,14 @@ header{
     justify-content: center;
     align-items: center;
     font-size: 20px;
-    color: var(--font-color);
+    color: var(--primary-color);
     cursor: pointer;
-  z-index: 2;
-    border-top-right-radius: 35px;
-
+    z-index: 2;
+    border-top-right-radius: 10px;
+    border-left: 1px solid var(--secondary-color);
+    background-color: transparent;
+     
+    
 }
 #searchIcons{
     width: 10%;
@@ -131,7 +159,7 @@ header{
      color: var(--font-color);
     cursor: pointer;
    display: none;
-    border-top-right-radius: 35px;
+    border-top-right-radius: 10x;
 }
 #phoneSearch{
         display: flex;
@@ -271,7 +299,7 @@ header{
 
     #create{
         height: 35px;
-        border-radius: 15px;
+        border-radius: 10px;
         border: var(--primary-color) 0.3px solid;
         backdrop-filter: blur(8px);
         color:var(--font-color);

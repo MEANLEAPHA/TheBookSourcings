@@ -1,8 +1,10 @@
 const db = require("../config/db");
 const { searchOtthorByGenre } = require('../controller/book/trending/filter/otthorFilter');
-const { searchGoogleBookByGenre } = require('../controller/book/trending/filter/googleFilter');
+// const { searchGoogleBookByGenre } = require('../controller/book/trending/filter/googleFilter');
 const { searchGutenbergByGenre } = require('../controller/book/trending/filter/gutenbergFilter');
 const { searchOpenLibraryByGenre } = require('../controller/book/trending/filter/openlibraryFilter');
+const { searchByMangaDexGenre } = require('../controller/book/trending/filter/mangaDexFilter');
+const { searchInternetArchiveByGenre } = require('../controller/book/trending/filter/internetArchFilter');
 
 
 async function getInterestBooks(memberQid, limit = 20) {
@@ -28,8 +30,10 @@ async function getInterestBooks(memberQid, limit = 20) {
   if (!genre) return [];
 
   const results = await Promise.allSettled([
-    searchGoogleBookByGenre(genre.slug, limit),
+    // searchGoogleBookByGenre(genre.slug, limit),
     searchGutenbergByGenre(genre.slug, limit),
+    searchByMangaDexGenre(genre.slug, limit),
+    searchInternetArchiveByGenre(genre.slug, limit),
     searchOpenLibraryByGenre(genre.slug, limit),
     searchOtthorByGenre(top.genre_id, limit)
   ]);

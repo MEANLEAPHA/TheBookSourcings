@@ -1,13 +1,17 @@
-const {getGoogleTrending} = require('../controller/book/trending/googleController');
+// const {getGoogleTrending} = require('../controller/book/trending/googleController');
 const {getGutenbergTrending} = require('../controller/book/trending/gutenbergController');
 const {getOpenLibraryTrending} = require('../controller/book/trending/openLibraryController');
 const {getOtthorTrending} = require('../controller/book/trending/otthorController');
+const { getMangaDexTrending } = require('../controller/book/trending/mangaDexController');
+const {getInternetArchiveTrending} = require('../controller/book/trending/internetArchiveController');
 async function getTrendingBooks(limit = 100) {
   const results = await Promise.allSettled([
-    getGoogleTrending(),
+    // getGoogleTrending(),
     getGutenbergTrending(),
     getOpenLibraryTrending(),
-    getOtthorTrending()
+    getOtthorTrending(),
+    getInternetArchiveTrending(),
+    getMangaDexTrending()
   ]);
 
   const books = results

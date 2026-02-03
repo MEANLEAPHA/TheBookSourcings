@@ -2,7 +2,9 @@ const { getGoogleTrending } = require('./googleController');
 const { getGutenbergTrending } = require('./gutenbergController');
 const { getOpenLibraryTrending } = require('./openLibraryController');
 const { getOtthorTrending } = require('./otthorController');
-
+const { getMangaDexTrending } = require('./mangaDexController');
+const { getInternetArchiveTrending } = require('./internetArchiveController')
+ 
 const { buildFeed } = require('../../../model/feed.model');
 const { buildAuthorFeed } = require('../../../model/helper/feedByauthor.model');
 const { buildGenreFeed } = require('../../../model/helper/feedBygenre.model');
@@ -10,7 +12,7 @@ const { buildGenreFeed } = require('../../../model/helper/feedBygenre.model');
 const { getTrendingBooks } = require('../../../model/trending.model');
 const { getInterestBooks } = require('../../../model/interest.model');
 const { getRandomBooks } = require('../../../model/random.model');
-// const { dedupeFeed } = require('../../../util/feedUtils');
+
 const { rankFeed } = require('../../../util/rankFeed');
 
 const feedCache = new Map(); 
@@ -45,16 +47,18 @@ async function buildSeededFeed(seed) {
   let cached = feedCache.get(seed);
 
   if (!cached || Date.now() > cached.expiry) {
-    const [google, gutenberg, openLibrary, otthor] =
+    const [google, gutenberg, openLibrary, otthor, mangaDex, internetArchive] =
       await Promise.all([
         getGoogleTrending().catch(() => []),
         getGutenbergTrending().catch(() => []),
         getOpenLibraryTrending().catch(() => []),
-        getOtthorTrending().catch(() => [])
+        getOtthorTrending().catch(() => []),
+        getMangaDexTrending().catch(() => []),
+        getInternetArchiveTrending().catch(() => [])
       ]);
 
     const mixed = mixBooksSeeded(
-      [...google, ...gutenberg, ...openLibrary, ...otthor],
+      [...google, ...gutenberg, ...openLibrary, ...otthor, ...mangaDex, ...internetArchive],
       seed
     );
 
@@ -147,6 +151,65 @@ async function getFeed(req, res) {
   }
 }
 
+
+
+
+async function buildExtendedFeed({ memberQid, cursor, limit }) {
+  let items = [];
+
+  // 🔹 Phase derived from cursor depth
+  let phase = 0;
+
+  if (cursor > 200) phase = 4;
+  else if (cursor > 150) phase = 3;
+  else if (cursor > 100) phase = 2;
+  else if (cursor > 50) phase = 1;
+
+  switch (phase) {
+    case 0:
+      items = await getTrendingBooks(limit);
+      break;
+
+    case 1:
+      items = await getInterestBooks(memberQid, limit);
+      break;
+
+    case 2:
+      items = await buildAuthorFeed(memberQid, limit);
+      break;
+
+    case 3:
+      items = await buildGenreFeed(null, limit);
+      break;
+
+    default:
+      items = await getRandomBooks(limit);
+  }
+
+  return rankFeed(dedupeFeed(items));
+}
+
+function dedupeFeed(items) {
+  const map = new Map();
+  for (const item of items) {
+    const key = `${item.source}_${item.bookId}`;
+    if (!map.has(key)) map.set(key, item);
+  }
+  return [...map.values()];
+}
+module.exports = {
+  getAllTrending,
+  getFeed
+};
+
+
+
+
+
+
+
+
+
 // async function getFeed(req, res) {
 //   try {
 //     const cursor = Number(req.query.cursor || 0);
@@ -200,52 +263,3 @@ async function getFeed(req, res) {
 //     res.status(500).json({ success: false });
 //   }
 // }
-
-
-async function buildExtendedFeed({ memberQid, cursor, limit }) {
-  let items = [];
-
-  // 🔹 Phase derived from cursor depth
-  let phase = 0;
-
-  if (cursor > 200) phase = 4;
-  else if (cursor > 150) phase = 3;
-  else if (cursor > 100) phase = 2;
-  else if (cursor > 50) phase = 1;
-
-  switch (phase) {
-    case 0:
-      items = await getTrendingBooks(limit);
-      break;
-
-    case 1:
-      items = await getInterestBooks(memberQid, limit);
-      break;
-
-    case 2:
-      items = await buildAuthorFeed(memberQid, limit);
-      break;
-
-    case 3:
-      items = await buildGenreFeed(null, limit);
-      break;
-
-    default:
-      items = await getRandomBooks(limit);
-  }
-
-  return rankFeed(dedupeFeed(items));
-}
-
-function dedupeFeed(items) {
-  const map = new Map();
-  for (const item of items) {
-    const key = `${item.source}_${item.bookId}`;
-    if (!map.has(key)) map.set(key, item);
-  }
-  return [...map.values()];
-}
-module.exports = {
-  getAllTrending,
-  getFeed
-};

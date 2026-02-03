@@ -1,11 +1,11 @@
 const db = require('../../config/db');
 const { searchOtthorByAuthor } = require('../../controller/book/trending/filter/otthorFilter');
-const {searchGoogleBookByAuthor} = require('../../controller/book/trending/filter/googleFilter');
+// const {searchGoogleBookByAuthor} = require('../../controller/book/trending/filter/googleFilter');
 const {searchGutenbergByAuthor} = require('../../controller/book/trending/filter/gutenbergFilter');
 const {searchOpenLibraryByAuthor} = require('../../controller/book/trending/filter/openlibraryFilter');
 const {searchInternetArchiveByAuthor} = require('../../controller/book/trending/filter/internetArchFilter');
 const {searchByMangaDexAuthor} = require('../../controller/book/trending/filter/mangaDexFilter');
-const {searchByAniListAuthor} = require('../../controller/book/trending/filter/aniListFilter');
+// const {searchByAniListAuthor} = require('../../controller/book/trending/filter/aniListFilter');
 
 async function buildAuthorFeed(authorId, limit) {
   try {
@@ -37,16 +37,15 @@ async function buildAuthorFeed(authorId, limit) {
       
       // Use all 4 sources: Google Books, Internet Archive, Gutenberg, and Open Library
       const results = await Promise.allSettled([
-        searchGoogleBookByAuthor(authorName, Math.ceil(limit/4)),
+        // searchGoogleBookByAuthor(authorName, Math.ceil(limit/4)),
         searchInternetArchiveByAuthor(authorName, Math.ceil(limit/4)),
         searchGutenbergByAuthor(authorName, Math.ceil(limit/4)),
         searchOpenLibraryByAuthor(authorName, Math.ceil(limit/4)),
-        searchByMangaDexAuthor(authorName, Math.ceil(limit/4)),
-        searchByAniListAuthor(authorName, Math.ceil(limit/4))
+        searchByMangaDexAuthor(authorName, Math.ceil(limit/4))
       ]);
 
       // Log results for debugging
-      const apiNames = ['Google Books', 'Internet Archive', 'Gutenberg', 'Open Library', 'MangaDex', 'AniList'];
+      const apiNames = ['Internet Archive', 'Gutenberg', 'Open Library', 'MangaDex'];
       results.forEach((result, index) => {
         if (result.status === 'fulfilled') {
           console.log(`✅ ${apiNames[index]}: Found ${result.value.length} books`);

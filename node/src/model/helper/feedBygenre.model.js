@@ -35,12 +35,12 @@
 const db = require('../../config/db');
 
 const { searchOtthorByGenre } = require('../../controller/book/trending/filter/otthorFilter');
-const { searchGoogleBookByGenre } = require('../../controller/book/trending/filter/googleFilter');
+// const { searchGoogleBookByGenre } = require('../../controller/book/trending/filter/googleFilter');
 const { searchGutenbergByGenre } = require('../../controller/book/trending/filter/gutenbergFilter');
 const { searchOpenLibraryByGenre } = require('../../controller/book/trending/filter/openlibraryFilter');
 const { searchInternetArchiveByGenre } = require('../../controller/book/trending/filter/internetArchFilter');
 const {searchByMangaDexGenre} = require('../../controller/book/trending/filter/mangaDexFilter');
-const { searchByAniListGenre } = require('../../controller/book/trending/filter/aniListFilter');
+// const { searchByAniListGenre } = require('../../controller/book/trending/filter/aniListFilter');
 
 // Helper function to deduplicate books
 function deduplicateBooks(books) {
@@ -86,17 +86,16 @@ async function buildGenreFeed(genreSlug, limit = 100) {
 
     // 2️⃣ fetch all sources with limit distribution
     const results = await Promise.allSettled([
-      searchGoogleBookByGenre(genreName, Math.ceil(limit/5)),
+      // searchGoogleBookByGenre(genreName, Math.ceil(limit/5)),
       searchGutenbergByGenre(genreName, Math.ceil(limit/5)),
       searchOpenLibraryByGenre(genreName, Math.ceil(limit/5)),
       searchInternetArchiveByGenre(genreName, Math.ceil(limit/5)),
       searchOtthorByGenre(genreName, Math.ceil(limit/5)),
-      searchByMangaDexGenre(genreName, Math.ceil(limit/5)),
-      searchByAniListGenre(genreName, Math.ceil(limit/5))
+      searchByMangaDexGenre(genreName, Math.ceil(limit/5))
     ]);
 
     // 3️⃣ Log results for debugging
-    const apiNames = ['Google Books', 'Gutenberg', 'Open Library', 'Internet Archive', 'OTTHOR', 'MangaDex', 'AniList'];
+    const apiNames = ['Gutenberg', 'Open Library', 'Internet Archive', 'OTTHOR', 'MangaDex'];
     results.forEach((result, index) => {
       if (result.status === 'fulfilled') {
         console.log(`✅ ${apiNames[index]}: Found ${result.value.length} books`);
