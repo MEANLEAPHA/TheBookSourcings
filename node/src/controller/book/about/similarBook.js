@@ -201,21 +201,26 @@ async function getGutenbergBooks(category) {
 }
 
 // Helper: MangaDex books with author fetching
+// Add this at the top
+function getCoverUrl(originalUrl, mangaId) {
+  if (!originalUrl) return null;
+  return `/api/proxy/mangadex-image?url=${encodeURIComponent(originalUrl)}&mangaId=${mangaId}`;
+}
+
 async function getMangaDexBooks(category) {
   try {
-    // MangaDex doesn't have direct genre search, use title search
     const url = `https://api.mangadex.org/manga?limit=5&title=${encodeURIComponent(category)}&contentRating[]=safe&contentRating[]=suggestive&order[followedCount]=desc&includes[]=cover_art&includes[]=author`;
     const data = await fetchJson(url);
     
     if (!data?.data) return [];
     
     return data.data.map(manga => {
-      // Get cover
-      let cover = null;
+      // Get cover URL
+      let coverUrl = null;
       if (manga.relationships) {
         const coverRel = manga.relationships.find(r => r.type === 'cover_art');
         if (coverRel?.attributes?.fileName) {
-          cover = `https://uploads.mangadex.org/covers/${manga.id}/${coverRel.attributes.fileName}`;
+          coverUrl = `https://uploads.mangadex.org/covers/${manga.id}/${coverRel.attributes.fileName}`;
         }
       }
       
@@ -237,7 +242,7 @@ async function getMangaDexBooks(category) {
       return {
         title: title,
         bookId: manga.id,
-        cover: cover,
+        cover: getCoverUrl(coverUrl, manga.id), // ← Use proxy here
         author: author,
         source: "MangaDex"
       };
@@ -246,6 +251,51 @@ async function getMangaDexBooks(category) {
     return [];
   }
 }
+// async function getMangaDexBooks(category) {
+//   try {
+//     // MangaDex doesn't have direct genre search, use title search
+//     const url = `https://api.mangadex.org/manga?limit=5&title=${encodeURIComponent(category)}&contentRating[]=safe&contentRating[]=suggestive&order[followedCount]=desc&includes[]=cover_art&includes[]=author`;
+//     const data = await fetchJson(url);
+    
+//     if (!data?.data) return [];
+    
+//     return data.data.map(manga => {
+//       // Get cover
+//       let cover = null;
+//       if (manga.relationships) {
+//         const coverRel = manga.relationships.find(r => r.type === 'cover_art');
+//         if (coverRel?.attributes?.fileName) {
+//           cover = `https://uploads.mangadex.org/covers/${manga.id}/${coverRel.attributes.fileName}`;
+//         }
+//       }
+      
+//       // Get authors
+//       let author = "Various Manga Authors";
+//       if (manga.relationships) {
+//         const authorRels = manga.relationships.filter(r => r.type === 'author');
+//         if (authorRels.length > 0) {
+//           const authors = authorRels.map(r => r.attributes?.name).filter(name => name);
+//           author = authors.join(", ") || author;
+//         }
+//       }
+      
+//       const title = manga.attributes?.title?.en || 
+//                    manga.attributes?.title?.['ja-ro'] || 
+//                    Object.values(manga.attributes?.title || {})[0] || 
+//                    'Unknown Title';
+      
+//       return {
+//         title: title,
+//         bookId: manga.id,
+//         cover: cover,
+//         author: author,
+//         source: "MangaDex"
+//       };
+//     });
+//   } catch {
+//     return [];
+//   }
+// }
 
 // Helper: Internet Archive books
 async function getInternetArchiveBooks(category) {
