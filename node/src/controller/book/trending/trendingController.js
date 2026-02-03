@@ -1,4 +1,4 @@
-const { getGoogleTrending } = require('./googleController');
+// const { getGoogleTrending } = require('./googleController');
 const { getGutenbergTrending } = require('./gutenbergController');
 const { getOpenLibraryTrending } = require('./openLibraryController');
 const { getOtthorTrending } = require('./otthorController');
@@ -49,7 +49,7 @@ async function buildSeededFeed(seed) {
   if (!cached || Date.now() > cached.expiry) {
     const [google, gutenberg, openLibrary, otthor, mangaDex, internetArchive] =
       await Promise.all([
-        getGoogleTrending().catch(() => []),
+        // getGoogleTrending().catch(() => []),
         getGutenbergTrending().catch(() => []),
         getOpenLibraryTrending().catch(() => []),
         getOtthorTrending().catch(() => []),

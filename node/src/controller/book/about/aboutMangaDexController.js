@@ -1,5 +1,11 @@
 const { fetchJson } = require("../../../util/apiClient");
 
+// Add this helper
+function getCoverUrl(originalUrl, mangaId) {
+  if (!originalUrl) return null;
+  return `/api/proxy/mangadex-image?url=${encodeURIComponent(originalUrl)}&mangaId=${mangaId}`;
+}
+
 async function getMangaDexBookById(req, res) {
   try {
     const { bookId } = req.params;
@@ -13,11 +19,11 @@ async function getMangaDexBookById(req, res) {
     const manga = data.data;
     
     // Get cover image
-    let cover = null;
+    let coverUrl = null;
     if (manga.relationships) {
       const coverRel = manga.relationships.find(r => r.type === 'cover_art');
       if (coverRel?.attributes?.fileName) {
-        cover = `https://uploads.mangadex.org/covers/${bookId}/${coverRel.attributes.fileName}`;
+        coverUrl = `https://uploads.mangadex.org/covers/${bookId}/${coverRel.attributes.fileName}`;
       }
     }
     
@@ -55,7 +61,7 @@ async function getMangaDexBookById(req, res) {
       authors: authors,
       author_id: authors,
       description: description,
-      cover: cover,
+      cover: getCoverUrl(coverUrl, manga.id), // ← Use proxy here
       categories: categories,
       language: manga.attributes?.originalLanguage || null,
       page: null,
