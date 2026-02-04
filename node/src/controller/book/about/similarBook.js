@@ -222,7 +222,7 @@ async function getMangaDexBooks(category) {
     if (manga.relationships) {
       const coverRel = manga.relationships.find(r => r.type === 'cover_art');
       if (coverRel?.attributes?.fileName) {
-        coverUrl = `https://uploads.mangadex.org/covers/${bookId}/${coverRel.attributes.fileName}`;
+        coverUrl = `https://uploads.mangadex.org/covers/${manga.id}/${coverRel.attributes.fileName}`;
       }
     }
       
