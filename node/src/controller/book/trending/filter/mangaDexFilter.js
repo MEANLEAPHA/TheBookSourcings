@@ -30,7 +30,7 @@ async function searchByMangaDexGenre(query, limit = 20) {
       console.log(`❌ No manga found for: "${query}"`);
       return [];
     }
-    
+     
     console.log(`✅ Found ${data.data.length} manga`);
     
     const results = [];

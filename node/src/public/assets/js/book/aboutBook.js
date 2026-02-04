@@ -154,8 +154,7 @@ function detectSource(bookId) {
     if (/^OL\d+(W|M|A)$/.test(bookId)) return "openlibrary";
     if (/^\d+$/.test(bookId)) return "gutenberg";
     if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(bookId)) return "mangadex";
-    if (/^ark:\/\d+\/[a-z0-9]+$/i.test(bookId)) return "internetarchive";
-    return "unknown"; 
+    return "internetarchive"; 
 }
 
 

@@ -211,19 +211,13 @@ async function getMangaDexBooks(category) {
   try {
     const url = `https://api.mangadex.org/manga?limit=5&title=${encodeURIComponent(category)}&contentRating[]=safe&contentRating[]=suggestive&order[followedCount]=desc&includes[]=cover_art&includes[]=author`;
     const data = await fetchJson(url);
-    
-    if (!data?.data) return [];
+     if (!data.data || data.data.length === 0) {
+      console.log(`❌ No manga found for: "${query}"`);
+      return [];
+    }
+    console.log(`✅ Found ${data.data.length} manga`);
     
     return data.data.map(manga => {
-      // Get cover URL
-      // let coverUrl = null;
-      // if (manga.relationships) {
-      //   const coverRel = manga.relationships.find(r => r.type === 'cover_art');
-      //   if (coverRel?.attributes?.fileName) {
-      //     coverUrl = `https://uploads.mangadex.org/covers/${manga.id}/${coverRel.attributes.fileName}`;
-      //   }
-      // }
-
       let coverUrl = null;
     if (manga.relationships) {
       const coverRel = manga.relationships.find(r => r.type === 'cover_art');
