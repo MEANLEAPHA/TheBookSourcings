@@ -129,18 +129,8 @@ async function allAboutBook(req, res){
   }
 };
 
-// Health/status endpoint to monitor active requests
-function getRequestStats(req, res) {
-  const stats = {
-    activeRequests: activeRequests.size,
-    requestKeys: Array.from(activeRequests.keys()),
-    maxTime: `${MAX_REQUEST_TIME}ms`,
-    concurrentLimit: CONCURRENT_LIMIT
-  };
-  res.json(stats);
-}
+
 
 module.exports = {
-  allAboutBook,
-  getRequestStats // Optional monitoring endpoint
+  allAboutBook
 };

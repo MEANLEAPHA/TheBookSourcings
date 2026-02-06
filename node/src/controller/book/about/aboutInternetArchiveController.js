@@ -159,15 +159,16 @@ async function getInternetArchiveBookById(req, res) {
 }
 
 // Optional: Add cache stats endpoint
-function getArchiveCacheStats(req, res) {
-  res.json({
-    cacheSize: archiveCache.size,
-    cacheKeys: Array.from(archiveCache.keys()),
-    cacheDuration: `${CACHE_DURATION / 60000} minutes`
-  });
-}
+// function getArchiveCacheStats(req, res) {
+//   res.json({
+//     cacheSize: archiveCache.size,
+//     cacheKeys: Array.from(archiveCache.keys()),
+//     cacheDuration: `${CACHE_DURATION / 60000} minutes`
+//   });
+// }
 
 module.exports = { 
-  getInternetArchiveBookById,
-  getArchiveCacheStats // Optional
+  getInternetArchiveBookById
+  // getArchiveCacheStats
+   // Optional
 };
