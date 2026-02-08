@@ -36,7 +36,7 @@ setInterval(() => {
 async function getAllTrending(req, res) {
   try {
     const seed = validateSeed(req.query.seed || 0);
-     const memberQid = req.user.memberQid;
+    const memberQid = req.user?.memberQid || null; // Use optional chaining
     const cursor = Math.max(0, Number(req.query.cursor || 0));
     const limit = Math.min(50, Number(req.query.limit || 50));
 
@@ -131,7 +131,7 @@ async function buildSeededFeed(seed, memberQid) {
   });
 
   // Limit cache size
-  if (feedCache.size > 50) {
+  if (feedCache.size > 100) {
     const firstKey = feedCache.keys().next().value;
     feedCache.delete(firstKey);
   }
