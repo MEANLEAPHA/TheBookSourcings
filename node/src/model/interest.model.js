@@ -45,26 +45,3 @@ async function getInterestBooks(memberQid, limit = 20) {
 }
 
 module.exports = { getInterestBooks };
-
-
-// async function getInterestBooks(memberQid, limit = 20) {
-//   if (!memberQid) return [];
-
-//   const [rows] = await db.query(
-//     `
-//     SELECT genre_id, COUNT(*) AS score
-//     FROM user_book_activity
-//     WHERE memberQid = ?
-//     GROUP BY genre_id
-//     ORDER BY score DESC
-//     LIMIT 1
-//     `,
-//     [memberQid]
-//   );
-
-//   if (!rows.length) return [];
-
-//   const topGenreId = rows[0].genre_id;
-
-//   return searchOtthorByGenre(topGenreId, limit);
-// }

@@ -1,8 +1,5 @@
 const db = require('../config/db');
 
-
-
-
 async function getTopGenresForUser(memberQid, limit = 15) {
   const [rows] = await db.query(`
     SELECT 
@@ -21,7 +18,6 @@ async function getTopGenresForUser(memberQid, limit = 15) {
   return rows;
 }
 
-
 async function getTopAuthorIds(memberQid, limit = 10) {
   const [rows] = await db.query(`
     SELECT 
@@ -33,7 +29,6 @@ async function getTopAuthorIds(memberQid, limit = 10) {
     ORDER BY score DESC
     LIMIT ?
   `, [memberQid, limit]);
-
   return rows;
 };
 
