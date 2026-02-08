@@ -36,10 +36,11 @@ setInterval(() => {
 async function getAllTrending(req, res) {
   try {
     const seed = validateSeed(req.query.seed || 0);
+     const memberQid = req.user.memberQid;
     const cursor = Math.max(0, Number(req.query.cursor || 0));
     const limit = Math.min(50, Number(req.query.limit || 50));
 
-    const data = await buildSeededFeed(seed);
+    const data = await buildSeededFeed(seed, memberQid);
     const batch = data.slice(cursor, cursor + limit);
     const hasMore = cursor + batch.length < data.length;
 
@@ -59,8 +60,8 @@ async function getAllTrending(req, res) {
   }
 }
 
-async function buildSeededFeed(seed) {
-  const memberQid = req.user.memberQid;
+async function buildSeededFeed(seed, memberQid) {
+ 
   const cacheKey = `trending:${seed}`;
   let cached = feedCache.get(cacheKey);
 
@@ -86,7 +87,7 @@ async function buildSeededFeed(seed) {
         }
       });
     };
-    
+
     const topAuthors = await getTopAuthorsForUser(memberQid, 10);
     if (topAuthors.length > 0) {
       const authorPromises = topAuthors.map(author => 
