@@ -77,16 +77,12 @@ async function buildSeededFeed(seed, memberQid) {
     console.log(`🔍 Fetching personalized data for user: ${memberQid}`);
     
     try {
-      // Get user's top genres
-      console.log('📚 Fetching top genres...');
-      const topGenres = await getTopGenresForUser(memberQid, 15);
-      console.log(`✅ Found ${topGenres?.length || 0} top genres`);
       
       if (topGenres && topGenres.length > 0) {
         console.log(`📖 Fetching books for ${topGenres.length} genres...`);
         const genrePromises = topGenres.map((genre, index) => {
           console.log(`   Genre ${index + 1}: ${genre.slug || genre.name}`);
-          return buildGenreFeed(genre.slug, 10);
+          return buildGenreFeed(genre.slug, 30);
         });
         
         const genreResults = await Promise.allSettled(genrePromises);
@@ -103,19 +99,14 @@ async function buildSeededFeed(seed, memberQid) {
       } else {
         console.log('ℹ️ No top genres found for user');
       }
-
-      // Get user's top authors
-      console.log('👤 Fetching top authors...');
-      const topAuthors = await getTopAuthorsForUser(memberQid, 10);
-      console.log(`✅ Found ${topAuthors?.length || 0} top authors`);
-      
+  
       if (topAuthors && topAuthors.length > 0) {
         console.log(`📖 Fetching books for ${topAuthors.length} authors...`);
         const authorPromises = topAuthors.map((author, index) => {
           // Try different possible author ID properties
           const authorId = author.author_id || author.id || author.authorQid;
           console.log(`   Author ${index + 1}: ${author.name || 'Unknown'} (ID: ${authorId})`);
-          return buildAuthorFeed(authorId, 10);
+          return buildAuthorFeed(authorId, 30);
         });
         
         const authorResults = await Promise.allSettled(authorPromises);
@@ -140,10 +131,6 @@ async function buildSeededFeed(seed, memberQid) {
     console.log('👤 Guest user - no personalization');
   }
 
-  console.log(`📊 Personalization summary:`);
-  console.log(`   Genre books: ${genreBooks.length}`);
-  console.log(`   Author books: ${authorBooks.length}`);
-  
   // Fetch all trending sources in parallel
   console.log('🌍 Fetching trending sources...');
   const [gutenberg, openLibrary, otthor, mangaDex, internetArchive] =
@@ -161,13 +148,6 @@ async function buildSeededFeed(seed, memberQid) {
   const otthorBooks = otthor.status === 'fulfilled' ? (otthor.value || []) : [];
   const mangaDexBooks = mangaDex.status === 'fulfilled' ? (mangaDex.value || []) : [];
   const internetArchiveBooks = internetArchive.status === 'fulfilled' ? (internetArchive.value || []) : [];
-
-  console.log(`📊 Trending sources:`);
-  console.log(`   Gutenberg: ${gutenbergBooks.length} books`);
-  console.log(`   OpenLibrary: ${openLibraryBooks.length} books`);
-  console.log(`   Otthor: ${otthorBooks.length} books`);
-  console.log(`   MangaDex: ${mangaDexBooks.length} books`);
-  console.log(`   Internet Archive: ${internetArchiveBooks.length} books`);
 
   // Combine all books - FIXED SYNTAX
   const allBooks = [
