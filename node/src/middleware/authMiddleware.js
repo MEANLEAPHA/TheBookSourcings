@@ -16,7 +16,27 @@ const authMiddleware = (req, res, next) => {
     }
 };
 
-module.exports = { authMiddleware };
+const optionalAuth = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    req.user = null; // guest
+    return next();
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try {
+    const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
+    req.user = decoded; // { userId, email, ... }
+  } catch (err) {
+    req.user = null; // invalid or expired token → treat as guest
+  }
+
+  next();
+};
+
+module.exports = { authMiddleware, optionalAuth };
 
 // const jwt = require('jsonwebtoken');
 

@@ -29,7 +29,6 @@ function resetToHomeFeed() {
   hasMore = true;
   container.innerHTML = "";
 }
-
 async function fetchNextBatch() {
   if (isLoading || !hasMore) return;
   isLoading = true;
@@ -38,25 +37,32 @@ async function fetchNextBatch() {
 
   try {
     let url;
-    
+
     if (feedMode === 'home') {
-      // Home feed - trending with seed
       url = `https://thebooksourcings.onrender.com/api/trending?seed=${feedSeed}&cursor=${cursor}`;
     } else {
-      // Genre or Author feed - using feed API
       const params = new URLSearchParams({
         cursor: cursor,
         mode: feedMode
       });
-      
+
       if (feedMode === 'genre') params.set('genre', currentValue);
       if (feedMode === 'author') params.set('authorId', currentValue);
-      
+
       url = `https://thebooksourcings.onrender.com/api/feed?${params.toString()}`;
     }
 
     console.log(`Fetching: ${url}`);
-    const res = await fetch(url);
+
+    // 🔐 Add token if exists
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(url, {
+      headers: token
+        ? { Authorization: `Bearer ${token}` }
+        : {}
+    });
+
     const result = await res.json();
 
     removeSkeletons();
@@ -68,15 +74,13 @@ async function fetchNextBatch() {
     }
 
     renderBooks(result.data);
-    
-    // Update cursor based on API response
+
     if (result.nextCursor !== undefined) {
       cursor = result.nextCursor;
     } else {
-      // Fallback for trending API
       cursor += result.data.length;
     }
-    
+
     hasMore = result.hasMore !== false;
 
   } catch (err) {
@@ -86,6 +90,63 @@ async function fetchNextBatch() {
 
   isLoading = false;
 }
+
+// async function fetchNextBatch() {
+//   if (isLoading || !hasMore) return;
+//   isLoading = true;
+
+//   renderSkeletons(3);
+
+//   try {
+//     let url;
+    
+//     if (feedMode === 'home') {
+//       // Home feed - trending with seed
+//       url = `https://thebooksourcings.onrender.com/api/trending?seed=${feedSeed}&cursor=${cursor}`;
+//     } else {
+//       // Genre or Author feed - using feed API
+//       const params = new URLSearchParams({
+//         cursor: cursor,
+//         mode: feedMode
+//       });
+      
+//       if (feedMode === 'genre') params.set('genre', currentValue);
+//       if (feedMode === 'author') params.set('authorId', currentValue);
+      
+//       url = `https://thebooksourcings.onrender.com/api/feed?${params.toString()}`;
+//     }
+
+//     console.log(`Fetching: ${url}`);
+//     const res = await fetch(url);
+//     const result = await res.json();
+
+//     removeSkeletons();
+
+//     if (!result.success || !result.data || result.data.length === 0) {
+//       hasMore = false;
+//       isLoading = false;
+//       return;
+//     }
+
+//     renderBooks(result.data);
+    
+//     // Update cursor based on API response
+//     if (result.nextCursor !== undefined) {
+//       cursor = result.nextCursor;
+//     } else {
+//       // Fallback for trending API
+//       cursor += result.data.length;
+//     }
+    
+//     hasMore = result.hasMore !== false;
+
+//   } catch (err) {
+//     console.error('Fetch error:', err);
+//     removeSkeletons();
+//   }
+
+//   isLoading = false;
+// }
 
 // Infinite scroll
 let scrollTimeout;

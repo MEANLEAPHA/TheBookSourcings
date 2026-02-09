@@ -1,10 +1,10 @@
 const express = require('express');
 const { getAllTrending, getFeed } = require('../../../controller/book/trending/trendingController');
-// const {   authMiddleware } = require('../../../middleware/authMiddleware');
+const {   authMiddleware,  optionalAuth  } = require('../../../middleware/authMiddleware');
 const router = express.Router();
 
 
-router.get('/trending', getAllTrending);
+router.get('/trending',  optionalAuth, getAllTrending);
 
 
 router.get('/feed',  getFeed);
