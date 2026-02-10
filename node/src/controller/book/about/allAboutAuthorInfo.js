@@ -944,20 +944,60 @@ const getPopularity = async (req, res) => {
   }
 };
 
+// function normalizeAuthor(raw = '') {
+//   return raw
+//     .toLowerCase()
+//     .trim()
+//     .replace(/[^a-z0-9]+/g, '-')
+//     .replace(/(^-|-$)/g, '');
+// }
+
+// function normalizeGenre(rawGenre = '') {
+//   return rawGenre
+//     .toLowerCase()
+//     .replace(/&/g, ' ')
+//     .replace(/[^a-z0-9]+/g, ' ')
+//     .replace(/(^-|-$)/g, ' ');
+// }
 function normalizeAuthor(raw = '') {
+  if (!raw || typeof raw !== 'string') {
+    return '';
+  }
+  
   return raw
     .toLowerCase()
     .trim()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '');
+    // Convert accented characters to ASCII (é → e, ñ → n, etc.)
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    // Remove all punctuation and special characters except letters, numbers, and spaces
+    .replace(/[^a-z0-9\s]/g, '')
+    // Replace multiple spaces with single space
+    .replace(/\s+/g, ' ')
+    // Final trim
+    .trim();
 }
-
 function normalizeGenre(rawGenre = '') {
-  return rawGenre
+  if (!rawGenre || typeof rawGenre !== 'string') {
+    return '';
+  }
+  
+  // Get the first word before any comma, slash, parentheses, or other separators
+  const firstWord = rawGenre
+    .trim()
     .toLowerCase()
-    .replace(/&/g, ' ')
-    .replace(/[^a-z0-9]+/g, ' ')
-    .replace(/(^-|-$)/g, ' ');
+    // Split by common separators and take first part
+    .split(/[,\/()&|;]/)[0]
+    // Split by any non-alphanumeric character (except spaces within the word)
+    .split(/[^a-z0-9\s]/)[0]
+    .trim()
+    // Take only the first word
+    .split(/\s+/)[0];
+  
+  // Remove any remaining non-alphanumeric characters
+  const normalized = firstWord.replace(/[^a-z0-9]/g, '');
+  
+  // Return empty string if result is invalid
+  return normalized.length > 0 ? normalized : '';
 }
 function generateAuthorQid() {
   return 'OTT_' + Math.random().toString(36).slice(2, 10) + '_HOR';
