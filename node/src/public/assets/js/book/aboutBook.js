@@ -352,10 +352,15 @@ async function loadBookInfo() {
 //     .replace(/[^a-z0-9]+/g, ' ')
 //     .replace(/(^-|-$)/g, ' ');
 
+    // const firstCategory = Array.isArray(book.categories)
+    // ? (book.categories[0] || "")
+    // : (book.categories || "");
+    // const categoryToUse = (firstCategory && String(firstCategory).trim().toLowerCase().replace(/&/g, ' ').replace(/[^a-z0-9]+/g, ' ').replace(/(^-|-$)/g, ' ')) ? firstCategory : "fiction";
     const firstCategory = Array.isArray(book.categories)
-    ? (book.categories[0] || "")
-    : (book.categories || "");
-    const categoryToUse = (firstCategory && String(firstCategory).trim().toLowerCase().replace(/&/g, ' ').replace(/[^a-z0-9]+/g, ' ').replace(/(^-|-$)/g, ' ')) ? firstCategory : "fiction";
+  ? (book.categories[0] || "")
+  : (book.categories || "");
+
+const categoryToUse = firstCategory ? normalizeGenreFrontend(String(firstCategory)) : "fiction";
 
     const authorId = Array.isArray(book.author_id)
     ? (book.author_id[0] || "")
@@ -404,7 +409,20 @@ async function loadBookInfo() {
   }
 
 }
-
+function normalizeGenreFrontend(rawGenre = '') {
+  if (!rawGenre || typeof rawGenre !== 'string') return '';
+  
+  const firstWord = rawGenre
+    .trim()
+    .toLowerCase()
+    .split(/[,\/()&|;]/)[0]
+    .split(/[^a-z0-9\s]/)[0]
+    .trim()
+    .split(/\s+/)[0];
+  
+  const normalized = firstWord.replace(/[^a-z0-9]/g, '');
+  return normalized.length > 0 ? normalized : '';
+}
 // ===========================
 // Load Channel Info
 // ===========================
