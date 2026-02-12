@@ -36,44 +36,43 @@ document.addEventListener('click', function (event) {
     window.location.href = "setting.html";
   }
 
-const toastNotiTrigger = document.querySelector('#liveNotiBtn');
-const toastLiveNotiExample = document.getElementById('liveNoti');
-const toastNotiBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveNotiExample);
+// const toastNotiTrigger = document.querySelector('#liveNotiBtn');
+// const toastLiveNotiExample = document.getElementById('liveNoti');
+// const toastNotiBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveNotiExample);
 
-if (toastNotiTrigger) {
-  toastNotiTrigger.addEventListener('click', () => {
-    toastNotiBootstrap.show();
-  }); 
-}
+// if (toastNotiTrigger) {
+//   toastNotiTrigger.addEventListener('click', () => {
+//     toastNotiBootstrap.show();
+//   }); 
+// }
 
-// Close toast when clicking outside
-document.addEventListener('click', function (event) {
-  const isClickInside = toastLiveNotiExample.contains(event.target);
-  const isTrigger = toastNotiTrigger.contains(event.target);
+// document.addEventListener('click', function (event) {
+//   const isClickInside = toastLiveNotiExample.contains(event.target);
+//   const isTrigger = toastNotiTrigger.contains(event.target);
 
-  if (!isClickInside && !isTrigger) {
-    toastNotiBootstrap.hide();
-  }
-});
-
+//   if (!isClickInside && !isTrigger) {
+//     toastNotiBootstrap.hide();
+//   }
+// });
 
 
-const toastFriTrigger = document.querySelector('#liveFriBtn');
-const toastLiveFriExample = document.getElementById('liveFri');
-const toastFriBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveFriExample);
 
-if (toastFriTrigger) {
-  toastFriTrigger.addEventListener('click', () => {
-    toastFriBootstrap.show();
-  }); 
-}
+// const toastFriTrigger = document.querySelector('#liveFriBtn');
+// const toastLiveFriExample = document.getElementById('liveFri');
+// const toastFriBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveFriExample);
 
-// Close toast when clicking outside
-document.addEventListener('click', function (event) {
-  const isClickInside = toastLiveFriExample.contains(event.target);
-  const isTrigger = toastFriTrigger.contains(event.target);
+// if (toastFriTrigger) {
+//   toastFriTrigger.addEventListener('click', () => {
+//     toastFriBootstrap.show();
+//   }); 
+// }
 
-  if (!isClickInside && !isTrigger) {
-    toastFriBootstrap.hide();
-  }
-});
+// // Close toast when clicking outside
+// document.addEventListener('click', function (event) {
+//   const isClickInside = toastLiveFriExample.contains(event.target);
+//   const isTrigger = toastFriTrigger.contains(event.target);
+
+//   if (!isClickInside && !isTrigger) {
+//     toastFriBootstrap.hide();
+//   }
+// });

@@ -14,3 +14,19 @@ else {
     cameraImg.style.opacity = "1";
 }
  
+const feedbackBtn = document.querySelector('.feedback-col-btn');
+const feedbackMenu = document.getElementById(feedbackBtn.getAttribute("aria-owns"));
+const userAccCol = document.getElementById('user-account-collapse');
+
+feedbackBtn.addEventListener('click', () => {
+    const expanded = feedbackBtn.getAttribute("aria-expanded") === "true";
+    feedbackBtn.setAttribute("aria-expanded", String(!expanded));
+    feedbackMenu.hidden = expanded;
+    userAccCol.hidden= true;
+});
+document.addEventListener('click', (e) => {
+    if(!feedbackBtn.contains(e.target) && !feedbackMenu.contains(e.target)){
+        feedbackBtn.setAttribute("aria-expanded", 'false');
+        feedbackMenu.hidden = true;
+    }
+})

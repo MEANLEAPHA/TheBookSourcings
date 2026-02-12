@@ -71,9 +71,12 @@
           </a>
         </div>
         <!-- <button id="enableNotif">Enable notifications</button> -->
-        <i class="fa-solid fa-bell"  id="liveNotiBtn"></i>
-        <i class="fa-solid fa-user" id="liveFriBtn"></i>
-        <img  class="userPf" alt="user" class="dropdown-item"  id="liveToastBtn">
+        <i class="fa-solid fa-bell" aria-owns="noti-collapse" aria-expanded="false" id="user-noti-col-btn"></i>
+        <!-- <i class="fa-solid fa-user" id="liveFriBtn"></i> -->
+
+        <!-- user account collapse -->
+        <!-- <img  class="userPf" alt="user" class="dropdown-item"  id="liveToastBtn"> -->
+        <img  class="userPfs" alt="user" aria-expanded="false" aria-owns="user-account-collapse" id="user-col-btn">
     </div>
   </header>   
   <div id="phoneSearch">
@@ -163,8 +166,38 @@
       </div>
       
     </div>
-    <!-- account tool collapse -->
-    <div class="toast-container position-fixed  end-0 p-3">
+
+    <ul id="user-account-collapse" hidden>
+        <div id="col-header">
+              <img src="https://as1.ftcdn.net/jpg/03/39/45/96/1000_F_339459697_XAFacNQmwnvJRqe1Fe9VOptPWMUxlZP8.jpg" alt="username" id="col-header-img">
+              <div id="col-header-name">
+                <p class="userName-collapse">MEANLEAP HA</p>
+                <p class="nickName-collapse">@Leapthegreat</p>
+              </div>
+        </div>
+        <li class="li-user-collapse">
+             <button onclick="settingLink()" class="btn-col-acc"><a><i class="fa-regular fa-user"></i> View Account</a></button>
+        </li>
+        <li class="li-user-collapse">
+             <button onclick="settingLink()" class="btn-col-acc"><a><i class="fa-solid fa-gear"></i> Settings</a></button>
+        </li>
+        <li class="li-user-collapse">
+            <button class="btn-col-acc theme-switch">
+              <a class="for-sun"><i class="fa-solid fa-sun"></i>Light mode</a>
+              <a class="for-moon"><i class="fa-solid fa-moon"></i>Dark mode</a>
+            </button>
+        </li>
+        <li class="li-user-collapse">
+             <button class="btn-col-acc feedback-col-btn" aria-owns="feedback-col" aria-expanded="false"><a><i class="fa-solid fa-comment-dots"></i> Feedback</a></button>
+        </li>
+        <li class="li-user-collapse">
+          <button onclick="login()" id="loginButton" class="btn-col-acc"><a><i class="fa-solid fa-arrow-right-to-bracket"></i> Login</a></button>
+          <button onclick="logout()" id="logoutButton" class="btn-col-acc"><a><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a></button>
+        </li>
+    </ul>
+
+    <!-- user account tool collapse -->
+    <!-- <div class="toast-container position-fixed  end-0 p-3">
       <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" >
         <div class="toast-header">
             <img src=""  class="userPf-collapse">
@@ -191,7 +224,6 @@
           <button onclick="helpLink()" class="btn-col-acc"><a><i class="fa-solid fa-circle-question"></i> Help</a></button>
         </div>
         <div class="toast-header"  >
-          <!-- <a class="feedBackBtn2"><i class="fa-solid fa-comment-dots"></i> Feedback</a> -->
           <button onclick="showFeedBackToast()" class="btn-col-acc"><a><i class="fa-solid fa-comment-dots"></i> Feedback</a></button>
         </div>
         <div class="toast-body log-in-out">
@@ -199,10 +231,9 @@
           <button onclick="logout()" id="logoutButton" class="btn-col-acc"><a><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a></button>
         </div>
       </div>
-    </div>
-    <!-- feedback collapse -->
-    <div class="toast-containers w-500">
-      <div id="liveToast2" class="toast" role="alert" aria-live="assertive" aria-atomic="true" >
+    </div> -->
+
+    <div id="feedback-col" hidden>
         <div class="toast-header">
             <div>Send Feedback to TheBookSourcing</div>
             <button type="button" data-bs-target="#liveToast2" data-bs-dismiss="toast" aria-label="Close" id="btnCloseFBToast"><i class="fa-solid fa-arrow-right"></i></button>
@@ -230,16 +261,14 @@
             <button type="submit" id="feedbackSubmit" name="feedbackSubmit">Submit</button>
           </form>
         </div>
-      </div>
     </div>
-     <!-- Notication Toast -->
-    <div class="toast-container position-fixed  end-0 p-3 noti-toast">
-      <div id="liveNoti" class="toast" role="alert" aria-live="assertive" aria-atomic="true" >
-        <div class="noti-head">
-          <span>Notication</span>
-          <button id="btn-clear-noti">Clear All</button>
-        </div>
-        <p class="notiUpdateSystem-span">System</p>
+    <!-- notification collapse -->
+     <div id="noti-collapse" hidden>
+          <div id="noti-header">
+              <span>Notication</span>
+              <button id="btn-clear-noti">Clear All</button>
+          </div>
+          <p class="notiUpdateSystem-span">System</p>
         <div class="notiUpdateSystem">
         </div>
         <p class="notiUpdateConnection-span">Connection</p>
@@ -252,24 +281,7 @@
           <i class="fa-solid fa-otter" ></i>
           <p class="no-noti-span">No notification!</p>
         </div>
-      </div>
-    </div>
-
-    <!--Friend toast -->
-    <div class="toast-container position-fixed  end-0 p-3 fri-toast">
-      <div id="liveFri" class="toast" role="alert" aria-live="assertive" aria-atomic="true" >
-        <div class="fri-head">
-          <span>Friend shortcut</span>
-          <span id="see-all-con"><a href="../../userConnection.html">See all</a></span>
-        </div>
-        <div class="append-fri">
-        </div>
-        <div id="dev-no-otter-fri">
-          <i class="fa-solid fa-otter" ></i>
-          <p class="no-fri-span">No Friend yet!</p>
-        </div>
-      </div>
-    </div>
+     </div>
 
     <!-- Toast container for logib/signup-->
     <div class="position-fixed" style="z-index: 1100; right: 10px;bottom: 10px;">
@@ -291,6 +303,7 @@
   <script src="assets/js/index/index.js" async></script>
   <script src="assets/js/accInfo.js" async></script>
   <script src="assets/js/index/darkmode.js" ></script>
+  <script src="assets/js/index/notification.js"></script>
   <script src="assets/js/index/collapseResponsive.js" ></script>
   <script src="assets/js/index/followingAcc.js" ></script>
   <script src="assets/js/index/accountToast.js"></script>

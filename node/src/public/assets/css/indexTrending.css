@@ -19,6 +19,8 @@
     height: auto;
     margin-bottom: 25px;
 }
+
+
 #labelForTrending{
     display: flex;
     align-items: end;

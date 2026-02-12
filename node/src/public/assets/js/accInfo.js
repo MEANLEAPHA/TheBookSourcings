@@ -72,3 +72,22 @@ if (token) {
   loginButton.style.display = "block";
   logoutButton.style.display = "none";
 }
+
+
+
+
+const buttonColUser = document.getElementById('user-col-btn');
+const menuColuer = document.getElementById(buttonColUser.getAttribute("aria-owns"));
+
+buttonColUser.addEventListener('click', () => {
+  const expanded = buttonColUser.getAttribute('aria-expanded') === "true";
+  buttonColUser.setAttribute('aria-expanded', String(!expanded));
+  menuColuer.hidden = expanded;
+})
+
+document.addEventListener('click', (e) => {
+  if(!buttonColUser.contains(e.target) && !menuColuer.contains(e.target)){
+    buttonColUser.setAttribute('aria-expanded', 'false');
+    menuColuer.hidden = true;
+  }
+})
