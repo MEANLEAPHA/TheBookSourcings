@@ -94,7 +94,7 @@ async function buildSeededFeed(seed, memberQid) {
     })(),
     
     // Get personalized feed (immediate if cached, background if not)
-    memberQid ? getPersonalizedFeed(memberQid, 45) : []
+    memberQid ? getPersonalizedFeed(memberQid, 40) : []
   ]);
 
   // Combine and shuffle
@@ -268,7 +268,7 @@ async function buildSeededFeed(seed, memberQid) {
 async function getFeed(req, res) {
   try {
     const cursor = Math.max(0, Number(req.query.cursor || 0));
-    const limit = Math.min(100, Number(req.query.limit || 100)); // Reduced from 230
+    const limit = Math.min(50, Number(req.query.limit || 50)); 
     
     const mode = req.query.mode || 'home';
     const genreSlug = req.query.genre || null;
@@ -303,18 +303,20 @@ async function getFeed(req, res) {
     } else if (mode === 'genre' && genreSlug) {
       feed = await buildGenreFeed(genreSlug, limit + 20);
     } else if (mode === 'home') {
-      if (cursor === 0) {
-        feed = await buildFeed({
+       feed = await buildFeed({
           memberQid: req.user?.memberQid || null,
           limit: limit + 20
         });
-      } else {
-        feed = await buildExtendedFeed({
-          memberQid: req.user?.memberQid || null,
-          cursor,
-          limit: limit + 20
-        });
-      }
+      // if (cursor === 0) {
+       
+      // } 
+      // else {
+      //   feed = await buildExtendedFeed({
+      //     memberQid: req.user?.memberQid || null,
+      //     cursor,
+      //     limit: limit + 20
+      //   });
+      // }
     } else {
       return res.status(400).json({
         success: false,
@@ -369,47 +371,47 @@ async function getFeed(req, res) {
 }
 
 // Improved extended feed with smart pagination
-async function buildExtendedFeed({ memberQid, cursor, limit }) {
-  // Dynamic phases based on available content
-  const phases = [
-    { type: 'trending', threshold: 50 },
-    { type: 'interest', threshold: 100 },
-    { type: 'author', threshold: 150 },
-    { type: 'genre', threshold: 200 },
-    { type: 'random', threshold: Infinity }
-  ];
+// async function buildExtendedFeed({ memberQid, cursor, limit }) {
+//   // Dynamic phases based on available content
+//   const phases = [
+//     { type: 'trending', threshold: 50 },
+//     { type: 'interest', threshold: 100 },
+//     { type: 'author', threshold: 150 },
+//     { type: 'genre', threshold: 200 },
+//     { type: 'random', threshold: Infinity }
+//   ];
 
-  // Determine current phase
-  let currentPhase = phases[0];
-  for (const phase of phases) {
-    if (cursor < phase.threshold) {
-      currentPhase = phase;
-      break;
-    }
-  }
+//   // Determine current phase
+//   let currentPhase = phases[0];
+//   for (const phase of phases) {
+//     if (cursor < phase.threshold) {
+//       currentPhase = phase;
+//       break;
+//     }
+//   }
 
-  console.log(`🔄 Extended feed: cursor=${cursor}, phase=${currentPhase.type}`);
+//   console.log(`🔄 Extended feed: cursor=${cursor}, phase=${currentPhase.type}`);
 
-  let items = [];
-  switch (currentPhase.type) {
-    case 'trending':
-      items = await getTrendingBooks(limit);
-      break;
-    case 'interest':
-      items = await getInterestBooks(memberQid, limit);
-      break;
-    case 'author':
-      items = await buildAuthorFeed(memberQid, limit);
-      break;
-    case 'genre':
-      items = await buildGenreFeed(null, limit);
-      break;
-    default:
-      items = await getRandomBooks(limit);
-  }
+//   let items = [];
+//   switch (currentPhase.type) {
+//     case 'trending':
+//       items = await getTrendingBooks(limit);
+//       break;
+//     case 'interest':
+//       items = await getInterestBooks(memberQid, limit);
+//       break;
+//     case 'author':
+//       items = await buildAuthorFeed(memberQid, limit);
+//       break;
+//     case 'genre':
+//       items = await buildGenreFeed(null, limit);
+//       break;
+//     default:
+//       items = await getRandomBooks(limit);
+//   }
 
-  return items || [];
-}
+//   return items || [];
+// }
 
 // Improved deduplication
 function dedupeFeed(items) {

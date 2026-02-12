@@ -4,7 +4,7 @@ const {getOpenLibraryTrending} = require('../controller/book/trending/openLibrar
 const {getOtthorTrending} = require('../controller/book/trending/otthorController');
 const { getMangaDexTrending } = require('../controller/book/trending/mangaDexController');
 const {getInternetArchiveTrending} = require('../controller/book/trending/internetArchiveController');
-async function getTrendingBooks(limit = 100) {
+async function getTrendingBooks(limit = 50) {
   const results = await Promise.allSettled([
     // getGoogleTrending(),
     getGutenbergTrending(),
