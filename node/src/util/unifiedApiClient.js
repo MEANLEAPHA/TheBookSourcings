@@ -2,7 +2,7 @@
 const { rateLimiters, circuitBreakers, internetArchiveFallback } = require('./rateLimiter');
 
 // Your existing fetchJson - import or define
-const originalFetchJson = require('./fetchJson'); // Adjust path as needed
+const {fetchJson} = require('./apiClient'); // Adjust path as needed
 
 // Enhanced fetch with rate limiting and circuit breaker
 async function fetchWithRateLimit(apiName, url, options = {}) {
@@ -16,7 +16,7 @@ async function fetchWithRateLimit(apiName, url, options = {}) {
   
   if (!rateLimiter) {
     try {
-      return await originalFetchJson(url, options);
+      return await fetchJson(url, options);
     } catch (error) {
       console.error(`❌ ${apiName} API error:`, error.message);
       throw error;
@@ -26,7 +26,7 @@ async function fetchWithRateLimit(apiName, url, options = {}) {
   const execute = async () => {
     return await rateLimiter.schedule(async () => {
       try {
-        const result = await originalFetchJson(url, options);
+        const result = await fetchJson(url, options);
         return result;
       } catch (error) {
         console.error(`❌ ${apiName} API error:`, error.message);
@@ -77,7 +77,7 @@ async function fetchInternetArchive(url, useScrape = true) {
           }
         };
         
-        const result = await originalFetchJson(transformedUrl, options);
+        const result = await fetchJson(transformedUrl, options);
         clearTimeout(timeoutId);
         return result;
       } catch (error) {
@@ -165,5 +165,5 @@ module.exports = {
   // Utilities
   fetchWithRetry,
   fetchBatch,
-  originalFetchJson
+  fetchJson
 };
