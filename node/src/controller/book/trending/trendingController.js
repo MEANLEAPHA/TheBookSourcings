@@ -108,7 +108,8 @@ async function buildSeededFeed(seed, memberQid) {
     data: mixed,
     expiry: Date.now() + FEED_CACHE_DURATION
   });
-
+  console.log(`only trend 5 source: ${trendingBooks.length} books`);
+  console.log(`personalized: ${personalizedBooks.length} books`);
   console.log(`✅ Trending feed built: ${mixed.length} books`);
   return mixed;
 }
