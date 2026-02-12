@@ -9,7 +9,7 @@ const cache = new Map();
 const processedCache = new Map();
 
 // Cache key generator
-function generateCacheKey(api, type, query, limit = 20) {
+function generateCacheKey(api, type, query, limit = 5) {
   return `${api}:${type}:${query.toLowerCase().trim()}:${limit}`;
 }
 
@@ -38,7 +38,7 @@ async function withCache(cacheKey, fetchFunction, ttl = CACHE_TTL) {
 }
 
 // --- GUTENBERG ---
-async function searchGutenberg({ query, type, limit = 20 }) {
+async function searchGutenberg({ query, type, limit = 5 }) {
   const cacheKey = generateCacheKey('gutenberg', type, query, limit);
   
   return withCache(cacheKey, async () => {
@@ -59,7 +59,7 @@ async function searchGutenberg({ query, type, limit = 20 }) {
 }
 
 // --- OPEN LIBRARY ---
-async function searchOpenLibrary({ query, type, limit = 20 }) {
+async function searchOpenLibrary({ query, type, limit = 5 }) {
   const cacheKey = generateCacheKey('openlibrary', type, query, limit);
   
   return withCache(cacheKey, async () => {
@@ -103,7 +103,7 @@ async function searchOpenLibrary({ query, type, limit = 20 }) {
 }
 
 // --- INTERNET ARCHIVE (FIXED) ---
-async function searchInternetArchive({ query, type, limit = 20 }) {
+async function searchInternetArchive({ query, type, limit = 5 }) {
   const cacheKey = generateCacheKey('internetarchive', type, query, limit);
   
   return withCache(cacheKey, async () => {
@@ -128,7 +128,7 @@ async function searchInternetArchive({ query, type, limit = 20 }) {
 }
 
 // --- MANGADEX ---
-async function searchMangaDex({ query, type, limit = 20 }) {
+async function searchMangaDex({ query, type, limit = 5 }) {
   const cacheKey = generateCacheKey('mangadex', type, query, limit);
   
   return withCache(cacheKey, async () => {
@@ -227,7 +227,7 @@ async function processMangaData(manga, query) {
 }
 
 // --- OTTHOR (Internal DB) ---
-async function searchOtthor({ query, type, limit = 20 }) {
+async function searchOtthor({ query, type, limit = 5 }) {
   const cacheKey = generateCacheKey('otthor', type, query, limit);
   
   return withCache(cacheKey, async () => {
@@ -269,7 +269,7 @@ const API_HANDLERS = {
   otthor: searchOtthor
 };
 
-async function unifiedSearch({ query, type, limit = 20, apis = null }) {
+async function unifiedSearch({ query, type, limit = 5, apis = null }) {
   const apisToUse = apis || Object.keys(API_HANDLERS);
   
   const promises = apisToUse.map(apiName => {

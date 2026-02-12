@@ -39,8 +39,8 @@ async function processPersonalizedFeed(memberQid, cacheKey) {
   try {
     // Get user's top genres and authors in parallel
     const [topGenres, topAuthors] = await Promise.all([
-      getTopGenresForUser(memberQid, 15),
-      getTopAuthorsForUser(memberQid, 10)
+      getTopGenresForUser(memberQid, 3),
+      getTopAuthorsForUser(memberQid, 3)
     ]);
     
     // Build all genre and author feeds in BATCHES (not all at once)
@@ -51,7 +51,7 @@ async function processPersonalizedFeed(memberQid, cacheKey) {
     for (let i = 0; i < topGenres.length; i += BATCH_SIZE) {
       const batch = topGenres.slice(i, i + BATCH_SIZE);
       const batchResults = await Promise.all(
-        batch.map(g => buildGenreFeed(g.slug, 10).catch(() => []))
+        batch.map(g => buildGenreFeed(g.slug, 5).catch(() => []))
       );
       allBooks = allBooks.concat(...batchResults);
       
@@ -65,7 +65,7 @@ async function processPersonalizedFeed(memberQid, cacheKey) {
     for (let i = 0; i < topAuthors.length; i += BATCH_SIZE) {
       const batch = topAuthors.slice(i, i + BATCH_SIZE);
       const batchResults = await Promise.all(
-        batch.map(a => buildAuthorFeed(a.author_id, 10).catch(() => []))
+        batch.map(a => buildAuthorFeed(a.author_id, 5).catch(() => []))
       );
       allBooks = allBooks.concat(...batchResults);
       

@@ -94,7 +94,7 @@ async function buildSeededFeed(seed, memberQid) {
     })(),
     
     // Get personalized feed (immediate if cached, background if not)
-    memberQid ? getPersonalizedFeed(memberQid, 100) : []
+    memberQid ? getPersonalizedFeed(memberQid, 45) : []
   ]);
 
   // Combine and shuffle
