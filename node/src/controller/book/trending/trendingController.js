@@ -83,12 +83,12 @@ async function buildSeededFeed(seed, memberQid) {
   const mangaDexBooks = mangaDex.status === 'fulfilled' ? (mangaDex.value || []) : [];
   const internetArchiveBooks = internetArchive.status === 'fulfilled' ? (internetArchive.value || []) : [];
 
-  console.log(`📊 Trending sources:`);
-  console.log(`   Gutenberg: ${gutenbergBooks.length} books`);
-  console.log(`   OpenLibrary: ${openLibraryBooks.length} books`);
-  console.log(`   Otthor: ${otthorBooks.length} books`);
-  console.log(`   MangaDex: ${mangaDexBooks.length} books`);
-  console.log(`   Internet Archive: ${internetArchiveBooks.length} books`);
+  // console.log(`📊 Trending sources:`);
+  // console.log(`   Gutenberg: ${gutenbergBooks.length} books`);
+  // console.log(`   OpenLibrary: ${openLibraryBooks.length} books`);
+  // console.log(`   Otthor: ${otthorBooks.length} books`);
+  // console.log(`   MangaDex: ${mangaDexBooks.length} books`);
+  // console.log(`   Internet Archive: ${internetArchiveBooks.length} books`);
 
   // Combine all books - FIXED SYNTAX
   const allBooks = [
@@ -110,7 +110,7 @@ async function buildSeededFeed(seed, memberQid) {
     return isValid;
   });
 
-  console.log(`📊 Total books after filtering: ${allBooks.length}`);
+  // console.log(`📊 Total books after filtering: ${allBooks.length}`);
   
   // Shuffle with seed
   const mixed = shuffleBooks(allBooks, seed);
@@ -171,18 +171,19 @@ async function getFeed(req, res) {
     } else if (mode === 'genre' && genreSlug) {
       feed = await buildGenreFeed(genreSlug, limit + 20);
     } else if (mode === 'home') {
-      if (cursor === 0) {
-        feed = await buildFeed({
+      feed = await buildFeed({
           memberQid: req.user?.memberQid || null,
           limit: limit + 20
         });
-      } else {
-        feed = await buildExtendedFeed({
-          memberQid: req.user?.memberQid || null,
-          cursor,
-          limit: limit + 20
-        });
-      }
+      // if (cursor === 0) {
+        
+      // } else {
+      //   feed = await buildExtendedFeed({
+      //     memberQid: req.user?.memberQid || null,
+      //     cursor,
+      //     limit: limit + 20
+      //   });
+      // }
     } else {
       return res.status(400).json({
         success: false,
@@ -237,47 +238,47 @@ async function getFeed(req, res) {
 }
 
 // Improved extended feed with smart pagination
-async function buildExtendedFeed({ memberQid, cursor, limit }) {
-  // Dynamic phases based on available content
-  const phases = [
-    { type: 'trending', threshold: 50 },
-    { type: 'interest', threshold: 100 },
-    { type: 'author', threshold: 150 },
-    { type: 'genre', threshold: 200 },
-    { type: 'random', threshold: Infinity }
-  ];
+// async function buildExtendedFeed({ memberQid, cursor, limit }) {
+//   // Dynamic phases based on available content
+//   const phases = [
+//     { type: 'trending', threshold: 50 },
+//     { type: 'interest', threshold: 100 },
+//     { type: 'author', threshold: 150 },
+//     { type: 'genre', threshold: 200 },
+//     { type: 'random', threshold: Infinity }
+//   ];
 
-  // Determine current phase
-  let currentPhase = phases[0];
-  for (const phase of phases) {
-    if (cursor < phase.threshold) {
-      currentPhase = phase;
-      break;
-    }
-  }
+//   // Determine current phase
+//   let currentPhase = phases[0];
+//   for (const phase of phases) {
+//     if (cursor < phase.threshold) {
+//       currentPhase = phase;
+//       break;
+//     }
+//   }
 
-  console.log(`🔄 Extended feed: cursor=${cursor}, phase=${currentPhase.type}`);
+//   console.log(`🔄 Extended feed: cursor=${cursor}, phase=${currentPhase.type}`);
 
-  let items = [];
-  switch (currentPhase.type) {
-    case 'trending':
-      items = await getTrendingBooks(limit);
-      break;
-    case 'interest':
-      items = await getInterestBooks(memberQid, limit);
-      break;
-    case 'author':
-      items = await buildAuthorFeed(memberQid, limit);
-      break;
-    case 'genre':
-      items = await buildGenreFeed(null, limit);
-      break;
-    default:
-      items = await getRandomBooks(limit);
-  }
+//   let items = [];
+//   switch (currentPhase.type) {
+//     case 'trending':
+//       items = await getTrendingBooks(limit);
+//       break;
+//     case 'interest':
+//       items = await getInterestBooks(memberQid, limit);
+//       break;
+//     case 'author':
+//       items = await buildAuthorFeed(memberQid, limit);
+//       break;
+//     case 'genre':
+//       items = await buildGenreFeed(null, limit);
+//       break;
+//     default:
+//       items = await getRandomBooks(limit);
+//   }
 
-  return items || [];
-}
+//   return items || [];
+// }
 
 // Improved deduplication
 function dedupeFeed(items) {
