@@ -41,7 +41,7 @@ async function getOtthorTrending() {
         COALESCE(downloadCount, 0) * 0.05
       ) DESC
       LIMIT 20
-    `);
+    `); // future will study on community based data
 
     if (!books || books.length === 0) {
       // Return cached data even if stale, or empty array

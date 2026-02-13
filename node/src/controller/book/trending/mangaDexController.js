@@ -25,7 +25,7 @@ async function getMangaDexTrending() {
   console.log('🌐 Fetching MangaDex trending from API');
   
   try {
-    const url = "https://api.mangadex.org/manga?limit=20&order[followedCount]=desc&contentRating[]=safe&includes[]=cover_art&includes[]=author";
+    const url = "https://api.mangadex.org/manga?limit=100&order[followedCount]=desc&contentRating[]=safe&includes[]=cover_art&includes[]=author";
     const data = await fetchJson(url);
     
     if (!data?.data) {
