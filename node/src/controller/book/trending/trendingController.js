@@ -34,13 +34,13 @@ setInterval(() => {
 
 // --- TRENDING FEED ---
 async function getAllTrending(req, res) {
-  const memberQid = req.user?.memberQid || null;
+ 
   try {
     const seed = validateSeed(req.query.seed || 0);
     const cursor = Math.max(0, Number(req.query.cursor || 0));
     const limit = Math.min(50, Number(req.query.limit || 50));
 
-    const data = await buildSeededFeed(seed, memberQid);
+    const data = await buildSeededFeed(seed);
     const batch = data.slice(cursor, cursor + limit);
     const hasMore = cursor + batch.length < data.length;
 
@@ -59,90 +59,7 @@ async function getAllTrending(req, res) {
     });
   }
 }
-async function buildSeededFeed(seed, memberQid) {
-  const cacheKey = `trending:${seed}:${memberQid || 'guest'}`; // Include memberQid in cache key
-  let cached = feedCache.get(cacheKey);
-
-  if (cached && Date.now() < cached.expiry) {
-    console.log(`📦 Serving trending feed from cache (seed: ${seed}, user: ${memberQid || 'guest'})`);
-    return cached.data;
-  }
-
-  console.log(`🌐 Building trending feed (seed: ${seed}, user: ${memberQid || 'guest'})`);
-
-  let genreBooks = [];
-  let authorBooks = [];
-  
-  if (memberQid) {
-    console.log(`🔍 Fetching personalized data for user: ${memberQid}`);
-    
-    try {
-      // Get user's top genres
-      console.log('📚 Fetching top genres...');
-      const topGenres = await getTopGenresForUser(memberQid, 15);
-      console.log(`✅ Found ${topGenres?.length || 0} top genres`);
-      
-      if (topGenres && topGenres.length > 0) {
-        console.log(`📖 Fetching books for ${topGenres.length} genres...`);
-        const genrePromises = topGenres.map((genre, index) => {
-          console.log(`   Genre ${index + 1}: ${genre.slug || genre.name}`);
-          return buildGenreFeed(genre.slug, 10);
-        });
-        
-        const genreResults = await Promise.allSettled(genrePromises);
-        console.log(`📊 Genre results: ${genreResults.length} promises`);
-        
-        genreResults.forEach((result, index) => {
-          if (result.status === 'fulfilled' && result.value) {
-            console.log(`   ✅ Genre ${index + 1}: ${result.value.length} books`);
-            genreBooks = [...genreBooks, ...result.value];
-          } else {
-            console.log(`   ❌ Genre ${index + 1} failed:`, result.reason?.message);
-          }
-        });
-      } else {
-        console.log('ℹ️ No top genres found for user');
-      }
-
-      // Get user's top authors
-      console.log('👤 Fetching top authors...');
-      const topAuthors = await getTopAuthorsForUser(memberQid, 10);
-      console.log(`✅ Found ${topAuthors?.length || 0} top authors`);
-      
-      if (topAuthors && topAuthors.length > 0) {
-        console.log(`📖 Fetching books for ${topAuthors.length} authors...`);
-        const authorPromises = topAuthors.map((author, index) => {
-          // Try different possible author ID properties
-          const authorId = author.author_id || author.id || author.authorQid;
-          console.log(`   Author ${index + 1}: ${author.name || 'Unknown'} (ID: ${authorId})`);
-          return buildAuthorFeed(authorId, 10);
-        });
-        
-        const authorResults = await Promise.allSettled(authorPromises);
-        console.log(`📊 Author results: ${authorResults.length} promises`);
-        
-        authorResults.forEach((result, index) => {
-          if (result.status === 'fulfilled' && result.value) {
-            console.log(`   ✅ Author ${index + 1}: ${result.value.length} books`);
-            authorBooks = [...authorBooks, ...result.value];
-          } else {
-            console.log(`   ❌ Author ${index + 1} failed:`, result.reason?.message);
-          }
-        });
-      } else {
-        console.log('ℹ️ No top authors found for user');
-      }
-      
-    } catch (err) {
-      console.error('❌ Error fetching personalized data:', err);
-    }
-  } else {
-    console.log('👤 Guest user - no personalization');
-  }
-
-  console.log(`📊 Personalization summary:`);
-  console.log(`   Genre books: ${genreBooks.length}`);
-  console.log(`   Author books: ${authorBooks.length}`);
+async function buildSeededFeed(seed) {
   
   // Fetch all trending sources in parallel
   console.log('🌍 Fetching trending sources...');
@@ -175,9 +92,7 @@ async function buildSeededFeed(seed, memberQid) {
     ...openLibraryBooks,
     ...otthorBooks,
     ...mangaDexBooks,
-    ...internetArchiveBooks,
-    ...genreBooks,    // Just spread the array directly
-    ...authorBooks    // Just spread the array directly
+    ...internetArchiveBooks
   ].filter(b => {
     const isValid = b && b.title && b.bookId;
     if (!isValid && b) {
@@ -211,85 +126,7 @@ async function buildSeededFeed(seed, memberQid) {
   console.log(`✅ Trending feed built and cached for ${memberQid || 'guest'} (${mixed.length} books)`);
   return mixed;
 }
-// async function buildSeededFeed(seed, memberQid) {
- 
-//   const cacheKey = `trending:${seed}`;
-//   let cached = feedCache.get(cacheKey);
 
-//   if (cached && Date.now() < cached.expiry) {
-//     console.log(`📦 Serving trending feed from cache (seed: ${seed})`);
-//     return cached.data;
-//   }
-
-//   console.log(`🌐 Building trending feed (seed: ${seed})`);
-
-//   let genreBooks = [];
-//     let authorBooks = [];
-//   if(memberQid){
-//     const topGenres = await getTopGenresForUser(memberQid, 15);
-//     if (topGenres.length > 0) {
-//       const genrePromises = topGenres.map(genre => 
-//         buildGenreFeed(genre.slug, 10)
-//       );
-//       const genreResults = await Promise.allSettled(genrePromises);
-//       genreResults.forEach(result => {
-//         if (result.status === 'fulfilled' && result.value) {
-//           genreBooks = [...genreBooks, ...result.value];
-//         }
-//       });
-//     };
-
-//     const topAuthors = await getTopAuthorsForUser(memberQid, 10);
-//     if (topAuthors.length > 0) {
-//       const authorPromises = topAuthors.map(author => 
-//         buildAuthorFeed(author.id, 10)
-//       );
-//       const authorResults = await Promise.allSettled(authorPromises);
-//       authorResults.forEach(result => {
-//         if (result.status === 'fulfilled' && result.value) {
-//           authorBooks = [...authorBooks, ...result.value];
-//         }
-//       });
-//     };
-//   }
-//   // Fetch all trending sources in parallel (they're already individually cached)
-//   const [gutenberg, openLibrary, otthor, mangaDex, internetArchive] =
-//     await Promise.all([
-//       getGutenbergTrending(),
-//       getOpenLibraryTrending(),
-//       getOtthorTrending(),
-//       getMangaDexTrending(),
-//       getInternetArchiveTrending()
-//     ]);
-
-//   // Combine and shuffle
-//   const allBooks = [
-//     ...(gutenberg || []),
-//     ...(openLibrary || []),
-//     ...(otthor || []),
-//     ...(mangaDex || []),
-//     ...(internetArchive || []),
-//     ...genreBooks || [],
-//     ...authorBooks || []
-//   ].filter(b => b && b.title && b.bookId); 
-
-//   const mixed = shuffleBooks(allBooks, seed);
-
-//   // Cache the result
-//   feedCache.set(cacheKey, {
-//     data: mixed,
-//     expiry: Date.now() + FEED_CACHE_DURATION
-//   });
-
-//   // Limit cache size
-//   if (feedCache.size > 100) {
-//     const firstKey = feedCache.keys().next().value;
-//     feedCache.delete(firstKey);
-//   }
-
-//   console.log(`✅ Trending feed built and cached (${mixed.length} books)`);
-//   return mixed;
-// }
 
 // --- MAIN FEED WITH PAGINATION ---
 async function getFeed(req, res) {
