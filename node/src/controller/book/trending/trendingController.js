@@ -14,7 +14,7 @@ const { getInterestBooks } = require('../../../model/interest.model');
 const { getRandomBooks } = require('../../../model/random.model');
 
 const { rankFeed } = require('../../../util/rankFeed');
-const { getTopGenresForUser, getTopAuthorsForUser } = require('../../../model/nav.model');
+// const { getTopGenresForUser, getTopAuthorsForUser } = require('../../../model/nav.model');
 
 // Improved cache system
 const feedCache = new Map();
@@ -34,13 +34,13 @@ setInterval(() => {
 
 // --- TRENDING FEED ---
 async function getAllTrending(req, res) {
- 
   try {
+    const memberQid = req.user?.memberQid || null;
     const seed = validateSeed(req.query.seed || 0);
     const cursor = Math.max(0, Number(req.query.cursor || 0));
     const limit = Math.min(50, Number(req.query.limit || 50));
 
-    const data = await buildSeededFeed(seed);
+    const data = await buildSeededFeed(seed, memberQid);
     const batch = data.slice(cursor, cursor + limit);
     const hasMore = cursor + batch.length < data.length;
 
@@ -59,8 +59,12 @@ async function getAllTrending(req, res) {
     });
   }
 }
-async function buildSeededFeed(seed) {
-  
+async function buildSeededFeed(seed, memberQid) {
+  const cacheKey = `trending:${seed}:${memberQid || 'guest'}`;
+  let cached = feedCache.get(cacheKey);
+  if (cached && Date.now() < cached.expiry) {
+    return cached.data;
+  }
   // Fetch all trending sources in parallel
   console.log('🌍 Fetching trending sources...');
   const [gutenberg, openLibrary, otthor, mangaDex, internetArchive] =
