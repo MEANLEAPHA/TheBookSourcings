@@ -15,169 +15,30 @@
 .fa-heart{
   color: var(--font-color);
 }
-/* nav bar in content */
-.nav-wrappers {
-  display: flex;
-  align-items: center;
-   position: sticky;  /* stays inside .content */
-  width: 98%;
-  padding: 10px;
-  height: 65px;
-  margin: auto;
-  top: 60px;
-  background-color: rgba(88, 88, 88, 0.307);
-  backdrop-filter: blur(10px);
-  z-index: 1;
-   transition: width 0.5s ease;
-  
-}
-
-
-    .scroll-btn {
-        background-color: var(--secondary-color);
-     
-      color: var(--font-color);
-      border: none;
-     font-size: 35px;
-      width: 40px;
-      
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 40px;
-      font-size: 18px;
-      
-      cursor: pointer;
-      margin: 0 5px;
-    
-      border: 1px solid var(--primary-color);
-      opacity: 1;
-       transition: width 0.5s ease;
-       border-radius: 25%;
-    }
-
-    .scroll-btn.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .genre-bar {
-      display: flex;
-      overflow-x: auto;
-      white-space: nowrap;
-      scrollbar-width: none;
-      border-radius: 10px;
-      scroll-behavior: smooth;
-      flex: 1;
-      transition: width 0.5s ease;
-    }
-
-    .genre-bar::-webkit-scrollbar {
-      display: none;
-    }
-
-    .genre-btn, .author-btn {
-      background-color: var(--background-color); 
-      backdrop-filter: blur(8px);
-      color:var(--font-color);
-      border: none;
-      border-radius: 11px;
-      padding: 8px 16px;
-      margin-right: 10px;
-      cursor: pointer;
-       max-width: 80%; /* force narrower scroll area */
-      font-size: 14px;
-      transition: background-color 0.3s;
-      flex-shrink: 0;
-    }
-   
-
-    #prevBtn{
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 2;
-  background-color:var(--background-color);
-  border-radius: 27%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-top: 2px;
-}
-  #nextBtn{
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 2;
-  background-color:var(--background-color);
-  border-radius: 27%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  justify-content: center;
-    padding-top: 2px;
-  align-items: center;
-}
-#prevBtn {
-  left: 1px;
-}
-#nextBtn {
-  right: 1px;
- 
-}
-
-
-
-
-
     /* bookConent */
    #BookContent{
       height: auto;
       display: flex;
       justify-content: start;
       flex-wrap: wrap;
-      /* border: 1px solid black; */
       padding: 0;
-      gap: 10px;
+      gap: 38px;
       width: 98%;
-      justify-content: start;
+      justify-content: center;
       margin: auto;
       margin-top: 10px;
       align-items: flex-start;
+     
     }
-    
-    #BookContent-trending{
-        height: auto;
-      display: flex;
-      justify-content: start;
-      flex-wrap: wrap;
-      /* border: 1px solid black; */
-      padding: 0;
-      gap: 10px;
-      width: 98%;
-      justify-content: start;
-      margin: auto;
-      margin-top: 10px;
-      align-items: flex-start;
-    }
-     #BookContent-topRating{
-        height: auto;
-      display: flex;
-      justify-content: start;
-      flex-wrap: wrap;
-      /* border: 1px solid black; */
-      padding: 0;
-      gap: 10px;
-      width: 98%;
-      justify-content: start;
-      margin: auto;
-      margin-top: 10px;
-      align-items: flex-start;
-    }
+
     .Book-card {
-       width: calc(100%/6.3);
+       width: calc(100%/6);
+      height:auto;
+      overflow: hidden;
+      padding-bottom: 3px;
+    }
+    .Book-card.collapseHidden{
+       width: calc(100%/7);
       height:auto;
       overflow: hidden;
       padding-bottom: 3px;
@@ -192,11 +53,11 @@
         padding: 0;
         margin: 0;
     }
-    .Book-card:hover .bookCovers{
+    /* .Book-card:hover .bookCovers{
         border-radius: 4px;
-    }
+    } */
      .thumbnail{
-         width: 100%;
+      width: 100%;
       height:280px;
       position: relative;
    
