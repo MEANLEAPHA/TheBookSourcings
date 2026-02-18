@@ -257,7 +257,6 @@ async function searchInternetArchiveByAuthor(authorName, limit = 20) {
       
       const url = `https://archive.org/advancedsearch.php?q=creator:"${encodeURIComponent(searchAuthor)}"+AND+mediatype:texts&fl[]=identifier,title,creator,year,subject&sort[]=&sort[]=&sort[]=&rows=${limit}&page=1&output=json`;
       
-      console.log(`📚 Internet Archive Author URL: ${url}`);
       
       const data = await fetchJson(url);
       
@@ -293,9 +292,7 @@ async function searchInternetArchiveByGenre(genre, limit = 20) {
       const searchGenre = genre.trim().toLowerCase();
       
       const url = `https://archive.org/advancedsearch.php?q=subject:"${encodeURIComponent(searchGenre)}"+AND+mediatype:texts&fl[]=identifier,title,creator,year,subject&sort[]=&sort[]=&sort[]=&rows=${limit}&page=1&output=json`;
-      
-      console.log(`📚 Internet Archive Genre URL: ${url}`);
-      
+    
       const data = await fetchJson(url);
       
       if (!data || !data.response || !data.response.docs) {
@@ -330,8 +327,6 @@ async function searchInternetArchiveByAuthorScrape(authorName, limit = 20) {
     return await withCache(cacheKey, async () => {
       const url = `https://archive.org/services/search/v1/scrape?fields=identifier,title,creator,year,subject&q=creator:"${encodeURIComponent(authorName)}" AND mediatype:texts&count=${limit}`;
       
-      console.log(`📚 Internet Archive Scrape URL: ${url}`);
-      
       const data = await fetchJson(url);
       
       if (!data || !data.items) {
@@ -365,7 +360,6 @@ async function searchInternetArchiveByGenreScrape(genre, limit = 20) {
     return await withCache(cacheKey, async () => {
       const url = `https://archive.org/services/search/v1/scrape?fields=identifier,title,creator,year,subject&q=subject:"${encodeURIComponent(genre)}" AND mediatype:texts&count=${limit}`;
       
-      console.log(`📚 Internet Archive Genre Scrape URL: ${url}`);
       
       const data = await fetchJson(url);
       
@@ -391,73 +385,7 @@ async function searchInternetArchiveByGenreScrape(genre, limit = 20) {
   }
 }
 
-// Additional book sources with caching
-async function searchStandardEbooksByAuthor(authorName, limit = 20) {
-  try {
-    const cacheKey = generateCacheKey('standard_ebooks', authorName, limit);
-    
-    return await withCache(cacheKey, async () => {
-      const url = `https://raw.githubusercontent.com/standardebooks/web/master/catalog/data/ebooks.json`;
-      const data = await fetchJson(url);
-      
-      const filtered = Object.values(data)
-        .filter(ebook => 
-          ebook.authors?.some(author => 
-            author.name.toLowerCase().includes(authorName.toLowerCase())
-          )
-        )
-        .slice(0, limit);
-      
-      return filtered.map(ebook => ({
-        bookId: ebook.url,
-        title: ebook.title,
-        authors: ebook.authors.map(a => a.name),
-        cover: `https://standardebooks.org${ebook.cover}`,
-        source: 'standard_ebooks',
-        genre: ebook.subjects?.[0] || null
-      }));
-    });
-  } catch (error) {
-    console.log(`⚠️ Standard Ebooks error:`, error.message);
-    return [];
-  }
-}
 
-async function searchWikipediaBooksByAuthor(authorName, limit = 20) {
-  try {
-    const cacheKey = generateCacheKey('wikipedia', authorName, limit);
-    
-    return await withCache(cacheKey, async () => {
-      const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(authorName)}&format=json`;
-      const searchData = await fetchJson(searchUrl);
-      
-      if (!searchData.query?.search?.[0]) return [];
-      
-      const pageId = searchData.query.search[0].pageid;
-      const pageUrl = `https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&pageids=${pageId}&format=json`;
-      
-      const pageData = await fetchJson(pageUrl);
-      const content = pageData.query?.pages?.[pageId]?.revisions?.[0]?.['*'] || '';
-      
-      const bookMatches = content.match(/\*\s*''([^'']+)''/g) || [];
-      const books = bookMatches
-        .map(match => match.replace(/\*\s*''([^'']+)''/, '$1'))
-        .slice(0, limit);
-      
-      return books.map((title, index) => ({
-        bookId: `wiki_${pageId}_${index}`,
-        title: title,
-        authors: [authorName],
-        cover: null,
-        source: 'wikipedia',
-        genre: null
-      }));
-    });
-  } catch (error) {
-    console.log(`⚠️ Wikipedia error:`, error.message);
-    return [];
-  }
-}
 
 // Main exported functions (using the scrape API which is more reliable)
 module.exports = {
@@ -468,7 +396,4 @@ module.exports = {
   searchInternetArchiveByAuthorOriginal: searchInternetArchiveByAuthor,
   searchInternetArchiveByGenreOriginal: searchInternetArchiveByGenre,
   
-  // Additional book sources
-  searchStandardEbooksByAuthor,
-  searchWikipediaBooksByAuthor
 };

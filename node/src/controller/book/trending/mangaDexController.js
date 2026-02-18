@@ -18,14 +18,13 @@ async function getMangaDexTrending() {
   // Check cache first
   if (mangaDexTrendingCache.data && 
       Date.now() - mangaDexTrendingCache.timestamp < mangaDexTrendingCache.duration) {
-    console.log('📦 Serving MangaDex trending from cache');
     return mangaDexTrendingCache.data;
   }
 
-  console.log('🌐 Fetching MangaDex trending from API');
+
   
   try {
-    const url = "https://api.mangadex.org/manga?limit=100&order[followedCount]=desc&contentRating[]=safe&includes[]=cover_art&includes[]=author";
+    const url = "https://api.mangadex.org/manga?limit=200&order[followedCount]=desc&contentRating[]=safe&includes[]=cover_art&includes[]=author";
     const data = await fetchJson(url);
     
     if (!data?.data) {
@@ -69,12 +68,10 @@ async function getMangaDexTrending() {
     // Update cache
     mangaDexTrendingCache.data = books;
     mangaDexTrendingCache.timestamp = Date.now();
-
-    console.log(`✅ MangaDex trending cached (${books.length} manga)`);
     return books;
     
   } catch (error) {
-    console.error('MangaDex trending error:', error.message);
+
     // Return cached data even if stale, or empty array
     return mangaDexTrendingCache.data || [];
   }

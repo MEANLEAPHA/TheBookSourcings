@@ -14,7 +14,6 @@ async function getOtthorTrending() {
     return otthorTrendingCache.data;
   }
 
-  console.log('🌐 Fetching Otthor trending from database');
   
   try {
     const [books] = await db.query(`
@@ -79,7 +78,6 @@ async function getOtthorTrending() {
     otthorTrendingCache.data = trendingBooks;
     otthorTrendingCache.timestamp = Date.now();
 
-    console.log(`✅ Otthor trending cached (${trendingBooks.length} books)`);
     return trendingBooks;
     
   } catch (error) {

@@ -10,7 +10,6 @@ async function getOpenLibraryTrending() {
   // Check cache first
   if (openLibraryTrendingCache.data && 
       Date.now() - openLibraryTrendingCache.timestamp < openLibraryTrendingCache.duration) {
-    console.log('📦 Serving Open Library trending from cache');
     return openLibraryTrendingCache.data;
   }
 
@@ -38,8 +37,6 @@ async function getOpenLibraryTrending() {
     // Update cache
     openLibraryTrendingCache.data = books;
     openLibraryTrendingCache.timestamp = Date.now();
-
-    console.log(`✅ Open Library trending cached (${books.length} books)`);
     return books;
     
   } catch (error) {

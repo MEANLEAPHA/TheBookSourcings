@@ -256,11 +256,11 @@ async function searchByMangaDexGenre(query, limit = 20) {
     const cacheKey = generateCacheKey('genre', query, limit);
     
     return await withCache(cacheKey, async () => {
-      console.log(`🔍 Searching MangaDex for genre: "${query}"`);
+     
       
       const url = `${API_BASE_URL}/manga?limit=${limit}&title=${encodeURIComponent(query)}&contentRating[]=safe&contentRating[]=suggestive&order[followedCount]=desc&includes[]=cover_art&includes[]=author`;
       
-      console.log(`🌐 API Request: ${url}`);
+
       const data = await fetchJson(url);
       
       if (!data.data || data.data.length === 0) {
@@ -268,7 +268,7 @@ async function searchByMangaDexGenre(query, limit = 20) {
         return [];
       }
       
-      console.log(`✅ Found ${data.data.length} manga`);
+   
       
       const results = [];
       
@@ -386,37 +386,25 @@ async function searchByMangaDexAuthor(query, limit = 20) {
     const cacheKey = generateCacheKey('author', query, limit);
     
     return await withCache(cacheKey, async () => {
-      console.log(`🔍 Searching MangaDex for author: "${query}"`);
-      
-      const authorSearchUrl = `${API_BASE_URL}/author?limit=5&name=${encodeURIComponent(query)}`;
-      console.log(`👤 Author search: ${authorSearchUrl}`);
-      
+      const authorSearchUrl = `${API_BASE_URL}/author?limit=5&name=${encodeURIComponent(query)}`; 
       const authorData = await fetchJson(authorSearchUrl);
-      
       if (!authorData.data || authorData.data.length === 0) {
-        console.log(`❌ No authors found for: "${query}"`);
+      
         return await searchByMangaDexGenre(query, limit);
       }
       
       const authorId = authorData.data[0].id;
       const authorName = authorData.data[0].attributes?.name || query;
-      
-      console.log(`✅ Found author: ${authorName} (ID: ${authorId})`);
-      
+  
       const authorMangaCacheKey = `author_manga:${authorId}:${limit}`;
       const mangaData = await withCache(authorMangaCacheKey, async () => {
         const mangaUrl = `${API_BASE_URL}/manga?limit=${limit}&authors[]=${authorId}&contentRating[]=safe&contentRating[]=suggestive&order[followedCount]=desc&includes[]=cover_art&includes[]=author`;
-        console.log(`📚 Manga by author: ${mangaUrl}`);
         return await fetchJson(mangaUrl);
       });
       
       if (!mangaData.data || mangaData.data.length === 0) {
-        console.log(`❌ No manga found for author: "${authorName}"`);
         return await searchByMangaDexGenre(query, limit);
       }
-      
-      console.log(`✅ Found ${mangaData.data.length} manga by ${authorName}`);
-      
       const results = [];
       
       for (const manga of mangaData.data.slice(0, limit)) {

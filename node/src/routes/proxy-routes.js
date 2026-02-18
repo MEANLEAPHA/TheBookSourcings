@@ -38,14 +38,11 @@ router.get('/proxy/mangadex-image', async (req, res) => {
       return res.status(400).json({ error: 'No image URL provided' });
     }
     
-    console.log(`🖼️ Proxying MangaDex image: ${imageUrl.substring(0, 100)}...`);
-    
     // Check cache first
     const cacheKey = imageUrl;
     const cached = imageCache.get(cacheKey);
     
     if (cached && (Date.now() - cached.timestamp < CACHE_DURATION)) {
-      console.log(`✅ Serving from cache: ${mangaId || 'unknown'}`);
       res.setHeader('Content-Type', cached.contentType);
       res.setHeader('Cache-Control', 'public, max-age=86400'); // 24 hours
       res.setHeader('X-Cache', 'HIT');
@@ -92,7 +89,7 @@ router.get('/proxy/mangadex-image', async (req, res) => {
           .jpeg({ quality: 80 })
           .toBuffer();
         finalContentType = 'image/jpeg';
-        console.log(`📐 Resized: ${metadata.width}x${metadata.height} -> 512px wide`);
+      
       }
     } catch (optimizeError) {
       console.log(`⚠️ Could not optimize image, using original: ${optimizeError.message}`);
@@ -121,9 +118,7 @@ router.get('/proxy/mangadex-image', async (req, res) => {
     
     // Send the image
     res.send(finalBuffer);
-    
-    console.log(`✅ Successfully proxied image for manga: ${mangaId || 'unknown'} (${Math.round(finalBuffer.length / 1024)}KB)`);
-    
+ 
   } catch (error) {
     console.error('❌ Image proxy error:', error.message);
     

@@ -73,7 +73,7 @@ const userChatIcon = require("./routes/chat/community/userRoomChatRoutes");
 
 const search = require('./routes/components/searchRoutes');
 
-// const quiz = require('./routes/quizRoute');
+
 
 // push nootification
 // const pushNotification = require('./routes/service/pushRoute');
@@ -101,8 +101,7 @@ bookRoutes(app);
 
 app.use('/api', navFeed);
 
-// monday quiz
-// app.use('/api/quiz', quiz)
+
 
 //filter
 

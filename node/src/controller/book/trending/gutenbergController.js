@@ -69,7 +69,7 @@ const gutenbergTrendingCache = {
   duration: 60 * 60 * 1000 // 60 minutes cache (increased from 30)
 };
 
-async function getGutenbergTrending(maxPages = 5) {
+async function getGutenbergTrending(maxPages = 8) {
   // Check cache
   if (gutenbergTrendingCache.data && 
       Date.now() - gutenbergTrendingCache.timestamp < gutenbergTrendingCache.duration) {

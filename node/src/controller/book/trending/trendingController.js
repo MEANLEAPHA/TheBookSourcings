@@ -1,19 +1,16 @@
-
 const { getGutenbergTrending } = require('./gutenbergController');
 const { getOpenLibraryTrending } = require('./openLibraryController');
 const { getOtthorTrending } = require('./otthorController');
 const { getMangaDexTrending } = require('./mangaDexController');
 const { getInternetArchiveTrending } = require('./internetArchiveController');
-
 const { buildFeed } = require('../../../model/feed.model');
 const { buildAuthorFeed } = require('../../../model/helper/feedByauthor.model');
+const { rankFeed } = require('../../../util/rankFeed');
 const { buildGenreFeed } = require('../../../model/helper/feedBygenre.model');
 
-const { getTrendingBooks } = require('../../../model/trending.model');
-const { getInterestBooks } = require('../../../model/interest.model');
-const { getRandomBooks } = require('../../../model/random.model');
-
-const { rankFeed } = require('../../../util/rankFeed');
+// const { getTrendingBooks } = require('../../../model/trending.model');
+// const { getInterestBooks } = require('../../../model/interest.model');
+// const { getRandomBooks } = require('../../../model/random.model');
 // const { getTopGenresForUser, getTopAuthorsForUser } = require('../../../model/nav.model');
 
 // Improved cache system
@@ -65,8 +62,7 @@ async function buildSeededFeed(seed, memberQid) {
   if (cached && Date.now() < cached.expiry) {
     return cached.data;
   }
-  // Fetch all trending sources in parallel
-  console.log('🌍 Fetching trending sources...');
+
   const [gutenberg, openLibrary, otthor, mangaDex, internetArchive] =
     await Promise.allSettled([
       getGutenbergTrending(),
@@ -110,7 +106,7 @@ async function buildSeededFeed(seed, memberQid) {
     return isValid;
   });
 
-  // console.log(`📊 Total books after filtering: ${allBooks.length}`);
+  console.log(`📊 Total books after filtering: ${allBooks.length}`);
   
   // Shuffle with seed
   const mixed = shuffleBooks(allBooks, seed);
@@ -126,8 +122,6 @@ async function buildSeededFeed(seed, memberQid) {
     const firstKey = feedCache.keys().next().value;
     feedCache.delete(firstKey);
   }
-
-  console.log(`✅ Trending feed built and cached for ${memberQid || 'guest'} (${mixed.length} books)`);
   return mixed;
 }
 
@@ -160,7 +154,7 @@ async function getFeed(req, res) {
     if (cacheKey && feedCache.has(cacheKey)) {
       const cached = feedCache.get(cacheKey);
       if (Date.now() < cached.expiry) {
-        console.log(`📦 Serving ${mode} feed from cache`);
+        // console.log(`📦 Serving ${mode} feed from cache`);
         return res.json(cached.data);
       }
     }
@@ -215,8 +209,6 @@ async function getFeed(req, res) {
         expiry: Date.now() + cacheDuration
       });
     }
-
-    console.log(`✅ ${mode} feed built: ${batch.length} items, hasMore: ${hasMore}`);
     res.json(response);
 
   } catch (err) {

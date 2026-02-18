@@ -13,11 +13,8 @@ async function getInternetArchiveTrending() {
     console.log('📦 Serving Internet Archive trending from cache');
     return internetArchiveTrendingCache.data;
   }
-
-  console.log('🌐 Fetching Internet Archive trending from API');
-  
   try {
-    const url = "https://archive.org/advancedsearch.php?q=mediatype:texts&output=json&rows=100&sort[]=week+desc&fl[]=identifier,title,creator,avg_rating,week";
+    const url = "https://archive.org/advancedsearch.php?q=mediatype:texts&output=json&rows=200&sort[]=week+desc&fl[]=identifier,title,creator,avg_rating,week";
     const data = await fetchJson(url);
     
     if (!data?.response?.docs) {
@@ -38,11 +35,10 @@ async function getInternetArchiveTrending() {
     internetArchiveTrendingCache.data = books;
     internetArchiveTrendingCache.timestamp = Date.now();
 
-    console.log(`✅ Internet Archive trending cached (${books.length} books)`);
     return books;
     
   } catch (error) {
-    console.error('Internet Archive trending error:', error.message);
+
     // Return cached data even if stale, or empty array
     return internetArchiveTrendingCache.data || [];
   }
