@@ -9,7 +9,7 @@ const app = express();
 const proxyRoutes = require('./routes/proxy-routes');
 app.use(cors(
     {
-        origin: ["https://admin.socket.io", "https://thebooksourcings.onrender.com"],
+        origin: ["https://admin.socket.io", "https://thebooksourcings.onrender.com", "https://otthoradmin-frontend.onrender.com"],
         credentials: true,
         methods: ['GET', 'POST', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Accept']
