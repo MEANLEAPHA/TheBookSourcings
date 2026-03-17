@@ -1,0 +1,44 @@
+:root{
+    /* --background-color:white; */
+     --background-color:rgb(32, 32, 32);
+    --primary-color:#fd7648;
+    /* --secondary-color: gainsboro; */
+     --secondary-color: rgba(220, 220, 220, 0.318);
+    /* --font-color:rgb(65, 65, 65); */
+    --font-color:rgb(255, 255, 255);
+
+    --back-con:rgb(245, 245, 245);
+    --primary-font:monospace;
+}
+.dark-theme{
+    --background-color:rgb(32, 32, 32);
+    --primary-color:#fd7648;
+    --secondary-color: rgba(220, 220, 220, 0.318);
+    --font-color:rgb(255, 255, 255);
+     --back-con:rgb(40, 40, 40);
+}
+body{
+    margin: 0;
+}
+main{
+    display: flex;
+    margin: 0;
+    padding: 0;
+ position: relative;
+}
+.article-header{
+    width: 100%;
+    color: var(--font-color);
+  
+    padding: 20px;
+}
+.icon{
+  opacity: 0.5;
+}
+.link-page{
+    cursor: pointer;
+}
+.link-page:hover{
+    color: var(--primary-color);
+    opacity: 1;
+}

@@ -1,0 +1,134 @@
+:root{
+    /* --background-color:white; */
+     --background-color:rgb(32, 32, 32);
+    --primary-color:#fd7648;
+    /* --secondary-color: gainsboro; */
+     --secondary-color: rgba(220, 220, 220, 0.318);
+    /* --font-color:rgb(65, 65, 65); */
+    --font-color:rgb(255, 255, 255);
+
+    --back-con:rgb(245, 245, 245);
+    --primary-font:monospace;
+}
+.dark-theme{
+    --background-color:rgb(32, 32, 32);
+    --primary-color:#fd7648;
+    --secondary-color: rgba(220, 220, 220, 0.318);
+    --font-color:rgb(255, 255, 255);
+     --back-con:rgb(40, 40, 40);
+}
+section{
+    width: 100%;
+   
+    padding: 0;
+    height: 91vh;
+}
+.article-header{
+    width: 100%;
+    color: var(--font-color);
+    opacity: 0.5;
+    padding: 20px;
+}
+.article-main{
+    width: 100%;
+    height: auto;
+    padding: 20px;
+  
+}
+.article-main ul{
+    display:flex;
+    width: 100%;
+    height: auto;
+    justify-content: space-between;
+    padding: 0;
+    margin: 0;
+    background-color: aqua;
+}
+.article-main ul li{
+    width: 40%;
+    height: auto;
+     position: relative;
+}
+.container{
+ width: 100%;
+ height: 130px;
+ position: relative;
+ display: flex;
+ flex-direction: column;
+ justify-content: end;
+
+}
+.con-icon{
+    width: 75px;
+    height: 75px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+   position: absolute;
+   border-radius: 5px;
+   z-index: 1;
+   top: -18px;
+   margin-left: 20px;
+}
+.con-icon .icons{
+    font-size: x-large;
+    color: antiquewhite;
+}
+
+.con-info{
+    width: 100%;
+    position: relative;
+    height: 90%;
+    border-radius: 2px;
+    box-shadow: 0px 0px 5px 0px rgba(74, 74, 74, 0.5);
+}
+.con-data{
+width: 100%;
+text-align: end;
+padding: 10px 20px 0px 0px;
+margin: 0;
+
+}
+.con-data p{
+    margin: 0;
+    color: var(--font-color);
+}
+.con-data p:first-child{
+    font-size: 15px;
+    opacity: 0.4;
+}
+.con-data p:last-child{
+    font-size: larger;
+}
+.con-info hr{
+    width: 82%;
+    text-align: center;
+    margin: 15px auto 5px auto;
+    color: gray;
+    opacity: 0.5;
+}
+.con-source{
+    width: 100%;
+    padding: 0px 20px 5px 20px;
+    margin: 0;
+}
+.con-source a{
+    color: var(--font-color);
+    opacity: 0.5;
+    font-size: small;
+    text-decoration: none;
+    margin: 0;
+    transition: all 0.5s ease;
+}
+.con-source a:hover{
+    color: var(--primary-color);
+    padding-left: 5px;
+    opacity: 1;
+}
+
+@media screen and (max-width:768px){
+ section{
+	height: 85vh;
+    background-color: antiquewhite;
+ }
+}
